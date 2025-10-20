@@ -5,7 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Philomenia – Hub d’IA</title>
   <style>
-    body {
+ <div class="menu">
+  <a href="Oracle.html"><button>🔮 Oracle</button></a>
+  <a href="Analyste%20Sportif.html"><button>⚽ Analyste Sportif</button></a>
+  <a href="Culture.html"><button>📚 Espace Culture</button></a>
+  <a href="flash.html"><button>⚡ Flash Info</button></a>
+</div>
+
+<style>
+  .menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 80px;
+  }
+
+  .menu button {
+    background: linear-gradient(90deg, #6a5acd, #8a2be2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+  }
+
+  .menu button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #8a2be2, #9370db);
+  }
+</style>   body {
       background: radial-gradient(circle at center, #1a1a1a, #000);
       color: white;
       font-family: Arial, sans-serif;
