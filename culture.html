@@ -1,61 +1,102 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Philomenia – Culture</title>
-  <style>
-    body {
-      background: radial-gradient(circle at top, #260033, #0b0013);
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 50px 20px;
-    }
-
-    h1 {
-      font-size: 2.2em;
-      color: #e3a7ff;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 1.2em;
-      color: #ddd;
-      line-height: 1.6em;
-      margin-bottom: 40px;
-    }
-
-    .back {
-      display: inline-block;
-      padding: 15px 30px;
-      background: #6100a5;
-      color: white;
-      border-radius: 50px;
-      text-decoration: none;
-      transition: all 0.3s;
-    }
-
-    .back:hover {
-      background: #8200c8;
-      transform: scale(1.05);
-    }
-
-    .quote {
-      font-style: italic;
-      color: #b366ff;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
+<!DOCTYPE html><html lang="fr"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Espace Culture • Philomenia</title>
+<style>
+ body{margin:0;background:#140017;color:#fff;font-family:Inter,system-ui,Arial}
+ .wrap{max-width:900px;margin:auto;padding:56px 20px}
+ h1{font-size:2.4rem;margin:0 0 12px;color:#e5b8ff}
+ p.lead{opacity:.9;margin:0 0 22px}
+ .card{background:#22052f;border:1px solid #4d0a5c;border-radius:16px;padding:18px 16px;margin-top:18px}
+ .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+ select{background:#1a0726;color:#fff;border:1px solid #4d0a5c;border-radius:12px;padding:10px}
+ button{background:#7c3aed;border:0;color:#fff;padding:10px 16px;border-radius:999px;font-weight:700;cursor:pointer}
+ .ghost{background:transparent;border:1px solid #7c3aed}
+ .out{margin-top:12px;line-height:1.6}
+ .muted{opacity:.75}
+ a{color:#cfa9ff;text-decoration:none}
+ blockquote{margin:12px 0;padding-left:14px;border-left:3px solid #7c3aed;opacity:.95}
+</style></head><body>
+<div class="wrap">
   <h1>📚 Espace Culture</h1>
-  <p>Bienvenue dans la section Culture de <strong>Philomenia</strong>.<br>
-  Ici, explore les pensées, les œuvres et les symboles qui inspirent ton esprit.</p>
+  <p class="lead">Découvre une citation et des pistes d’exploration express.</p>
 
-  <div class="quote">✨ “La culture, c’est ce qui reste quand on a tout oublié.” – Édouard Herriot</div>
+  <div class="card">
+    <div class="row">
+      <button id="quoteBtn">✨ Nouvelle citation</button>
+      <a href="index.html"><button class="ghost" type="button">← Accueil</button></a>
+    </div>
+    <div id="quoteBox" class="out muted">Clique sur “Nouvelle citation”.</div>
+  </div>
 
-  <br><br>
-  <a href="index.html" class="back">⬅ Retour à l’accueil</a>
-</body>
-</html>
+  <div class="card">
+    <div class="row">
+      <label for="theme" class="muted">Choisis un thème :</label>
+      <select id="theme">
+        <option value="philo">Philosophie</option>
+        <option value="histoire">Histoire</option>
+        <option value="art">Art</option>
+        <option value="sciences">Sciences</option>
+        <option value="litterature">Littérature</option>
+      </select>
+      <button id="ideasBtn">🎯 Idées à explorer</button>
+    </div>
+    <div id="ideasBox" class="out"></div>
+    <p class="muted" style="margin-top:10px">*Démo locale. On connectera plus tard une vraie base culturelle.</p>
+  </div>
+</div>
+
+<script>
+ const quotes=[
+  ["La culture, c’est ce qui reste quand on a tout oublié.","Édouard Herriot"],
+  ["Connais-toi toi-même.","Socrate"],
+  ["L’art lave notre âme de la poussière du quotidien.","Pablo Picasso"],
+  ["La science est faite de données comme une maison de pierres, mais une accumulation de données n’est pas plus une science qu’un tas de pierres n’est une maison.","Henri Poincaré"],
+  ["La littérature est la preuve que la vie ne suffit pas.","Fernando Pessoa"]
+ ];
+ const ideas={
+  philo:[
+    "Comparer stoïcisme vs. épicurisme en 5 phrases.",
+    "Relier ‘conatus’ (Spinoza) à la motivation moderne.",
+    "Libre arbitre : 2 arguments pour/contre."
+  ],
+  histoire:[
+    "Lister 3 dates charnières de la Révolution française.",
+    "Pourquoi 1914 change tout pour l’Europe (en 4 points).",
+    "Colonisation : 2 conséquences longues durées."
+  ],
+  art:[
+    "Repérer 3 codes du surréalisme dans une image.",
+    "Différence impressionnisme / expressionnisme.",
+    "Composer une mini-analyse de tableau en 5 lignes."
+  ],
+  sciences:[
+    "Expliquer l’effet placebo simplement.",
+    "Qu’est-ce qu’un modèle climatique ?",
+    "ARNm : 3 idées reçues et corrections."
+  ],
+  litterature:[
+    "Schéma narratif en 5 étapes (exemple concret).",
+    "Comparer un poème classique et un slam.",
+    "3 figures de style illustrées."
+  ]
+ };
+
+ const quoteBtn=document.getElementById('quoteBtn');
+ const quoteBox=document.getElementById('quoteBox');
+ const ideasBtn=document.getElementById('ideasBtn');
+ const ideasBox=document.getElementById('ideasBox');
+ const theme=document.getElementById('theme');
+
+ const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+ quoteBtn.onclick=()=>{
+   const [text,author]=pick(quotes);
+   quoteBox.innerHTML=`<blockquote>“${text}”</blockquote><div class="muted">— ${author}</div>`;
+ };
+
+ ideasBtn.onclick=()=>{
+   const set=ideas[theme.value]||[];
+   ideasBox.innerHTML = `<strong>Pistes :</strong><ul>` + set.map(x=>`<li>${x}</li>`).join("") + `</ul>`;
+ };
+</script>
+</body></html>
