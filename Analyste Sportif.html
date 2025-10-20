@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Philomenia — Analyste Sportif</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0b0f14;
+      color: #e7eef7;
+      font-family: system-ui, sans-serif;
+    }
+    .header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #1f2937;
+    }
+    a {
+      color: #9dd5ff;
+      text-decoration: none;
+    }
+    .main {
+      max-width: 860px;
+      margin: 18px auto;
+      padding: 0 16px;
+    }
+    h1 {
+      margin: 12px 0 8px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      background: #0f151d;
+      color: #e7eef7;
+      border: 1px solid #223042;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    button {
+      background: #4f79ff;
+      color: #fff;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 40px;
+    }
+    li {
+      background: #111826;
+      border: 1px solid #223042;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="index.html">← Accueil</a>
+    <strong>Philomenia</strong>
+  </div>
+  <main class="main">
+    <h1>🧠 Analyste Sportif</h1>
+    <p>Pose ta question sportive. (Démo locale, API à venir)</p>
+    <textarea id="txt" placeholder="Ex : Analyse Marseille vs PSG ce week-end ?"></textarea>
+    <button id="send">Envoyer</button>
+    <ul id="history"></ul>
+  </main>
+  <script>
+    document.getElementById("send").onclick = () => {
+      const t = document.getElementById("txt");
+      const q = t.value.trim();
+      if (!q) return alert("Écris ta question.");
+      const li = document.createElement("li");
+      li.textContent = "Analyse (démo) : " + q;
+      document.getElementById("history").prepend(li);
+      t.value = "";
+    };
+  </script>
+</body>
+</html>
