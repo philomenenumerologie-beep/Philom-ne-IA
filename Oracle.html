@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Philomenia — Oracle</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #190022, #0b0010);
+      color: #f5e7ff;
+      font-family: system-ui, sans-serif;
+      text-align: center;
+    }
+    header {
+      padding: 16px;
+      border-bottom: 1px solid #331144;
+    }
+    a {
+      color: #b177ff;
+      text-decoration: none;
+    }
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+    h1 {
+      font-size: 2.2em;
+      color: #d7a4ff;
+    }
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      border-radius: 10px;
+      border: 1px solid #442266;
+      background: #1a0028;
+      color: #f0e6ff;
+      padding: 12px;
+    }
+    button {
+      background: #8c38ff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 10px 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+    li {
+      background: #220033;
+      border: 1px solid #3a1055;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">← Retour à l'accueil</a>
+  </header>
+  <main>
+    <h1>🔮 Oracle de Philomenia</h1>
+    <p>Pose une question à l’oracle :</p>
+    <textarea id="question" placeholder="Ex : Que me réserve cette semaine ?"></textarea>
+    <button id="predict">Demander à l’oracle</button>
+    <ul id="responses"></ul>
+  </main>
+  <script>
+    const réponses = [
+      "Une belle surprise t’attend 🌸",
+      "Un changement important approche ⚡",
+      "L’univers te teste avant la réussite ✨",
+      "Reste calme, tout va s’éclaircir 🌙",
+      "Ton intuition a raison 🌠"
+    ];
+    document.getElementById("predict").onclick = () => {
+      const q = document.getElementById("question").value.trim();
+      if (!q) return alert("Écris une question ✍️");
+      const r = réponses[Math.floor(Math.random() * réponses.length)];
+      const li = document.createElement("li");
+      li.textContent = "🔮 " + r;
+      document.getElementById("responses").prepend(li);
+      document.getElementById("question").value = "";
+    };
+  </script>
+</body>
+</html>
