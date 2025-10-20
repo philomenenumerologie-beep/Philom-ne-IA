@@ -1,88 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Philomenia — Analyste Sportif</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analyste Sportif • Philomenia</title>
   <style>
-    body {
-      margin: 0;
-      background: #0b0f14;
-      color: #e7eef7;
-      font-family: system-ui, sans-serif;
-    }
-    .header {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      padding: 14px 16px;
-      border-bottom: 1px solid #1f2937;
-    }
-    a {
-      color: #9dd5ff;
-      text-decoration: none;
-    }
-    .main {
-      max-width: 860px;
-      margin: 18px auto;
-      padding: 0 16px;
-    }
-    h1 {
-      margin: 12px 0 8px;
-    }
-    textarea {
-      width: 100%;
-      min-height: 130px;
-      background: #0f151d;
-      color: #e7eef7;
-      border: 1px solid #223042;
-      border-radius: 12px;
-      padding: 12px;
-    }
-    button {
-      background: #4f79ff;
-      color: #fff;
-      border: 0;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 16px 0 40px;
-    }
-    li {
-      background: #111826;
-      border: 1px solid #223042;
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 8px;
-    }
+    body{margin:0;background:#0a0f1f;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:900px;margin:0 auto;padding:56px 20px}
+    h1{font-size:2.2rem;margin:0 0 12px;color:#9fd3ff}
+    p.lead{opacity:.85;margin:0 0 24px}
+    .card{background:#0f1630;border:1px solid #21335a;border-radius:16px;padding:18px 16px;margin-top:18px}
+    textarea,input,select{width:100%;border-radius:12px;border:1px solid #2b447a;background:#0b1330;color:#fff;padding:12px;font-size:16px;outline:none}
+    .row{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+    button{background:#2563eb;border:0;color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer}
+    .out{margin-top:16px;line-height:1.5}
+    a{color:#9fd3ff;text-decoration:none}
   </style>
 </head>
 <body>
-  <div class="header">
-    <a href="index.html">← Accueil</a>
-    <strong>Philomenia</strong>
+  <div class="wrap">
+    <h1>⚽ Analyste Sportif</h1>
+    <p class="lead">Entre deux équipes ou colle une phrase, je te donne une analyse rapide (démo).</p>
+
+    <div class="card">
+      <label>Équipe A</label>
+      <input id="a" placeholder="Ex. : PSG">
+      <label style="margin-top:8px">Équipe B</label>
+      <input id="b" placeholder="Ex. : OM">
+      <div class="row">
+        <button id="analyze">Analyser le match</button>
+        <a href="index.html"><button type="button" style="background:transparent;border:1px solid #2563eb">← Accueil</button></a>
+      </div>
+      <div id="out" class="out"></div>
+      <p class="lead" style="opacity:.6">*Démo côté navigateur. On branchera les vraies données ensuite.</p>
+    </div>
   </div>
-  <main class="main">
-    <h1>🧠 Analyste Sportif</h1>
-    <p>Pose ta question sportive. (Démo locale, API à venir)</p>
-    <textarea id="txt" placeholder="Ex : Analyse Marseille vs PSG ce week-end ?"></textarea>
-    <button id="send">Envoyer</button>
-    <ul id="history"></ul>
-  </main>
+
   <script>
-    document.getElementById("send").onclick = () => {
-      const t = document.getElementById("txt");
-      const q = t.value.trim();
-      if (!q) return alert("Écris ta question.");
-      const li = document.createElement("li");
-      li.textContent = "Analyse (démo) : " + q;
-      document.getElementById("history").prepend(li);
-      t.value = "";
+    const patterns = [
+      (a,b)=>`${a} domine la possession mais ${b} est dangereux en transitions rapides.`,
+      (a,b)=>`Le milieu de ${a} semble plus structuré; ${b} compense par l'intensité et les coups de pied arrêtés.`,
+      (a,b)=>`Match équilibré : xG proches attendus. L’avantage irait légèrement à ${a} s’il concrétise tôt.`,
+      (a,b)=>`${b} a une meilleure forme récente, mais ${a} a l’avantage tactique si le pressing est coordonné.`,
+      (a,b)=>`Clé du match : largeur et centres. ${a} devra contrôler les côtés, ${b} chercher le second ballon.`
+    ];
+    const who = (a,b)=>Math.random()<0.52 ? a : b;
+
+    document.getElementById('analyze').onclick = ()=>{
+      const A = (document.getElementById('a').value||'Équipe A').trim();
+      const B = (document.getElementById('b').value||'Équipe B').trim();
+      const take = patterns[Math.floor(Math.random()*patterns.length)](A,B);
+      const winner = who(A,B);
+      document.getElementById('out').innerHTML = `
+        <strong>Aperçu tactique :</strong> ${take}<br><br>
+        <strong>Joueur-clé :</strong> impact des milieux dans la première relance.<br>
+        <strong>Tendance score (démo) :</strong> ${winner} 1–0 / 2–1.
+      `;
     };
   </script>
 </body>
