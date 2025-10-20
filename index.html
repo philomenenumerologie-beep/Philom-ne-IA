@@ -1,80 +1,83 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Philomenia – Hub d’IA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhilomenIA – Hub d’IA</title>
   <style>
- <div class="menu">
-  <a href="Oracle.html"><button>🔮 Oracle</button></a>
-  <a href="Analyste%20Sportif.html"><button>⚽ Analyste Sportif</button></a>
-  <a href="Culture.html"><button>📚 Espace Culture</button></a>
-  <a href="flash.html"><button>⚡ Flash Info</button></a>
-</div>
-
-<style>
-  .menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    margin-top: 80px;
-  }
-
-  .menu button {
-    background: linear-gradient(90deg, #6a5acd, #8a2be2);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 15px 40px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: transform 0.2s, background 0.3s;
-  }
-
-  .menu button:hover {
-    transform: scale(1.05);
-    background: linear-gradient(90deg, #8a2be2, #9370db);
-  }
-</style>   body {
-      background: radial-gradient(circle at center, #1a1a1a, #000);
+    body {
+      background: radial-gradient(circle at center, #1a0033, #000);
       color: white;
-      font-family: Arial, sans-serif;
+      font-family: "Poppins", Arial, sans-serif;
       text-align: center;
-      padding-top: 100px;
+      padding-top: 80px;
+      margin: 0;
     }
+
     h1 {
-      font-size: 2.2em;
-      color: #e5b8ff;
+      font-size: 2.6em;
+      color: #c59bff;
+      margin-bottom: 10px;
+      animation: fadeIn 2s ease-in-out;
     }
-    .bubbles {
-      margin-top: 40px;
+
+    h2 {
+      color: #aaa;
+      font-weight: 400;
+      margin-bottom: 50px;
     }
-    .bubble {
-      display: inline-block;
-      background: #3b0066;
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .menu button {
+      background: linear-gradient(90deg, #7f00ff, #e100ff);
       color: white;
-      padding: 20px 40px;
+      border: none;
       border-radius: 50px;
-      margin: 10px;
+      padding: 15px 50px;
+      font-size: 1.2em;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: 0.3s;
+      width: 260px;
     }
-    .bubble:hover {
-      background: #6100a5;
-      transform: scale(1.1);
+
+    .menu button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #9d4edd, #6a00f4);
+      box-shadow: 0 0 15px #b266ff;
+    }
+
+    footer {
+      margin-top: 80px;
+      color: #777;
+      font-size: 0.9em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
+
 <body>
-  <h1>🌌 Bienvenue sur Philomenia</h1>
-  <p>Choisissez une IA pour commencer :</p>
-  <div class="bubbles">
-  <a href="Analyste%20Sportif.html" class="bubble">⚽ Analyste Sportif</a>
-  <a href="Oracle.html" class="bubble">🔮 Oracle</a>
-  <a href="culture.html" class="bubble">📚 Culture</a>
-  <a href="flash.html" class="bubble">⚡ Flash Info</a>
-</div>
+  <h1>🌌 Bienvenue sur <span style="color:#e5b8ff;">PhilomenIA</span></h1>
+  <h2>Choisis ton IA pour commencer :</h2>
+
+  <div class="menu">
+    <a href="Oracle.html"><button>🔮 Oracle</button></a>
+    <a href="Analyste%20Sportif.html"><button>⚽ Analyste Sportif</button></a>
+    <a href="Culture.html"><button>📚 Espace Culture</button></a>
+    <a href="flash.html"><button>⚡ Flash Info</button></a>
   </div>
+
+  <footer>
+    © 2025 PhilomenIA • Créé avec 💜 et curiosité
+  </footer>
 </body>
 </html>
