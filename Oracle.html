@@ -1,93 +1,87 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Philomenia — Oracle</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oracle • Philomenia</title>
   <style>
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top, #190022, #0b0010);
-      color: #f5e7ff;
-      font-family: system-ui, sans-serif;
-      text-align: center;
-    }
-    header {
-      padding: 16px;
-      border-bottom: 1px solid #331144;
-    }
-    a {
-      color: #b177ff;
-      text-decoration: none;
-    }
-    main {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 16px;
-    }
-    h1 {
-      font-size: 2.2em;
-      color: #d7a4ff;
-    }
-    textarea {
-      width: 100%;
-      min-height: 130px;
-      border-radius: 10px;
-      border: 1px solid #442266;
-      background: #1a0028;
-      color: #f0e6ff;
-      padding: 12px;
-    }
-    button {
-      background: #8c38ff;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      padding: 10px 16px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-    li {
-      background: #220033;
-      border: 1px solid #3a1055;
-      border-radius: 10px;
-      padding: 10px;
-      margin-top: 10px;
-    }
+    body{margin:0;background:#13001f;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:800px;margin:0 auto;padding:56px 20px}
+    h1{font-size:2.4rem;margin:0 0 12px;color:#e6b6ff}
+    p.lead{opacity:.85;margin:0 0 24px}
+    .card{background:#1e0530;border:1px solid #3b0e5a;border-radius:16px;padding:18px 16px;margin-top:18px}
+    label{display:block;margin:0 0 8px;font-weight:600}
+    textarea{width:100%;min-height:96px;border-radius:12px;border:1px solid #4a176f;background:#170427;color:#fff;padding:12px;font-size:16px;outline:none}
+    .row{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+    button{background:#6a0dad;border:0;color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.6;cursor:default}
+    .ghost{background:transparent;border:1px solid #6a0dad}
+    .out{margin-top:16px;line-height:1.5}
+    .muted{opacity:.7}
+    .loader{display:none;margin-left:8px;border:2px solid #ffffff33;border-top:2px solid #fff;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    a{color:#caa8ff;text-decoration:none}
   </style>
 </head>
 <body>
-  <header>
-    <a href="index.html">← Retour à l'accueil</a>
-  </header>
-  <main>
-    <h1>🔮 Oracle de Philomenia</h1>
-    <p>Pose une question à l’oracle :</p>
-    <textarea id="question" placeholder="Ex : Que me réserve cette semaine ?"></textarea>
-    <button id="predict">Demander à l’oracle</button>
-    <ul id="responses"></ul>
-  </main>
+  <div class="wrap">
+    <h1>🔮 Oracle</h1>
+    <p class="lead">Pose ta question. L’Oracle te répond avec sagesse instantanée.</p>
+
+    <div class="card">
+      <label for="q">Ta question</label>
+      <textarea id="q" placeholder="Ex. : Est-ce le bon moment pour lancer mon projet ?"></textarea>
+      <div class="row">
+        <button id="askBtn">Interroger l’Oracle <span class="loader" id="spin"></span></button>
+        <a class="ghost" href="index.html"><button class="ghost" type="button">← Retour à l’accueil</button></a>
+      </div>
+      <div class="out" id="out"></div>
+      <p class="muted" style="margin-top:10px">*Réponse générée côté navigateur (démo). On branchera l’IA ensuite.</p>
+    </div>
+  </div>
+
   <script>
-    const réponses = [
-      "Une belle surprise t’attend 🌸",
-      "Un changement important approche ⚡",
-      "L’univers te teste avant la réussite ✨",
-      "Reste calme, tout va s’éclaircir 🌙",
-      "Ton intuition a raison 🌠"
+    const answers = [
+      "Oui — mais garde le cap et reste simple.",
+      "Pas encore. Prépare un peu plus, puis fonce.",
+      "La réponse est en toi : commence petit aujourd’hui.",
+      "Oui, si tu acceptes d’apprendre en chemin.",
+      "Attends un signe concret (message, appel, opportunité) et démarre.",
+      "Clarifie l’intention, puis agis. Les portes s’ouvriront.",
+      "Non pour l’instant. Revois le plan et allège-le."
     ];
-    document.getElementById("predict").onclick = () => {
-      const q = document.getElementById("question").value.trim();
-      if (!q) return alert("Écris une question ✍️");
-      const r = réponses[Math.floor(Math.random() * réponses.length)];
-      const li = document.createElement("li");
-      li.textContent = "🔮 " + r;
-      document.getElementById("responses").prepend(li);
-      document.getElementById("question").value = "";
+    const notes = [
+      "Fais un pas concret dans les 24h.",
+      "Supprime une chose qui te freine.",
+      "Demande un avis à une personne neutre.",
+      "Choisis la version la plus légère du plan.",
+      "Écris une checklist de 3 points et exécute-les."
+    ];
+    const askBtn = document.getElementById('askBtn');
+    const spin = document.getElementById('spin');
+    const out = document.getElementById('out');
+    const q = document.getElementById('q');
+
+    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    askBtn.onclick = async () => {
+      const text = (q.value || "").trim();
+      if (!text){ q.focus(); return; }
+      askBtn.disabled = true; spin.style.display = 'inline-block'; out.innerHTML = "";
+
+      // petite attente pour l’effet
+      await new Promise(r=>setTimeout(r, 700));
+
+      const stamp = new Date().toLocaleString('fr-FR',{weekday:'long',hour:'2-digit',minute:'2-digit'});
+      const base = pick(answers);
+      const tip = pick(notes);
+      out.innerHTML = `
+        <div><strong>Question :</strong> ${text.replace(/</g,"&lt;")}</div>
+        <div style="margin-top:8px"><strong>Oracle :</strong> ${base}</div>
+        <div class="muted" style="margin-top:8px">Conseil : ${tip}</div>
+        <div class="muted" style="margin-top:6px">⏱️ ${stamp}</div>
+      `;
+      askBtn.disabled = false; spin.style.display = 'none';
     };
   </script>
 </body>
