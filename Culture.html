@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>📚 Culture — PhilomenIA</title>
+<style>
+  :root{--txt:#f2ecff;--muted:#cdbdf3;--btn:#8b5cf6;--btn-h:#7c3aed}
+  *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--txt);
+  background: radial-gradient(1200px 800px at 50% -10%, #241538 0%, #160b24 55%, #0e0817 100%);}
+  .wrap{max-width:900px;margin:auto;padding:28px}
+  h1{font-size:clamp(28px,5vw,46px);margin:8px 0 16px;color:#e6d6ff;display:flex;gap:.6rem;align-items:center}
+  p.lead{color:var(--muted);margin:0 0 18px}
+  .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
+  textarea{width:100%;min-height:120px;border:1px solid rgba(255,255,255,.12);background:#120b1f;color:var(--txt);
+           border-radius:14px;padding:12px 14px;font-size:16px;outline:none}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  button,a.btn{appearance:none;border:0;border-radius:12px;background:var(--btn);color:#fff;padding:12px 16px;font-weight:600;
+               cursor:pointer;box-shadow:0 6px 18px rgba(139,92,246,.25);transition:.18s}
+  button:hover,a.btn:hover{transform:translateY(-1px);background:var(--btn-h)}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,.14);color:#ddd}
+  .answer{margin-top:14px;padding:14px;border-radius:14px;background:#160c25;border:1px solid rgba(255,255,255,.06);white-space:pre-wrap}
+  .hint{color:#bdaee6; font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>📚 Espace Culture</h1>
+    <p class="lead">Pose une question (livres, idées, symboles, arts…).</p>
+
+    <div class="card">
+      <label for="q">Ta question</label>
+      <textarea id="q" placeholder="Ex. : Explique le mythe de Sisyphe en 5 points."></textarea>
+      <div class="row">
+        <button id="askBtn">Interroger</button>
+        <a class="btn ghost" href="index.html">← Accueil</a>
+      </div>
+      <div class="answer" id="answer" aria-live="polite"></div>
+      <div class="hint">*Démo locale si le backend est hors-ligne.</div>
+    </div>
+  </div>
+
+<script>
+const API_URL = "https://philo-backend-cfxz.onrender.com/ask"; // ← remplace par ton URL Render
+const ctx = "culture";
+
+const q = document.getElementById('q');
+const ans = document.getElementById('answer');
+const btn = document.getElementById('askBtn');
+
+btn.addEventListener('click', async () => {
+  const question = q.value.trim();
+  if (!question) { ans.textContent = "Écris ta question d’abord 🙂"; return; }
+  btn.disabled = true; btn.textContent = "Réflexion…";
+  ans.textContent = "📖 Je prépare une réponse synthétique…";
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ question, ctx })
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    ans.textContent = data.answer || "Pas de réponse reçue.";
+  } catch(e) {
+    ans.textContent =
+      "🔧 (démo) Backend injoignable.\n\n" +
+      "Piste rapide (Sisyphe) :\n" +
+      "1) Absurde (répétition sans fin) • 2) Révolte lucide\n" +
+      "3) Sens fabriqué par l’acte • 4) Présent intensifié\n" +
+      "5) « Il faut imaginer Sisyphe heureux » (Camus).";
+  } finally {
+    btn.disabled = false; btn.textContent = "Interroger";
+  }
+});
+</script>
+</body>
+</html>
