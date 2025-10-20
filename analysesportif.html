@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>⚽ Analyste Sportif — PhilomenIA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  :root{--bg:#06101a;--txt:#eaf1ff;--muted:#a7c0e8;--btn:#2563eb;--btn-h:#1d4ed8}
+  *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--txt);
+  background: radial-gradient(1000px 700px at 50% -10%, #0f2744 0%, #081626 55%, #06101a 100%);}
+  .wrap{max-width:900px;margin:auto;padding:28px}
+  h1{font-size:clamp(28px,5vw,46px);margin:8px 0 16px;color:#bcd9ff;display:flex;gap:.6rem;align-items:center}
+  p.lead{color:var(--muted);margin:0 0 18px}
+  .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
+  textarea{width:100%;min-height:120px;border:1px solid rgba(255,255,255,.12);background:#071728;color:var(--txt);
+           border-radius:14px;padding:12px 14px;font-size:16px;outline:none}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  button,a.btn{appearance:none;border:0;border-radius:12px;background:var(--btn);color:#fff;padding:12px 16px;font-weight:600;
+               cursor:pointer;box-shadow:0 6px 18px rgba(37,99,235,.25);transition:.18s}
+  button:hover,a.btn:hover{transform:translateY(-1px);background:var(--btn-h)}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,.14);color:#ddd}
+  .answer{margin-top:14px;padding:14px;border-radius:14px;background:#0a1a2d;border:1px solid rgba(255,255,255,.06);white-space:pre-wrap}
+  .hint{color:#9ab0cc; font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>⚽ Analyste Sportif</h1>
+    <p class="lead">Tape un duel (ex. “PSG vs OM”) ou une question libre (“Analyse le match Real-Barça”).</p>
+
+    <div class="card">
+      <label for="q">Ta demande</label>
+      <textarea id="q" placeholder="Ex. : PSG vs OM — qui prend l’avantage et pourquoi ?"></textarea>
+      <div class="row">
+        <button id="askBtn">Analyser</button>
+        <a class="btn ghost" href="index.html">← Accueil</a>
+      </div>
+      <div class="answer" id="answer" aria-live="polite"></div>
+      <div class="hint">*Démo locale si le backend est hors-ligne.</div>
+    </div>
+  </div>
+
+<script>
+const API_URL = "https://philo-backend-cfxz.onrender.com/ask"; // ← remplace par ton URL Render
+const ctx = "sport";
+
+const q = document.getElementById('q');
+const ans = document.getElementById('answer');
+const btn = document.getElementById('askBtn');
+
+btn.addEventListener('click', async () => {
+  const question = q.value.trim();
+  if (!question) { ans.textContent = "Écris ta demande d’abord 🙂"; return; }
+  btn.disabled = true; btn.textContent = "Analyse en cours…";
+  ans.textContent = "📊 Compilation des facteurs (forme, tactique, absences)…";
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ question, ctx })
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    ans.textContent = data.answer || "Pas de réponse reçue.";
+  } catch(e) {
+    ans.textContent =
+      "🔧 (démo) Backend injoignable.\n\n" +
+      "Lecture rapide :\n" +
+      "• Intensité & pressing décisifs sur les 20’ initiales.\n" +
+      "• Couloir gauche à surveiller (mismatch récurrent).\n" +
+      "• ⚠️ Attention aux CPA défensifs.\n" +
+      "Pronostic indicatif : match serré, avantage léger à l’équipe la plus propre en transition.";
+  } finally {
+    btn.disabled = false; btn.textContent = "Analyser";
+  }
+});
+</script>
+</body>
+</html>
