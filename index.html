@@ -62,7 +62,25 @@
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-  </style>
+/* Bouton Société - même style que les autres bulles */
+.bubble {
+  display: inline-block;
+  background: linear-gradient(135deg, #c59bff, #7b2ff7);
+  color: white;
+  font-weight: 600;
+  padding: 12px 30px;
+  margin-top: 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 1.2em;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(123, 47, 247, 0.5);
+}
+
+.bubble:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(197, 155, 255, 0.8);
+}  </style> 
 </head>
 
 <body>
