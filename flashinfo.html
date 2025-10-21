@@ -23,7 +23,19 @@
   .hint{color:#a9d7c0; font-size:13px;margin-top:8px}
 </style>
 </head>
-<body>
+<body><script>
+document.querySelector("button").addEventListener("click", async () => {
+  const sujet = document.querySelector("input").value.trim();
+  if (!sujet) return alert("Entre un sujet ⚡");
+  const res = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ia: "flash", question: sujet })
+  });
+  const data = await res.json();
+  document.querySelector("#flashResult").textContent = data.answer || "Pas d’info 😕";
+});
+</script>
   <div class="wrap">
     <h1>⚡ Flash Info</h1>
     <p class="lead">Résumés express, to-do, synthèse de texte collé, etc.</p>
