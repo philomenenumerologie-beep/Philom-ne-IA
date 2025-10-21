@@ -2,247 +2,144 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>⚽ Analyste Sportif • Philoménia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Philomène IA — Analyste Sportif</title>
   <style>
     :root{
-      --bg-1:#0f0a24;
-      --bg-2:#060413;
-      --card:#12122a;
-      --card-2:#0e1030;
-      --txt:#e9e8ff;
-      --muted:#aab0d6;
-      --accent:#2fb3ff;
-      --accent-2:#7a5cff;
-      --ok:#32d583;
-      --err:#ff7070;
-      --chip-bg:#0b1535;
-      --chip-ring:#2fb3ff33;
+      --bg-a:#06110a;
+      --bg-b:#0b1b1e;
+      --grad-1:#36d16d;
+      --grad-2:#2aa3ff;
+      --card:#0f1c1a;
+      --text:#fff;
+      --muted:#bfe8ff;
+      --accent:#9af1c6;
+      --btn-1:#36d16d;
+      --btn-2:#2aa3ff;
+      --user:#0f2a24;
+      --bot:#0b1a19;
     }
-    /* Page */
-    html,body{height:100%}
+    *{box-sizing:border-box}
     body{
-      margin:0;
-      color:var(--txt);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      margin:0;color:var(--text);
+      font-family: "Poppins",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
       background:
-        radial-gradient(1200px 800px at 20% -10%, #1b1344 0%, transparent 60%),
-        radial-gradient(1200px 800px at 120% 20%, #0a2a4a 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg-1), var(--bg-2));
-      min-height:100%;
+        radial-gradient(1100px 760px at -5% -20%, rgba(54,209,109,.22), transparent 60%),
+        radial-gradient(1100px 760px at 120% -10%, rgba(42,163,255,.22), transparent 60%),
+        linear-gradient(160deg, var(--bg-a), var(--bg-b) 70%);
+      min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px;
     }
-    .wrap{
-      max-width:880px;
-      margin:0 auto;
-      padding:32px 20px 80px;
-    }
-    header{
-      display:flex;align-items:center;gap:14px;margin:8px 0 18px;
-    }
-    header .ico{
-      font-size:2rem;filter: drop-shadow(0 4px 16px #0008);
-    }
-    h1{font-size:clamp(1.8rem, 2.6vw, 2.6rem);margin:0}
-    p.lead{color:var(--muted);margin:.25rem 0 1.5rem}
+    .app{ width:min(920px, 100%); background:rgba(5,12,10,.55); border:1px solid rgba(42,163,255,.18);
+      border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04) }
+    header{ padding:28px 26px 10px }
+    h1{ margin:0; font-size:clamp(26px, 4.5vw, 36px); line-height:1.15; }
+    .brand{display:flex; gap:14px; align-items:center}
+    .logo{width:46px; height:46px; border-radius:12px; background:
+      radial-gradient(70% 70% at 60% 35%, rgba(255,255,255,.9), rgba(255,255,255,.15) 60%),
+      linear-gradient(135deg, var(--grad-1), var(--grad-2));
+      box-shadow: 0 10px 25px rgba(42,163,255,.22), inset 0 0 30px rgba(255,255,255,.12)}
+    .subtitle{color:var(--muted); margin-top:6px}
 
-    /* Carte */
-    .card{
-      background:linear-gradient(180deg, var(--card), var(--card-2));
-      border:1px solid #ffffff14;
-      border-radius:18px;
-      padding:18px;
-      box-shadow: 0 10px 30px #0008, inset 0 1px 0 #ffffff0d;
-    }
+    .chat{ padding: 0 16px 16px; display:flex; flex-direction:column; gap:12px; max-height:60dvh; overflow:auto }
+    .bubble{ border-radius:16px; padding:14px 16px; line-height:1.55; }
+    .bot{ align-self:flex-start; background:var(--bot); border:1px solid rgba(42,163,255,.18)}
+    .you{ align-self:flex-end; background:var(--user); border:1px solid rgba(42,163,255,.14)}
+    .system{ color:#bff6dc }
 
-    /* Zone chips */
-    .chips-title{
-      font-weight:600;
-      font-size:.95rem;
-      display:flex;align-items:center;gap:.5rem;
-      color:#d3d7ff;
-      margin-bottom:10px;
-    }
-    .chips{
-      display:flex; flex-wrap:wrap; gap:10px;
-      margin-bottom:16px;
-    }
-    .chip{
-      display:inline-flex;align-items:center;gap:.4rem;
-      padding:10px 14px;
-      border-radius:999px;
-      background: var(--chip-bg);
-      color:#e8ecff;
-      border:1px solid #1e2a55;
-      box-shadow: 0 1px 0 #ffffff08, 0 2px 10px #0009, inset 0 0 0 1px var(--chip-ring);
-      cursor:pointer;
-      transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
-      font-size:.94rem;
-      white-space:nowrap;
-    }
-    .chip:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px #000a, inset 0 0 0 1px #2fb3ff55; }
-    .chip:active{ transform: translateY(0); }
-
-    /* Formulaire */
-    label{display:block; font-weight:600; margin:6px 0 8px;}
+    .composer{ display:flex; gap:10px; padding:16px; border-top:1px solid rgba(42,163,255,.18); background:rgba(0,0,0,.25); border-radius:0 0 20px 20px }
     textarea{
-      width:100%;
-      min-height:120px;
-      resize:vertical;
-      color:var(--txt);
-      background:#0c0d24;
-      border:1px solid #242848;
-      border-radius:14px;
-      padding:14px 16px;
-      line-height:1.4;
-      box-shadow: inset 0 1px 0 #ffffff06;
-      outline:none;
-      transition: box-shadow .2s ease, border-color .2s ease;
+      flex:1; resize:none; min-height:52px; max-height:160px; padding:14px 14px 14px 16px;
+      color:var(--text); background:rgba(255,255,255,.03); border:1px solid rgba(42,163,255,.2);
+      border-radius:12px; outline:none; box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
     }
-    textarea:focus{
-      border-color:#3a51ff;
-      box-shadow: 0 0 0 4px #3a51ff26;
-    }
-
-    /* Actions */
-    .row{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
     button{
-      background: linear-gradient(180deg, #3a8fff, #3a51ff);
-      border:none;color:white;font-weight:700;
-      padding:12px 20px;border-radius:12px;cursor:pointer;
-      box-shadow: 0 10px 22px #1020ff44, inset 0 1px 0 #ffffff66;
-      transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+      background:linear-gradient(135deg, var(--btn-1), var(--btn-2));
+      color:#fff; border:0; padding:0 22px; border-radius:12px; font-weight:600; cursor:pointer;
+      display:flex; align-items:center; gap:10px; min-height:52px; box-shadow:0 10px 22px rgba(54,209,109,.25)
     }
-    button:hover{filter:brightness(1.05)}
-    button:active{transform:translateY(1px)}
-    button:disabled{opacity:.65;cursor:not-allowed;filter:saturate(.3)}
-    a.ghost{
-      color:#c7cbff;text-decoration:none;font-weight:600;padding:10px 12px;
-      border-radius:10px;border:1px solid #ffffff2a; background:#ffffff05;
-    }
-    .hint{color:var(--muted); font-size:.92rem;margin-top:10px}
-
-    /* Résultat */
-    .result{
-      margin-top:18px;padding:16px;border-radius:14px;
-      background:#0a0c24;border:1px solid #ffffff14;
-      box-shadow: inset 0 1px 0 #ffffff08;
-      min-height:64px;white-space:pre-wrap;
-    }
-
-    /* Loader mini */
-    .dots{display:inline-flex;gap:6px;margin-left:8px;vertical-align:middle}
-    .dot{width:6px;height:6px;border-radius:50%;background:#cfe3ff;opacity:.3;animation:bounce 1s infinite}
-    .dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
-    @keyframes bounce{
-      0%,80%,100%{transform:translateY(0);opacity:.3}
-      40%{transform:translateY(-6px);opacity:.9}
-    }
-
-    footer{margin-top:26px;text-align:center;color:#9aa1d8;font-size:.88rem;opacity:.9}
+    button:disabled{ opacity:.6; cursor:not-allowed }
+    .tips{ color:#bfe8ff; font-size:.85rem; padding:0 22px 18px }
+    .fade{ animation:fade .35s ease }
+    @keyframes fade{ from{opacity:.35; transform:translateY(4px)} to{opacity:1; transform:none} }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <main class="app">
     <header>
-      <div class="ico">⚽</div>
-      <div>
-        <h1>Analyste Sportif</h1>
-        <p class="lead">Pose ta question sur un match, une tactique ou des joueurs. Clique aussi sur une idée pour préremplir.</p>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Analyste Sportif</h1>
+          <div class="subtitle">Stats • Tactiques • Préparation • Progression</div>
+        </div>
       </div>
     </header>
 
-    <section class="card">
-      <div class="chips-title">💡 Idées de questions <span style="font-weight:400;color:#95a0d8">(clique pour remplir automatiquement)</span></div>
-      <div id="chips" class="chips"></div>
-
-      <label for="q">Ta question</label>
-      <textarea id="q" placeholder="Ex. Analyse ce match : forces/faiblesses, clés tactiques..."></textarea>
-
-      <div class="row">
-        <button id="askBtn">Interroger</button>
-        <a class="ghost" href="index.html">⟵ Accueil</a>
-        <span class="hint" id="statusHint">Prêt.</span>
+    <section id="chat" class="chat">
+      <div class="bubble bot fade">
+        <strong>Bienvenue 👋</strong><br />
+        Je suis <strong class="system">Philomène Analyste Sportif</strong>. Je t’aide à comprendre tactiques,
+        statistiques, préparation mentale/physique, planification d’entraînement et analyses de matchs.
+        Sports co ou individuels, amateur ou compétiteur — on construit des plans concrets. 🏃‍♀️⚽🏀
       </div>
-
-      <div id="result" class="result">Aucune réponse obtenue.</div>
     </section>
 
-    <footer>Philoménia • moteur IA privé (OpenAI) — Design harmonisé</footer>
-  </div>
+    <form id="composer" class="composer">
+      <textarea id="input" placeholder="Dis-moi ton sport, ton niveau, ton objectif…"></textarea>
+      <button id="send" type="submit">Envoyer 🟢</button>
+    </form>
+    <div class="tips">Exemples : « Programme 3 séances/sem… », « Analyse ce match… », « Plan nutrition simple… »</div>
+  </main>
 
   <script>
-    /* === Config backend === */
-    const BACKEND_URL = "https://philo-backend-cfxz.onrender.com/ask";
+    const ENDPOINT_PATH = "/chat";
 
-    /* === Idées de questions (chips) === */
-    const SUGGESTIONS = [
-      "Analyse ce match : forces/faiblesses et clé tactique.",
-      "Quelles sont les probabilités de victoire si ces deux équipes rejouent ?",
-      "Donne-moi 3 scénarios probables du match (optimiste/neutre/pessimiste).",
-      "Quels joueurs seront décisifs et pourquoi ?",
-      "Explique la formation idéale pour battre l’adversaire.",
-      "Compare les styles de jeu des deux équipes (pression, transitions, blocs).",
-      "Analyse les coups de pied arrêtés : risques/opportunités."
-    ];
+    const SYSTEM_PROMPT = `
+Tu es Philomène Analyste Sportif : précis, structuré, motivant.
+- Tu poses (si besoin) 3 questions clés (objectif, niveau, contraintes).
+- Tu fournis des plans d'entraînement, des plages d'intensité, des repères mesurables.
+- Tu expliques les principes (surcompensation, RPE, périodisation, récupération) simplement.
+- Tu signales les limites : pas de diagnostic médical.
+- Tu termines par 3 indicateurs concrets de suivi.
+Réponds en français.`;
 
-    /* === Rendu des chips === */
-    const chipsEl = document.getElementById("chips");
-    const ta = document.getElementById("q");
-    const askBtn = document.getElementById("askBtn");
-    const resEl = document.getElementById("result");
-    const hint = document.getElementById("statusHint");
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('composer');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
 
-    function renderChips(list){
-      chipsEl.innerHTML = "";
-      list.forEach(text => {
-        const span = document.createElement("span");
-        span.className = "chip";
-        span.textContent = text;
-        span.addEventListener("click", () => {
-          ta.value = text;
-          ta.focus();
-        });
-        chipsEl.appendChild(span);
-      });
+    function addBubble(text, who="bot"){
+      const div = document.createElement('div');
+      div.className = `bubble ${who} fade`;
+      div.innerHTML = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
     }
-    renderChips(SUGGESTIONS);
 
-    /* === Appel backend === */
-    async function ask(){
-      const question = ta.value.trim();
-      if(!question){ alert("Écris une question ✍️"); ta.focus(); return; }
-
-      askBtn.disabled = true;
-      hint.innerHTML = `Interrogation du moteur… <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
-      resEl.textContent = "…";
-
+    async function ask(text){
+      sendBtn.disabled = true;
+      addBubble(text, "you");
       try{
-        const r = await fetch(BACKEND_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ia:"sport", question })
+        const r = await fetch(ENDPOINT_PATH, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ system: SYSTEM_PROMPT, message: text, agent:"sport"})
         });
-        if(!r.ok){
-          const text = await r.text().catch(()=> "");
-          throw new Error(`HTTP ${r.status} — ${text || "erreur serveur"}`);
-        }
         const data = await r.json();
-        resEl.textContent = (data.answer || "Aucune réponse.");
-        hint.textContent = "Réponse reçue ✔︎";
-      }catch(err){
-        console.error(err);
-        resEl.textContent = "❌ Erreur : " + (err.message || "échec de la requête");
-        hint.textContent = "Erreur";
+        addBubble(data.reply || "Désolé, je n’ai pas pu répondre cette fois.");
+      }catch(e){
+        addBubble("Oups, une erreur s’est produite. Réessaie.");
       }finally{
-        askBtn.disabled = false;
+        sendBtn.disabled = false;
       }
     }
 
-    askBtn.addEventListener("click", ask);
-
-    // Option: Ctrl/Cmd+Enter pour envoyer
-    document.addEventListener("keydown", (e) => {
-      if((e.ctrlKey || e.metaKey) && e.key === "Enter") ask();
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const text = input.value.trim();
+      if(!text) return;
+      input.value = "";
+      ask(text);
     });
   </script>
 </body>
