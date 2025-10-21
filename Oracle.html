@@ -22,7 +22,19 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     a{color:#caa8ff;text-decoration:none}
   </style>
-</head>
+</head><script>
+document.querySelector("button").addEventListener("click", async () => {
+  const question = document.querySelector("textarea").value.trim();
+  if (!question) return alert("Écris ta question ✨");
+  const res = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ia: "oracle", question })
+  });
+  const data = await res.json();
+  document.querySelector("#response").textContent = data.answer || "Aucune réponse 😕";
+});
+</script>
 <body>
   <div class="wrap">
     <h1>🔮 Oracle</h1>
