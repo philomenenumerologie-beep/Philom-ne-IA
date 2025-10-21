@@ -1,69 +1,249 @@
-<!-- 🧠 Idées de questions -->
-<div class="hints">
-  <div class="hints-head">
-    <strong>Idées de questions</strong>
-    <span class="tips">ⓘ Clique pour remplir automatiquement</span>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⚽ Analyste Sportif • Philoménia</title>
+  <style>
+    :root{
+      --bg-1:#0f0a24;
+      --bg-2:#060413;
+      --card:#12122a;
+      --card-2:#0e1030;
+      --txt:#e9e8ff;
+      --muted:#aab0d6;
+      --accent:#2fb3ff;
+      --accent-2:#7a5cff;
+      --ok:#32d583;
+      --err:#ff7070;
+      --chip-bg:#0b1535;
+      --chip-ring:#2fb3ff33;
+    }
+    /* Page */
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--txt);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 800px at 20% -10%, #1b1344 0%, transparent 60%),
+        radial-gradient(1200px 800px at 120% 20%, #0a2a4a 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      min-height:100%;
+    }
+    .wrap{
+      max-width:880px;
+      margin:0 auto;
+      padding:32px 20px 80px;
+    }
+    header{
+      display:flex;align-items:center;gap:14px;margin:8px 0 18px;
+    }
+    header .ico{
+      font-size:2rem;filter: drop-shadow(0 4px 16px #0008);
+    }
+    h1{font-size:clamp(1.8rem, 2.6vw, 2.6rem);margin:0}
+    p.lead{color:var(--muted);margin:.25rem 0 1.5rem}
+
+    /* Carte */
+    .card{
+      background:linear-gradient(180deg, var(--card), var(--card-2));
+      border:1px solid #ffffff14;
+      border-radius:18px;
+      padding:18px;
+      box-shadow: 0 10px 30px #0008, inset 0 1px 0 #ffffff0d;
+    }
+
+    /* Zone chips */
+    .chips-title{
+      font-weight:600;
+      font-size:.95rem;
+      display:flex;align-items:center;gap:.5rem;
+      color:#d3d7ff;
+      margin-bottom:10px;
+    }
+    .chips{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-bottom:16px;
+    }
+    .chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:10px 14px;
+      border-radius:999px;
+      background: var(--chip-bg);
+      color:#e8ecff;
+      border:1px solid #1e2a55;
+      box-shadow: 0 1px 0 #ffffff08, 0 2px 10px #0009, inset 0 0 0 1px var(--chip-ring);
+      cursor:pointer;
+      transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
+      font-size:.94rem;
+      white-space:nowrap;
+    }
+    .chip:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px #000a, inset 0 0 0 1px #2fb3ff55; }
+    .chip:active{ transform: translateY(0); }
+
+    /* Formulaire */
+    label{display:block; font-weight:600; margin:6px 0 8px;}
+    textarea{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      color:var(--txt);
+      background:#0c0d24;
+      border:1px solid #242848;
+      border-radius:14px;
+      padding:14px 16px;
+      line-height:1.4;
+      box-shadow: inset 0 1px 0 #ffffff06;
+      outline:none;
+      transition: box-shadow .2s ease, border-color .2s ease;
+    }
+    textarea:focus{
+      border-color:#3a51ff;
+      box-shadow: 0 0 0 4px #3a51ff26;
+    }
+
+    /* Actions */
+    .row{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+    button{
+      background: linear-gradient(180deg, #3a8fff, #3a51ff);
+      border:none;color:white;font-weight:700;
+      padding:12px 20px;border-radius:12px;cursor:pointer;
+      box-shadow: 0 10px 22px #1020ff44, inset 0 1px 0 #ffffff66;
+      transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+    }
+    button:hover{filter:brightness(1.05)}
+    button:active{transform:translateY(1px)}
+    button:disabled{opacity:.65;cursor:not-allowed;filter:saturate(.3)}
+    a.ghost{
+      color:#c7cbff;text-decoration:none;font-weight:600;padding:10px 12px;
+      border-radius:10px;border:1px solid #ffffff2a; background:#ffffff05;
+    }
+    .hint{color:var(--muted); font-size:.92rem;margin-top:10px}
+
+    /* Résultat */
+    .result{
+      margin-top:18px;padding:16px;border-radius:14px;
+      background:#0a0c24;border:1px solid #ffffff14;
+      box-shadow: inset 0 1px 0 #ffffff08;
+      min-height:64px;white-space:pre-wrap;
+    }
+
+    /* Loader mini */
+    .dots{display:inline-flex;gap:6px;margin-left:8px;vertical-align:middle}
+    .dot{width:6px;height:6px;border-radius:50%;background:#cfe3ff;opacity:.3;animation:bounce 1s infinite}
+    .dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
+    @keyframes bounce{
+      0%,80%,100%{transform:translateY(0);opacity:.3}
+      40%{transform:translateY(-6px);opacity:.9}
+    }
+
+    footer{margin-top:26px;text-align:center;color:#9aa1d8;font-size:.88rem;opacity:.9}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="ico">⚽</div>
+      <div>
+        <h1>Analyste Sportif</h1>
+        <p class="lead">Pose ta question sur un match, une tactique ou des joueurs. Clique aussi sur une idée pour préremplir.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="chips-title">💡 Idées de questions <span style="font-weight:400;color:#95a0d8">(clique pour remplir automatiquement)</span></div>
+      <div id="chips" class="chips"></div>
+
+      <label for="q">Ta question</label>
+      <textarea id="q" placeholder="Ex. Analyse ce match : forces/faiblesses, clés tactiques..."></textarea>
+
+      <div class="row">
+        <button id="askBtn">Interroger</button>
+        <a class="ghost" href="index.html">⟵ Accueil</a>
+        <span class="hint" id="statusHint">Prêt.</span>
+      </div>
+
+      <div id="result" class="result">Aucune réponse obtenue.</div>
+    </section>
+
+    <footer>Philoménia • moteur IA privé (OpenAI) — Design harmonisé</footer>
   </div>
-  <div id="chips" class="chips"></div>
-</div>
 
-<style>
-.hints{margin:10px 0 6px}
-.hints-head{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-.hints .tips{font-size:.9em;opacity:.7}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{
-  background:#123; color:#cfe8ff; border:1px solid #2aa1ff;
-  padding:6px 10px; border-radius:999px; cursor:pointer; font-size:.95em;
-  transition:.15s; user-select:none;
-}
-.chip:hover{background:#0e2940}
-</style>
+  <script>
+    /* === Config backend === */
+    const BACKEND_URL = "https://philo-backend-cfxz.onrender.com/ask";
 
-<script>
-/** Suggestions "texte seul" */
-const SUG_TEXT = [
-  "Analyse ce match : forces/faiblesses et clé tactique.",
-  "Quelles sont les probabilités de victoire si ces deux équipes rejouent ?",
-  "Quels duels individuels seront décisifs ?",
-  "Donne-moi 3 scénarios probables du match (optimiste/neutre/pessimiste).",
-  "Explique la formation idéale pour battre l’adversaire.",
-];
+    /* === Idées de questions (chips) === */
+    const SUGGESTIONS = [
+      "Analyse ce match : forces/faiblesses et clé tactique.",
+      "Quelles sont les probabilités de victoire si ces deux équipes rejouent ?",
+      "Donne-moi 3 scénarios probables du match (optimiste/neutre/pessimiste).",
+      "Quels joueurs seront décisifs et pourquoi ?",
+      "Explique la formation idéale pour battre l’adversaire.",
+      "Compare les styles de jeu des deux équipes (pression, transitions, blocs).",
+      "Analyse les coups de pied arrêtés : risques/opportunités."
+    ];
 
-/** Suggestions quand une image de résultats est jointe */
-const SUG_IMAGE = [
-  "Extrait tous les matchs et scores en JSON.",
-  "Calcule la moyenne de buts par match et le nb de nuls.",
-  "Classe les équipes par différence de buts sur cette journée.",
-  "Résume en 3 phrases les faits marquants de ces résultats.",
-  "Identifie les séries (victoires/nuls/défaites) visibles sur ces scores.",
-];
+    /* === Rendu des chips === */
+    const chipsEl = document.getElementById("chips");
+    const ta = document.getElementById("q");
+    const askBtn = document.getElementById("askBtn");
+    const resEl = document.getElementById("result");
+    const hint = document.getElementById("statusHint");
 
-/** Rend les chips et gère le clic */
-function renderChips(list){
-  const el = document.getElementById("chips");
-  el.innerHTML = "";
-  list.forEach(q => {
-    const span = document.createElement("span");
-    span.className = "chip";
-    span.textContent = q;
-    span.addEventListener("click", () => {
-      const ta = document.querySelector("textarea");
-      ta.value = q;
-      ta.focus();
+    function renderChips(list){
+      chipsEl.innerHTML = "";
+      list.forEach(text => {
+        const span = document.createElement("span");
+        span.className = "chip";
+        span.textContent = text;
+        span.addEventListener("click", () => {
+          ta.value = text;
+          ta.focus();
+        });
+        chipsEl.appendChild(span);
+      });
+    }
+    renderChips(SUGGESTIONS);
+
+    /* === Appel backend === */
+    async function ask(){
+      const question = ta.value.trim();
+      if(!question){ alert("Écris une question ✍️"); ta.focus(); return; }
+
+      askBtn.disabled = true;
+      hint.innerHTML = `Interrogation du moteur… <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
+      resEl.textContent = "…";
+
+      try{
+        const r = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ia:"sport", question })
+        });
+        if(!r.ok){
+          const text = await r.text().catch(()=> "");
+          throw new Error(`HTTP ${r.status} — ${text || "erreur serveur"}`);
+        }
+        const data = await r.json();
+        resEl.textContent = (data.answer || "Aucune réponse.");
+        hint.textContent = "Réponse reçue ✔︎";
+      }catch(err){
+        console.error(err);
+        resEl.textContent = "❌ Erreur : " + (err.message || "échec de la requête");
+        hint.textContent = "Erreur";
+      }finally{
+        askBtn.disabled = false;
+      }
+    }
+
+    askBtn.addEventListener("click", ask);
+
+    // Option: Ctrl/Cmd+Enter pour envoyer
+    document.addEventListener("keydown", (e) => {
+      if((e.ctrlKey || e.metaKey) && e.key === "Enter") ask();
     });
-    el.appendChild(span);
-  });
-}
-
-// ————— Intégration avec ton uploader existant —————
-// Appelle renderChips(SUG_TEXT) au chargement :
-renderChips(SUG_TEXT);
-
-// Si tu as la variable imageBase64 comme dans l’exemple précédent,
-// on peut basculer automatiquement les idées quand une image est ajoutée.
-(function watchImageSuggestions(){
-  // expose une petite API globale si besoin
-  window.__philoSetHasImage = (has) => renderChips(has ? SUG_IMAGE : SUG_TEXT);
-})();
-</script>
+  </script>
+</body>
+</html>
