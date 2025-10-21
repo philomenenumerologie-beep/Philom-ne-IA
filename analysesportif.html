@@ -24,7 +24,22 @@
   .hint{color:#9ab0cc; font-size:13px;margin-top:8px}
 </style>
 </head>
-<body>
+<body><script>
+document.querySelector("button").addEventListener("click", async () => {
+  const eqA = document.querySelector("#eqA").value.trim();
+  const eqB = document.querySelector("#eqB").value.trim();
+  const question = eqA && eqB ? `${eqA} vs ${eqB}` : `${eqA}${eqB}`;
+  if (!question) return alert("Ajoute au moins une équipe ⚽");
+
+  const res = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ia: "sport", question })
+  });
+  const data = await res.json();
+  document.querySelector("#result").textContent = data.answer || "Pas d’analyse 😕";
+});
+</script>
   <div class="wrap">
     <h1>⚽ Analyste Sportif</h1>
     <p class="lead">Tape un duel (ex. “PSG vs OM”) ou une question libre (“Analyse le match Real-Barça”).</p>
