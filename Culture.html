@@ -1,89 +1,145 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>📚 Culture — PhilomenIA</title>
-<style>
-  :root{--txt:#f2ecff;--muted:#cdbdf3;--btn:#8b5cf6;--btn-h:#7c3aed}
-  *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--txt);
-  background: radial-gradient(1200px 800px at 50% -10%, #241538 0%, #160b24 55%, #0e0817 100%);}
-  .wrap{max-width:900px;margin:auto;padding:28px}
-  h1{font-size:clamp(28px,5vw,46px);margin:8px 0 16px;color:#e6d6ff;display:flex;gap:.6rem;align-items:center}
-  p.lead{color:var(--muted);margin:0 0 18px}
-  .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
-  textarea{width:100%;min-height:120px;border:1px solid rgba(255,255,255,.12);background:#120b1f;color:var(--txt);
-           border-radius:14px;padding:12px 14px;font-size:16px;outline:none}
-  .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-  button,a.btn{appearance:none;border:0;border-radius:12px;background:var(--btn);color:#fff;padding:12px 16px;font-weight:600;
-               cursor:pointer;box-shadow:0 6px 18px rgba(139,92,246,.25);transition:.18s}
-  button:hover,a.btn:hover{transform:translateY(-1px);background:var(--btn-h)}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,.14);color:#ddd}
-  .answer{margin-top:14px;padding:14px;border-radius:14px;background:#160c25;border:1px solid rgba(255,255,255,.06);white-space:pre-wrap}
-  .hint{color:#bdaee6; font-size:13px;margin-top:8px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Philomène IA — Espace Culture</title>
+  <style>
+    :root{
+      --bg-a:#150b12;
+      --bg-b:#1b1422;
+      --grad-1:#ff7a59;
+      --grad-2:#ff3da1;
+      --card:#221629;
+      --text:#fff;
+      --muted:#ffcbd6;
+      --accent:#ffd9b5;
+      --btn-1:#ff7a59;
+      --btn-2:#ff3da1;
+      --user:#2a2033;
+      --bot:#1e1726;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;color:var(--text);
+      font-family: "Poppins",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      background:
+        radial-gradient(1200px 800px at 0% -10%, rgba(255,122,89,.22), transparent 60%),
+        radial-gradient(1200px 800px at 110% -10%, rgba(255,61,161,.18), transparent 60%),
+        linear-gradient(160deg, var(--bg-a), var(--bg-b) 70%);
+      min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px;
+    }
+    .app{ width:min(920px, 100%); background:rgba(20,12,22,.55); border:1px solid rgba(255,122,89,.18);
+      border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04) }
+    header{ padding:28px 26px 10px }
+    h1{ margin:0; font-size:clamp(26px, 4.5vw, 36px); line-height:1.15; }
+    .brand{display:flex; gap:14px; align-items:center}
+    .logo{width:46px; height:46px; border-radius:12px; background:
+      radial-gradient(70% 70% at 60% 35%, rgba(255,255,255,.9), rgba(255,255,255,.15) 60%),
+      linear-gradient(135deg, var(--grad-1), var(--grad-2));
+      box-shadow: 0 10px 25px rgba(255,61,161,.22), inset 0 0 30px rgba(255,255,255,.12)}
+    .subtitle{color:var(--muted); margin-top:6px}
+
+    .chat{ padding: 0 16px 16px; display:flex; flex-direction:column; gap:12px; max-height:60dvh; overflow:auto }
+    .bubble{ border-radius:16px; padding:14px 16px; line-height:1.55; }
+    .bot{ align-self:flex-start; background:var(--bot); border:1px solid rgba(255,122,89,.18)}
+    .you{ align-self:flex-end; background:var(--user); border:1px solid rgba(255,122,89,.14)}
+    .system{ color:#ffd7e7 }
+
+    .composer{ display:flex; gap:10px; padding:16px; border-top:1px solid rgba(255,122,89,.18); background:rgba(0,0,0,.25); border-radius:0 0 20px 20px }
+    textarea{
+      flex:1; resize:none; min-height:52px; max-height:160px; padding:14px 14px 14px 16px;
+      color:var(--text); background:rgba(255,255,255,.03); border:1px solid rgba(255,122,89,.2);
+      border-radius:12px; outline:none; box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    button{
+      background:linear-gradient(135deg, var(--btn-1), var(--btn-2));
+      color:#fff; border:0; padding:0 22px; border-radius:12px; font-weight:600; cursor:pointer;
+      display:flex; align-items:center; gap:10px; min-height:52px; box-shadow:0 10px 22px rgba(255,61,161,.25)
+    }
+    button:disabled{ opacity:.6; cursor:not-allowed }
+    .tips{ color:#ffd9b5; font-size:.85rem; padding:0 22px 18px }
+    .fade{ animation:fade .35s ease }
+    @keyframes fade{ from{opacity:.35; transform:translateY(4px)} to{opacity:1; transform:none} }
+  </style>
 </head>
-<body><script>
-document.querySelector("button").addEventListener("click", async () => {
-  const theme = document.querySelector("select").value;
-  const res = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ia: "culture", question: `Donne une idée sur le thème ${theme}` })
-  });
-  const data = await res.json();
-  document.querySelector("#citation").textContent = data.answer || "Aucune idée trouvée 😕";
-});
-</script>
-  <div class="wrap">
-    <h1>📚 Espace Culture</h1>
-    <p class="lead">Pose une question (livres, idées, symboles, arts…).</p>
-
-    <div class="card">
-      <label for="q">Ta question</label>
-      <textarea id="q" placeholder="Ex. : Explique le mythe de Sisyphe en 5 points."></textarea>
-      <div class="row">
-        <button id="askBtn">Interroger</button>
-        <a class="btn ghost" href="index.html">← Accueil</a>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Espace Culture</h1>
+          <div class="subtitle">Littérature • Cinéma • Musique • Arts & Histoire</div>
+        </div>
       </div>
-      <div class="answer" id="answer" aria-live="polite"></div>
-      <div class="hint">*Démo locale si le backend est hors-ligne.</div>
-    </div>
-  </div>
+    </header>
 
-<script>
-const API_URL = "https://philo-backend-cfxz.onrender.com/ask"; // ← remplace par ton URL Render
-const ctx = "culture";
+    <section id="chat" class="chat">
+      <div class="bubble bot fade">
+        <strong>Bienvenue 👋</strong><br />
+        Je suis <strong class="system">Philomène Culture</strong>. Je t’aide à découvrir, comprendre et apprécier
+        œuvres et mouvements (livres, films, musique, arts, histoire, idées). Je peux résumer, expliquer,
+        comparer, recommander… tout en donnant du contexte. 🎬📚🎶
+      </div>
+    </section>
 
-const q = document.getElementById('q');
-const ans = document.getElementById('answer');
-const btn = document.getElementById('askBtn');
+    <form id="composer" class="composer">
+      <textarea id="input" placeholder="Une œuvre ? Un courant ? Une recommandation ?"></textarea>
+      <button id="send" type="submit">Envoyer 🎨</button>
+    </form>
+    <div class="tips">Exemples : « Résume-moi… », « Donne-moi 5 films comme… », « Explique le contexte de… »</div>
+  </main>
 
-btn.addEventListener('click', async () => {
-  const question = q.value.trim();
-  if (!question) { ans.textContent = "Écris ta question d’abord 🙂"; return; }
-  btn.disabled = true; btn.textContent = "Réflexion…";
-  ans.textContent = "📖 Je prépare une réponse synthétique…";
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ question, ctx })
+  <script>
+    const ENDPOINT_PATH = "/chat";
+
+    const SYSTEM_PROMPT = `
+Tu es Philomène Culture : pédagogue, curieuse, accessible.
+- Tu donnes le contexte historique/culturel, les thèmes, l’influence, et des pistes pour aller plus loin.
+- Tu proposes des recommandations organisées (par époque, style, humeur).
+- Tu cites des sources ou références lorsque c’est pertinent (sans liens si tu n’en as pas).
+- Tu conclues par 3 pistes concrètes : "À lire", "À voir/écouter", "À explorer".
+Réponds en français.`;
+
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('composer');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+
+    function addBubble(text, who="bot"){
+      const div = document.createElement('div');
+      div.className = `bubble ${who} fade`;
+      div.innerHTML = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function ask(text){
+      sendBtn.disabled = true;
+      addBubble(text, "you");
+      try{
+        const r = await fetch(ENDPOINT_PATH, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ system: SYSTEM_PROMPT, message: text, agent:"culture"})
+        });
+        const data = await r.json();
+        addBubble(data.reply || "Désolé, je n’ai pas pu répondre cette fois.");
+      }catch(e){
+        addBubble("Oups, une erreur s’est produite. Réessaie.");
+      }finally{
+        sendBtn.disabled = false;
+      }
+    }
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const text = input.value.trim();
+      if(!text) return;
+      input.value = "";
+      ask(text);
     });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    ans.textContent = data.answer || "Pas de réponse reçue.";
-  } catch(e) {
-    ans.textContent =
-      "🔧 (démo) Backend injoignable.\n\n" +
-      "Piste rapide (Sisyphe) :\n" +
-      "1) Absurde (répétition sans fin) • 2) Révolte lucide\n" +
-      "3) Sens fabriqué par l’acte • 4) Présent intensifié\n" +
-      "5) « Il faut imaginer Sisyphe heureux » (Camus).";
-  } finally {
-    btn.disabled = false; btn.textContent = "Interroger";
-  }
-});
-</script>
+  </script>
 </body>
 </html>
