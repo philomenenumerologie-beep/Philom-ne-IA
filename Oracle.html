@@ -22,7 +22,8 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     a{color:#caa8ff;text-decoration:none}
   </style>
-</head><script>
+</head>
+<body>script>
 document.querySelector("button").addEventListener("click", async () => {
   const question = document.querySelector("textarea").value.trim();
   if (!question) return alert("Écris ta question ✨");
@@ -35,7 +36,6 @@ document.querySelector("button").addEventListener("click", async () => {
   document.querySelector("#response").textContent = data.answer || "Aucune réponse 😕";
 });
 </script>
-<body>
   <div class="wrap">
     <h1>🔮 Oracle</h1>
     <p class="lead">Pose ta question. L’Oracle te répond avec sagesse instantanée.</p>
