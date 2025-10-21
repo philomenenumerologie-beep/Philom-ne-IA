@@ -23,7 +23,18 @@
   .hint{color:#bdaee6; font-size:13px;margin-top:8px}
 </style>
 </head>
-<body>
+<body><script>
+document.querySelector("button").addEventListener("click", async () => {
+  const theme = document.querySelector("select").value;
+  const res = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ia: "culture", question: `Donne une idée sur le thème ${theme}` })
+  });
+  const data = await res.json();
+  document.querySelector("#citation").textContent = data.answer || "Aucune idée trouvée 😕";
+});
+</script>
   <div class="wrap">
     <h1>📚 Espace Culture</h1>
     <p class="lead">Pose une question (livres, idées, symboles, arts…).</p>
