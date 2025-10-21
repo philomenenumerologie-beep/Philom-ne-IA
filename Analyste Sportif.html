@@ -1,73 +1,69 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚽ Analyste Sportif Philoménia</title>
-  <style>
-    body {
-      background-color: #001820;
-      color: #eaffff;
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    textarea {
-      width: 90%;
-      height: 120px;
-      border-radius: 10px;
-      border: none;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-    button {
-      background-color: #00b7ff;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #008dd1;
-    }
-    #reponse {
-      margin-top: 20px;
-      background: rgba(255,255,255,0.08);
-      padding: 20px;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-<body>
-  <h1>⚽ Analyste Sportif</h1>
-  <p>Pose ta question sur le sport (matchs, tactiques, joueurs...)</p>
+<!-- 🧠 Idées de questions -->
+<div class="hints">
+  <div class="hints-head">
+    <strong>Idées de questions</strong>
+    <span class="tips">ⓘ Clique pour remplir automatiquement</span>
+  </div>
+  <div id="chips" class="chips"></div>
+</div>
 
-  <textarea id="question" placeholder="Exemple : Analyse le style de jeu du PSG."></textarea><br>
-  <button onclick="interrogerSport()">Interroger</button>
+<style>
+.hints{margin:10px 0 6px}
+.hints-head{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.hints .tips{font-size:.9em;opacity:.7}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  background:#123; color:#cfe8ff; border:1px solid #2aa1ff;
+  padding:6px 10px; border-radius:999px; cursor:pointer; font-size:.95em;
+  transition:.15s; user-select:none;
+}
+.chip:hover{background:#0e2940}
+</style>
 
-  <div id="reponse"></div>
+<script>
+/** Suggestions "texte seul" */
+const SUG_TEXT = [
+  "Analyse ce match : forces/faiblesses et clé tactique.",
+  "Quelles sont les probabilités de victoire si ces deux équipes rejouent ?",
+  "Quels duels individuels seront décisifs ?",
+  "Donne-moi 3 scénarios probables du match (optimiste/neutre/pessimiste).",
+  "Explique la formation idéale pour battre l’adversaire.",
+];
 
-  <script>
-    async function interrogerSport() {
-      const question = document.getElementById("question").value;
-      const reponseDiv = document.getElementById("reponse");
-      reponseDiv.textContent = "Analyse en cours... ⚙️";
+/** Suggestions quand une image de résultats est jointe */
+const SUG_IMAGE = [
+  "Extrait tous les matchs et scores en JSON.",
+  "Calcule la moyenne de buts par match et le nb de nuls.",
+  "Classe les équipes par différence de buts sur cette journée.",
+  "Résume en 3 phrases les faits marquants de ces résultats.",
+  "Identifie les séries (victoires/nuls/défaites) visibles sur ces scores.",
+];
 
-      try {
-        const r = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ia: "sport", question })
-        });
-        const data = await r.json();
-        reponseDiv.textContent = data.reponse || "Aucune réponse obtenue.";
-      } catch (err) {
-        reponseDiv.textContent = "Erreur serveur ❌";
-      }
-    }
-  </script>
-</body>
-</html>
+/** Rend les chips et gère le clic */
+function renderChips(list){
+  const el = document.getElementById("chips");
+  el.innerHTML = "";
+  list.forEach(q => {
+    const span = document.createElement("span");
+    span.className = "chip";
+    span.textContent = q;
+    span.addEventListener("click", () => {
+      const ta = document.querySelector("textarea");
+      ta.value = q;
+      ta.focus();
+    });
+    el.appendChild(span);
+  });
+}
+
+// ————— Intégration avec ton uploader existant —————
+// Appelle renderChips(SUG_TEXT) au chargement :
+renderChips(SUG_TEXT);
+
+// Si tu as la variable imageBase64 comme dans l’exemple précédent,
+// on peut basculer automatiquement les idées quand une image est ajoutée.
+(function watchImageSuggestions(){
+  // expose une petite API globale si besoin
+  window.__philoSetHasImage = (has) => renderChips(has ? SUG_IMAGE : SUG_TEXT);
+})();
+</script>
