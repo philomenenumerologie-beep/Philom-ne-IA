@@ -2,99 +2,145 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oracle • Philomenia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Philomène IA — Oracle</title>
   <style>
-    body{margin:0;background:#13001f;color:#fff;font-family:Inter,system-ui,Arial}
-    .wrap{max-width:800px;margin:0 auto;padding:56px 20px}
-    h1{font-size:2.4rem;margin:0 0 12px;color:#e6b6ff}
-    p.lead{opacity:.85;margin:0 0 24px}
-    .card{background:#1e0530;border:1px solid #3b0e5a;border-radius:16px;padding:18px 16px;margin-top:18px}
-    label{display:block;margin:0 0 8px;font-weight:600}
-    textarea{width:100%;min-height:96px;border-radius:12px;border:1px solid #4a176f;background:#170427;color:#fff;padding:12px;font-size:16px;outline:none}
-    .row{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
-    button{background:#6a0dad;border:0;color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer}
-    button:disabled{opacity:.6;cursor:default}
-    .ghost{background:transparent;border:1px solid #6a0dad}
-    .out{margin-top:16px;line-height:1.5}
-    .muted{opacity:.7}
-    .loader{display:none;margin-left:8px;border:2px solid #ffffff33;border-top:2px solid #fff;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    a{color:#caa8ff;text-decoration:none}
+    :root{
+      --bg-a:#0b0f1a;
+      --bg-b:#0f1d3a;
+      --grad-1:#5b5bd6;
+      --grad-2:#00c2b7;
+      --card:#131a2b;
+      --text:#fff;
+      --muted:#b7c0ff;
+      --accent:#8ae6df;
+      --btn-1:#5b5bd6;
+      --btn-2:#00c2b7;
+      --user:#243256;
+      --bot:#16223c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;color:var(--text);
+      font-family: "Poppins",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      background:
+        radial-gradient(1200px 800px at 10% -20%, rgba(91,91,214,.25), transparent 60%),
+        radial-gradient(1200px 800px at 110% -10%, rgba(0,194,183,.22), transparent 60%),
+        linear-gradient(160deg, var(--bg-a), var(--bg-b) 70%);
+      min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px;
+    }
+    .app{ width:min(920px, 100%); background:rgba(10,14,25,.55); border:1px solid rgba(138,230,223,.15);
+      border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04) }
+    header{ padding:28px 26px 10px }
+    h1{ margin:0; font-size:clamp(26px, 4.5vw, 36px); line-height:1.15; }
+    .brand{display:flex; gap:14px; align-items:center}
+    .logo{width:46px; height:46px; border-radius:12px; background:
+      radial-gradient(70% 70% at 60% 35%, rgba(255,255,255,.9), rgba(255,255,255,.15) 60%),
+      linear-gradient(135deg, var(--grad-1), var(--grad-2));
+      box-shadow: 0 10px 25px rgba(0,194,183,.25), inset 0 0 30px rgba(255,255,255,.12)}
+    .subtitle{color:var(--muted); margin-top:6px}
+
+    .chat{ padding: 0 16px 16px; display:flex; flex-direction:column; gap:12px; max-height:60dvh; overflow:auto }
+    .bubble{ border-radius:16px; padding:14px 16px; line-height:1.55; }
+    .bot{ align-self:flex-start; background:var(--bot); border:1px solid rgba(138,230,223,.14)}
+    .you{ align-self:flex-end; background:var(--user); border:1px solid rgba(138,230,223,.12)}
+    .system{ color:#d7fff9 }
+
+    .composer{ display:flex; gap:10px; padding:16px; border-top:1px solid rgba(138,230,223,.12); background:rgba(0,0,0,.25); border-radius:0 0 20px 20px }
+    textarea{
+      flex:1; resize:none; min-height:52px; max-height:160px; padding:14px 14px 14px 16px;
+      color:var(--text); background:rgba(255,255,255,.03); border:1px solid rgba(138,230,223,.16);
+      border-radius:12px; outline:none; box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    button{
+      background:linear-gradient(135deg, var(--btn-1), var(--btn-2));
+      color:#fff; border:0; padding:0 22px; border-radius:12px; font-weight:600; cursor:pointer;
+      display:flex; align-items:center; gap:10px; min-height:52px; box-shadow:0 10px 22px rgba(0,194,183,.25)
+    }
+    button:disabled{ opacity:.6; cursor:not-allowed }
+    .tips{ color:#bfeeea; font-size:.85rem; padding:0 22px 18px }
+    .fade{ animation:fade .35s ease }
+    @keyframes fade{ from{opacity:.35; transform:translateY(4px)} to{opacity:1; transform:none} }
   </style>
 </head>
-<body>script>
-document.querySelector("button").addEventListener("click", async () => {
-  const question = document.querySelector("textarea").value.trim();
-  if (!question) return alert("Écris ta question ✨");
-  const res = await fetch("https://philo-backend-cfxz.onrender.com/ask", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ia: "oracle", question })
-  });
-  const data = await res.json();
-  document.querySelector("#response").textContent = data.answer || "Aucune réponse 😕";
-});
-</script>
-  <div class="wrap">
-    <h1>🔮 Oracle</h1>
-    <p class="lead">Pose ta question. L’Oracle te répond avec sagesse instantanée.</p>
-
-    <div class="card">
-      <label for="q">Ta question</label>
-      <textarea id="q" placeholder="Ex. : Est-ce le bon moment pour lancer mon projet ?"></textarea>
-      <div class="row">
-        <button id="askBtn">Interroger l’Oracle <span class="loader" id="spin"></span></button>
-        <a class="ghost" href="index.html"><button class="ghost" type="button">← Retour à l’accueil</button></a>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Oracle</h1>
+          <div class="subtitle">Conseils clairs • Vision stratégique • Explications simples</div>
+        </div>
       </div>
-      <div class="out" id="out"></div>
-      <p class="muted" style="margin-top:10px">*Réponse générée côté navigateur (démo). On branchera l’IA ensuite.</p>
-    </div>
-  </div>
+    </header>
+
+    <section id="chat" class="chat">
+      <div class="bubble bot fade">
+        <strong>Bienvenue 👋</strong><br />
+        Je suis <strong class="system">Philomène Oracle</strong>. Pose-moi des questions sur la prise de décision,
+        la vie quotidienne, l’apprentissage, la carrière, les relations, la spiritualité pragmatique,
+        et je te répondrai avec des explications concrètes et bienveillantes. ✨
+      </div>
+    </section>
+
+    <form id="composer" class="composer">
+      <textarea id="input" placeholder="Écris ta question… (Shift+Entrée pour aller à la ligne)"></textarea>
+      <button id="send" type="submit">Envoyer ✨</button>
+    </form>
+    <div class="tips">Astuce : « Explique-moi simplement… », « Que ferais-tu à ma place ? », « Donne-moi un plan en 3 étapes… »</div>
+  </main>
 
   <script>
-    const answers = [
-      "Oui — mais garde le cap et reste simple.",
-      "Pas encore. Prépare un peu plus, puis fonce.",
-      "La réponse est en toi : commence petit aujourd’hui.",
-      "Oui, si tu acceptes d’apprendre en chemin.",
-      "Attends un signe concret (message, appel, opportunité) et démarre.",
-      "Clarifie l’intention, puis agis. Les portes s’ouvriront.",
-      "Non pour l’instant. Revois le plan et allège-le."
-    ];
-    const notes = [
-      "Fais un pas concret dans les 24h.",
-      "Supprime une chose qui te freine.",
-      "Demande un avis à une personne neutre.",
-      "Choisis la version la plus légère du plan.",
-      "Écris une checklist de 3 points et exécute-les."
-    ];
-    const askBtn = document.getElementById('askBtn');
-    const spin = document.getElementById('spin');
-    const out = document.getElementById('out');
-    const q = document.getElementById('q');
+    // 👉 Mets ici le même endpoint que dans societe.html si différent
+    const ENDPOINT_PATH = "/chat";
 
-    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    const SYSTEM_PROMPT = `
+Tu es Philomène Oracle : une IA conseillère bienveillante et pragmatique.
+- Ton style : clair, simple, humain, sans jargon inutile.
+- Tu proposes des étapes concrètes, des exemples, des check-lists courtes.
+- Tu sais dire "je ne suis pas médecin/juriste" quand c’est le cas et tu rediriges vers des ressources.
+- Tu résumes en fin de réponse par 2–4 bullet points actionnables.
+Réponds en français.`;
 
-    askBtn.onclick = async () => {
-      const text = (q.value || "").trim();
-      if (!text){ q.focus(); return; }
-      askBtn.disabled = true; spin.style.display = 'inline-block'; out.innerHTML = "";
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('composer');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
 
-      // petite attente pour l’effet
-      await new Promise(r=>setTimeout(r, 700));
+    function addBubble(text, who="bot"){
+      const div = document.createElement('div');
+      div.className = `bubble ${who} fade`;
+      div.innerHTML = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-      const stamp = new Date().toLocaleString('fr-FR',{weekday:'long',hour:'2-digit',minute:'2-digit'});
-      const base = pick(answers);
-      const tip = pick(notes);
-      out.innerHTML = `
-        <div><strong>Question :</strong> ${text.replace(/</g,"&lt;")}</div>
-        <div style="margin-top:8px"><strong>Oracle :</strong> ${base}</div>
-        <div class="muted" style="margin-top:8px">Conseil : ${tip}</div>
-        <div class="muted" style="margin-top:6px">⏱️ ${stamp}</div>
-      `;
-      askBtn.disabled = false; spin.style.display = 'none';
-    };
+    async function ask(text){
+      sendBtn.disabled = true;
+      addBubble(text, "you");
+      try{
+        const r = await fetch(ENDPOINT_PATH, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ system: SYSTEM_PROMPT, message: text, agent:"oracle"})
+        });
+        const data = await r.json();
+        addBubble(data.reply || "Désolé, je n’ai pas pu répondre cette fois.");
+      }catch(e){
+        addBubble("Oups, une erreur s’est produite. Réessaie.");
+      }finally{
+        sendBtn.disabled = false;
+      }
+    }
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const text = input.value.trim();
+      if(!text) return;
+      input.value = "";
+      ask(text);
+    });
   </script>
 </body>
 </html>
