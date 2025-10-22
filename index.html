@@ -213,7 +213,200 @@ header p {
   header h1 { font-size: 1.5rem; }
   header p { font-size: 0.9rem; }
   .tools .btn { width: 90%; }
-}    
+}  
+ /* ===============================
+   RESPONSIVE (mobile-first tweaks)
+   =============================== */
+
+/* Tablette et petits laptops */
+@media (max-width: 900px) {
+  .wrap {
+    padding-inline: 16px;
+  }
+
+  header .brand {
+    gap: 10px;
+  }
+
+  header .brand h1 {
+    font-size: clamp(20px, 3.8vw, 28px);
+    line-height: 1.15;
+  }
+
+  header .subtitle {
+    font-size: 0.95rem;
+    line-height: 1.35;
+    max-width: 100%;
+    opacity: .95;
+    /* évite que ça glisse derrière les boutons */
+    position: relative;
+    z-index: 1;
+  }
+
+  header .toolbar {
+    gap: 8px 10px;
+    flex-wrap: wrap;
+  }
+
+  header .toolbar .btn {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .card {
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .chat {
+    padding-inline: 0;
+  }
+
+  .composer {
+    gap: 10px;
+  }
+
+  .composer textarea {
+    min-height: 44px;
+    font-size: 1rem;
+    padding: 12px 12px;
+  }
+
+  .composer .btn.send {
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
+}
+
+/* Téléphones (iPhone/Android) */
+@media (max-width: 600px) {
+  body {
+    /* un peu plus de contraste sur mobile */
+    --panel: color-mix(in hsl, var(--panel) 90%, black 10%);
+  }
+
+  .wrap {
+    padding-inline: 14px;
+  }
+
+  header {
+    padding-top: 8px;
+  }
+
+  header .brand {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  header .logo {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    font-size: 19px;
+  }
+
+  header .brand h1 {
+    /* évite la collision avec la toolbar */
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: .2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80vw;
+  }
+
+  header .subtitle {
+    margin-top: 6px;
+    font-size: .95rem;
+  }
+
+  /* La toolbar passe sur 2 lignes, boutons larges */
+  header .toolbar {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  header .toolbar .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-weight: 600;
+  }
+
+  /* Petits “chips” sous le titre (ex: Mini — rapide…) */
+  .label-chip {
+    font-size: .9rem;
+    padding: 8px 12px;
+  }
+
+  /* Bulle de bienvenue + quick actions */
+  .card .actions .btn {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+  }
+
+  /* Messages */
+  .bubble {
+    font-size: 1rem;
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  /* Composer (barre d’envoi) plus “app” */
+  .composer {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(180deg, transparent, var(--bg) 30%, var(--bg) 100%);
+    padding-top: 10px;
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+  }
+
+  .composer textarea {
+    border-radius: 12px;
+    min-height: 46px;
+    max-height: 38vh;
+  }
+
+  .composer .side {
+    gap: 8px;
+  }
+
+  .composer .btn.icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    font-size: 18px;
+  }
+
+  .composer .btn.send {
+    border-radius: 12px;
+    padding: 12px 16px;
+    min-width: 110px;
+  }
+
+  /* Boîte d’upload image qui dépasse bien le doigt */
+  input[type="file"] {
+    font-size: 16px; /* évite le zoom iOS */
+  }
+}
+
+/* Petits iPhone (SE) */
+@media (max-width: 360px) {
+  header .brand h1 {
+    font-size: 20px;
+    max-width: 72vw;
+  }
+  header .toolbar {
+    grid-template-columns: 1fr;
+  }
+  header .toolbar .btn {
+    font-size: .95rem;
+  }
+}   
   </style>
 </head>
 <body>
