@@ -173,7 +173,47 @@ header p {
     width: 90%;
     font-size: 0.9rem;
   }
-}  
+} 
+/* Correction du header : empêche le texte de passer derrière les boutons */
+header .wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* Titre et sous-titre bien séparés */
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.2rem;
+}
+
+header p {
+  font-size: 1rem;
+  opacity: 0.85;
+  line-height: 1.4;
+  margin: 0.3rem 0 1rem;
+  padding: 0 1rem;
+}
+
+/* Boutons bien centrés sous le texte */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+/* Version mobile : tout bien centré */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.5rem; }
+  header p { font-size: 0.9rem; }
+  .tools .btn { width: 90%; }
+}    
   </style>
 </head>
 <body>
