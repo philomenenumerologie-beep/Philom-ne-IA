@@ -1,101 +1,368 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PhilomenIA – Hub d’IA</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Philomene GPT — Tout l’univers et toute la puissance de ChatGPT accessible à tous</title>
+  <meta name="description" content="Philomene GPT : un assistant IA simple, puissant et accessible." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='100%25' height='100%25' rx='28' ry='28' fill='%236b5bff'/%3E%3Ctext x='50%25' y='58%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,system-ui,-apple-system,Segoe UI,Roboto' font-size='70' fill='white'%3E%CE%A6%3C/text%3E%3C/svg%3E" />
+
   <style>
-    body {
-      background: radial-gradient(circle at center, #1a0033, #000);
-      color: white;
-      font-family: "Poppins", Arial, sans-serif;
-      text-align: center;
-      padding-top: 80px;
-      margin: 0;
+    :root{
+      --bg: #0f1220;
+      --panel: #161a2a;
+      --text: #f5f7ff;
+      --muted:#a9b0c7;
+      --brand:#7a6cff; /* violet discret */
+      --brand-2:#25d0ff; /* accent */
+      --bubble-ai:#1b2138;
+      --bubble-user:#2d2a55;
+      --ring: 0 0 0 2px color-mix(in oklab, var(--brand) 55%, transparent);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f7f8ff;
+        --panel:#ffffff;
+        --text:#101321;
+        --muted:#5b647a;
+        --bubble-ai:#eef0ff;
+        --bubble-user:#e9e5ff;
+      }
+      body{background: linear-gradient(180deg,#f7f8ff 0%, #f1f3ff 50%, #f7f8ff 100%);}
     }
 
-    h1 {
-      font-size: 2.6em;
-      color: #c59bff;
-      margin-bottom: 10px;
-      animation: fadeIn 2s ease-in-out;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font: 16px/1.5 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 50% -10%, #1a1d33 0%, var(--bg) 60%);
+      display:flex; flex-direction:column;
     }
 
-    h2 {
-      color: #aaa;
-      font-weight: 400;
-      margin-bottom: 50px;
+    header{
+      position:sticky; top:0; z-index:5;
+      backdrop-filter: saturate(1.2) blur(6px);
+      background: color-mix(in oklab, var(--panel), transparent 35%);
+      border-bottom: 1px solid color-mix(in oklab, var(--muted) 20%, transparent);
     }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
+    .wrap{max-width:980px; margin:0 auto; padding:14px 16px}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 6px 24px color-mix(in oklab, var(--brand) 45%, transparent);
+      font-weight:700;
     }
-
-    .menu button {
-      background: linear-gradient(90deg, #7f00ff, #e100ff);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 15px 50px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: 0.3s;
-      width: 260px;
+    .brand h1{
+      margin:0; font-size:18px; letter-spacing:.2px;
     }
+    .subtitle{margin:2px 0 0 46px; color:var(--muted); font-size:13px}
 
-    .menu button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #9d4edd, #6a00f4);
-      box-shadow: 0 0 15px #b266ff;
+    .toolbar{
+      display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-top:-36px;
     }
-
-    footer {
-      margin-top: 80px;
-      color: #777;
-      font-size: 0.9em;
+    .select, .btn{
+      border:1px solid color-mix(in oklab, var(--muted) 25%, transparent);
+      background: var(--panel);
+      color:var(--text);
+      border-radius:12px; padding:10px 12px; font-weight:600;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .select{appearance:none; padding-right:34px; position:relative}
+    .btn.primary{
+      background: linear-gradient(135deg,var(--brand),var(--brand-2));
+      border: none; color:white;
+      box-shadow: 0 8px 30px color-mix(in oklab, var(--brand) 45%, transparent);
     }
-/* Bouton Société - même style que les autres bulles */
-.bubble {
-  display: inline-block;
-  background: linear-gradient(135deg, #c59bff, #7b2ff7);
-  color: white;
-  font-weight: 600;
-  padding: 12px 30px;
-  margin-top: 20px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-size: 1.2em;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(123, 47, 247, 0.5);
-}
+    .btn.ghost{background:transparent; border-color: color-mix(in oklab, var(--muted) 30%, transparent); color:var(--muted)}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
 
-.bubble:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(197, 155, 255, 0.8);
-}  </style> 
+    main{flex:1; display:flex; justify-content:center}
+    .chat{
+      width:100%; max-width:980px; padding:20px 16px 26vh;
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .system-card{
+      margin-top:18px; border:1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+      background: color-mix(in oklab, var(--panel), transparent 20%);
+      border-radius:16px; padding:16px;
+    }
+    .system-card h2{margin:.2rem 0 .2rem; font-size:16px}
+    .system-card p{margin:.2rem 0 0; color:var(--muted); font-size:14px}
+
+    .msg{display:flex; gap:10px; align-items:flex-start}
+    .msg .avatar{
+      flex:0 0 34px; height:34px; border-radius:10px; display:grid; place-items:center; font-weight:700;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white;
+    }
+    .msg.user .avatar{background:linear-gradient(135deg,#ff7ac0,#ffb86c)}
+    .bubble{
+      max-width:78%; padding:12px 14px; border-radius:14px;
+      border:1px solid color-mix(in oklab, var(--muted) 20%, transparent);
+      background: var(--bubble-ai);
+      box-shadow: 0 2px 14px rgba(0,0,0,.08);
+      white-space:pre-wrap; word-wrap:break-word;
+    }
+    .msg.user{flex-direction:row-reverse}
+    .msg.user .bubble{background:var(--bubble-user)}
+    .bubble img.preview{max-width:260px; border-radius:10px; display:block; margin-top:8px}
+
+    .composer{
+      position:fixed; left:0; right:0; bottom:0; z-index:5;
+      background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--bg) 85%, transparent) 30%, var(--bg) 70%);
+      padding:14px 10px 14px;
+    }
+    .composer .inner{
+      max-width:980px; margin:0 auto; display:flex; gap:10px; align-items:flex-end;
+    }
+    textarea{
+      flex:1; min-height:56px; max-height:180px; resize:vertical;
+      border-radius:16px; padding:12px 14px;
+      border:1px solid color-mix(in oklab, var(--muted) 25%, transparent);
+      background: var(--panel); color:var(--text);
+      outline:none;
+    }
+    textarea:focus{box-shadow: var(--ring)}
+    .actions{display:flex; gap:8px}
+    .hidden{display:none}
+
+    .tips{color:var(--muted); font-size:12px; text-align:center; margin-top:6px}
+    .tools{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .tools .btn{padding:8px 10px; font-size:13px}
+
+    /* Impression */
+    @media print{
+      header, .composer, .toolbar, .tips { display:none !important; }
+      body{background:white; color:#111}
+      .chat{max-width:800px; padding:0; margin:0 auto}
+      .bubble{background:#fff; border-color:#ddd; box-shadow:none}
+    }
+  </style>
 </head>
-
 <body>
-  <h1>🌌 Bienvenue sur <span style="color:#e5b8ff;">PhilomenIA</span></h1>
-  <h2>Choisis ton IA pour commencer :</h2>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">Φ</div>
+        <h1>Philomene GPT</h1>
+      </div>
+      <p class="subtitle">Tout l’univers et toute la puissance de ChatGPT accessibles à tous.</p>
 
-  <div class="menu">
-    <a href="Oracle.html"><button>🔮 Oracle</button></a>
-    <a href="Analyste%20Sportif.html"><button>⚽ Analyste Sportif</button></a>
-    <a href="Culture.html"><button>📚 Espace Culture</button></a>
-    <a href="flash.html"><button>⚡ Flash Info</button></a>
+      <div class="toolbar">
+        <select id="plan" class="select" title="Choisir un plan">
+          <option value="mini">Mini — rapide & économique</option>
+          <option value="pro">Pro — plus intelligent</option>
+        </select>
+        <button id="printBtn" class="btn ghost" title="Imprimer la discussion">🖨️ Imprimer</button>
+        <button id="downloadBtn" class="btn ghost" title="Télécharger la discussion">⇩ Télécharger</button>
+        <button id="clearBtn" class="btn ghost" title="Effacer">🧹 Effacer</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="chat" id="chat">
+      <div class="system-card">
+        <h2>Bienvenue 👋</h2>
+        <p>Pose-moi tes questions (vie quotidienne, travail, études, tech, démarches, idées…). Tu peux <strong>joindre une image</strong> si besoin. Je réponds clairement, sans pub ni blabla.</p>
+        <div class="tools">
+          <button class="btn ghost tip" data-fill="Explique-moi simplement : ">« Explique-moi simplement… »</button>
+          <button class="btn ghost tip" data-fill="Donne-moi un plan en 3 étapes pour : ">Plan en 3 étapes</button>
+          <button class="btn ghost tip" data-fill="Aide-moi à comparer : ">Comparer A/B</button>
+          <button class="btn ghost tip" data-fill="Rédige un message poli pour : ">Message poli</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="composer">
+    <div class="inner">
+      <input type="file" id="imageInput" accept="image/png,image/jpeg" class="hidden" />
+      <textarea id="input" placeholder="Écris ta question… (Shift+Entrée pour une nouvelle ligne)"></textarea>
+      <div class="actions">
+        <button id="attachBtn" class="btn" title="Joindre une image">📎</button>
+        <button id="sendBtn" class="btn primary">Envoyer ✨</button>
+      </div>
+    </div>
+    <div class="tips">Astuce : Shift+Entrée = retour à la ligne. Tu peux aussi glisser-déposer une image.</div>
   </div>
-  <a href="societe.html" class="bubble">Société</a>
-  <footer>
-    © 2025 PhilomenIA • Créé avec 💜 et curiosité
-  </footer>
+
+  <script>
+    // ⚙️ RENSEIGNE ICI TON BACKEND RENDER :
+    const BACKEND_URL = "https://philo-backend-cfxz.onrender.com"; // ← remplace par TON URL
+
+    // --- mini helpers
+    const $ = sel => document.querySelector(sel);
+    const chat = $("#chat");
+    const input = $("#input");
+    const sendBtn = $("#sendBtn");
+    const attachBtn = $("#attachBtn");
+    const fileInput = $("#imageInput");
+    const planSel = $("#plan");
+    const printBtn = $("#printBtn");
+    const downloadBtn = $("#downloadBtn");
+    const clearBtn = $("#clearBtn");
+
+    let history = []; // {role:"user"|"assistant", content:"text", image?:dataURL}
+
+    // Bullles
+    function addMsg(role, content, imageDataUrl) {
+      const wrap = document.createElement("div");
+      wrap.className = "msg " + (role === "user" ? "user" : "ai");
+      wrap.innerHTML = `
+        <div class="avatar">${ role === "user" ? "🧑" : "Φ" }</div>
+        <div class="bubble"></div>
+      `;
+      const bubble = wrap.querySelector(".bubble");
+      bubble.textContent = content || "";
+      if (imageDataUrl) {
+        const img = document.createElement("img");
+        img.className = "preview";
+        img.src = imageDataUrl;
+        bubble.appendChild(img);
+      }
+      chat.appendChild(wrap);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+
+    function addTyping() {
+      const wrap = document.createElement("div");
+      wrap.className = "msg ai";
+      wrap.dataset.typing = "1";
+      wrap.innerHTML = `
+        <div class="avatar">Φ</div>
+        <div class="bubble">Réflexion en cours…</div>
+      `;
+      chat.appendChild(wrap);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+    function removeTyping() {
+      const node = chat.querySelector('.msg.ai[data-typing="1"]');
+      if (node) node.remove();
+    }
+
+    // Impression & téléchargement
+    printBtn.addEventListener("click", () => window.print());
+    downloadBtn.addEventListener("click", () => {
+      const lines = history.map(h => {
+        const who = h.role === "user" ? "👤 Toi" : "🤖 Philomene";
+        return `【${who}】\n${h.content}\n${h.image ? "[Image jointe]" : ""}\n`;
+      }).join("\n----------------\n\n");
+      const blob = new Blob([lines], {type:"text/plain;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "philomene-gpt-discussion.txt"; a.click();
+      URL.revokeObjectURL(url);
+    });
+    clearBtn.addEventListener("click", () => {
+      history = [];
+      chat.innerHTML = `
+        <div class="system-card">
+          <h2>Bienvenue 👋</h2>
+          <p>Pose-moi tes questions. Joins une image si besoin. Je réponds clairement, sans pub ni blabla.</p>
+          <div class="tools">
+            <button class="btn ghost tip" data-fill="Explique-moi simplement : ">« Explique-moi simplement… »</button>
+            <button class="btn ghost tip" data-fill="Donne-moi un plan en 3 étapes pour : ">Plan en 3 étapes</button>
+            <button class="btn ghost tip" data-fill="Aide-moi à comparer : ">Comparer A/B</button>
+            <button class="btn ghost tip" data-fill="Rédige un message poli pour : ">Message poli</button>
+          </div>
+        </div>`;
+    });
+
+    // Tips quick-fill
+    chat.addEventListener("click", (e)=>{
+      const btn = e.target.closest(".tip");
+      if (!btn) return;
+      input.value = btn.dataset.fill;
+      input.focus();
+    });
+
+    // Attach image
+    attachBtn.addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", async (e)=>{
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (!/^image\/(png|jpe?g)$/.test(file.type)) { alert("Image PNG/JPG uniquement"); return; }
+      if (file.size > 2 * 1024 * 1024) { alert("Image trop lourde (max 2 Mo)"); return; }
+      const dataUrl = await toDataURL(file);
+      input.dataset.image = dataUrl; // stocke pour l’envoi prochain
+      attachBtn.textContent = "📎✓";
+    });
+    // drag&drop
+    document.addEventListener("dragover", e=>{ e.preventDefault(); });
+    document.addEventListener("drop", async (e)=>{
+      e.preventDefault();
+      const file = e.dataTransfer?.files?.[0];
+      if (!file) return;
+      if (!/^image\/(png|jpe?g)$/.test(file.type)) return alert("Image PNG/JPG uniquement");
+      if (file.size > 2 * 1024 * 1024) return alert("Image trop lourde (max 2 Mo)");
+      const dataUrl = await toDataURL(file);
+      input.dataset.image = dataUrl; attachBtn.textContent = "📎✓";
+    });
+
+    function toDataURL(file){
+      return new Promise((resolve,reject)=>{
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    // Envoi
+    function sendOnEnter(e){
+      if (e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        doSend();
+      }
+    }
+    input.addEventListener("keydown", sendOnEnter);
+    sendBtn.addEventListener("click", doSend);
+
+    async function doSend(){
+      const text = input.value.trim();
+      const img = input.dataset.image;
+      if (!text && !img) return;
+
+      // message utilisateur
+      addMsg("user", text, img);
+      history.push({ role:"user", content:text, image:img });
+      input.value = ""; delete input.dataset.image; attachBtn.textContent = "📎";
+
+      // appel backend
+      try{
+        sendBtn.disabled = true;
+        addTyping();
+
+        const payload = {
+          plan: planSel.value,         // "mini" | "pro"
+          messages: history.map(m => ({
+            role: m.role,
+            content: m.content,
+            image: m.image || null
+          }))
+        };
+
+        const res = await fetch(`${BACKEND_URL}/api/chat`, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error("HTTP "+res.status);
+        const data = await res.json();
+
+        removeTyping();
+        addMsg("assistant", data.reply || "(réponse vide)");
+        history.push({ role:"assistant", content: data.reply || "" });
+      } catch(err){
+        console.error(err);
+        removeTyping();
+        addMsg("assistant", "Oups, une erreur s’est produite. Réessaie.");
+      } finally{
+        sendBtn.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
