@@ -99,4 +99,94 @@
    ideasBox.innerHTML = `<strong>Pistes :</strong><ul>` + set.map(x=>`<li>${x}</li>`).join("") + `</ul>`;
  };
 </script>
+<!-- ton HTML principal ici -->
+<div class="card">
+  <label for="q">Ta question</label>
+  <input id="q" placeholder="Ex. : Comment agir pour l’environnement ?" />
+  <button id="askBtn">Interroger Philomène</button>
+  <div id="answer"></div>
+</div>
+
+<!-- 👇 ICI tu colles le script -->
+<script>
+  const BACKEND = "https://philo-backend-cfxz.onrender.com";
+  const BOT = "societe"; // 👈 change selon la page
+
+  async function ask(question) {
+    const res = await fetch(`${BACKEND}/ask/${BOT}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.answer || "Je n’ai pas pu répondre.";
+  }
+
+  const input = document.getElementById("q");
+  const btn = document.getElementById("askBtn");
+  const ans = document.getElementById("answer");
+
+  btn.addEventListener("click", async () => {
+    const q = input.value.trim();
+    if (!q) return;
+    btn.disabled = true;
+    ans.textContent = "Réflexion en cours…";
+    try {
+      ans.textContent = await ask(q);
+    } catch (e) {
+      console.error(e);
+      ans.textContent = "Oups, une erreur s’est produite. Réessaie.";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+ <!-- ton HTML principal ici -->
+<div class="card">
+  <label for="q">Ta question</label>
+  <input id="q" placeholder="Ex. : Comment agir pour l’environnement ?" />
+  <button id="askBtn">Interroger Philomène</button>
+  <div id="answer"></div>
+</div>
+
+<!-- 👇 ICI tu colles le script -->
+<script>
+  const BACKEND = "https://philo-backend-cfxz.onrender.com";
+  const BOT = "societe"; // 👈 change selon la page
+
+  async function ask(question) {
+    const res = await fetch(`${BACKEND}/ask/${BOT}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.answer || "Je n’ai pas pu répondre.";
+  }
+
+  const input = document.getElementById("q");
+  const btn = document.getElementById("askBtn");
+  const ans = document.getElementById("answer");
+
+  btn.addEventListener("click", async () => {
+    const q = input.value.trim();
+    if (!q) return;
+    btn.disabled = true;
+    ans.textContent = "Réflexion en cours…";
+    try {
+      ans.textContent = await ask(q);
+    } catch (e) {
+      console.error(e);
+      ans.textContent = "Oups, une erreur s’est produite. Réessaie.";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
+</body>
+ 
 </body></html>
