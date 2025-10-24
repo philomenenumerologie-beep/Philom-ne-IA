@@ -1,166 +1,134 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Philomenia • Chat (style MSN)</title>
-  <style>
-    /* ====== ADN visuel MSN + thème sombre ====== */
-    :root{
-      --bg: #eaf3ff;           /* clair: fond fenêtre */
-      --panel: #ffffff;
-      --text: #0b1b33;
-      --sub: #4b5a73;
-      --accent1: #3a84ff;      /* bleu MSN */
-      --accent2: #8ec0ff;
-      --input: #ffffff;
-      --bubble-me: #e6f2ff;    /* bulles */
-      --bubble-bot:#f6f7fb;
-      --border:#c8d6f2;
-      --shadow: 0 8px 24px rgba(15,35,85,.12);
-    }
-    .dark{
-      --bg: #0e1420;           /* sombre */
-      --panel: #121a28;
-      --text: #e8eefc;
-      --sub: #9bb0cf;
-      --accent1: #6aa2ff;
-      --accent2: #345b99;
-      --input: #0f1725;
-      --bubble-me:#0f213b;
-      --bubble-bot:#0d1a2e;
-      --border:#1e2a41;
-      --shadow: 0 10px 28px rgba(0,0,0,.35);
-    }
-
-    html,body{
-      height:100%;
-      margin:0;
-      background: var(--bg);
-      color: var(--text);
-      font: 14px/1.45 Tahoma, Verdana, Segoe UI, system-ui, sans-serif;
-    }
-    .wrap{
-      max-width: 980px;
-      margin: 24px auto;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      background: var(--panel);
-    }
-    /* Barre de titre façon MSN */
-    .titlebar{
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 8px 12px;
-      color:#fff;
-      background: linear-gradient(180deg, var(--accent1), var(--accent2));
-    }
-    .titlebar .left{
-      display:flex; gap:10px; align-items:center;
-    }
-    .titlebar .orb{
-      width:20px;height:20px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, #ffffff 0 15%, #5cc1ff 30%, #1e7bff 60%, #0c53c7 100%);
-      border:1px solid rgba(255,255,255,.6);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.15);
-    }
-    .title{
-      font-weight:bold; letter-spacing:.2px;
-      text-shadow: 0 1px 0 rgba(0,0,0,.25);
-    }
-    .toolbar{
-      display:flex; gap:8px;
-    }
-    .btn{
-      height:30px; min-width:30px;
-      border:1px solid rgba(255,255,255,.6);
-      border-radius:6px;
-      background: rgba(255,255,255,.18);
-      display:grid; place-items:center;
-      color:#fff; cursor:pointer;
-      transition: .15s ease;
-      backdrop-filter: blur(2px);
-    }
-    .btn:hover{ background: rgba(255,255,255,.28); transform: translateY(-1px); }
-    .btn svg{ width:16px; height:16px; fill:#fff }
-
-    /* Zone de chat */
-    .chat{
-      display:grid;
-      grid-template-rows: auto 120px;
-      height: 70vh;
-    }
-    .log{
-      padding: 14px;
-      overflow:auto;
-      background:
-        radial-gradient(ellipse at top left, rgba(255,255,255,.65), transparent 60%),
-        var(--panel);
-      border-bottom:1px solid var(--border);
-    }
-    .msg{
-      display:flex; gap:10px; margin:10px 0; align-items:flex-end;
-    }
-    .msg.me{ justify-content:flex-end; }
-    .bubble{
-      max-width: 70%;
-      padding:10px 12px;
-      border-radius: 10px;
-      border:1px solid var(--border);
-      background: var(--bubble-bot);
-    }
-    .msg.me .bubble{ background: var(--bubble-me); }
-    .name{ font-weight:bold; color:var(--sub); margin-bottom:2px; font-size:12px }
-    .time{ color:var(--sub); font-size:11px; margin-left:8px }
-    .inputbar{
-      display:grid; grid-template-columns: 1fr auto;
-      gap:8px; padding:10px; background: var(--panel);
-    }
-    textarea{
-      resize:none; border:1px solid var(--border);
-      border-radius:8px; padding:10px 12px;
-      background: var(--input); color: var(--text);
-      outline: none;
-    }
-    .send{
-      padding: 10px 16px;
-      border-radius:8px; border:1px solid var(--border);
-      background: linear-gradient(180deg, var(--accent1), var(--accent2));
-      color:#fff; font-weight:600; cursor:pointer;
-      transition:.15s;
-    }
-    .send:hover{ filter:brightness(1.05) }
-    .status{
-      padding:8px 12px; background:rgba(0,0,0,.04);
-      color:var(--sub); font-size:12px; border-top:1px solid var(--border);
-    }
-
-    /* Panneau paramètres */
-    .settings{
-      position: fixed; right: 18px; top: 66px;
-      width: 260px; background: var(--panel); color:var(--text);
-      border:1px solid var(--border); border-radius:10px;
-      box-shadow: var(--shadow); padding:12px; display:none;
-    }
-    .settings h4{ margin:6px 0 10px 0 }
-    .row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin:8px 0 }
-    .row input[type="text"]{ width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--input); color:var(--text) }
-    .switch{
-      --w:44px; position:relative; width:var(--w); height:24px; border-radius:999px;
-      background:#7f8aa3; cursor:pointer; border:1px solid var(--border)
-    }
-    .switch:before{
-      content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
-      background:#fff; transition:.2s; box-shadow:0 1px 0 rgba(0,0,0,.3)
-    }
-    .switch.on{ background:#3aa157 }
-    .switch.on:before{ left: calc(var(--w) - 22px) }
-    .settings .small{ font-size:12px; color:var(--sub) }
-    .foot{ display:flex; gap:8px; justify-content:flex-end; margin-top:10px }
-    .outline{ background:transparent; color:var(--text) }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Philomenia • Chat MSN</title>
+<style>
+:root{
+  --bg:#eaf3ff;--panel:#fff;--text:#0b1b33;--sub:#4b5a73;
+  --accent1:#3a84ff;--accent2:#8ec0ff;--input:#fff;
+  --bubble-me:#e6f2ff;--bubble-bot:#f6f7fb;--border:#c8d6f2;
+  --shadow:0 8px 24px rgba(15,35,85,.12);
+}
+.dark{
+  --bg:#0e1420;--panel:#121a28;--text:#e8eefc;--sub:#9bb0cf;
+  --accent1:#6aa2ff;--accent2:#345b99;--input:#0f1725;
+  --bubble-me:#0f213b;--bubble-bot:#0d1a2e;--border:#1e2a41;
+  --shadow:0 10px 28px rgba(0,0,0,.35);
+}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.45 Tahoma,Verdana,Segoe UI,system-ui,sans-serif;}
+.wrap{max-width:900px;margin:24px auto;box-shadow:var(--shadow);
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  background:var(--panel);}
+.titlebar{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;color:#fff;background:linear-gradient(180deg,var(--accent1),var(--accent2));}
+.titlebar .left{display:flex;gap:10px;align-items:center;}
+.orb{width:20px;height:20px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#fff 0 15%,#5cc1ff 30%,#1e7bff 60%,#0c53c7 100%);
+  border:1px solid rgba(255,255,255,.6);}
+.title{font-weight:bold;letter-spacing:.2px;text-shadow:0 1px 0 rgba(0,0,0,.25);}
+.toolbar{display:flex;gap:8px;}
+.btn{height:30px;min-width:30px;border:1px solid rgba(255,255,255,.6);
+  border-radius:6px;background:rgba(255,255,255,.18);display:grid;place-items:center;
+  color:#fff;cursor:pointer;transition:.15s ease;}
+.btn:hover{background:rgba(255,255,255,.28);transform:translateY(-1px);}
+.btn svg{width:16px;height:16px;fill:#fff}
+.chat{display:grid;grid-template-rows:auto 120px;height:70vh;}
+.log{padding:14px;overflow:auto;background:var(--panel);border-bottom:1px solid var(--border);}
+.msg{display:flex;gap:10px;margin:10px 0;align-items:flex-end;}
+.msg.me{justify-content:flex-end;}
+.bubble{max-width:70%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bubble-bot);}
+.msg.me .bubble{background:var(--bubble-me);}
+.name{font-weight:bold;color:var(--sub);font-size:12px}
+.time{color:var(--sub);font-size:11px;margin-left:8px}
+.inputbar{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px;background:var(--panel);}
+textarea{resize:none;border:1px solid var(--border);border-radius:8px;padding:10px 12px;
+  background:var(--input);color:var(--text);}
+.send{padding:10px 16px;border-radius:8px;border:1px solid var(--border);
+  background:linear-gradient(180deg,var(--accent1),var(--accent2));color:#fff;
+  font-weight:600;cursor:pointer;}
+.status{padding:8px 12px;background:rgba(0,0,0,.04);color:var(--sub);font-size:12px;
+  border-top:1px solid var(--border);}
+.settings{position:fixed;right:18px;top:66px;width:260px;background:var(--panel);
+  color:var(--text);border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow);padding:12px;display:none;}
+.switch{--w:44px;position:relative;width:var(--w);height:24px;border-radius:999px;
+  background:#7f8aa3;cursor:pointer;border:1px solid var(--border);}
+.switch:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;
+  border-radius:50%;background:#fff;transition:.2s;}
+.switch.on{background:#3aa157;}
+.switch.on:before{left:calc(var(--w) - 22px);}
+</style>
 </head>
 <body>
-  <div class="wrap" id="app">
-    <div class="
+<div class="wrap" id="app">
+  <div class="titlebar">
+    <div class="left"><div class="orb"></div><div class="title">Philomenia Messenger</div></div>
+    <div class="toolbar">
+      <button class="btn" id="btnDownload" title="Télécharger">
+        <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zm7-18v10.17l3.59-3.58L17 10l-5 5-5-5 1.41-1.41L11 12.17V2h1z"/></svg>
+      </button>
+      <button class="btn" id="btnPrint" title="Imprimer">
+        <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v4h4v4h12v-4h4v-4c0-1.66-1.34-3-3-3zm-3 10H8v-4h8v4zm3-10V3H5v5h14z"/></svg>
+      </button>
+      <button class="btn" id="btnSettings" title="Paramètres">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 1h-3.8a.5.5 0 0 0-.49.41l-.36 2.54c-.59.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 7.97a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 13.65a.5.5 0 0 0-.12.64l1.92 3.32c.12.21.37.3.6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54c.05.24.25.41.49.41h3.8c.24 0 .44-.17.49-.41l.36-2.54c.59-.22 1.14-.54 1.63-.94l2.39.96c.23.08.48-.01.6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="chat" id="chat">
+    <div class="log" id="log"></div>
+    <div class="inputbar">
+      <textarea id="input" rows="3" placeholder="Écris ton message… (Entrée pour envoyer)"></textarea>
+      <button class="send" id="send">Envoyer</button>
+    </div>
+    <div class="status" id="status">Prêt.</div>
+  </div>
+</div>
+
+<div class="settings" id="settings">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <span>Mode sombre</span>
+    <div class="switch" id="darkSwitch"></div>
+  </div>
+</div>
+
+<script>
+let BACKEND_URL="https://philo-backend-su29.onrender.com";
+const $=s=>document.querySelector(s);
+const log=$("#log"),input=$("#input"),send=$("#send"),status=$("#status");
+const darkSwitch=$("#darkSwitch"),settings=$("#settings"),btnSettings=$("#btnSettings");
+
+function addMsg(name,txt,mine){
+  const d=document.createElement("div");
+  d.className="msg"+(mine?" me":"");
+  d.innerHTML=`<div class="bubble">${txt}</div>`;
+  log.appendChild(d);log.scrollTop=log.scrollHeight;
+}
+function toast(t){status.textContent=t;setTimeout(()=>status.textContent="Prêt.",2000);}
+
+send.onclick=async()=>{
+  const text=input.value.trim();if(!text)return;
+  addMsg("Moi",text,true);input.value="";
+  try{
+    status.textContent="Envoi...";
+    const r=await fetch(BACKEND_URL+"/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})});
+    const d=await r.json();addMsg("Bot",d.reply||"…");toast("Réponse reçue.");
+  }catch(e){addMsg("Bot","Oups, erreur.");toast("Erreur de connexion.");}
+};
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send.onclick();}});
+
+btnSettings.onclick=()=>settings.style.display=settings.style.display==="block"?"none":"block";
+darkSwitch.onclick=()=>{
+  const d=!document.body.classList.contains("dark");
+  document.body.classList.toggle("dark",d);
+  darkSwitch.classList.toggle("on",d);
+};
+addMsg("Philomenia","Bonjour 👋 Écris-moi ci-dessous (style MSN activé !)");
+</script>
+</body>
+</html>
