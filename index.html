@@ -1,316 +1,307 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Philomenia • Messenger (style MSN)</title>
-  <style>
-    :root{
-      /* Thème clair MSN */
-      --bg:#eaf3ff; --panel:#fff; --text:#0b1b33; --sub:#4b5a73;
-      --accent1:#3a84ff; --accent2:#8ec0ff; --input:#fff;
-      --bubble-me:#e6f2ff; --bubble-bot:#f2f7fb; --border:#c8d6f2;
-      --shadow:0 10px 30px rgba(0,0,0,.12);
-    }
-    [data-theme="dark"]{
-      --bg:#0f1722; --panel:#121a26; --text:#dbe7ff; --sub:#9db2d7;
-      --accent1:#4da3ff; --accent2:#2b73d9; --input:#0c111a;
-      --bubble-me:#1a2638; --bubble-bot:#121a26; --border:#24334a;
-      --shadow:0 12px 40px rgba(0,0,0,.35);
-    }
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial}
-    .app{max-width:860px;margin:16px auto;padding:0 12px}
-    .window{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
-    .titlebar{display:flex;align-items:center;gap:10px;background:linear-gradient(#5aa0ff,#2d7fff);color:#fff;padding:10px 14px;position:sticky;top:0;z-index:3}
-    .dot{width:14px;height:14px;border-radius:50%;background:radial-gradient(#bff,#3cf)}
-    .title{font-weight:700;flex:1}
-    .tbtn{width:38px;height:38px;display:grid;place-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:10px;cursor:pointer}
-    .tbtn:hover{background:rgba(255,255,255,.28)}
-    .chat{height:65vh;min-height:420px;overflow:auto;padding:16px;scroll-behavior:smooth}
-    .msg{max-width:90%;padding:12px 14px;border:1px solid var(--border);border-radius:14px;margin:8px 0;white-space:pre-wrap;word-wrap:break-word}
-    .me{background:var(--bubble-me);margin-left:auto}
-    .bot{background:var(--bubble-bot)}
-    .avatar{float:right;margin-left:8px;width:40px;height:40px;border-radius:10px;background:#cfe2ff;display:grid;place-items:center}
-    .inputbar{display:flex;gap:10px;align-items:center;border-top:1px solid var(--border);padding:10px;background:var(--panel);position:sticky;bottom:0}
-    textarea{flex:1;resize:none;max-height:40vh;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);outline:none}
-    textarea:focus{border-color:var(--accent1);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent1) 20%, transparent)}
-    button.primary{background:linear-gradient(var(--accent2),var(--accent1));color:#fff;border:none;padding:12px 18px;border-radius:12px;font-weight:700;min-width:120px}
-    button.primary:active{transform:translateY(1px)}
-    .iconbtn{width:44px;height:44px;border:1px solid var(--border);background:var(--panel);border-radius:12px;display:grid;place-items:center}
-    .row{display:flex;gap:10px;align-items:center}
-    .hint{font-size:.85rem;color:var(--sub);padding:8px 16px}
-    .pill{background:#e8f1ff;border:1px solid var(--border);color:var(--sub);padding:2px 8px;border-radius:999px;margin-left:6px}
-    [data-theme="dark"] .pill{background:#142033}
-    /* Modal */
-    .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.4);padding:16px}
-    .modal.show{display:flex}
-    .card{max-width:680px;width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
-    .card h3{margin:0;padding:16px;border-bottom:1px solid var(--border)}
-    .card .content{padding:16px}
-    .pack{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
-    .shake{animation:shake .5s linear 1}
-    @keyframes shake{
-      10%{transform:translate(-3px,0)} 20%{transform:translate(3px,0)}
-      30%{transform:translate(-3px,0)} 40%{transform:translate(3px,0)}
-      50%{transform:translate(-2px,0)} 60%{transform:translate(2px,0)}
-      70%{transform:translate(-2px,0)} 80%{transform:translate(2px,0)}
-      90%{transform:translate(-1px,0)} 100%{transform:translate(0,0)}
-    }
-    @media (max-width:520px){
-      .chat{height:70dvh}
-      .titlebar{border-radius:12px 12px 0 0}
-      .avatar{display:none}
-      .msg{max-width:100%}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Philomenia • Messenger</title>
+<style>
+  :root{
+    --bg:#0f1722;--panel:#121a26;--text:#dbe7ff;--sub:#9db2d7;--a1:#4da3ff;--a2:#2b73d9;
+    --border:#24334a;--me:#1a2638;--bot:#121a26;--input:#0c111a;
+  }
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font:16px/1.4 system-ui,"Segoe UI",Roboto,Helvetica,Arial;-webkit-text-size-adjust:100%}
+  /* Conteneur plein écran stable mobile (évite les sauts quand le clavier s’ouvre) */
+  .app{min-height:100dvh;display:flex;align-items:stretch;justify-content:center;padding:12px}
+  .win{width:100%;max-width:860px;display:flex;flex-direction:column;border:1px solid var(--border);
+    border-radius:12px;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}
+  .bar{display:flex;align-items:center;gap:8px;background:linear-gradient(#5aa0ff,#2d7fff);color:#fff;padding:10px 14px}
+  .title{font-weight:700;flex:1}
+  .lang{display:flex;gap:6px}
+  .lang a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:4px 8px;border-radius:8px;opacity:.9}
+  .lang a.active{background:rgba(255,255,255,.25)}
+  .ibtn{width:38px;height:38px;display:grid;place-items:center;background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.35);border-radius:10px;cursor:pointer}
+  /* Zone chat : prend tout l’espace restant */
+  .chat{flex:1;min-height:0;overflow:auto;padding:16px;scroll-behavior:smooth}
+  .msg{max-width:92%;padding:12px 14px;border:1px solid var(--border);border-radius:14px;margin:8px 0;
+    white-space:pre-wrap;word-wrap:break-word}
+  .me{background:var(--me);margin-left:auto}
+  .bot{background:var(--bot)}
+  .hint{font-size:.85rem;color:var(--sub);padding:8px 16px;border-top:1px solid var(--border)}
+  /* Barre d’entrée collée en bas, sans bouger avec le clavier */
+  .input{position:sticky;bottom:0;left:0;right:0;background:var(--panel);
+    border-top:1px solid var(--border);padding:10px;display:flex;gap:10px;align-items:center}
+  .iconbtn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--border);
+    background:var(--panel);border-radius:12px}
+  textarea{flex:1;resize:none;max-height:40vh;padding:12px 14px;border-radius:12px;
+    border:1px solid var(--border);background:var(--input);color:inherit;outline:none;font-size:16px}
+  button.primary{background:linear-gradient(var(--a2),var(--a1));color:#fff;border:none;padding:12px 18px;border-radius:12px;font-weight:700;min-width:110px}
+  .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.45);padding:16px}
+  .modal.show{display:flex}
+  .card{max-width:700px;width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+  .card h3{margin:0;padding:16px;border-bottom:1px solid var(--border)}
+  .content{padding:16px}
+  .packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .pack{border:1px solid var(--border);border-radius:12px;padding:14px}
+  .pill{background:#142033;border:1px solid var(--border);border-radius:999px;padding:2px 8px;margin-left:6px}
+  .note{opacity:.8;font-size:.9rem}
+  .shake{animation:shake .5s linear 1}
+  @keyframes shake{10%{transform:translate(-3px)}20%{transform:translate(3px)}30%{transform:translate(-3px)}40%{transform:translate(3px)}}
+  @media (max-width:520px){.msg{max-width:100%}}
+</style>
 </head>
 <body>
-  <div class="app">
-    <div class="window" id="win">
-      <div class="titlebar">
-        <div class="dot"></div>
-        <div class="title">Philomenia Messenger</div>
-        <div class="tbtn" id="btnDownload" title="Télécharger la conversation">⬇️</div>
-        <div class="tbtn" id="btnPrint" title="Imprimer">🖨️</div>
-        <div class="tbtn" id="btnSettings" title="Paramètres & recharges">⚙️</div>
+<div class="app">
+  <div class="win" id="win">
+    <div class="bar">
+      <div class="title" id="t_app">Philomenia Messenger</div>
+      <div class="lang">
+        <a href="#" data-lang="fr" id="lng-fr">FR</a>
+        <a href="#" data-lang="en" id="lng-en">EN</a>
+        <a href="#" data-lang="nl" id="lng-nl">NL</a>
       </div>
+      <div class="ibtn" id="btnDownload" title="Télécharger">⬇️</div>
+      <div class="ibtn" id="btnPrint" title="Imprimer">🖨️</div>
+      <div class="ibtn" id="btnSettings" title="Recharger & Paramètres">⚙️</div>
+    </div>
 
-      <div class="chat" id="chat"></div>
-      <div class="hint" id="quotaHint">Forfait actuel : <span id="tierLabel">free</span> — Tokens restants : <strong id="left">…</strong></div>
+    <div class="chat" id="chat"></div>
+    <div class="hint" id="hint">…</div>
 
-      <div class="inputbar">
-        <label class="iconbtn" title="Joindre une image (jpeg/png)">
-          📎
-          <input type="file" id="file" accept="image/*" style="display:none">
-        </label>
-        <button class="iconbtn" id="btnNudge" title="Nudge MSN">🔔</button>
-        <textarea id="input" rows="1" placeholder="Écris ton message… (Entrée pour envoyer)"></textarea>
-        <button class="primary" id="send">Envoyer</button>
-      </div>
+    <div class="input" id="inputbar" style="padding-bottom:calc(10px + env(safe-area-inset-bottom))">
+      <label class="iconbtn" title="Joindre une image">
+        📎 <input type="file" id="file" accept="image/*" style="display:none">
+      </label>
+      <div class="iconbtn" id="btnNudge" title="Nudge">🔔</div>
+      <textarea id="input" rows="1" placeholder="Écris ton message…"></textarea>
+      <button class="primary" id="send">Envoyer</button>
     </div>
   </div>
+</div>
 
-  <!-- Modal paramètres / recharges -->
-  <div class="modal" id="settingsModal" aria-hidden="true">
-    <div class="card">
-      <h3>Paramètres</h3>
-      <div class="content">
-        <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:14px">
-          <div>
-            <label>Thème</label><br/>
-            <select id="themeSel">
-              <option value="light">Clair (MSN)</option>
-              <option value="dark">Sombre</option>
-            </select>
-          </div>
-          <div>
-            <label>Langue</label><br/>
-            <select id="langSel">
-              <option value="fr">Français</option>
-              <option value="en">English</option>
-              <option value="nl">Nederlands</option>
-            </select>
-          </div>
-          <div>
-            <label>Actualités</label><br/>
-            <input id="newsQuery" placeholder="ex: premier ministre français" style="width:240px">
-            <button id="btnNews">Chercher</button>
-          </div>
-        </div>
-
-        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
-        <h4 style="margin:0 0 8px">Recharger des tokens (PayPal)</h4>
+<!-- Modal recharges -->
+<div class="modal" id="settings">
+  <div class="card">
+    <h3 id="t_topup">Recharger des tokens (PayPal)</h3>
+    <div class="content">
+      <div class="packs">
         <div class="pack">
-          <strong>Pack 5 €</strong> <span class="pill">≈ 4 000 tokens</span>
+          <strong id="p1_title">Pack 5 €</strong>
+          <span class="pill" id="p1_tokens">≈ 30 000 tokens</span>
           <div id="pp-5" style="margin-top:8px"></div>
         </div>
         <div class="pack">
-          <strong>Pack 10 €</strong> <span class="pill">≈ 9 000 tokens</span>
+          <strong id="p2_title">Pack 10 €</strong>
+          <span class="pill" id="p2_tokens">≈ 70 000 tokens</span>
           <div id="pp-10" style="margin-top:8px"></div>
         </div>
         <div class="pack">
-          <strong>Pack 20 €</strong> <span class="pill">≈ 20 000 tokens</span>
+          <strong id="p3_title">Pack 20 €</strong>
+          <span class="pill" id="p3_tokens">≈ 150 000 tokens</span>
           <div id="pp-20" style="margin-top:8px"></div>
         </div>
-        <div class="row" style="justify-content:flex-end">
-          <button id="closeSettings">Fermer</button>
-        </div>
       </div>
+      <p class="note" id="paypalNote" style="margin-top:10px"></p>
+      <div style="text-align:right;margin-top:12px"><button id="closeSettings">OK</button></div>
     </div>
   </div>
+</div>
 
-  <!-- Sons (petits bips intégrés) -->
-  <audio id="snd-send" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
-  <audio id="snd-recv" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
-  <audio id="snd-nudge" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
+<!-- Sons optionnels (vides pour alléger) -->
+<audio id="snd-send" preload="auto"></audio>
+<audio id="snd-recv" preload="auto"></audio>
+<audio id="snd-nudge" preload="auto"></audio>
 
-  <!-- PayPal SDK (SANDBOX par défaut) -->
-  <script>
-    // TODO: mets ton CLIENT-ID sandbox (puis tu passeras l'URL en live quand tu seras prêt)
-    const PAYPAL_CLIENT_ID = "EJKOBEaO53LvLlA8KbN__haTgvLJejkXY9LCIT6PCdDNFRt3sG5ckFU4NERx-ml1NXMzUp6xgIHdiIkX";
-    if (PAYPAL_CLIENT_ID && !document.getElementById('pp-sdk')) {
-      const s=document.createElement('script');
-      s.id='pp-sdk';
-      s.src=`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture`;
-      document.head.appendChild(s);
-    }
-  </script>
+<script>
+/* === CONFIG À RENSEIGNER === */
+const BACKEND_URL = "https://philo-backend-xxxx.onrender.com";  // ← mets l’URL de ton backend
+const PAYPAL_CLIENT_ID = "";                                     // ← mets ton Client ID (sandbox) si tu veux déjà afficher les boutons
+/* =========================== */
+</script>
 
-  <script>
-  // === Config ===
-  // TODO: remplace par l’URL de ton backend Render
-  const BACKEND_URL = "https://philo-backend-su29.onrender.com";
+<!-- SDK PayPal (chargé uniquement si CLIENT_ID présent) -->
+<script>
+(function(){
+  if(!PAYPAL_CLIENT_ID){ return; }
+  const s=document.createElement('script');
+  s.src=`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture`;
+  s.onload=()=>window.__ppReady=true;
+  document.head.appendChild(s);
+})();
+</script>
 
-  // id client pour quota
-  const clientId = localStorage.getItem("client-id") || (crypto.randomUUID?.() || String(Math.random())).toString();
-  localStorage.setItem("client-id", clientId);
+<script>
+/* ===== i18n FR/EN/NL ===== */
+const STR = {
+  fr:{app:"Philomenia Messenger",hello:"Bonjour 👋\n• Tape @motclé pour l’actualité\n• Clique sur ⚙️ pour recharger des tokens",
+      ready:"Prêt.",attachReady:"📎 Image prête (envoyée au prochain message).",noNews:"(Aucune actualité trouvée)",
+      topup:"Recharger des tokens (PayPal)",
+      p1:"Pack 5 €",p1t:"≈ 30 000 tokens",p2:"Pack 10 €",p2t:"≈ 70 000 tokens",p3:"Pack 20 €",p3t:"≈ 150 000 tokens",
+      msgPH:"Écris ton message…",send:"Envoyer",
+      solde:(r,t,p)=>`Solde : ${r} tokens (gratuit restant : ${t}, payant : ${p})`,
+      quotaOut:"⚠️ Plus de tokens. Ouvre ⚙️ pour recharger.",
+      ppNote:(has)=> has? "Paiement sécurisé via PayPal (Sandbox pour tests).":"PayPal non connecté : ajoute le Client ID pour activer les boutons." },
+  en:{app:"Philomenia Messenger",hello:"Hello 👋\n• Type @keyword for news\n• Click ⚙️ to top up tokens",
+      ready:"Ready.",attachReady:"📎 Image attached (will be sent with your next message).",noNews:"(No news found)",
+      topup:"Top up tokens (PayPal)",
+      p1:"Pack €5",p1t:"≈ 30,000 tokens",p2:"Pack €10",p2t:"≈ 70,000 tokens",p3:"Pack €20",p3t:"≈ 150,000 tokens",
+      msgPH:"Type your message…",send:"Send",
+      solde:(r,t,p)=>`Balance: ${r} tokens (free left: ${t}, paid: ${p})`,
+      quotaOut:"⚠️ Out of tokens. Open ⚙️ to top up.",
+      ppNote:(has)=> has? "Secure payment via PayPal (Sandbox for tests).":"PayPal not connected: add Client ID to enable buttons." },
+  nl:{app:"Philomenia Messenger",hello:"Hallo 👋\n• Typ @trefwoord voor nieuws\n• Klik ⚙️ om tokens op te laden",
+      ready:"Klaar.",attachReady:"📎 Afbeelding klaar (wordt met je volgende bericht verzonden).",noNews:"(Geen nieuws gevonden)",
+      topup:"Tokens opladen (PayPal)",
+      p1:"Pakket €5",p1t:"≈ 30.000 tokens",p2:"Pakket €10",p2t:"≈ 70.000 tokens",p3:"Pakket €20",p3t:"≈ 150.000 tokens",
+      msgPH:"Schrijf je bericht…",send:"Versturen",
+      solde:(r,t,p)=>`Saldo: ${r} tokens (gratis over: ${t}, betaald: ${p})`,
+      quotaOut:"⚠️ Tokens op. Open ⚙️ om op te laden.",
+      ppNote:(has)=> has? "Beveiligde betaling via PayPal (Sandbox).":"PayPal niet verbonden: voeg Client ID toe om knoppen te tonen." }
+};
 
-  // i18n minimal
-  const STR = {
-    fr:{ hello:"Bonjour 👋 Écris-moi ci-dessous (style MSN activé !)", ready:"Prêt.", noNews:"Aucun résultat d’actualité trouvé." },
-    en:{ hello:"Hello! How can I assist you today?", ready:"Ready.", noNews:"No news results found." },
-    nl:{ hello:"Hallo! Hoe kan ik je vandaag helpen?", ready:"Klaar.", noNews:"Geen nieuws gevonden." }
-  };
-  let lang = localStorage.getItem("lang") || "fr";
-  let theme = localStorage.getItem("theme") || (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  document.documentElement.setAttribute("data-theme", theme);
+const $=(s,r=document)=>r.querySelector(s);
+const win=$("#win"), chat=$("#chat"), input=$("#input"), send=$("#send");
+const hint=$("#hint"), file=$("#file"); const inputbar=$("#inputbar");
+const btnPrint=$("#btnPrint"), btnDownload=$("#btnDownload");
+const btnSettings=$("#btnSettings"), modal=$("#settings"), closeSettings=$("#closeSettings");
+const btnNudge=$("#btnNudge");
 
-  // DOM
-  const chat = $("#chat"), input=$("#input"), send=$("#send");
-  const left=$("#left"), tierLabel=$("#tierLabel");
-  const btnSettings=$("#btnSettings"), modal=$("#settingsModal");
-  $("#themeSel").value = theme; $("#langSel").value = lang;
+let lang = localStorage.getItem("lang") || (navigator.language||"fr").slice(0,2);
+if(!["fr","en","nl"].includes(lang)) lang="fr";
+setLang(lang);
+$("#lng-fr").onclick=(e)=>{e.preventDefault();setLang("fr");};
+$("#lng-en").onclick=(e)=>{e.preventDefault();setLang("en");};
+$("#lng-nl").onclick=(e)=>{e.preventDefault();setLang("nl");};
+function setLang(l){
+  lang=l; localStorage.setItem("lang",l);
+  $("#t_app").textContent=STR[l].app;
+  $("#t_topup").textContent=STR[l].topup;
+  $("#p1_title").textContent=STR[l].p1; $("#p1_tokens").textContent=STR[l].p1t;
+  $("#p2_title").textContent=STR[l].p2; $("#p2_tokens").textContent=STR[l].p2t;
+  $("#p3_title").textContent=STR[l].p3; $("#p3_tokens").textContent=STR[l].p3t;
+  input.placeholder=STR[l].msgPH; send.textContent=STR[l].send;
+  $("#paypalNote").textContent = STR[l].ppNote(!!PAYPAL_CLIENT_ID);
+  // Activer badge
+  for(const a of document.querySelectorAll(".lang a")) a.classList.toggle("active", a.dataset.lang===l);
+}
 
-  // Helpers
-  function $(sel,root=document){ return root.querySelector(sel); }
-  function el(tag,cls,txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
-  const play = id => { const a=$("#"+id); a && a.play().catch(()=>{}); };
+/* ID client pour suivre les quotas */
+const CLIENT_ID = localStorage.getItem("client-id") || (crypto.randomUUID?.() || String(Math.random()));
+localStorage.setItem("client-id", CLIENT_ID);
 
-  // UI
-  function addMsg(who,text,avatar=false){
-    const m=el("div","msg "+(who==="me"?"me":"bot"));
-    m.textContent=text;
-    if(avatar){ const av=el("div","avatar"); av.textContent="Φ"; m.appendChild(av); }
-    chat.appendChild(m); chat.scrollTop = chat.scrollHeight; return m;
+/* Helpers UI */
+function addMsg(who,text){ const m=document.createElement("div"); m.className=`msg ${who}`; m.textContent=text; chat.appendChild(m); chat.scrollTop=chat.scrollHeight; return m; }
+async function toBase64(file){ return await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+
+/* Intro + Quota */
+addMsg("bot", STR[lang].hello);
+hint.textContent = STR[lang].ready;
+refreshQuota();
+async function refreshQuota(){
+  try{
+    const r=await fetch(`${BACKEND_URL}/api/quota`,{ headers:{ "x-client-id":CLIENT_ID }});
+    const j=await r.json();
+    hint.textContent = STR[lang].solde(j.remaining, j.trialLeft, j.paid);
+  }catch{ hint.textContent="…"; }
+}
+
+/* Envoi message */
+send.onclick = sendMessage;
+input.addEventListener("keydown", e=>{
+  if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+file.addEventListener("change", ()=>{ if(file.files[0]) addMsg("me", STR[lang].attachReady ); });
+
+async function sendMessage(){
+  const text=input.value.trim();
+  if(!text && !file.files[0]) return;
+  if(text){ addMsg("me", text); input.value=""; $("#snd-send").play?.(); }
+
+  let image=null;
+  if(file.files[0]){ image=await toBase64(file.files[0]); file.value=""; }
+
+  // Actu si @ / actu / news
+  if(text && /^@|^actu|^news/i.test(text)){
+    const q=text.replace(/^@/,'').trim()||text;
+    const r=await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
+    const j=await r.json().catch(()=>null);
+    addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join("\n\n") : STR[lang].noNews));
+    $("#snd-recv").play?.(); refreshQuota(); return;
   }
 
-  // Intro
-  addMsg("bot", STR[lang].hello, true);
-  $(".hint").textContent = STR[lang].ready;
-
-  // Quota
-  async function refreshQuota(){
-    const r = await fetch(`${BACKEND_URL}/api/quota`, { headers:{ "x-client-id":clientId }});
-    const j = await r.json();
-    left.textContent = j.remaining ?? "—";
-    tierLabel.textContent = j.tier ?? "free";
-  }
-  refreshQuota();
-
-  // Envoi message
-  async function sendMessage(){
-    const text = input.value.trim();
-    if(!text) return;
-    addMsg("me", text);
-    input.value=""; play("snd-send");
-
-    // Actu rapide si @ ou mot clef
-    const isNews = /^actu|actualité|news|aujourd|qui est|^@/i.test(text);
-    if(isNews){
-      const q = text.replace(/^@/,'').trim() || text;
-      const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
-      const j = await r.json().catch(()=>null);
-      addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join('\n\n') : STR[lang].noNews));
-      play("snd-recv"); return;
-    }
-
-    // image optionnelle
-    const file = $("#file").files[0];
-    let imageBase64=null;
-    if(file){ imageBase64 = await fileToBase64(file); $("#file").value=""; }
-
-    const r = await fetch(`${BACKEND_URL}/api/chat`,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-client-id":clientId,
-        "x-lang":lang
-      },
-      body: JSON.stringify({ message:text, image:imageBase64 })
-    });
-    const j = await r.json();
-    if(r.status===402){ addMsg("bot","⚠️ Quota atteint. Ouvre ⚙️ pour recharger."); return; }
-    addMsg("bot", j.reply || "(pas de réponse)"); play("snd-recv");
-    refreshQuota();
-  }
-  send.onclick = sendMessage;
-  input.addEventListener("keydown", e=>{
-    if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+  const r=await fetch(`${BACKEND_URL}/api/chat`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID,"x-lang":lang },
+    body: JSON.stringify({ message:text, image })
   });
+  if(r.status===402){ addMsg("bot", STR[lang].quotaOut ); return; }
+  const j=await r.json();
+  addMsg("bot", j.reply || "(…)"); $("#snd-recv").play?.(); refreshQuota();
+}
 
-  $("#file").addEventListener("change", ()=>{
-    if($("#file").files[0]) addMsg("me","📎 Image jointe prête (elle sera envoyée au prochain message).");
-  });
+/* Nudge, print, download */
+btnNudge.onclick=()=>{ win.classList.remove("shake"); void win.offsetWidth; win.classList.add("shake"); $("#snd-nudge").play?.(); };
+btnPrint.onclick = ()=>window.print();
+btnDownload.onclick = ()=>{
+  const lines=[...document.querySelectorAll(".msg")].map(m=> (m.classList.contains("me")?"Moi: ":"Φ: ")+m.textContent);
+  const blob=new Blob([lines.join("\n\n")],{type:"text/plain"}), a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="conversation.txt"; a.click();
+};
 
-  // Nudge
-  $("#btnNudge").onclick = ()=>{
-    const w=$("#win"); w.classList.remove("shake"); void w.offsetWidth; w.classList.add("shake"); play("snd-nudge");
-  };
+/* PayPal modal */
+btnSettings.onclick = ()=>{
+  modal.classList.add("show");
+  renderPP("#pp-5","PACK_5"); renderPP("#pp-10","PACK_10"); renderPP("#pp-20","PACK_20");
+};
+closeSettings.onclick = ()=> modal.classList.remove("show");
+modal.addEventListener("click",(e)=>{ if(e.target===modal) closeSettings.click(); });
 
-  // Download / Print
-  $("#btnDownload").onclick = ()=>{
-    let txt=[...document.querySelectorAll(".msg")].map(m=>m.classList.contains("me")?"Moi: "+m.textContent:"Φ: "+m.textContent).join("\n\n");
-    const blob=new Blob([txt],{type:"text/plain"}), a=document.createElement("a");
-    a.href=URL.createObjectURL(blob); a.download="conversation.txt"; a.click();
-  };
-  $("#btnPrint").onclick = ()=>window.print();
-
-  // Paramètres + actu
-  btnSettings.onclick = ()=>{ modal.classList.add("show"); initPayPal(); };
-  $("#closeSettings").onclick = ()=>modal.classList.remove("show");
-  $("#themeSel").onchange = (e)=>{ theme=e.target.value; localStorage.setItem("theme",theme); document.documentElement.setAttribute("data-theme",theme); };
-  $("#langSel").onchange = (e)=>{ lang=e.target.value; localStorage.setItem("lang",lang); };
-  $("#btnNews").onclick = async ()=>{
-    const q=$("#newsQuery").value.trim(); if(!q) return;
-    const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
-    const j = await r.json().catch(()=>null);
-    addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join('\n\n') : STR[lang].noNews));
-  };
-
-  // PayPal — top-up
-  function initPayPal(){
-    if(!window.paypal) return; // SDK non chargé (pas de client id)
-    const mounts = [
-      { id:"pp-5",  packId:"PACK_5"  },
-      { id:"pp-10", packId:"PACK_10" },
-      { id:"pp-20", packId:"PACK_20" },
-    ];
-    mounts.forEach(m=>{
-      const node = $("#"+m.id); if(!node) return; node.innerHTML="";
-      paypal.Buttons({
-        style:{ shape:"pill", color:"blue", layout:"horizontal", label:"pay" },
-        createOrder: ()=> fetch(`${BACKEND_URL}/api/paypal/create-order`,{
-          method:"POST", headers:{ "Content-Type":"application/json","x-client-id":clientId },
-          body: JSON.stringify({ packId:m.packId })
-        }).then(r=>r.json()).then(j=>j.id),
-        onApprove: data => fetch(`${BACKEND_URL}/api/paypal/capture-order`,{
-          method:"POST", headers:{ "Content-Type":"application/json","x-client-id":clientId },
-          body: JSON.stringify({ orderId:data.orderID })
-        }).then(r=>r.json()).then(j=>{
-          if(j.ok){ addMsg("bot","✅ Paiement confirmé. Tokens ajoutés : "+j.added); refreshQuota(); }
-          else{ addMsg("bot","❌ Paiement refusé."); }
-        }),
-        onError: err => addMsg("bot","❌ Erreur PayPal: "+(err?.message||err))
-      }).render(node);
-    });
+function renderPP(sel, packId){
+  const host=$(sel); host.innerHTML="";
+  if(!PAYPAL_CLIENT_ID || !window.__ppReady || !window.paypal){
+    host.innerHTML = '<div style="opacity:.7">—</div>'; return;
   }
+  paypal.Buttons({
+    style:{ shape:"pill", color:"blue", label:"pay", layout:"horizontal" },
+    createOrder: ()=> fetch(`${BACKEND_URL}/api/paypal/create-order`,{
+      method:"POST", headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID },
+      body: JSON.stringify({ packId })
+    }).then(r=>r.json()).then(j=>j.id),
+    onApprove: data => fetch(`${BACKEND_URL}/api/paypal/capture-order`,{
+      method:"POST", headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID },
+      body: JSON.stringify({ orderId:data.orderID })
+    }).then(r=>r.json()).then(j=>{
+      if(j.ok){ addMsg("bot",(lang==="fr"?"✅ Paiement confirmé. +":"✅ Payment confirmed. +")+j.added+" tokens."); refreshQuota(); }
+      else { addMsg("bot", lang==="fr"?"❌ Paiement refusé.":"❌ Payment failed."); }
+    }),
+    onError: err => addMsg("bot","❌ PayPal: "+(err?.message||err))
+  }).render(host);
+}
 
-  // Utils
-  function fileToBase64(file){
-    return new Promise((res,rej)=>{
-      const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
-    });
+/* ===== Corrections mobile : input toujours visible, pas de zoom/sauts ===== */
+(function fixMobileInput(){
+  // Empêche le zoom iOS sur le textarea (font-size >= 16px déjà)
+  // Suit la hauteur de l’écran visible (VisualViewport)
+  if(window.visualViewport){
+    const vv = window.visualViewport;
+    const onVV = ()=>{
+      const bottomInset = Math.max(0, (window.innerHeight - vv.height - vv.offsetTop));
+      // On pousse juste un peu la barre d’entrée si le clavier recouvre
+      inputbar.style.marginBottom = bottomInset ? (bottomInset + 6) + "px" : "0px";
+      chat.scrollTop = chat.scrollHeight;
+    };
+    vv.addEventListener("resize", onVV);
+    vv.addEventListener("scroll", onVV);
+    window.addEventListener("orientationchange", onVV);
+    onVV();
   }
-  </script>
+  // Empêche le body de “rebondir” au scroll pendant saisie
+  document.body.style.overscrollBehaviorY = "contain";
+  // Focus: on scrolle le dernier message en vue
+  input.addEventListener("focus", ()=>{ setTimeout(()=> chat.scrollTop = chat.scrollHeight, 50); });
+})();
+</script>
 </body>
 </html>
