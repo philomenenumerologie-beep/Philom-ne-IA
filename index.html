@@ -2,37 +2,39 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Philomenia • Messenger</title>
 <style>
   :root{
-    --bg:#0f1722;--panel:#121a26;--text:#dbe7ff;--sub:#9db2d7;--a1:#4da3ff;--a2:#2b73d9;
-    --border:#24334a;--me:#1a2638;--bot:#121a26;--input:#0c111a;--ok:#20c997;--warn:#ffb020;--danger:#ff6b6b;
+    --bg:#0f1722;--panel:#121a26;--text:#dbe7ff;--sub:#9db2d7;
+    --a1:#4da3ff;--a2:#2b73d9;--border:#24334a;--me:#1a2638;--bot:#121a26;--input:#0c111a;
   }
   html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
-    font:16px/1.4 system-ui,"Segoe UI",Roboto,Helvetica,Arial;-webkit-text-size-adjust:100%}
-  .app{min-height:100dvh;display:flex;align-items:stretch;justify-content:center;padding:12px}
+    font:16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial;-webkit-text-size-adjust:100%}
+  *{box-sizing:border-box}
+  .wrap{min-height:100dvh;display:flex;align-items:stretch;justify-content:center;padding:12px}
   .win{width:100%;max-width:860px;display:flex;flex-direction:column;border:1px solid var(--border);
     border-radius:12px;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}
-  .bar{display:flex;align-items:center;gap:8px;background:linear-gradient(#5aa0ff,#2d7fff);color:#fff;padding:10px 14px;position:relative}
+  .bar{display:flex;align-items:center;gap:8px;background:linear-gradient(#5aa0ff,#2d7fff);color:#fff;padding:10px 14px}
   .title{font-weight:700;flex:1}
   .lang{display:flex;gap:6px}
   .lang a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:4px 8px;border-radius:8px;opacity:.9}
   .lang a.active{background:rgba(255,255,255,.25)}
   .ibtn{width:38px;height:38px;display:grid;place-items:center;background:rgba(255,255,255,.18);
     border:1px solid rgba(255,255,255,.35);border-radius:10px;cursor:pointer}
-  .tok{position:absolute;right:14px;top:10px;display:flex;flex-direction:column;min-width:150px;gap:6px}
-  .tok .badge{align-self:flex-end;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.35);
-    color:#fff;border-radius:999px;padding:6px 10px;font-weight:700;font-size:.9rem;backdrop-filter:blur(3px)}
-  .tokbar{height:6px;border-radius:999px;background:rgba(255,255,255,.25);overflow:hidden;border:1px solid rgba(255,255,255,.35)}
-  .tokfill{height:100%;width:0;background:linear-gradient(90deg,#9be7a5,#29c77e)}
   .chat{flex:1;min-height:0;overflow:auto;padding:16px;scroll-behavior:smooth}
   .msg{max-width:92%;padding:12px 14px;border:1px solid var(--border);border-radius:14px;margin:8px 0;
-    white-space:pre-wrap;word-wrap:break-word}
+    white-space:pre-wrap;word-break:break-word}
   .me{background:var(--me);margin-left:auto}
   .bot{background:var(--bot)}
-  .hint{font-size:.85rem;color:var(--sub);padding:8px 16px;border-top:1px solid var(--border)}
+  /* panneau tokens sous la discussion */
+  .tokens-panel{padding:10px 14px;border-top:1px solid var(--border);background:rgba(255,255,255,.02)}
+  .t-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .t-badge{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 10px;font-weight:700}
+  .t-detail{font-size:.9rem;color:var(--sub)}
+  .t-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.2);overflow:hidden;border:1px solid rgba(255,255,255,.25);margin-top:8px}
+  .t-fill{height:100%;width:0;background:linear-gradient(90deg,#9be7a5,#20c997)}
+  /* input */
   .input{position:sticky;bottom:0;left:0;right:0;background:var(--panel);
     border-top:1px solid var(--border);padding:10px;display:flex;gap:10px;align-items:center}
   .iconbtn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--border);
@@ -40,6 +42,7 @@
   textarea{flex:1;resize:none;max-height:40vh;padding:12px 14px;border-radius:12px;
     border:1px solid var(--border);background:var(--input);color:inherit;outline:none;font-size:16px}
   button.primary{background:linear-gradient(var(--a2),var(--a1));color:#fff;border:none;padding:12px 18px;border-radius:12px;font-weight:700;min-width:110px}
+  /* modal */
   .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.45);padding:16px}
   .modal.show{display:flex}
   .card{max-width:700px;width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
@@ -48,37 +51,34 @@
   .packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
   .pack{border:1px solid var(--border);border-radius:12px;padding:14px}
   .pill{background:#142033;border:1px solid var(--border);border-radius:999px;padding:2px 8px;margin-left:6px}
-  .note{opacity:.8;font-size:.9rem}
-  .shake{animation:shake .5s linear 1}
-  @keyframes shake{10%{transform:translate(-3px)}20%{transform:translate(3px)}30%{transform:translate(-3px)}40%{transform:translate(3px)}}
   @media (max-width:520px){.msg{max-width:100%}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="wrap">
   <div class="win" id="win">
     <div class="bar">
       <div class="title" id="t_app">Philomenia Messenger</div>
-
-      <div class="lang" style="margin-right:8px">
+      <div class="lang">
         <a href="#" data-lang="fr" id="lng-fr">FR</a>
         <a href="#" data-lang="en" id="lng-en">EN</a>
         <a href="#" data-lang="nl" id="lng-nl">NL</a>
       </div>
-
-      <!-- Compteur tokens -->
-      <div class="tok" id="tokBox" title="Tokens restants">
-        <div class="badge" id="tokBadge">Tokens: —</div>
-        <div class="tokbar"><div class="tokfill" id="tokFill"></div></div>
-      </div>
-
-      <div class="ibtn" id="btnDownload" title="Télécharger" style="margin-left:8px">⬇️</div>
+      <div class="ibtn" id="btnDownload" title="Télécharger">⬇️</div>
       <div class="ibtn" id="btnPrint" title="Imprimer">🖨️</div>
       <div class="ibtn" id="btnSettings" title="Recharger & Paramètres">⚙️</div>
     </div>
 
     <div class="chat" id="chat"></div>
-    <div class="hint" id="hint">…</div>
+
+    <!-- COMPTEUR TOKENS sous la discussion -->
+    <div class="tokens-panel">
+      <div class="t-row">
+        <div class="t-badge" id="tokBadge">Tokens : —</div>
+        <div class="t-detail" id="tokDetail">—</div>
+      </div>
+      <div class="t-bar"><div class="t-fill" id="tokFill"></div></div>
+    </div>
 
     <div class="input" id="inputbar" style="padding-bottom:calc(10px + env(safe-area-inset-bottom))">
       <label class="iconbtn" title="Joindre une image">
@@ -97,94 +97,58 @@
     <h3 id="t_topup">Recharger des tokens (PayPal)</h3>
     <div class="content">
       <div class="packs">
-        <div class="pack"><strong id="p1_title">Pack 5 €</strong><span class="pill" id="p1_tokens">≈ 30 000 tokens</span><div id="pp-5" style="margin-top:8px"></div></div>
-        <div class="pack"><strong id="p2_title">Pack 10 €</strong><span class="pill" id="p2_tokens">≈ 70 000 tokens</span><div id="pp-10" style="margin-top:8px"></div></div>
-        <div class="pack"><strong id="p3_title">Pack 20 €</strong><span class="pill" id="p3_tokens">≈ 150 000 tokens</span><div id="pp-20" style="margin-top:8px"></div></div>
+        <div class="pack"><strong id="p1_title">Pack 5 €</strong> <span class="pill" id="p1_tokens">≈ 12 000 tokens</span><div id="pp-5" style="margin-top:8px"></div></div>
+        <div class="pack"><strong id="p2_title">Pack 10 €</strong> <span class="pill" id="p2_tokens">≈ 28 000 tokens</span><div id="pp-10" style="margin-top:8px"></div></div>
+        <div class="pack"><strong id="p3_title">Pack 20 €</strong> <span class="pill" id="p3_tokens">≈ 60 000 tokens</span><div id="pp-20" style="margin-top:8px"></div></div>
       </div>
-      <p class="note" id="paypalNote" style="margin-top:10px"></p>
       <div style="text-align:right;margin-top:12px"><button id="closeSettings">OK</button></div>
     </div>
   </div>
 </div>
 
-<!-- Sons (vides pour alléger) -->
+<!-- sons (facultatif) -->
 <audio id="snd-send" preload="auto"></audio>
 <audio id="snd-recv" preload="auto"></audio>
 <audio id="snd-nudge" preload="auto"></audio>
 
 <script>
-/* === CONFIG À RENSEIGNER === */
-const BACKEND_URL = "https://philo-backend-xxxx.onrender.com";  // ← mets l’URL de ton backend Render
-const PAYPAL_CLIENT_ID = "";                                     // ← mets ton Client ID PayPal (sandbox) si tu veux afficher les boutons
-/* =========================== */
-</script>
+// ===== CONFIG =====
+const BACKEND_URL = "https://philo-backend-xxxx.onrender.com"; // ← mets ton URL backend
 
-<!-- SDK PayPal (chargé uniquement si CLIENT_ID présent) -->
-<script>
-(function(){
-  if(!PAYPAL_CLIENT_ID){ return; }
-  const s=document.createElement('script');
-  s.src=`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture`;
-  s.onload=()=>window.__ppReady=true;
-  document.head.appendChild(s);
-})();
-</script>
-
-<script>
-// i18n — FR/EN/NL
+// i18n
 const STR = {
-  fr:{app:"Philomenia Messenger",
-      hello:"Bonjour 👋\n• Tape @motclé pour l’actualité\n• Clique sur ⚙️ pour recharger des tokens",
-      ready:"Prêt.",attachReady:"📎 Image prête (envoyée au prochain message).",
-      noNews:"(Aucune actualité trouvée)",
+  fr:{app:"Philomenia Messenger",hello:"Bonjour 👋\n• Tape @motclé pour l’actualité\n• Clique sur ⚙️ pour recharger des tokens",
       topup:"Recharger des tokens (PayPal)",
-      p1:"Pack 5 €",p1t:"≈ 30 000 tokens",p2:"Pack 10 €",p2t:"≈ 70 000 tokens",p3:"Pack 20 €",p3t:"≈ 150 000 tokens",
+      p1:"Pack 5 €",p1t:"≈ 12 000 tokens",p2:"Pack 10 €",p2t:"≈ 28 000 tokens",p3:"Pack 20 €",p3t:"≈ 60 000 tokens",
       msgPH:"Écris ton message…",send:"Envoyer",
-      solde:(r,t,p)=>`Solde : ${r} tokens (gratuit restant : ${t}, payant : ${p})`,
-      quotaOut:"⚠️ Plus de tokens. Ouvre ⚙️ pour recharger.",
-      ppNote:(has)=> has? "Paiement sécurisé via PayPal (Sandbox).":"PayPal non connecté : ajoute le Client ID pour activer les boutons.",
-      badge:(r)=>`Tokens : ${r.toLocaleString("fr-FR")}`
-  },
-  en:{app:"Philomenia Messenger",
-      hello:"Hello 👋\n• Type @keyword for news\n• Click ⚙️ to top up tokens",
-      ready:"Ready.",attachReady:"📎 Image attached (will be sent with your next message).",
-      noNews:"(No news found)",
+      detail:(r,t,p)=>`Solde: ${r.toLocaleString()}  •  Gratuit: ${t.toLocaleString()}  •  Payant: ${p.toLocaleString()}`,
+      out:"⚠️ Plus de tokens. Ouvre ⚙️ pour recharger."},
+  en:{app:"Philomenia Messenger",hello:"Hello 👋\n• Type @keyword for news\n• Click ⚙️ to top up tokens",
       topup:"Top up tokens (PayPal)",
-      p1:"Pack €5",p1t:"≈ 30,000 tokens",p2:"Pack €10",p2t:"≈ 70,000 tokens",p3:"Pack €20",p3t:"≈ 150,000 tokens",
+      p1:"Pack €5",p1t:"≈ 12,000 tokens",p2:"Pack €10",p2t:"≈ 28,000 tokens",p3:"Pack €20",p3t:"≈ 60,000 tokens",
       msgPH:"Type your message…",send:"Send",
-      solde:(r,t,p)=>`Balance: ${r} tokens (free left: ${t}, paid: ${p})`,
-      quotaOut:"⚠️ Out of tokens. Open ⚙️ to top up.",
-      ppNote:(has)=> has? "Secure payment via PayPal (Sandbox).":"PayPal not connected: add Client ID to enable buttons.",
-      badge:(r)=>`Tokens: ${r.toLocaleString("en-US")}`
-  },
-  nl:{app:"Philomenia Messenger",
-      hello:"Hallo 👋\n• Typ @trefwoord voor nieuws\n• Klik ⚙️ om tokens op te laden",
-      ready:"Klaar.",attachReady:"📎 Afbeelding klaar (wordt met je volgende bericht verzonden).",
-      noNews:"(Geen nieuws gevonden)",
+      detail:(r,t,p)=>`Balance: ${r.toLocaleString()}  •  Free: ${t.toLocaleString()}  •  Paid: ${p.toLocaleString()}`,
+      out:"⚠️ Out of tokens. Open ⚙️ to top up."},
+  nl:{app:"Philomenia Messenger",hello:"Hallo 👋\n• Typ @trefwoord voor nieuws\n• Klik ⚙️ om tokens op te laden",
       topup:"Tokens opladen (PayPal)",
-      p1:"Pakket €5",p1t:"≈ 30.000 tokens",p2:"Pakket €10",p2t:"≈ 70.000 tokens",p3:"Pakket €20",p3t:"≈ 150.000 tokens",
+      p1:"Pakket €5",p1t:"≈ 12.000 tokens",p2:"Pakket €10",p2t:"≈ 28.000 tokens",p3:"Pakket €20",p3t:"≈ 60.000 tokens",
       msgPH:"Schrijf je bericht…",send:"Versturen",
-      solde:(r,t,p)=>`Saldo: ${r} tokens (gratis over: ${t}, betaald: ${p})`,
-      quotaOut:"⚠️ Tokens op. Open ⚙️ om op te laden.",
-      ppNote:(has)=> has? "Beveiligde betaling via PayPal (Sandbox).":"PayPal niet verbonden: voeg Client ID toe om knoppen te tonen.",
-      badge:(r)=>`Tokens: ${r.toLocaleString("nl-NL")}`
-  }
+      detail:(r,t,p)=>`Saldo: ${r.toLocaleString()}  •  Gratis: ${t.toLocaleString()}  •  Betaald: ${p.toLocaleString()}`,
+      out:"⚠️ Tokens op. Open ⚙️ om op te laden."}
 };
-
 const $=(s,r=document)=>r.querySelector(s);
-const win=$("#win"), chat=$("#chat"), input=$("#input"), send=$("#send");
-const hint=$("#hint"), file=$("#file"); const inputbar=$("#inputbar");
+const chat=$("#chat"), input=$("#input"), send=$("#send");
+const tokBadge=$("#tokBadge"), tokFill=$("#tokFill"), tokDetail=$("#tokDetail");
 const btnPrint=$("#btnPrint"), btnDownload=$("#btnDownload");
 const btnSettings=$("#btnSettings"), modal=$("#settings"), closeSettings=$("#closeSettings");
-const btnNudge=$("#btnNudge");
-const tokBadge=$("#tokBadge"), tokFill=$("#tokFill");
+const file=$("#file"), win=$("#win");
 
 let lang = localStorage.getItem("lang") || (navigator.language||"fr").slice(0,2);
 if(!["fr","en","nl"].includes(lang)) lang="fr";
 setLang(lang);
-$("#lng-fr").onclick=(e)=>{e.preventDefault();setLang("fr");refreshQuota();};
-$("#lng-en").onclick=(e)=>{e.preventDefault();setLang("en");refreshQuota();};
-$("#lng-nl").onclick=(e)=>{e.preventDefault();setLang("nl");refreshQuota();};
+$("#lng-fr").onclick=(e)=>{e.preventDefault();setLang("fr"); refreshQuota();};
+$("#lng-en").onclick=(e)=>{e.preventDefault();setLang("en"); refreshQuota();};
+$("#lng-nl").onclick=(e)=>{e.preventDefault();setLang("nl"); refreshQuota();};
 function setLang(l){
   lang=l; localStorage.setItem("lang",l);
   $("#t_app").textContent=STR[l].app;
@@ -193,147 +157,148 @@ function setLang(l){
   $("#p2_title").textContent=STR[l].p2; $("#p2_tokens").textContent=STR[l].p2t;
   $("#p3_title").textContent=STR[l].p3; $("#p3_tokens").textContent=STR[l].p3t;
   input.placeholder=STR[l].msgPH; send.textContent=STR[l].send;
-  $("#paypalNote").textContent = STR[l].ppNote(!!PAYPAL_CLIENT_ID);
 }
 
-/* ID client pour suivre les quotas */
+// identité client
 const CLIENT_ID = localStorage.getItem("client-id") || (crypto.randomUUID?.() || String(Math.random()));
 localStorage.setItem("client-id", CLIENT_ID);
 
-/* Helpers UI */
+// UI
 function addMsg(who,text){ const m=document.createElement("div"); m.className=`msg ${who}`; m.textContent=text; chat.appendChild(m); chat.scrollTop=chat.scrollHeight; return m; }
 async function toBase64(file){ return await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+function approxTokens(s){ return Math.ceil((s||"").length/4); }
 
-/* Intro + Quota */
+// Intro
 addMsg("bot", STR[lang].hello);
-hint.textContent = STR[lang].ready;
 
-// On conserve "le max vu" pour la jauge (afin d'avoir une progression crédible)
-let maxSeen = Number(localStorage.getItem("max-tokens") || 0);
-
-function updateTokenUI(rem, trialLeft, paid){
-  // texte pastille
-  tokBadge.textContent = STR[lang].badge(rem);
-  // max vu (si recharge, rem peut augmenter => on met à jour)
-  if(rem > maxSeen){ maxSeen = rem; localStorage.setItem("max-tokens", String(maxSeen)); }
-  const denom = Math.max(maxSeen, 1);
-  const p = Math.max(0, Math.min(1, rem / denom));
-  tokFill.style.width = (p*100).toFixed(1) + "%";
-  // couleur selon niveau
+// TOKEN STATE
+let maxSeen=0, lastPaid=0, lastTrial=0, remaining=0;
+function updateTokenUI(rem, trial, paid){
+  remaining=rem; lastTrial=trial; lastPaid=paid;
+  tokBadge.textContent = (lang==="fr"?"Tokens : ":"Tokens: ")+ rem.toLocaleString();
+  tokDetail.textContent = STR[lang].detail(rem, trial, paid);
+  if(rem>maxSeen) maxSeen=rem;
+  const p = Math.max(0, Math.min(1, rem / Math.max(maxSeen,1)));
+  tokFill.style.width = (p*100).toFixed(1)+"%";
   tokFill.style.background = p>0.6 ? "linear-gradient(90deg,#9be7a5,#20c997)"
-                         : p>0.25 ? "linear-gradient(90deg,#ffd36e,#ffb020)"
-                                  : "linear-gradient(90deg,#ff9aa5,#ff6b6b)";
-  // texte du hint (détail)
-  hint.textContent = STR[lang].solde(rem, trialLeft, paid);
+                        : p>0.25? "linear-gradient(90deg,#ffd36e,#ffb020)"
+                                : "linear-gradient(90deg,#ff9aa5,#ff6b6b)";
 }
 
 async function refreshQuota(){
   try{
     const r=await fetch(`${BACKEND_URL}/api/quota`,{ headers:{ "x-client-id":CLIENT_ID }});
     const j=await r.json();
-    updateTokenUI(Number(j.remaining||0), Number(j.trialLeft||0), Number(j.paid||0));
-  }catch{
-    tokBadge.textContent = STR[lang].badge(0);
-    tokFill.style.width="0%";
-    hint.textContent="…";
-  }
+    const rem = Number(j.remaining||0);
+    const trial = j.tier==="free" ? rem : 0;
+    const paid  = j.tier!=="free" ? rem : 0;
+    updateTokenUI(rem, trial, paid);
+  }catch{ tokBadge.textContent=(lang==="fr"?"Tokens : —":"Tokens: —"); }
 }
 refreshQuota();
 
-/* Envoi message */
+// modèle souhaité (mini si que du gratuit, sinon turbo)
+function currentModel(){ return lastPaid>0 ? "turbo" : "mini"; }
+
+// Envoi
 send.onclick = sendMessage;
 input.addEventListener("keydown", e=>{
   if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
 });
-file.addEventListener("change", ()=>{ if(file.files[0]) addMsg("me", STR[lang].attachReady ); });
+file.addEventListener("change", ()=>{ if(file.files[0]) addMsg("me", lang==="fr"?"📎 Image prête":"📎 Image attached"); });
 
 async function sendMessage(){
   const text=input.value.trim();
   if(!text && !file.files[0]) return;
-  if(text){ addMsg("me", text); input.value=""; $("#snd-send").play?.(); }
+  if(text){ addMsg("me", text); input.value=""; }
 
   let image=null;
   if(file.files[0]){ image=await toBase64(file.files[0]); file.value=""; }
 
-  // Actu si @ / actu / news
+  // Actus si @/news/actu
   if(text && /^@|^actu|^news/i.test(text)){
     const q=text.replace(/^@/,'').trim()||text;
-    const r=await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
-    const j=await r.json().catch(()=>null);
-    addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join("\n\n") : STR[lang].noNews));
-    $("#snd-recv").play?.(); refreshQuota(); return;
+    try{
+      const r=await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
+      const j=await r.json();
+      addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join("\n\n")
+                                       : (lang==="fr"?"(Aucune actualité trouvée)":"(No news found)")));
+    }catch{ addMsg("bot","(news error)"); }
+    refreshQuota(); return;
   }
 
-  const r=await fetch(`${BACKEND_URL}/api/chat`,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID,"x-lang":lang },
-    body: JSON.stringify({ message:text, image })
-  });
-  if(r.status===402){ addMsg("bot", STR[lang].quotaOut ); return; }
-  const j=await r.json();
-  addMsg("bot", j.reply || "(…)"); $("#snd-recv").play?.(); refreshQuota();
+  // Décrément local estimatif (retour visuel immédiat)
+  const est = approxTokens(text) + (image?256:64);
+  updateTokenUI(Math.max(remaining-est,0), lastTrial, lastPaid);
+
+  try{
+    const r=await fetch(`${BACKEND_URL}/api/chat`,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID,"x-lang":lang,"x-model":currentModel() },
+      body: JSON.stringify({ message:text, image })
+    });
+    if(r.status===402){ addMsg("bot", STR[lang].out ); await refreshQuota(); return; }
+    const j=await r.json();
+    addMsg("bot", j.reply || "(…)"); 
+    await refreshQuota(); // valeur serveur = référence
+  }catch{
+    addMsg("bot","[Erreur réseau]");
+    await refreshQuota();
+  }
 }
 
-/* Nudge, print, download */
-$("#btnNudge").onclick=()=>{ win.classList.remove("shake"); void win.offsetWidth; win.classList.add("shake"); $("#snd-nudge").play?.(); };
-$("#btnPrint").onclick = ()=>window.print();
-$("#btnDownload").onclick = ()=>{
+// Imprimer / Télécharger / Nudge / Settings
+btnPrint.onclick = ()=>window.print();
+btnDownload.onclick = ()=>{
   const lines=[...document.querySelectorAll(".msg")].map(m=> (m.classList.contains("me")?"Moi: ":"Φ: ")+m.textContent);
   const blob=new Blob([lines.join("\n\n")],{type:"text/plain"}), a=document.createElement("a");
-  a.href=URL.createObjectURL(blob); a.download="conversation.txt"; a.click();
+  a.href=URL.createObjectURL(blob); a.download="philomenia-conversation.txt"; a.click();
 };
+$("#btnNudge").onclick = ()=>{ win.classList.remove("shake"); void win.offsetWidth; win.classList.add("shake"); $("#snd-nudge")?.play?.(); };
 
-/* PayPal modal */
 btnSettings.onclick = ()=>{
   modal.classList.add("show");
-  renderPP("#pp-5","PACK_5"); renderPP("#pp-10","PACK_10"); renderPP("#pp-20","PACK_20");
+  renderBuy("#pp-5",5,12000);
+  renderBuy("#pp-10",10,28000);
+  renderBuy("#pp-20",20,60000);
 };
 closeSettings.onclick = ()=> modal.classList.remove("show");
-modal.addEventListener("click",(e)=>{ if(e.target===modal) closeSettings.click(); });
+modal.addEventListener("click", e=>{ if(e.target===modal) closeSettings.click(); });
 
-function renderPP(sel, packId){
+function renderBuy(sel, price, tokens){
   const host=$(sel); host.innerHTML="";
-  if(!PAYPAL_CLIENT_ID || !window.__ppReady || !window.paypal){
-    host.innerHTML = '<div style="opacity:.7">—</div>'; return;
-  }
-  paypal.Buttons({
-    style:{ shape:"pill", color:"blue", label:"pay", layout:"horizontal" },
-    createOrder: ()=> fetch(`${BACKEND_URL}/api/paypal/create-order`,{
-      method:"POST", headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID },
-      body: JSON.stringify({ packId })
-    }).then(r=>r.json()).then(j=>j.id),
-    onApprove: data => fetch(`${BACKEND_URL}/api/paypal/capture-order`,{
-      method:"POST", headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID },
-      body: JSON.stringify({ orderId:data.orderID })
-    }).then(r=>r.json()).then(j=>{
-      if(j.ok){
-        addMsg("bot",(lang==="fr"?"✅ Paiement confirmé. +":"✅ Payment confirmed. +")+j.added+" tokens.");
-        refreshQuota();
-      } else {
-        addMsg("bot", lang==="fr"?"❌ Paiement refusé.":"❌ Payment failed.");
-      }
-    }),
-    onError: err => addMsg("bot","❌ PayPal: "+(err?.message||err))
-  }).render(host);
+  const btn=document.createElement("button");
+  btn.textContent = (lang==="fr"?"Payer ":"Pay ") + price+"€";
+  btn.className="primary";
+  btn.onclick = async ()=>{
+    try{
+      const r=await fetch(`${BACKEND_URL}/api/paypal/create-order`,{
+        method:"POST",
+        headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID },
+        body: JSON.stringify({ price, tokens })
+      });
+      const j=await r.json();
+      if(j?.approveUrl){ location.href=j.approveUrl; }
+      else if(j?.id){ addMsg("bot",(lang==="fr"?"Commande PayPal créée":"PayPal order created")); }
+      else { addMsg("bot","PayPal indisponible."); }
+    }catch{ addMsg("bot","Erreur PayPal"); }
+  };
+  host.appendChild(btn);
 }
 
-/* Corrections mobile : input toujours visible, pas de zoom/sauts */
-(function fixMobileInput(){
-  if(window.visualViewport){
-    const vv = window.visualViewport;
-    const onVV = ()=>{
-      const bottomInset = Math.max(0, (window.innerHeight - vv.height - vv.offsetTop));
-      inputbar.style.marginBottom = bottomInset ? (bottomInset + 6) + "px" : "0px";
-      chat.scrollTop = chat.scrollHeight;
-    };
-    vv.addEventListener("resize", onVV);
-    vv.addEventListener("scroll", onVV);
-    window.addEventListener("orientationchange", onVV);
-    onVV();
-  }
-  document.body.style.overscrollBehaviorY = "contain";
-  input.addEventListener("focus", ()=>{ setTimeout(()=> chat.scrollTop = chat.scrollHeight, 50); });
-})();
+// Mobile: input toujours visible (iOS/Android)
+if(window.visualViewport){
+  const vv=window.visualViewport, inputbar=$("#inputbar");
+  const onVV=()=>{
+    const bottomInset = Math.max(0,(window.innerHeight - vv.height - vv.offsetTop));
+    inputbar.style.marginBottom = bottomInset ? (bottomInset+6)+"px":"0px";
+    chat.scrollTop = chat.scrollHeight;
+  };
+  vv.addEventListener("resize", onVV);
+  vv.addEventListener("scroll", onVV);
+  window.addEventListener("orientationchange", onVV);
+  onVV();
+}
 </script>
 </body>
 </html>
