@@ -3,342 +3,314 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Philomenia Messenger 💬</title>
+  <title>Philomenia • Messenger (style MSN)</title>
   <style>
     :root{
-      --bg:#eaf3ff;--panel:#fff;--text:#0b1b33;--border:#c8d6f2;
-      --a1:#3a84ff;--a2:#8ec0ff;
-      --me:#e6f0ff;--bot:#f1f5ff;
+      /* Thème clair MSN */
+      --bg:#eaf3ff; --panel:#fff; --text:#0b1b33; --sub:#4b5a73;
+      --accent1:#3a84ff; --accent2:#8ec0ff; --input:#fff;
+      --bubble-me:#e6f2ff; --bubble-bot:#f2f7fb; --border:#c8d6f2;
+      --shadow:0 10px 30px rgba(0,0,0,.12);
     }
-    @media (prefers-color-scheme:dark){
-      :root{
-        --bg:#0e1117;--panel:#171c24;--text:#eef2ff;--border:#2a3550;
-        --a1:#3a84ff;--a2:#68a2ff;--me:#20335a;--bot:#222838;
-      }
+    [data-theme="dark"]{
+      --bg:#0f1722; --panel:#121a26; --text:#dbe7ff; --sub:#9db2d7;
+      --accent1:#4da3ff; --accent2:#2b73d9; --input:#0c111a;
+      --bubble-me:#1a2638; --bubble-bot:#121a26; --border:#24334a;
+      --shadow:0 12px 40px rgba(0,0,0,.35);
     }
-    html,body{height:100%;margin:0}
-    body{
-      background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
-      display:flex;justify-content:flex-start;align-items:center;flex-direction:column;
-      min-height:100dvh;
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    .app{max-width:860px;margin:16px auto;padding:0 12px}
+    .window{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .titlebar{display:flex;align-items:center;gap:10px;background:linear-gradient(#5aa0ff,#2d7fff);color:#fff;padding:10px 14px;position:sticky;top:0;z-index:3}
+    .dot{width:14px;height:14px;border-radius:50%;background:radial-gradient(#bff,#3cf)}
+    .title{font-weight:700;flex:1}
+    .tbtn{width:38px;height:38px;display:grid;place-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:10px;cursor:pointer}
+    .tbtn:hover{background:rgba(255,255,255,.28)}
+    .chat{height:65vh;min-height:420px;overflow:auto;padding:16px;scroll-behavior:smooth}
+    .msg{max-width:90%;padding:12px 14px;border:1px solid var(--border);border-radius:14px;margin:8px 0;white-space:pre-wrap;word-wrap:break-word}
+    .me{background:var(--bubble-me);margin-left:auto}
+    .bot{background:var(--bubble-bot)}
+    .avatar{float:right;margin-left:8px;width:40px;height:40px;border-radius:10px;background:#cfe2ff;display:grid;place-items:center}
+    .inputbar{display:flex;gap:10px;align-items:center;border-top:1px solid var(--border);padding:10px;background:var(--panel);position:sticky;bottom:0}
+    textarea{flex:1;resize:none;max-height:40vh;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);outline:none}
+    textarea:focus{border-color:var(--accent1);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent1) 20%, transparent)}
+    button.primary{background:linear-gradient(var(--accent2),var(--accent1));color:#fff;border:none;padding:12px 18px;border-radius:12px;font-weight:700;min-width:120px}
+    button.primary:active{transform:translateY(1px)}
+    .iconbtn{width:44px;height:44px;border:1px solid var(--border);background:var(--panel);border-radius:12px;display:grid;place-items:center}
+    .row{display:flex;gap:10px;align-items:center}
+    .hint{font-size:.85rem;color:var(--sub);padding:8px 16px}
+    .pill{background:#e8f1ff;border:1px solid var(--border);color:var(--sub);padding:2px 8px;border-radius:999px;margin-left:6px}
+    [data-theme="dark"] .pill{background:#142033}
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.4);padding:16px}
+    .modal.show{display:flex}
+    .card{max-width:680px;width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+    .card h3{margin:0;padding:16px;border-bottom:1px solid var(--border)}
+    .card .content{padding:16px}
+    .pack{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+    .shake{animation:shake .5s linear 1}
+    @keyframes shake{
+      10%{transform:translate(-3px,0)} 20%{transform:translate(3px,0)}
+      30%{transform:translate(-3px,0)} 40%{transform:translate(3px,0)}
+      50%{transform:translate(-2px,0)} 60%{transform:translate(2px,0)}
+      70%{transform:translate(-2px,0)} 80%{transform:translate(2px,0)}
+      90%{transform:translate(-1px,0)} 100%{transform:translate(0,0)}
     }
-    .win{
-      width:min(640px,95vw);height:min(90dvh,900px);margin:1rem 0;background:var(--panel);
-      border:2px solid var(--border);border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.15);
-      display:flex;flex-direction:column;overflow:hidden;transform:translateZ(0);
+    @media (max-width:520px){
+      .chat{height:70dvh}
+      .titlebar{border-radius:12px 12px 0 0}
+      .avatar{display:none}
+      .msg{max-width:100%}
     }
-    header{
-      background:linear-gradient(#5aa3ff,#8ec0ff);color:#fff;display:flex;align-items:center;justify-content:space-between;
-      padding:.45rem .6rem;user-select:none
-    }
-    header h1{margin:0;font-size:.95rem;display:flex;gap:.5rem;align-items:center}
-    .btns{display:flex;gap:.35rem}
-    .icon{
-      border:none;border-radius:6px;padding:.25rem .45rem;background:rgba(255,255,255,.22);color:#fff;cursor:pointer
-    }
-    .icon:hover{background:rgba(255,255,255,.35)}
-    #chat{
-      flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem;scroll-behavior:smooth;
-      background:
-        radial-gradient(ellipse at top left, rgba(255,255,255,.25) 0 30%, transparent 30%) top 12px left 12px/14px 14px no-repeat,
-        transparent;
-    }
-    .msg{max-width:82%;padding:.5rem .6rem;border-radius:8px;word-wrap:break-word;overflow-wrap:anywhere;border:1px solid var(--border)}
-    .bot{background:var(--bot)}
-    .me{background:var(--me);align-self:flex-end}
-    .sys{opacity:.8;font-style:italic}
-    footer{
-      border-top:1px solid var(--border);padding:.5rem;display:flex;gap:.45rem;align-items:center;
-      position:relative
-    }
-    textarea#input{
-      flex:1;min-height:42px;max-height:120px;padding:.55rem .6rem;border:1px solid var(--border);
-      border-radius:8px;resize:none;font:inherit;background:#fff;color:inherit
-    }
-    .send{background:var(--a1);color:#fff;border:none;border-radius:8px;padding:.6rem .9rem;font-weight:600;cursor:pointer}
-    .send:hover{background:var(--a2)}
-    .quota{font-size:.83rem;color:#6b7280;border-top:1px solid var(--border);padding:.35rem .8rem}
-    /* mobile barre input fixe */
-    .win{contain:layout size style}
-    /* modale paramètres / abonnements */
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem}
-    .modal.open{display:flex}
-    .card{width:min(700px,95vw);max-height:85dvh;overflow:auto;background:var(--panel);color:var(--text);
-      border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:1rem}
-    .card h2{margin:.2rem 0 .4rem}
-    .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem}
-    .plan{border:1px solid var(--border);border-radius:10px;padding:.8rem}
-    .plan h3{margin:.2rem 0}
-    .badge{display:inline-block;background:var(--a1);color:#fff;border-radius:999px;padding:.15rem .5rem;font-size:.75rem}
-    .row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-    .hint{font-size:.85rem;opacity:.8}
-    .pill{background:#eef3ff;color:#111;border:1px solid var(--border);border-radius:999px;padding:.2rem .5rem;font-size:.8rem}
-    .hide{display:none}
-    /* mini toaster */
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;background:#111;color:#fff;padding:.6rem .9rem;border-radius:8px;opacity:0;transition:.25s}
-    .toast.show{opacity:1}
   </style>
-  <!-- PayPal SDK (Sandbox). Remplace client-id (YOUR-PAYPAL-CLIENT-ID). Pour LIVE, utilise https://www.paypal.com/sdk/js?... -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR-PAYPAL-CLIENT-ID&currency=EUR&vault=true" defer></script>
 </head>
 <body>
-  <div class="win" id="win">
-    <header>
-      <h1>💬 Philomenia Messenger</h1>
-      <div class="btns">
-        <button class="icon" id="nudgeBtn" title="Nudge (secousse)">🫨</button>
-        <button class="icon" id="downloadBtn" title="Télécharger">⬇️</button>
-        <button class="icon" id="printBtn" title="Imprimer">🖨️</button>
-        <button class="icon" id="attachBtn" title="Joindre une image">📎</button>
-        <button class="icon" id="settingsBtn" title="Paramètres & Abonnements">⚙️</button>
-        <input type="file" id="imageInput" accept="image/*" class="hide" />
+  <div class="app">
+    <div class="window" id="win">
+      <div class="titlebar">
+        <div class="dot"></div>
+        <div class="title">Philomenia Messenger</div>
+        <div class="tbtn" id="btnDownload" title="Télécharger la conversation">⬇️</div>
+        <div class="tbtn" id="btnPrint" title="Imprimer">🖨️</div>
+        <div class="tbtn" id="btnSettings" title="Paramètres & recharges">⚙️</div>
       </div>
-    </header>
 
-    <div id="chat" aria-live="polite">
-      <div class="msg bot">Bonjour 👋 Écris-moi ci-dessous (style MSN activé !)</div>
+      <div class="chat" id="chat"></div>
+      <div class="hint" id="quotaHint">Forfait actuel : <span id="tierLabel">free</span> — Tokens restants : <strong id="left">…</strong></div>
+
+      <div class="inputbar">
+        <label class="iconbtn" title="Joindre une image (jpeg/png)">
+          📎
+          <input type="file" id="file" accept="image/*" style="display:none">
+        </label>
+        <button class="iconbtn" id="btnNudge" title="Nudge MSN">🔔</button>
+        <textarea id="input" rows="1" placeholder="Écris ton message… (Entrée pour envoyer)"></textarea>
+        <button class="primary" id="send">Envoyer</button>
+      </div>
     </div>
-
-    <footer>
-      <textarea id="input" placeholder="Écris ton message… (Entrée pour envoyer)"></textarea>
-      <button class="send" id="sendBtn">Envoyer</button>
-    </footer>
-
-    <div class="quota" id="quotaInfo">Prêt.</div>
   </div>
 
-  <!-- MODALE paramètres / abonnements -->
+  <!-- Modal paramètres / recharges -->
   <div class="modal" id="settingsModal" aria-hidden="true">
     <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>Paramètres & Abonnements</h2>
-        <button class="icon" id="closeSettings">✖</button>
-      </div>
+      <h3>Paramètres</h3>
+      <div class="content">
+        <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:14px">
+          <div>
+            <label>Thème</label><br/>
+            <select id="themeSel">
+              <option value="light">Clair (MSN)</option>
+              <option value="dark">Sombre</option>
+            </select>
+          </div>
+          <div>
+            <label>Langue</label><br/>
+            <select id="langSel">
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+              <option value="nl">Nederlands</option>
+            </select>
+          </div>
+          <div>
+            <label>Actualités</label><br/>
+            <input id="newsQuery" placeholder="ex: premier ministre français" style="width:240px">
+            <button id="btnNews">Chercher</button>
+          </div>
+        </div>
 
-      <p class="hint">Forfait actuel : <span id="tierLabel" class="pill">free</span> — Tokens restants : <span id="remainLabel">—</span></p>
-
-      <h3>Abonnements PayPal</h3>
-      <div class="plans">
-        <div class="plan">
-          <h3>Mini Mensuel <span class="badge">1,49 €</span></h3>
-          <p class="hint">≈ 1 000 tokens / mois</p>
-          <div id="pp-mini-month"></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+        <h4 style="margin:0 0 8px">Recharger des tokens (PayPal)</h4>
+        <div class="pack">
+          <strong>Pack 5 €</strong> <span class="pill">≈ 4 000 tokens</span>
+          <div id="pp-5" style="margin-top:8px"></div>
         </div>
-        <div class="plan">
-          <h3>Pro Mensuel <span class="badge">4,90 €</span></h3>
-          <p class="hint">≈ 5 000 tokens / mois</p>
-          <div id="pp-pro-month"></div>
+        <div class="pack">
+          <strong>Pack 10 €</strong> <span class="pill">≈ 9 000 tokens</span>
+          <div id="pp-10" style="margin-top:8px"></div>
         </div>
-        <div class="plan">
-          <h3>Mini Annuel <span class="badge">15 €</span></h3>
-          <p class="hint">≈ 12 000 tokens / an</p>
-          <div id="pp-mini-year"></div>
+        <div class="pack">
+          <strong>Pack 20 €</strong> <span class="pill">≈ 20 000 tokens</span>
+          <div id="pp-20" style="margin-top:8px"></div>
         </div>
-        <div class="plan">
-          <h3>Pro Annuel <span class="badge">50 €</span></h3>
-          <p class="hint">≈ 60 000 tokens / an</p>
-          <div id="pp-pro-year"></div>
+        <div class="row" style="justify-content:flex-end">
+          <button id="closeSettings">Fermer</button>
         </div>
       </div>
-
-      <hr style="margin:1rem 0;border-color:var(--border)">
-      <h3>Options</h3>
-      <div class="row">
-        <button class="icon" id="forceFree">Basculer sur Free</button>
-        <button class="icon" id="forceMini">Basculer sur Mini</button>
-        <button class="icon" id="forcePro">Basculer sur Pro</button>
-        <button class="icon" id="refreshQuota">Rafraîchir quota</button>
-      </div>
-      <p class="hint">Les bascules locales servent pour tester l’UI. Le vrai statut vient de PayPal côté serveur quand tu l’intégreras complètement.</p>
     </div>
   </div>
 
-  <!-- Sons MSN (data URI légers) -->
-  <audio id="snd-send" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYAAAAA..."></audio>
-  <audio id="snd-recv" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYAAAAA..."></audio>
-  <audio id="snd-nudge" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYAAAAA..."></audio>
+  <!-- Sons (petits bips intégrés) -->
+  <audio id="snd-send" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
+  <audio id="snd-recv" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
+  <audio id="snd-nudge" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
 
-  <div class="toast" id="toast"></div>
+  <!-- PayPal SDK (SANDBOX par défaut) -->
+  <script>
+    // TODO: mets ton CLIENT-ID sandbox (puis tu passeras l'URL en live quand tu seras prêt)
+    const PAYPAL_CLIENT_ID = "YOUR-PAYPAL-CLIENT-ID";
+    if (PAYPAL_CLIENT_ID && !document.getElementById('pp-sdk')) {
+      const s=document.createElement('script');
+      s.id='pp-sdk';
+      s.src=`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture`;
+      document.head.appendChild(s);
+    }
+  </script>
 
   <script>
-    // ===================== CONFIG =====================
-    const BACKEND_URL = "https://philo-backend-su29.onrender.com"; // ton backend Render
-    const CLIENT_ID = localStorage.getItem("clientId") || crypto.randomUUID();
-    localStorage.setItem("clientId", CLIENT_ID);
-    let tier = localStorage.getItem("tier") || "free"; // free | mini | pro
-    // ==================================================
+  // === Config ===
+  // TODO: remplace par l’URL de ton backend Render
+  const BACKEND_URL = "https://philo-backend-su29.onrender.com";
 
-    // ======= UI refs
-    const win = document.getElementById("win");
-    const chat = document.getElementById("chat");
-    const input = document.getElementById("input");
-    const sendBtn = document.getElementById("sendBtn");
-    const attachBtn = document.getElementById("attachBtn");
-    const imageInput = document.getElementById("imageInput");
-    const printBtn = document.getElementById("printBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const settingsBtn = document.getElementById("settingsBtn");
-    const nudgeBtn = document.getElementById("nudgeBtn");
-    const quotaInfo = document.getElementById("quotaInfo");
+  // id client pour quota
+  const clientId = localStorage.getItem("client-id") || (crypto.randomUUID?.() || String(Math.random())).toString();
+  localStorage.setItem("client-id", clientId);
 
-    const settingsModal = document.getElementById("settingsModal");
-    const closeSettings = document.getElementById("closeSettings");
-    const tierLabel = document.getElementById("tierLabel");
-    const remainLabel = document.getElementById("remainLabel");
-    const forceFree = document.getElementById("forceFree");
-    const forceMini = document.getElementById("forceMini");
-    const forcePro = document.getElementById("forcePro");
-    const refreshQuota = document.getElementById("refreshQuota");
+  // i18n minimal
+  const STR = {
+    fr:{ hello:"Bonjour 👋 Écris-moi ci-dessous (style MSN activé !)", ready:"Prêt.", noNews:"Aucun résultat d’actualité trouvé." },
+    en:{ hello:"Hello! How can I assist you today?", ready:"Ready.", noNews:"No news results found." },
+    nl:{ hello:"Hallo! Hoe kan ik je vandaag helpen?", ready:"Klaar.", noNews:"Geen nieuws gevonden." }
+  };
+  let lang = localStorage.getItem("lang") || "fr";
+  let theme = localStorage.getItem("theme") || (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  document.documentElement.setAttribute("data-theme", theme);
 
-    const sndSend = document.getElementById("snd-send");
-    const sndRecv = document.getElementById("snd-recv");
-    const sndNudge = document.getElementById("snd-nudge");
-    const toast = document.getElementById("toast");
+  // DOM
+  const chat = $("#chat"), input=$("#input"), send=$("#send");
+  const left=$("#left"), tierLabel=$("#tierLabel");
+  const btnSettings=$("#btnSettings"), modal=$("#settingsModal");
+  $("#themeSel").value = theme; $("#langSel").value = lang;
 
-    // ======= helper
-    function addMessage(text, who="bot"){
-      const div=document.createElement("div");
-      div.className=`msg ${who}`;
-      div.textContent=text;
-      chat.appendChild(div);
-      chat.scrollTop=chat.scrollHeight;
-    }
-    function showToast(msg){
-      toast.textContent=msg; toast.classList.add("show");
-      setTimeout(()=>toast.classList.remove("show"),1700);
-    }
+  // Helpers
+  function $(sel,root=document){ return root.querySelector(sel); }
+  function el(tag,cls,txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+  const play = id => { const a=$("#"+id); a && a.play().catch(()=>{}); };
 
-    // ======= nudge (secousse + son)
-    function nudge(){
-      sndNudge?.play().catch(()=>{});
-      win.animate(
-        [{transform:"translateX(0)"},{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"translateX(0)"}],
-        {duration:400,iterations:2}
-      );
-    }
+  // UI
+  function addMsg(who,text,avatar=false){
+    const m=el("div","msg "+(who==="me"?"me":"bot"));
+    m.textContent=text;
+    if(avatar){ const av=el("div","avatar"); av.textContent="Φ"; m.appendChild(av); }
+    chat.appendChild(m); chat.scrollTop = chat.scrollHeight; return m;
+  }
 
-    // ======= Quota
-    async function updateQuota(){
-      try{
-        const r=await fetch(`${BACKEND_URL}/api/quota`,{
-          headers:{ "x-client-id":CLIENT_ID,"x-tier":tier }
-        });
-        const d=await r.json();
-        tierLabel.textContent=d.tier||tier;
-        remainLabel.textContent=d.remaining ?? "—";
-        quotaInfo.textContent=`Forfait : ${d.tier||tier} • ${d.remaining} tokens restants`;
-      }catch(e){
-        quotaInfo.textContent=`Forfait : ${tier} • (quota indisponible)`;
-      }
+  // Intro
+  addMsg("bot", STR[lang].hello, true);
+  $(".hint").textContent = STR[lang].ready;
+
+  // Quota
+  async function refreshQuota(){
+    const r = await fetch(`${BACKEND_URL}/api/quota`, { headers:{ "x-client-id":clientId }});
+    const j = await r.json();
+    left.textContent = j.remaining ?? "—";
+    tierLabel.textContent = j.tier ?? "free";
+  }
+  refreshQuota();
+
+  // Envoi message
+  async function sendMessage(){
+    const text = input.value.trim();
+    if(!text) return;
+    addMsg("me", text);
+    input.value=""; play("snd-send");
+
+    // Actu rapide si @ ou mot clef
+    const isNews = /^actu|actualité|news|aujourd|qui est|^@/i.test(text);
+    if(isNews){
+      const q = text.replace(/^@/,'').trim() || text;
+      const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
+      const j = await r.json().catch(()=>null);
+      addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join('\n\n') : STR[lang].noNews));
+      play("snd-recv"); return;
     }
 
-    // ======= envoyer
-    async function sendMessage(imageData){
-      const text = input.value.trim();
-      if(!text && !imageData) return;
+    // image optionnelle
+    const file = $("#file").files[0];
+    let imageBase64=null;
+    if(file){ imageBase64 = await fileToBase64(file); $("#file").value=""; }
 
-      if(text){ addMessage(text,"me"); sndSend?.play().catch(()=>{}); }
-      input.value="";
-
-      const body = { message:text };
-      if(imageData) body.image = imageData;
-
-      const r=await fetch(`${BACKEND_URL}/api/chat`,{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "x-client-id":CLIENT_ID,
-          "x-tier":tier
-        },
-        body:JSON.stringify(body)
-      });
-      const d=await r.json();
-
-      if(d.reply){ addMessage(d.reply,"bot"); sndRecv?.play().catch(()=>{}); }
-      if(d.quota){
-        quotaInfo.textContent=`Forfait : ${d.quota.tier} • ${d.quota.remaining} tokens restants`;
-        tierLabel.textContent=d.quota.tier;
-        remainLabel.textContent=d.quota.remaining;
-      }
-      if(d.error){ showToast(d.error); }
-    }
-
-    // ======= events
-    sendBtn.onclick=()=>sendMessage();
-    input.addEventListener("keydown",e=>{
-      if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+    const r = await fetch(`${BACKEND_URL}/api/chat`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-client-id":clientId,
+        "x-lang":lang
+      },
+      body: JSON.stringify({ message:text, image:imageBase64 })
     });
+    const j = await r.json();
+    if(r.status===402){ addMsg("bot","⚠️ Quota atteint. Ouvre ⚙️ pour recharger."); return; }
+    addMsg("bot", j.reply || "(pas de réponse)"); play("snd-recv");
+    refreshQuota();
+  }
+  send.onclick = sendMessage;
+  input.addEventListener("keydown", e=>{
+    if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+  });
 
-    attachBtn.onclick=()=>imageInput.click();
-    imageInput.onchange=()=>{
-      const f=imageInput.files?.[0]; if(!f) return;
-      const reader=new FileReader();
-      reader.onload=()=>{ sendMessage(reader.result); showToast("Image jointe envoyée"); };
-      reader.readAsDataURL(f);
-    };
+  $("#file").addEventListener("change", ()=>{
+    if($("#file").files[0]) addMsg("me","📎 Image jointe prête (elle sera envoyée au prochain message).");
+  });
 
-    printBtn.onclick=()=>window.print();
-    downloadBtn.onclick=()=>{
-      const lines=[...chat.querySelectorAll(".msg")].map(m=> (m.classList.contains("me")?"Moi: ":"Φ: ")+m.textContent );
-      const blob=new Blob([lines.join("\n\n")],{type:"text/plain;charset=utf-8"});
-      const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-      a.download=`philomenia_chat_${Date.now()}.txt`; a.click();
-      URL.revokeObjectURL(a.href);
-    };
+  // Nudge
+  $("#btnNudge").onclick = ()=>{
+    const w=$("#win"); w.classList.remove("shake"); void w.offsetWidth; w.classList.add("shake"); play("snd-nudge");
+  };
 
-    settingsBtn.onclick=()=>{ settingsModal.classList.add("open"); settingsModal.setAttribute("aria-hidden","false"); };
-    closeSettings.onclick=()=>{ settingsModal.classList.remove("open"); settingsModal.setAttribute("aria-hidden","true"); };
-    settingsModal.addEventListener("click",e=>{ if(e.target===settingsModal) closeSettings.click(); });
+  // Download / Print
+  $("#btnDownload").onclick = ()=>{
+    let txt=[...document.querySelectorAll(".msg")].map(m=>m.classList.contains("me")?"Moi: "+m.textContent:"Φ: "+m.textContent).join("\n\n");
+    const blob=new Blob([txt],{type:"text/plain"}), a=document.createElement("a");
+    a.href=URL.createObjectURL(blob); a.download="conversation.txt"; a.click();
+  };
+  $("#btnPrint").onclick = ()=>window.print();
 
-    nudgeBtn.onclick=()=>nudge();
+  // Paramètres + actu
+  btnSettings.onclick = ()=>{ modal.classList.add("show"); initPayPal(); };
+  $("#closeSettings").onclick = ()=>modal.classList.remove("show");
+  $("#themeSel").onchange = (e)=>{ theme=e.target.value; localStorage.setItem("theme",theme); document.documentElement.setAttribute("data-theme",theme); };
+  $("#langSel").onchange = (e)=>{ lang=e.target.value; localStorage.setItem("lang",lang); };
+  $("#btnNews").onclick = async ()=>{
+    const q=$("#newsQuery").value.trim(); if(!q) return;
+    const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
+    const j = await r.json().catch(()=>null);
+    addMsg("bot", (j?.results?.length? j.results.map(n=>`📰 ${n.title}\n🔗 ${n.link}`).join('\n\n') : STR[lang].noNews));
+  };
 
-    // boutons test de forfait local (UI only)
-    function setTier(t){ tier=t; localStorage.setItem("tier",t); updateQuota(); showToast(`Forfait local : ${t}`); }
-    forceFree.onclick=()=>setTier("free");
-    forceMini.onclick=()=>setTier("mini");
-    forcePro.onclick=()=>setTier("pro");
-    refreshQuota.onclick=()=>updateQuota();
-
-    // ======= Mobile: garder la fenêtre stable quand clavier s’ouvre
-    // (100dvh + scrollIntoView si besoin)
-    input.addEventListener("focus",()=>{
-      setTimeout(()=>{ sendBtn.scrollIntoView({block:"nearest"}); },100);
-    });
-
-    // ======= init
-    addMessage("Hello! How can I assist you today?","bot");
-    updateQuota();
-
-    // ======= PayPal Buttons (montants fixes — Sandbox)
-    // NOTE: Remplace "YOUR-PAYPAL-CLIENT-ID" dans la balise <script> en haut.
-    // Ici on crée des paiements simples (non-subscription) pour démo.
-    function renderPP(id, valueEUR, label){
-      if(!window.paypal){ document.getElementById(id).innerHTML='<div class="hint">⚠️ Configure ton Client ID PayPal (Sandbox) pour afficher le bouton.</div>'; return; }
+  // PayPal — top-up
+  function initPayPal(){
+    if(!window.paypal) return; // SDK non chargé (pas de client id)
+    const mounts = [
+      { id:"pp-5",  packId:"PACK_5"  },
+      { id:"pp-10", packId:"PACK_10" },
+      { id:"pp-20", packId:"PACK_20" },
+    ];
+    mounts.forEach(m=>{
+      const node = $("#"+m.id); if(!node) return; node.innerHTML="";
       paypal.Buttons({
-        style:{ layout:"vertical", color:"blue", shape:"pill", label:"paypal" },
-        createOrder:(data,actions)=>{
-          return actions.order.create({
-            purchase_units:[{ amount:{ currency_code:"EUR", value:String(valueEUR) }, description:`${label}` }]
-          });
-        },
-        onApprove: async (data,actions)=>{
-          await actions.order.capture();
-          // Ici, côté vrai app : appeler ton backend pour valider et enregistrer niveau
-          // await fetch(`${BACKEND_URL}/api/paypal/verify`, { ... })
-          // Pour la démo on bascule l’UI localement :
-          if(/Mini/.test(label)) setTier("mini"); else setTier("pro");
-          showToast(`Paiement validé : ${label}`);
-        },
-        onError: ()=> showToast("Erreur PayPal")
-      }).render(`#${id}`);
-    }
-
-    window.addEventListener("load",()=>{
-      renderPP("pp-mini-month", 1.49, "Mini Mensuel");
-      renderPP("pp-pro-month",  4.90, "Pro Mensuel");
-      renderPP("pp-mini-year", 15.00, "Mini Annuel");
-      renderPP("pp-pro-year",  50.00, "Pro Annuel");
+        style:{ shape:"pill", color:"blue", layout:"horizontal", label:"pay" },
+        createOrder: ()=> fetch(`${BACKEND_URL}/api/paypal/create-order`,{
+          method:"POST", headers:{ "Content-Type":"application/json","x-client-id":clientId },
+          body: JSON.stringify({ packId:m.packId })
+        }).then(r=>r.json()).then(j=>j.id),
+        onApprove: data => fetch(`${BACKEND_URL}/api/paypal/capture-order`,{
+          method:"POST", headers:{ "Content-Type":"application/json","x-client-id":clientId },
+          body: JSON.stringify({ orderId:data.orderID })
+        }).then(r=>r.json()).then(j=>{
+          if(j.ok){ addMsg("bot","✅ Paiement confirmé. Tokens ajoutés : "+j.added); refreshQuota(); }
+          else{ addMsg("bot","❌ Paiement refusé."); }
+        }),
+        onError: err => addMsg("bot","❌ Erreur PayPal: "+(err?.message||err))
+      }).render(node);
     });
+  }
+
+  // Utils
+  function fileToBase64(file){
+    return new Promise((res,rej)=>{
+      const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+    });
+  }
   </script>
 </body>
 </html>
