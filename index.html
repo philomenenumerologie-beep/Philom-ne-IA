@@ -1,351 +1,229 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>Philomenia • Messenger (style MSN)</title>
-<style>
-:root{
-  --bg:#eaf3ff; --panel:#fff; --text:#0b1b33; --sub:#4b5a73;
-  --accent1:#3a84ff; --accent2:#8ec0ff; --input:#fff;
-  --bubble-me:#e6f2ff; --bubble-bot:#f0f5ff; --border:#c8d6f2;
-  --shadow:0 6px 20px rgba(18,44,96,.15);
-}
-[data-theme="dark"]{
-  --bg:#0f172a; --panel:#0b1222; --text:#e5eeff; --sub:#a9bbda;
-  --accent1:#60a5ff; --accent2:#3b82f6; --input:#0f192f;
-  --bubble-me:#0f274a; --bubble-bot:#0b1d3a; --border:#1e2c49;
-  --shadow:0 10px 24px rgba(0,0,0,.35);
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-.app{min-height:100svh;display:flex;flex-direction:column}
-.msnbar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;padding:10px;background:linear-gradient(#6fb3ff,#3b7dff);color:#fff;box-shadow:var(--shadow)}
-.title{font-weight:700}
-.spacer{flex:1}
-.icon{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 10px;cursor:pointer}
-.chat{flex:1;display:flex;flex-direction:column}
-.log{flex:1;overflow:auto;padding:12px;background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.bubble{max-width:88%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;padding:10px 12px;border:1px solid var(--border);border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.05);margin:8px 0;background:var(--bubble-bot)}
-.me{background:var(--bubble-me);margin-left:auto}
-.meta{color:var(--sub);font-size:12px;margin:2px 4px}
-.composer{display:flex;gap:8px;align-items:flex-end;padding:10px;background:var(--panel)}
-#input{flex:1;min-height:44px;max-height:160px;resize:none;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--input);color:var(--text);outline:none}
-.actions{display:flex;gap:8px;align-items:center}
-button.primary{min-width:110px;border-radius:10px;border:1px solid #2b5cff;color:#fff;background:linear-gradient(#6aa2ff,#2f6fff);padding:10px 14px;cursor:pointer;box-shadow:0 8px 20px rgba(69,120,255,.25);font-weight:700}
-input[type=file]{display:none}
-label.attach{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--bubble-bot);color:var(--text);cursor:pointer}
-.badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;background:var(--bubble-bot);color:var(--sub);font-size:12px}
-.toolbar{display:flex;gap:8px}
-@keyframes nudge{0%,100%{transform:translate(0,0)}10%{transform:translate(-6px,0)}20%{transform:translate(6px,0)}30%{transform:translate(-4px,0)}40%{transform:translate(4px,0)}50%{transform:translate(-3px,0)}60%{transform:translate(3px,0)}70%{transform:translate(-2px,0)}80%{transform:translate(2px,0)}90%{transform:translate(-1px,0)}}
-.shake{animation:nudge .6s ease-in-out}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;place-items:center;padding:16px;z-index:5}
-.modal.on{display:grid}
-.card{width:min(760px,96vw);background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px}
-.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.plan{border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--bubble-me)}
-.price{font-weight:700;margin:4px 0 10px}
-.row{display:flex;gap:8px}
-input.inline{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--input);color:var(--text)}
-.btn{border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
-.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn.solid{background:var(--accent1);color:#fff}
-.hint{color:var(--sub);font-size:12px}
-@media (max-width:700px){.plans{grid-template-columns:1fr}}
-</style>
-<!-- PayPal SDK — SANDBOX (A). Pour Live, remplace par l’ID Live -->
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR-PAYPAL-CLIENT-ID&vault=true&intent=subscription&currency=EUR"></script>
-</head>
-<body>
-<div class="app" id="app">
-  <div class="msnbar">
-    <div class="title">Philomenia Messenger</div>
-    <span class="badge" id="quota">Quota: —</span>
-    <div class="spacer"></div>
-    <div class="toolbar">
-      <button class="icon" id="btnNews">📰</button>
-      <button class="icon" id="btnNudge">💥</button>
-      <button class="icon" id="btnDownload">💾</button>
-      <button class="icon" id="btnPrint">🖨️</button>
-      <button class="icon" id="btnTheme">🌙</button>
-      <button class="icon" id="btnSub">💳</button>
-    </div>
-  </div>
+// --- Philomenia Backend (quotas sans coupon) ---
+import express from "express";
+import cors from "cors";
+import fetch from "node-fetch";
+import OpenAI from "openai";
+import dotenv from "dotenv";
+dotenv.config();
 
-  <div class="chat" id="chatWin">
-    <div class="log" id="log"></div>
+// ---- OpenAI
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    <div class="composer" id="composer">
-      <textarea id="input" placeholder="Écris ton message… (Entrée pour envoyer)" rows="2"></textarea>
-      <div class="actions">
-        <input type="file" id="file" accept="image/*" />
-        <label class="attach" for="file">📎 Joindre</label>
-        <button id="send" class="primary">Envoyer</button>
-      </div>
-    </div>
-  </div>
-</div>
+// ---- CORS
+const DEFAULT_ORIGINS = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://philomenia.com",
+  "https://www.philomenia.com",
+  "https://philomeneia.com",
+  "https://www.philomeneia.com"
+];
+const ALLOWED = (process.env.ALLOWED_ORIGINS || DEFAULT_ORIGINS.join(","))
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
 
-<!-- Modale Abonnements -->
-<div class="modal" id="subModal">
-  <div class="card">
-    <h3>Abonnement Philomenia</h3>
-    <p class="hint">Mini/Pro en mensuel ou annuel. Code promo possible (1 mois gratuit PRO).</p>
-
-    <div class="row" style="margin:6px 0 12px">
-      <input id="coupon" class="inline" placeholder="Code promo (ex: PHILO1MOIS)" />
-      <button id="applyCoupon" class="btn solid">Activer</button>
-      <span id="couponMsg" class="hint"></span>
-    </div>
-
-    <div class="plans">
-      <div class="plan">
-        <h4>Mini</h4>
-        <div class="price">1,49 €/mois</div><div id="pp-mini-m"></div>
-        <div class="price">15 €/an</div><div id="pp-mini-y"></div>
-      </div>
-      <div class="plan">
-        <h4>Pro</h4>
-        <div class="price">4,90 €/mois</div><div id="pp-pro-m"></div>
-        <div class="price">50 €/an</div><div id="pp-pro-y"></div>
-      </div>
-    </div>
-
-    <div style="text-align:right;margin-top:12px">
-      <button class="btn ghost" id="subClose">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modale News -->
-<div class="modal" id="newsModal">
-  <div class="card">
-    <h3>Actualités</h3>
-    <div class="row" style="margin-bottom:10px">
-      <input id="newsQuery" class="inline" placeholder="Sujet (ex: Ligue des Champions, IA…)" />
-      <button id="newsGo" class="btn solid">Chercher</button>
-    </div>
-    <div id="newsList" class="hint">Tape un sujet puis “Chercher”.</div>
-    <div style="text-align:right;margin-top:12px">
-      <button class="btn ghost" id="newsClose">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ====== CONFIG ====== */
-const BACKEND_URL = "https://philo-backend-su29.onrender.com"; // <- mets ton URL backend
-// PayPal plan IDs (mets les tiens)
-const PLAN_MINI_MOIS = "P-XXXXMINIMONTH";
-const PLAN_MINI_AN   = "P-XXXXMINIYEAR";
-const PLAN_PRO_MOIS  = "P-XXXXPROMONTH";
-const PLAN_PRO_AN    = "P-XXXXPROYEAR";
-
-/* ====== STATE ====== */
-const $ = s => document.querySelector(s);
-const app = $("#app"), log = $("#log"), input = $("#input"), send = $("#send");
-const file = $("#file"), quotaEl = $("#quota");
-const btnTheme=$("#btnTheme"), btnPrint=$("#btnPrint"), btnDownload=$("#btnDownload");
-const btnNudge=$("#btnNudge"), chatWin=$("#chatWin");
-const btnSub=$("#btnSub"), subModal=$("#subModal"), subClose=$("#subClose");
-const coupon=$("#coupon"), applyCoupon=$("#applyCoupon"), couponMsg=$("#couponMsg");
-const btnNews=$("#btnNews"), newsModal=$("#newsModal"), newsClose=$("#newsClose");
-const newsQuery=$("#newsQuery"), newsGo=$("#newsGo");
-let imageData = ""; // dataURL si pièce jointe
-let theme = localStorage.getItem("theme") || "light";
-document.documentElement.setAttribute("data-theme", theme);
-
-// clientId persistant (pour quota serveur)
-let cid = localStorage.getItem("philo.cid");
-if(!cid){ cid = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random()); localStorage.setItem("philo.cid", cid); }
-
-// abonnement local (juste indicatif côté front)
-function currentTier(){
-  const sub = JSON.parse(localStorage.getItem("philo.sub") || "{}");
-  // sub.plan = "Mini Mensuel" / "Pro Annuel" / etc.
-  if((sub.plan||"").toLowerCase().includes("pro")) return "pro";
-  if((sub.plan||"").toLowerCase().includes("mini")) return "mini";
-  return "free";
-}
-function currentToken(){
-  return localStorage.getItem("philo.token") || "";
-}
-
-/* ====== UI HELPERS ====== */
-function addBubble(text, me=false){
-  const b = document.createElement("div");
-  b.className = "bubble" + (me ? " me" : "");
-  b.innerHTML = text.replace(/\n/g,"<br>");
-  log.appendChild(b);
-  log.scrollTop = log.scrollHeight;
-}
-function setQuota(q){
-  if(!q) { quotaEl.textContent = "Quota: —"; return; }
-  quotaEl.textContent = `Quota: ${q.percent}% restants`;
-}
-
-/* ====== SOUNDS & NUDGE ====== */
-function beep(freq=880, dur=0.08){
-  try{
-    const ac = new (window.AudioContext||window.webkitAudioContext)();
-    const o = ac.createOscillator(), g = ac.createGain();
-    o.type="triangle"; o.frequency.value=freq;
-    o.connect(g); g.connect(ac.destination);
-    g.gain.setValueAtTime(0.0001, ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.2, ac.currentTime + 0.02);
-    o.start();
-    setTimeout(()=>{ g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.02); o.stop(); }, dur*1000);
-  }catch(_){}
-}
-btnNudge.addEventListener("click", ()=>{
-  app.classList.add("shake"); setTimeout(()=>app.classList.remove("shake"), 650);
-  beep(440,0.1); setTimeout(()=>beep(660,0.1),120);
-});
-
-/* ====== THEME / PRINT / DOWNLOAD ====== */
-btnTheme.onclick = ()=>{
-  theme = (theme==="light" ? "dark":"light");
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-};
-btnPrint.onclick = ()=>window.print();
-btnDownload.onclick = ()=>{
-  const text = [...log.querySelectorAll(".bubble")].map(x=>x.innerText).join("\n\n");
-  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "conversation-"+Date.now()+".txt";
-  a.click();
-  URL.revokeObjectURL(a.href);
-};
-
-/* ====== FILE ATTACH ====== */
-file.addEventListener("change", ()=>{
-  const f = file.files[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = e => { imageData = e.target.result; addBubble("📎 Image jointe ajoutée (sera envoyée avec le prochain message)"); };
-  reader.readAsDataURL(f);
-});
-
-/* ====== NEWS ====== */
-btnNews.onclick = ()=> newsModal.classList.add("on");
-newsClose.onclick = ()=> newsModal.classList.remove("on");
-newsGo.onclick = async ()=>{
-  const q = newsQuery.value.trim(); if(!q) return;
-  $("#newsList").textContent = "Chargement…";
-  try{
-    const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q));
-    const d = await r.json();
-    if(!Array.isArray(d.results) || d.results.length===0){
-      $("#newsList").textContent = "Aucun résultat.";
-      return;
+const app = express();
+app.use(express.json({ limit: "10mb" }));
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true); // mobile apps / curl
+      return cb(null, ALLOWED.includes(origin));
     }
-    $("#newsList").innerHTML = d.results.map(n => `
-      <div class="bubble">
-        <strong>${n.title || "Sans titre"}</strong><br>
-        <span class="meta">${n.source||""} — ${n.date||""}</span><br>
-        <a href="${n.link}" target="_blank" rel="noopener">Ouvrir</a>
-      </div>
-    `).join("");
-  }catch(e){
-    $("#newsList").textContent = "Erreur.";
+  })
+);
+
+// ---- Tiers & quotas
+// maxTokens: limite par requête vers OpenAI (sécurité)
+const TIER = {
+  free: { monthly: 500, maxTokens: 2000 },
+  mini: { monthly: 10_000, maxTokens: 4000 },
+  pro:  { monthly: 60_000, maxTokens: 8000 }
+};
+
+// ---- Stockage usage (mémoire). Pour la prod durable : Redis/DB.
+const usage = {}; // { [clientId]: { [yyyymm]: { used: number } } }
+
+const ymNow = () => {
+  const d = new Date();
+  return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+};
+
+// ---- Helpers
+const approxTokens = (str = "") => Math.ceil((str || "").length / 4);
+
+// Détermine le palier à partir des headers
+function resolveTier(req) {
+  // Front enverra `x-tier: free|mini|pro` (par défaut free)
+  let tier = (req.headers["x-tier"] || "free").toString().toLowerCase();
+  if (!["free", "mini", "pro"].includes(tier)) tier = "free";
+  return tier;
+}
+
+// Récupère l'identifiant client (à garder simple : header requis côté front)
+function resolveClientId(req) {
+  // front envoie un x-client-id (localStorage UID). Si absent, fallback à IP.
+  return (
+    (req.headers["x-client-id"] || "").toString() ||
+    req.ip ||
+    "anonymous"
+  );
+}
+
+// Ajoute la conso et renvoie {used, remaining}
+function checkAndAddUsage(clientId, tier, tokensToAdd) {
+  const month = ymNow();
+  usage[clientId] ||= {};
+  usage[clientId][month] ||= { used: 0 };
+
+  const limit = TIER[tier].monthly;
+  const u = usage[clientId][month];
+  const remaining = Math.max(0, limit - u.used);
+
+  if (tokensToAdd > remaining) {
+    return { ok: false, limit, used: u.used, remaining };
   }
-};
-
-/* ====== SUBSCRIPTIONS (PayPal) & COUPON ====== */
-btnSub.onclick = ()=> subModal.classList.add("on");
-subClose.onclick = ()=> subModal.classList.remove("on");
-
-applyCoupon.onclick = async ()=>{
-  couponMsg.textContent = "Vérification…";
-  try{
-    const r = await fetch(`${BACKEND_URL}/api/coupon/redeem`, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ code: coupon.value.trim() })
-    });
-    const d = await r.json();
-    if(!r.ok || !d.ok){ couponMsg.textContent = d.error || "Code invalide."; return; }
-    localStorage.setItem("philo.token", d.token);
-    localStorage.setItem("philo.sub", JSON.stringify({ plan:"Pro (coupon)", expiresAt:d.expiresAt }));
-    couponMsg.textContent = "✅ 1 mois PRO activé !";
-    updateQuota();
-  }catch(_){ couponMsg.textContent = "Erreur réseau."; }
-};
-
-// rendu des 4 boutons PayPal
-function renderPayPal(target, planId, label){
-  if(!window.paypal){ console.warn("PayPal SDK absent"); return; }
-  paypal.Buttons({
-    style:{ layout:'vertical', color:'blue', shape:'pill', label:'subscribe' },
-    createSubscription: (data, actions) => actions.subscription.create({ plan_id: planId }),
-    onApprove: (data) => {
-      localStorage.setItem("philo.sub", JSON.stringify({ plan: label, subId: data.subscriptionID }));
-      alert("Merci ! Abonnement "+label+" activé.");
-      subModal.classList.remove("on");
-      updateQuota();
-    }
-  }).render("#"+target);
+  u.used += tokensToAdd;
+  return { ok: true, limit, used: u.used, remaining: limit - u.used };
 }
-renderPayPal("pp-mini-m", PLAN_MINI_MOIS, "Mini Mensuel");
-renderPayPal("pp-mini-y", PLAN_MINI_AN,   "Mini Annuel");
-renderPayPal("pp-pro-m",  PLAN_PRO_MOIS,  "Pro Mensuel");
-renderPayPal("pp-pro-y",  PLAN_PRO_AN,    "Pro Annuel");
 
-/* ====== QUOTA ====== */
-async function updateQuota(){
-  try{
-    const r = await fetch(`${BACKEND_URL}/api/quota`, {
-      headers:{
-        "x-client-id": cid,
-        "x-tier": currentTier(),
-        ...(currentToken()? { "Authorization":"Bearer "+currentToken() } : {})
+// ---- Routes
+
+// Santé
+app.get("/health", (_, res) => res.json({ ok: true }));
+
+// Quota
+app.get("/api/quota", (req, res) => {
+  const clientId = resolveClientId(req);
+  const tier = resolveTier(req);
+  const month = ymNow();
+  const u = usage[clientId]?.[month]?.used || 0;
+  const limit = TIER[tier].monthly;
+  res.json({
+    tier,
+    monthlyLimit: limit,
+    used: u,
+    remaining: Math.max(0, limit - u)
+  });
+});
+
+// Actualités via Serper
+app.get("/api/news", async (req, res) => {
+  try {
+    const q = (req.query.q || "").toString().trim();
+    if (!q) return res.status(400).json({ error: "Paramètre 'q' requis" });
+
+    const r = await fetch("https://google.serper.dev/news", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": process.env.SERPER_API_KEY || "",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q })
+    });
+    const data = await r.json();
+
+    const items = (data.news || []).slice(0, 5).map(item => ({
+      title: item.title,
+      link: item.link,
+      source: item.source,
+      date: item.date
+    }));
+
+    res.json({ results: items });
+  } catch (e) {
+    console.error("News error:", e);
+    res.status(500).json({ error: "Erreur actus." });
+  }
+});
+
+// Chat
+app.post("/api/chat", async (req, res) => {
+  try {
+    const clientId = resolveClientId(req);
+    const tier = resolveTier(req);
+
+    const messageRaw = (req.body?.message || "").toString();
+    const imageBase64 = (req.body?.imageBase64 || "").toString(); // optionnel
+    if (!messageRaw && !imageBase64) {
+      return res.status(400).json({ error: "Message ou image requis." });
+    }
+
+    const promptTokens = approxTokens(messageRaw);
+    const maxGen = TIER[tier].maxTokens;
+
+    // On calcule la conso *avant* (prompt + sortie max théorique prudente ~50% de maxGen)
+    const expected = promptTokens + Math.ceil(maxGen * 0.5);
+    const quota = checkAndAddUsage(clientId, tier, expected);
+    if (!quota.ok) {
+      return res.status(402).json({
+        error: "Quota mensuel atteint. Passe à l’abonnement supérieur.",
+        quota: { used: quota.used, remaining: quota.remaining }
+      });
+    }
+
+    // Messages pour OpenAI
+    const messages = [
+      {
+        role: "system",
+        content:
+          "Tu es Philomène, utile, concise, avec un ton chaleureux style assistant MSN. Réponds en français si l’utilisateur parle français."
+      },
+    ];
+
+    if (imageBase64) {
+      messages.push({
+        role: "user",
+        content: [
+          { type: "text", text: messageRaw || "Analyse cette image, stp." },
+          {
+            type: "input_image",
+            image_url: { url: `data:image/png;base64,${imageBase64}` }
+          }
+        ]
+      });
+    } else {
+      messages.push({ role: "user", content: messageRaw });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_tokens: maxGen,
+      temperature: 0.4,
+      messages
+    });
+
+    const replyText =
+      completion.choices?.[0]?.message?.content?.trim() || "(pas de réponse)";
+    // Ajuste la conso réelle (diff entre prévu et réel)
+    const realOut = approxTokens(replyText);
+    const realTotal = promptTokens + realOut;
+    const month = ymNow();
+    usage[clientId][month].used -= expected; // retire l'estimation
+    const again = checkAndAddUsage(clientId, tier, realTotal); // pose la conso réelle
+    if (!again.ok) {
+      // si ça passe pas en réel (rare), on remet l'estimation initiale au lieu du réel pour ne pas bloquer
+      usage[clientId][month].used += expected;
+    }
+
+    const u = usage[clientId][month].used;
+    res.json({
+      reply: replyText,
+      quota: {
+        tier,
+        used: u,
+        remaining: Math.max(0, TIER[tier].monthly - u)
       }
     });
-    const d = await r.json();
-    if(d && typeof d.percent === "number"){ setQuota(d); }
-  }catch(_){ quotaEl.textContent = "Quota: —"; }
-}
-updateQuota();
-
-/* ====== SEND ====== */
-async function sendMessage(){
-  const text = input.value.trim(); if(!text && !imageData) return;
-  addBubble(text || "(image)", true);
-  input.value = "";
-
-  try{
-    const r = await fetch(`${BACKEND_URL}/api/chat`, {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-client-id": cid,
-        "x-tier": currentTier(),
-        ...(currentToken()? { "Authorization":"Bearer "+currentToken() } : {})
-      },
-      body: JSON.stringify({ message: text, image: imageData })
-    });
-    const d = await r.json();
-    if(!r.ok){ addBubble("❌ "+(d.error||"Erreur")); return; }
-    addBubble(d.reply || "…");
-    updateQuota();
-  }catch(e){
-    addBubble("❌ Erreur de connexion.");
-  }finally{
-    imageData = ""; // consomme la pièce jointe une fois
+  } catch (error) {
+    console.error("Erreur backend:", error);
+    res.status(500).json({ error: "Erreur serveur." });
   }
-}
-send.onclick = sendMessage;
-input.addEventListener("keydown",(e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }});
+});
 
-// message d’accueil
-addBubble("Bonjour 👋\nTu peux chatter, joindre une image, voir les actus (📰) et t’abonner (💳).");
-
-/* ====== iPhone UX : éviter les sauts quand le clavier s’ouvre ====== */
-const composer = document.getElementById("composer");
-function lockHeight(){ composer.style.position="sticky"; composer.style.bottom="env(safe-area-inset-bottom)"; }
-lockHeight();
-</script>
-</body>
-</html>
+// ---- Lancement
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`✅ Serveur en ligne sur le port ${PORT}`);
+});
