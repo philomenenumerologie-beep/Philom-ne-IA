@@ -294,9 +294,10 @@ el('btnNL').onclick=()=>addMsg('bot','🇳🇱 Nederlands geselecteerd');
 // Boot
 refreshMe();
 addMsg('bot','Bonjour ! Comment puis-je vous aider aujourd’hui ?');
-</script>
-</body>
-  const API_BASE = 'https://philo-backend-xxxx.onrender.com'; // ← remplace
+...
+refreshMe();
+addMsg('bot','Bonjour ! Comment puis-je vous aider aujourd’hui ?');
+const API_BASE = 'https://philo-backend-xxxx.onrender.com'; // ← remplace
 
 function api(path, opts = {}) {
   return fetch(API_BASE + path, {
@@ -371,4 +372,7 @@ async function logout() {
 }
 
 document.addEventListener('DOMContentLoaded', initUser);
-</html>
+</script>
+</body>
+</html>  
+
