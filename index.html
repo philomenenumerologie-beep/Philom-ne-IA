@@ -133,9 +133,24 @@
     <div id="lgMsg" class="hint"></div>
   </div>
 </dialog>
-
 <script>
-const BACKEND_URL = "https://philo-backend-su29.onrender.com";
+  // === Config backend ===
+  const BACKEND_URL = 'https://philo-backend-xxxx.onrender.com'; // <-- remplace par TON URL Render exact
+
+  // === Appel API (unique) ===
+  async function api(path, opt = {}) {
+    const r = await fetch(BACKEND_URL + path, {
+      method: opt.method || 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',               // indispensable pour le cookie
+      body: opt.body ? JSON.stringify(opt.body) : undefined
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+  // (ensuite ton code existant : helpers, setHUD, refresh/initUser, doSend, signup, login, spend, logout…)
+<script>
+const API_BASE = 'https://philo-backend-xxx…'
 
 const el = id => document.getElementById(id);
 const msgs = el('msgs');
@@ -308,17 +323,7 @@ function api(path, opts = {}) {
     body: opts.body ? JSON.stringify(opts.body) : undefined
   }).then(r => r.json());
 }
-const API_BASE = 'https://philo-backend-xxxx.onrender.com'; // ← remplace
 
-function api(path, opts = {}) {
-  return fetch(API_BASE + path, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',     // ← INDISPENSABLE pour les cookies
-    ...opts,
-    body: opts.body ? JSON.stringify(opts.body) : undefined
-  }).then(r => r.json());
-}
 
 // --- HUD ---
 const elTotal = document.getElementById('tkTotal');           // ex: <span id="tkTotal"></span>
