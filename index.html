@@ -2,347 +2,298 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <title>Philomenia Messenger (style MSN)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Philomenia Messenger</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b1220; --panel:#0e1b2e; --text:#e8f0ff; --sub:#9fb4d6;
-      --acc1:#3aa4ff; --acc2:#8ec0ff; --bubble-me:#0e66ff22; --bubble-bot:#103559aa;
-      --border:#274467; --shadow: 0 10px 30px #0008;
+      --bg:#0e1420;--panel:#122038;--panel2:#0b172a;--text:#e8f0ff;--muted:#9bb0d1;
+      --primary:#3b82f6;--primary-2:#2563eb;--danger:#f43f5e;--ok:#22c55e;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background: radial-gradient(1200px 800px at 10% -10%, #143257, #081120 60%);
-      color:var(--text);
-    }
-    .app{
-      max-width:820px;margin:12px auto;padding:0 12px;
-    }
-    .window{
-      background:linear-gradient(#2c6cd8,#2a60bd 60%,#214e9a);
-      border-radius:16px; box-shadow:var(--shadow); overflow:hidden;
-      border:1px solid #1f3f7f;
-    }
-    .titlebar{
-      display:flex;align-items:center;gap:10px;padding:12px 14px;
-    }
-    .titlebar .lamp{
-      width:14px;height:14px;border-radius:50%;
-      background:#33ff5a;box-shadow:0 0 10px #33ff5a88 inset,0 0 8px #33ff5a88;
-      margin-right:6px;
-    }
-    .title{font-weight:700;text-shadow:0 1px 0 #0006}
-    .tb-actions{margin-left:auto;display:flex;gap:10px}
-    .btn-ico{
-      width:40px;height:40px;border-radius:10px;border:1px solid #19407f;
-      background:linear-gradient(#0b1c36,#0a1730); color:#cfe3ff;
-      display:grid;place-items:center;cursor:pointer;
-    }
-    .btn-ico:hover{outline:2px solid #3aa4ff55}
-    .tabs{display:flex;gap:8px;padding:0 14px 12px}
-    .tab{
-      padding:6px 10px;border-radius:10px;border:1px solid #19407f;
-      background:#0a1730;color:#cfe3ff;cursor:pointer;min-width:48px;text-align:center
-    }
-    .tab.active{background:#14305a;border-color:#2e6fe0}
-    .panel{
-      background:var(--panel); border-top:1px solid #153361;
-      padding:14px;min-height:360px;max-height:55dvh;overflow:auto;
-    }
-    .bubble{
-      background:var(--bubble-bot);padding:12px 14px;border-radius:12px;
-      border:1px solid var(--border); margin:10px 0; max-width:92%;
-      box-shadow: inset 0 0 0 1px #0004;
-    }
-    .me{margin-left:auto;background:var(--bubble-me)}
-    .hint{color:var(--sub);font-size:14px;line-height:1.4}
-    .footer{
-      background:#0a1730;border-top:1px solid #153361;padding:10px 12px;
-      position: sticky; bottom:0; z-index:2;
-    }
-    .composer{display:flex;gap:10px;align-items:center}
-    .attach, .nudge{
-      width:44px;height:44px;border-radius:12px;border:1px solid #19407f;
-      background:#0e1b2e;color:#cfe3ff;display:grid;place-items:center;cursor:pointer;
-    }
-    .input{
-      flex:1;border:1px solid #274467;background:#0e1b2e;color:var(--text);
-      border-radius:12px;padding:12px 14px;min-height:44px;max-height:120px;overflow:auto
-    }
-    .send{
-      min-width:120px;height:44px;border-radius:12px;border:1px solid #19407f;
-      background:linear-gradient(#2e7bff,#2162d9);color:white;font-weight:700;cursor:pointer
-    }
-    .meter{
-      margin:8px 0 0; height:8px;border-radius:999px;background:#0b162a;border:1px solid #18335f;
-      position:relative;overflow:hidden
-    }
-    .meter > i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,#2e7bff,#38e3ff);transition:width .25s}
-    .small{font-size:13px;color:#a8c2ea;margin-top:6px}
-    /* Modal settings */
-    .modal{position:fixed;inset:0;background:#0008;display:none;place-items:center;padding:18px}
-    .modal.open{display:grid}
-    .card{
-      width:min(820px,96vw); max-height:88dvh; overflow:auto;
-      background:#0a1730;border:1px solid #274467;border-radius:16px; box-shadow:var(--shadow); padding:16px;
-    }
-    .h2{font-size:20px;margin:4px 0 14px}
-    .pack{border:1px solid #274467;border-radius:12px;padding:14px;margin:10px 0;background:#0e1b2e}
-    .primary{background:#2e7bff;color:#fff;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .row > *{flex:1}
-    /* iOS focus fix: preserve layout height */
-    .viewport{height:calc(100dvh - 24px)}
-    @media (max-width:520px){ .send{min-width:100px} .panel{max-height:52dvh} }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial}
+    .wrap{max-width:860px;margin:16px auto;padding:0 12px}
+    .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid #193252;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+    header{display:flex;align-items:center;gap:10px;padding:14px 16px}
+    .title{font-weight:700;font-size:18px}
+    .badge{margin-left:auto;background:#0d2444;border:1px solid #1d3b68;border-radius:12px;padding:6px 10px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid #1f3d6b;background:#10274a;color:#dbeafe;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .btn.primary{background:var(--primary);border-color:var(--primary-2);color:white}
+    .btn.ghost{background:transparent}
+    .btn.small{padding:6px 9px;border-radius:8px}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .pill{padding:6px 10px;border-radius:999px;background:#0d2444;border:1px solid #1d3b68}
+    .chat{padding:12px;display:flex;flex-direction:column;height:62vh}
+    .msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px}
+    .bubble{max-width:80%;padding:10px 12px;border-radius:12px;border:1px solid #23416f;background:#0f2442}
+    .bubble.me{margin-left:auto;background:#133058}
+    .input{display:flex;gap:8px;padding:12px;border-top:1px solid #1a345c;background:#0b172c;border-radius:0 0 14px 14px}
+    textarea{flex:1;resize:none;min-height:40px;max-height:160px;padding:10px;border-radius:10px;border:1px solid #1f3d6b;background:#091326;color:var(--text)}
+    .hud{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px dashed #294971;background:#0a162b;border-radius:0 0 14px 14px}
+    .muted{color:var(--muted)}
+    .right{margin-left:auto}
+    dialog{border:none;border-radius:14px;padding:0;max-width:420px;width:calc(100% - 24px);background:linear-gradient(180deg,#11213b,#0c1a30);color:var(--text)}
+    .modal-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #1a345c}
+    .modal-b{padding:16px}
+    input[type="email"],input[type="password"]{width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid #1f3d6b;background:#091326;color:var(--text)}
+    .hint{font-size:12px;color:var(--muted)}
+    .ok{color:var(--ok)} .ko{color:var(--danger)}
   </style>
 </head>
 <body>
-<div class="app viewport">
-  <div class="window">
-    <div class="titlebar">
-      <div class="lamp"></div>
-      <div class="title">Philomenia Messenger</div>
-      <div class="tb-actions">
-        <button class="btn-ico" id="btnDownload" title="Télécharger la conversation">⬇️</button>
-        <button class="btn-ico" id="btnPrint" title="Imprimer">🖨️</button>
-        <button class="btn-ico" id="btnSettings" title="Paramètres • Recharger">⚙️</button>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" data-lang="fr">FR</button>
-      <button class="tab" data-lang="en">EN</button>
-      <button class="tab" data-lang="nl">NL</button>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-        <span style="background:#19325a;border:1px solid #274467;color:#cfe3ff;border-radius:12px;padding:6px 10px">
-          <strong>Tokens :</strong>
-          <span id="tok-free" title="Gratuits"></span> /
-          <span id="tok-paid" title="Payés"></span> —
-          <span id="tok-total" title="Total"></span>
-        </span>
-      </div>
-    </div>
-
-    <div class="panel" id="chat">
-      <div class="bubble hint" id="hello"></div>
-    </div>
-
-    <div class="footer">
-      <div class="composer">
-        <button class="attach" id="btnAttach" title="Envoyer une image">📎</button>
-        <button class="nudge" id="btnNudge" title="Nudge">🔔</button>
-        <div class="input" id="input" contenteditable="true" role="textbox" aria-multiline="true"></div>
-        <button class="send" id="btnSend">Envoyer</button>
-      </div>
-      <div class="meter"><i id="meterFill"></i></div>
-      <div class="small" id="detail"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Sons (facultatif) -->
-<audio id="snd-send" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA"></audio>
-<audio id="snd-recv" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA"></audio>
-<audio id="snd-nudge" preload="auto" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA"></audio>
-
-<!-- Modal paramètres -->
-<div class="modal" id="settings">
+<div class="wrap">
   <div class="card">
-    <div class="h2">Paramètres</div>
-    <div class="row">
-      <div>
-        <label>Actualités</label>
-        <div style="display:flex;gap:8px">
-          <input id="newsQ" placeholder="ex : premier ministre français" style="flex:1;border:1px solid #274467;background:#0e1b2e;color:#e8f0ff;border-radius:10px;padding:10px"/>
-          <button class="primary" id="btnNews">Chercher</button>
-        </div>
-        <div id="newsRes" class="small" style="margin-top:8px"></div>
+    <header class="row">
+      <div class="title">Philomenia Messenger</div>
+      <div class="row">
+        <button class="btn small pill" id="btnFR">FR</button>
+        <button class="btn small pill" id="btnEN">EN</button>
+        <button class="btn small pill" id="btnNL">NL</button>
+      </div>
+      <div class="badge">
+        <strong>Tokens :</strong>
+        <span id="tkTotal">0</span>
+        <span class="muted">/</span>
+        <span class="muted" id="tkPaid">0</span>
+        <span class="muted">—</span>
+        <span class="muted" id="tkFree">0</span>
+      </div>
+      <button class="btn small pill" id="btnSettings" title="Paramètres">⚙️</button>
+    </header>
+
+    <!-- Auth + actions -->
+    <div class="row" style="padding:10px 14px;justify-content:space-between">
+      <div class="muted" id="hello">Bonjour 👋 • Tape @motclé pour l’actualité</div>
+      <div class="row">
+        <button class="btn small" id="btnSignup">S’inscrire</button>
+        <button class="btn small" id="btnLogin">Se connecter</button>
+        <button class="btn small" id="btnLogout" style="display:none">Se déconnecter</button>
       </div>
     </div>
 
-    <div class="h2" style="margin-top:16px">Recharger des tokens (PayPal)</div>
-    <div class="pack">
-      <div class="row" style="align-items:center">
-        <div><strong>Pack 5 €</strong><br/><span class="small">≈ 12 000 tokens</span></div>
-        <button class="primary" data-price="5"  data-tokens="12000">Payer 5 €</button>
-      </div>
-    </div>
-    <div class="pack">
-      <div class="row" style="align-items:center">
-        <div><strong>Pack 10 €</strong><br/><span class="small">≈ 28 000 tokens</span></div>
-        <button class="primary" data-price="10" data-tokens="28000">Payer 10 €</button>
-      </div>
-    </div>
-    <div class="pack">
-      <div class="row" style="align-items:center">
-        <div><strong>Pack 20 €</strong><br/><span class="small">≈ 60 000 tokens</span></div>
-        <button class="primary" data-price="20" data-tokens="60000">Payer 20 €</button>
+    <!-- Zone chat -->
+    <div class="chat">
+      <div id="msgs" class="msgs"></div>
+      <div class="input">
+        <textarea id="txt" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+        <button class="btn primary" id="btnSend">Envoyer</button>
       </div>
     </div>
 
-    <div style="text-align:right;margin-top:8px">
-      <button class="primary" style="background:#274467" id="closeSettings">Fermer</button>
+    <!-- HUD tokens -->
+    <div class="hud">
+      <div class="muted">
+        <span id="hudBalance">Solde : 0</span>
+        <span class="muted">• Gratuit : </span><span id="hudFree">0</span>
+        <span class="muted">• Payant : </span><span id="hudPaid">0</span>
+      </div>
+      <div class="row right">
+        <button class="btn small" id="btnBuy">Recharger (PayPal)</button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Modal Inscription -->
+<dialog id="dlgSignup">
+  <div class="modal-h">
+    <strong>Créer un compte</strong>
+    <button class="btn small ghost" data-close="dlgSignup">✖</button>
+  </div>
+  <div class="modal-b">
+    <div class="hint">Bonus d’essai : <strong>+2000 tokens</strong> une seule fois après validation.</div>
+    <label>Email</label>
+    <input id="suEmail" type="email" autocomplete="email" placeholder="ton@email.com">
+    <label>Mot de passe</label>
+    <input id="suPass" type="password" autocomplete="new-password" placeholder="••••••••">
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" data-close="dlgSignup">Annuler</button>
+      <button class="btn primary" id="doSignup">Valider</button>
+    </div>
+    <div id="suMsg" class="hint"></div>
+  </div>
+</dialog>
+
+<!-- Modal Connexion -->
+<dialog id="dlgLogin">
+  <div class="modal-h">
+    <strong>Se connecter</strong>
+    <button class="btn small ghost" data-close="dlgLogin">✖</button>
+  </div>
+  <div class="modal-b">
+    <label>Email</label>
+    <input id="lgEmail" type="email" autocomplete="email" placeholder="ton@email.com">
+    <label>Mot de passe</label>
+    <input id="lgPass" type="password" autocomplete="current-password" placeholder="••••••••">
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" data-close="dlgLogin">Annuler</button>
+      <button class="btn primary" id="doLogin">Entrer</button>
+    </div>
+    <div id="lgMsg" class="hint"></div>
+  </div>
+</dialog>
 
 <script>
-/* ===== CONFIG ===== */
 const BACKEND_URL = "https://philo-backend-su29.onrender.com";
 
-/* ===== i18n ===== */
-const STR = {
-  fr:{ hello:"Bonjour 👋\n• Tape @motclé pour l’actualité\n• Clique sur ⚙️ pour recharger des tokens",
-       sendPH:"Écris ton message… (Entrée = envoyer)",
-       detail:(r)=>`Solde : ${r.total.toLocaleString()} • Gratuit : ${r.free.toLocaleString()} • Payant : ${r.paid.toLocaleString()}`,
-       quotaOut:"⚠️ Plus de tokens. Ouvre ⚙️ pour recharger." },
-  en:{ hello:"Hello 👋\n• Type @keyword for news\n• Tap ⚙️ to top up tokens",
-       sendPH:"Type your message… (Enter to send)",
-       detail:(r)=>`Balance: ${r.total.toLocaleString()} • Free: ${r.free.toLocaleString()} • Paid: ${r.paid.toLocaleString()}`,
-       quotaOut:"⚠️ Out of tokens. Open ⚙️ to top up." },
-  nl:{ hello:"Hallo 👋\n• Typ @trefwoord voor nieuws\n• Tik ⚙️ om tokens op te laden",
-       sendPH:"Schrijf je bericht… (Enter = verzenden)",
-       detail:(r)=>`Saldo: ${r.total.toLocaleString()} • Gratis: ${r.free.toLocaleString()} • Betaald: ${r.paid.toLocaleString()}`,
-       quotaOut:"⚠️ Tokens op. Open ⚙️ om op te laden." }
-};
-let lang = (localStorage.getItem("lang")||"fr");
-const $ = (s, r=document)=>r.querySelector(s);
-const chat = $("#chat"), input = $("#input");
-const btnSend = $("#btnSend"), btnNudge=$("#btnNudge"), btnAttach=$("#btnAttach");
+const el = id => document.getElementById(id);
+const msgs = el('msgs');
+const txt  = el('txt');
 
-/* ===== Client ID (local) ===== */
-let CLIENT_ID = localStorage.getItem("client-id") || "anon";
-localStorage.setItem("client-id", CLIENT_ID);
-
-/* ===== UI init ===== */
+// --- UI helpers
 function addMsg(who, text){
-  const b = document.createElement("div");
-  b.className = "bubble"+(who==="me"?" me":"");
-  b.textContent = text;
-  chat.appendChild(b);
-  chat.scrollTop = chat.scrollHeight;
+  const div = document.createElement('div');
+  div.className = 'bubble ' + (who==='me'?'me':'bot');
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
-function setLang(l){
-  lang=l; localStorage.setItem("lang",l);
-  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.lang===l));
-  $("#hello").textContent = STR[l].hello;
-  input.setAttribute("placeholder", STR[l].sendPH);
-}
-document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>setLang(t.dataset.lang));
-setLang(lang);
+function setHUD(state){
+  const t = (n)=>Number(n||0).toLocaleString('fr-FR');
+  el('tkFree').textContent  = t(state.freeRemaining);
+  el('tkPaid').textContent  = t(state.paidBalance);
+  el('tkTotal').textContent = t((state.freeRemaining||0)+(state.paidBalance||0));
+  el('hudFree').textContent = t(state.freeRemaining);
+  el('hudPaid').textContent = t(state.paidBalance);
+  el('hudBalance').textContent = 'Solde : '+ t((state.freeRemaining||0)+(state.paidBalance||0));
 
-/* ===== Quota / meter ===== */
-async function refreshQuota(){
-  const r = await fetch(`${BACKEND_URL}/api/quota`, {headers:{ "x-client-id":CLIENT_ID, "x-lang":lang }});
-  const j = await r.json();
-  const free = j.freeRemaining|0, paid = j.paidBalance|0, total = (j.totalRemaining|0);
-  $("#tok-free").textContent = free.toLocaleString();
-  $("#tok-paid").textContent = paid.toLocaleString();
-  $("#tok-total").textContent = total.toLocaleString();
-  $("#detail").textContent = STR[lang].detail({free,paid,total});
-  const cap = 60000; // échelle de la barre (visuel)
-  $("#meterFill").style.width = `${Math.min(100, (total/cap)*100)}%`;
-  return total;
+  // toggle auth buttons
+  const logged = !!state.email;
+  el('btnSignup').style.display = logged?'none':'';
+  el('btnLogin').style.display  = logged?'none':'';
+  el('btnLogout').style.display = logged?'':'none';
+
+  el('hello').textContent = logged
+    ? ('Connecté : '+state.email)
+    : 'Bonjour 👋 • Tape @motclé pour l’actualité';
 }
 
-/* ===== Envoi ===== */
-input.addEventListener("keydown", e=>{
-  if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); btnSend.click(); }
-});
-btnSend.onclick = async ()=>{
-  const text = (input.textContent||"").trim();
-  if(!text) return;
-  addMsg("me", text);
-  input.textContent = "";
-  $("#snd-send")?.play().catch(()=>{});
-  const total = await refreshQuota();
-  if(total<=0){ addMsg("bot", STR[lang].quotaOut); return; }
+// --- API
+async function api(path, opt={}){
+  const r = await fetch(BACKEND_URL+path, Object.assign({
+    credentials:'include',
+    headers:{'Content-Type':'application/json'}
+  }, opt));
+  if (!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
 
-  // actualités si @motclé
-  if(text.startsWith("@")){
-    const q = text.slice(1).trim();
-    const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q),{
-      headers:{ "x-client-id":CLIENT_ID, "x-lang":lang }
+async function refreshMe(){
+  try{
+    const me = await api('/api/me');
+    setHUD(me);
+    return me;
+  }catch(e){
+    console.error(e);
+  }
+}
+
+async function doSend(){
+  const text = txt.value.trim();
+  if (!text) return;
+  // coût par message (ex: 50 tokens)
+  const cost = 50;
+
+  // 1) vérifier/consommer les tokens
+  try{
+    const use = await api('/api/use', {
+      method:'POST',
+      body: JSON.stringify({ cost })
     });
-    const j = await r.json();
-    const lines = (j.results||[]).slice(0,3).map(it=>"📰 "+it.title+" 🔗 "+it.url).join("\n");
-    addMsg("bot", lines||"Aucun résultat.");
-    $("#snd-recv")?.play().catch(()=>{});
-    await refreshQuota();
+    setHUD(use); // serveur renvoie solde après débit
+  }catch(e){
+    addMsg('bot','⚠️ Plus de tokens. Clique sur ⚙️ puis “Recharger”.');
     return;
   }
 
-  const r = await fetch(`${BACKEND_URL}/api/chat`,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID,"x-lang":lang },
-    body: JSON.stringify({ message:text })
-  });
-  if(r.status===402){ addMsg("bot", STR[lang].quotaOut); return; }
-  if(!r.ok){ addMsg("bot","[Erreur réseau]"); return; }
-  const j = await r.json();
-  addMsg("bot", j.reply || "…");
-  $("#snd-recv")?.play().catch(()=>{});
-  await refreshQuota();
-};
+  addMsg('me', text);
+  txt.value='';
 
-/* ===== Nudge / Print / Download ===== */
-btnNudge.onclick = ()=>{ $("#snd-nudge")?.play().catch(()=>{}); chat.classList.add("shake"); setTimeout(()=>chat.classList.remove("shake"),500) };
-$("#btnPrint").onclick = ()=>window.print();
-$("#btnDownload").onclick = ()=>{
-  const texts = [...document.querySelectorAll(".bubble")].map(b=> (b.classList.contains("me")?"Moi: ":"Φ: ")+b.textContent);
-  const blob = new Blob([texts.join("\n\n")],{type:"text/plain"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="conversation.txt"; a.click();
-  URL.revokeObjectURL(a.href);
-};
+  // 2) appeler le chat
+  try{
+    const r = await api('/api/chat', {
+      method:'POST',
+      body: JSON.stringify({ message:text })
+    });
+    addMsg('bot', r.reply || '…');
+    // le serveur peut aussi décrémenter ici si tu préfères
+    refreshMe();
+  }catch(e){
+    addMsg('bot', '[Erreur réseau]');
+    console.error(e);
+  }
+}
 
-/* ===== Settings / PayPal Packs ===== */
-const dlg = $("#settings");
-$("#btnSettings").onclick = ()=>{ dlg.classList.add("open"); };
-$("#closeSettings").onclick = ()=>{ dlg.classList.remove("open"); };
-dlg.addEventListener("click", e=>{ if(e.target===dlg) dlg.classList.remove("open"); });
+// --- Auth
+function openDlg(id){ document.getElementById(id).showModal(); }
+function closeDlg(id){ document.getElementById(id).close(); }
 
-dlg.querySelectorAll(".pack .primary").forEach(btn=>{
-  btn.onclick = async ()=>{
-    const price = Number(btn.dataset.price), tokens = Number(btn.dataset.tokens);
-    btn.disabled = true; btn.textContent = "…";
-    try{
-      const r = await fetch(`${BACKEND_URL}/api/paypal/create-order`,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json","x-client-id":CLIENT_ID,"x-lang":lang },
-        body: JSON.stringify({ price, tokens })
-      });
-      const j = await r.json();
-      if(j.approveUrl){ location.href = j.approveUrl; }
-      else{ alert("Paiement indisponible."); }
-    }catch(err){ alert("Erreur réseau."); }
-    finally{ btn.disabled=false; btn.textContent = `Payer ${price} €`; }
-  };
+async function signup(){
+  const email = el('suEmail').value.trim();
+  const password = el('suPass').value;
+  el('suMsg').textContent='';
+  try{
+    const r = await api('/api/signup',{method:'POST',body:JSON.stringify({email,password})});
+    el('suMsg').innerHTML = '<span class="ok">Compte créé ✔ +2000 tokens</span>';
+    setTimeout(()=>closeDlg('dlgSignup'),600);
+    refreshMe();
+  }catch(e){
+    el('suMsg').innerHTML = '<span class="ko">Création impossible</span>';
+  }
+}
+
+async function login(){
+  const email = el('lgEmail').value.trim();
+  const password = el('lgPass').value;
+  el('lgMsg').textContent='';
+  try{
+    const r = await api('/api/login',{method:'POST',body:JSON.stringify({email,password})});
+    el('lgMsg').innerHTML = '<span class="ok">Connecté ✔</span>';
+    setTimeout(()=>closeDlg('dlgLogin'),400);
+    refreshMe();
+  }catch(e){
+    el('lgMsg').innerHTML = '<span class="ko">Email ou mot de passe invalide</span>';
+  }
+}
+
+async function logout(){
+  try{ await api('/api/logout'); }catch(e){}
+  refreshMe();
+}
+
+// --- PayPal (placeholder)
+function buy(){
+  alert("Paiement indisponible pour le moment. On l’active dès que PayPal est prêt ✅");
+}
+
+// --- Wiring
+document.addEventListener('click', (ev)=>{
+  const c = ev.target.dataset && ev.target.dataset.close;
+  if (c) closeDlg(c);
 });
 
-/* ===== News depuis la modale ===== */
-$("#btnNews").onclick = async ()=>{
-  const q = $("#newsQ").value.trim(); if(!q) return;
-  $("#newsRes").textContent="…";
-  const r = await fetch(`${BACKEND_URL}/api/news?q=`+encodeURIComponent(q), {headers:{ "x-client-id":CLIENT_ID, "x-lang":lang }});
-  const j = await r.json();
-  const lines = (j.results||[]).slice(0,3).map(it=>"• "+it.title).join("\n");
-  $("#newsRes").textContent = lines || "Aucun résultat.";
-};
+el('btnSend').onclick = doSend;
+txt.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && !e.shiftKey){e.preventDefault();doSend();}
+});
 
-/* ===== Attach (image) : optionnel (placeholder) ===== */
-btnAttach.onclick = ()=>alert("Envoi d’image (à activer plus tard).");
+el('btnSignup').onclick = ()=>openDlg('dlgSignup');
+el('btnLogin').onclick  = ()=>openDlg('dlgLogin');
+el('btnLogout').onclick = logout;
+el('doSignup').onclick  = signup;
+el('doLogin').onclick   = login;
 
-/* ===== Boot ===== */
-addMsg("bot", STR[lang].hello);
-refreshQuota();
+el('btnBuy').onclick = buy;
 
-/* Visuel secousse nudge */
-const style = document.createElement("style");
-style.textContent = `.shake{animation:sh .08s linear 8}
-@keyframes sh{0%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(0)}75%{transform:translateX(4px)}100%{transform:translateX(0)}}`;
-document.head.appendChild(style);
+// Lang boutons (placeholder)
+el('btnFR').onclick=()=>addMsg('bot','🇫🇷 Français sélectionné');
+el('btnEN').onclick=()=>addMsg('bot','🇬🇧 English selected');
+el('btnNL').onclick=()=>addMsg('bot','🇳🇱 Nederlands geselecteerd');
+
+// Boot
+refreshMe();
+addMsg('bot','Bonjour ! Comment puis-je vous aider aujourd’hui ?');
 </script>
 </body>
 </html>
