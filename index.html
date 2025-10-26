@@ -174,18 +174,57 @@ function setHUD(state){
                                    : 'Bonjour 👋 • Tape @motclé pour l’actualité';
 }
 
-/* =========================
-   API (unique)
-   ========================= */
-async function api(path, opt = {}){
+<script>
+// ==== API unique ====
+async function api(path, opt = {}) {
   const r = await fetch(BACKEND_URL + path, {
     method: opt.method || 'GET',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+    credentials: 'include',                     // <-- garde le cookie
     body: opt.body ? JSON.stringify(opt.body) : undefined
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return r.json();
+}
+
+// (si tu n'as pas déjà cette fonction quelque part)
+function setHUD(u){
+  const t = n => Number(n||0).toLocaleString('fr-FR');
+  const free = u.freeRemaining||0, paid = u.paidBalance||0, total = free+paid;
+  el('tkFree').textContent  = t(free);
+  el('tkPaid').textContent  = t(paid);
+  el('tkTotal').textContent = t(total);
+  el('hudFree').textContent = t(free);
+  el('hudPaid').textContent = t(paid);
+  el('hudBalance').textContent = 'Solde : ' + t(total);
+}
+
+// ==== Au chargement : POST /api/start ====
+async function initUser() {
+  try {
+    const res = await api('/api/start', { method: 'POST' });
+    if (res && res.user) {
+      setHUD(res.user);
+      addMsg('bot','✅ start OK (anonyme prêt)');
+    } else {
+      addMsg('bot','⚠️ start: réponse inattendue');
+      console.log('start response:', res);
+    }
+  } catch (e) {
+    addMsg('bot','⚠️ start ERROR: ' + e.message);
+    console.error(e);
+  }
+}
+document.addEventListener('DOMContentLoaded', initUser);
+
+// (petit filet de sécurité pour voir les erreurs JS/réseau à l’écran)
+window.addEventListener('unhandledrejection', ev => {
+  addMsg('bot','⚠️ Promesse rejetée: ' + (ev.reason?.message || ev.reason));
+});
+window.addEventListener('error', ev => {
+  addMsg('bot','⚠️ JS error: ' + ev.message);
+});
+</script>
 }
 
 /* =========================
