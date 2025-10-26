@@ -308,7 +308,81 @@ function api(path, opts = {}) {
     body: opts.body ? JSON.stringify(opts.body) : undefined
   }).then(r => r.json());
 }
+const API_BASE = 'https://philo-backend-xxxx.onrender.com'; // ← remplace
 
+function api(path, opts = {}) {
+  return fetch(API_BASE + path, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',     // ← INDISPENSABLE pour les cookies
+    ...opts,
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  }).then(r => r.json());
+}
+
+// --- HUD ---
+const elTotal = document.getElementById('tkTotal');           // ex: <span id="tkTotal"></span>
+const elFooterSolde = document.getElementById('footer-solde'); // si tu as un élément pour “Solde : …”
+
+function updateHUD(u) {
+  const free = u.freeRemaining || 0;
+  const paid = u.paidBalance || 0;
+  const total = free + paid;
+  if (elTotal) elTotal.textContent = total;
+  if (elFooterSolde) elFooterSolde.textContent = `Solde : ${total} • Gratuit : ${free} • Payant : ${paid}`;
+}
+
+// --- 1) Au chargement : crée/récupère l’anonyme et affiche le solde ---
+async function initUser() {
+  const res = await api('/api/start', { method: 'POST' });
+  if (res && res.user) updateHUD(res.user);
+}
+
+// --- 2) Inscription ---
+async function signup(email, password) {
+  const res = await api('/api/signup', { method: 'POST', body: { email, password } });
+  if (res.ok) {
+    const me = await api('/api/me');
+    if (me && me.id) updateHUD(me);
+    // affiche “Compte créé ✅ +2000 tokens” dans ton UI
+  } else {
+    // affiche “Création impossible”
+  }
+}
+
+// --- 3) Connexion ---
+async function login(email, password) {
+  const res = await api('/api/login', { method: 'POST', body: { email, password } });
+  if (res.ok) {
+    const me = await api('/api/me');
+    if (me && me.id) updateHUD(me);
+  } else {
+    // affiche “Email ou mot de passe invalide”
+  }
+}
+
+// --- 4) Dépenser ---
+async function spend(cost) {
+  const res = await api('/api/use', { method: 'POST', body: { cost } });
+  if (res.ok) {
+    updateHUD({
+      freeRemaining: res.freeRemaining,
+      paidBalance: res.paidBalance
+    });
+  } else {
+    // affiche “Pas assez de tokens”
+  }
+}
+
+// --- 5) Déconnexion ---
+async function logout() {
+  const res = await api('/api/logout', { method: 'POST' });
+  if (res.ok) {
+    await initUser(); // on revient en anonyme
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initUser);
 // --- HUD ---
 const elTotal = document.getElementById('tkTotal');           // ex: <span id="tkTotal"></span>
 const elFooterSolde = document.getElementById('footer-solde'); // si tu as un élément pour “Solde : …”
