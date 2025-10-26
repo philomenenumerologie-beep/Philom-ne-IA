@@ -1,174 +1,230 @@
-<script>
-// ============================
-//  Config
-// ============================
-const BACKEND_URL = 'https://philo-backend-su29.onrender.com';
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Philomenia Messenger</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0e1420;--panel:#122038;--panel2:#0b172a;--text:#e8f0ff;--muted:#9bb0d1;--primary:#3b82f6;--primary-2:#2563eb;--danger:#f43f5e;--ok:#22c55e}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial}
+    .wrap{max-width:860px;margin:16px auto;padding:0 12px}
+    .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid #193252;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+    header{display:flex;align-items:center;gap:10px;padding:14px 16px}
+    .title{font-weight:700;font-size:18px}
+    .badge{margin-left:auto;background:#0d2444;border:1px solid #1d3b68;border-radius:12px;padding:6px 10px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid #1f3d6b;background:#10274a;color:#dbeafe;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .btn.primary{background:var(--primary);border-color:var(--primary-2);color:white}
+    .btn.ghost{background:transparent}
+    .btn.small{padding:6px 9px;border-radius:8px}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .pill{padding:6px 10px;border-radius:999px;background:#0d2444;border:1px solid #1d3b68}
+    .chat{padding:12px;display:flex;flex-direction:column;height:62vh}
+    .msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px}
+    .bubble{max-width:80%;padding:10px 12px;border-radius:12px;border:1px solid #23416f;background:#0f2442}
+    .bubble.me{margin-left:auto;background:#133058}
+    .input{display:flex;gap:8px;padding:12px;border-top:1px solid #1a345c;background:#0b172c;border-radius:0 0 14px 14px}
+    textarea{flex:1;resize:none;min-height:40px;max-height:160px;padding:10px;border-radius:10px;border:1px solid #1f3d6b;background:#091326;color:var(--text)}
+    .hud{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px dashed #294971;background:#0a162b;border-radius:0 0 14px 14px}
+    .muted{color:var(--muted)} .right{margin-left:auto}
+    dialog{border:none;border-radius:14px;padding:0;max-width:420px;width:calc(100% - 24px);background:linear-gradient(180deg,#11213b,#0c1a30);color:var(--text)}
+    .modal-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #1a345c}
+    .modal-b{padding:16px}
+    input[type="email"],input[type="password"]{width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid #1f3d6b;background:#091326;color:var(--text)}
+    .hint{font-size:12px;color:var(--muted)} .ok{color:var(--ok)} .ko{color:var(--danger)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <header class="row">
+      <div class="title">Philomenia Messenger</div>
+      <div class="row">
+        <button class="btn small pill" id="btnFR">FR</button>
+        <button class="btn small pill" id="btnEN">EN</button>
+        <button class="btn small pill" id="btnNL">NL</button>
+      </div>
+      <div class="badge">
+        <strong>Tokens :</strong>
+        <span id="tkTotal">0</span>
+        <span class="muted">/</span><span class="muted" id="tkPaid">0</span>
+        <span class="muted">—</span><span class="muted" id="tkFree">0</span>
+      </div>
+      <button class="btn small pill" id="btnSettings" title="Paramètres">⚙️</button>
+    </header>
 
-// ============================
-//  Helpers UI
-// ============================
-const $ = id => document.getElementById(id);
-const msgs = $('msgs');
-const txt  = $('txt');
+    <div class="row" style="padding:10px 14px;justify-content:space-between">
+      <div class="muted" id="hello">Bonjour 👋 • Tape @motclé pour l’actualité</div>
+      <div class="row">
+        <button class="btn small" id="btnSignup">S’inscrire</button>
+        <button class="btn small" id="btnLogin">Se connecter</button>
+        <button class="btn small" id="btnLogout" style="display:none">Se déconnecter</button>
+      </div>
+    </div>
+
+    <div class="chat">
+      <div id="msgs" class="msgs"></div>
+      <div class="input">
+        <textarea id="txt" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+        <button class="btn primary" id="btnSend">Envoyer</button>
+      </div>
+    </div>
+
+    <div class="hud">
+      <div class="muted">
+        <span id="hudBalance">Solde : 0</span>
+        <span class="muted">• Gratuit : </span><span id="hudFree">0</span>
+        <span class="muted">• Payant : </span><span id="hudPaid">0</span>
+      </div>
+      <div class="row right">
+        <button class="btn small" id="btnBuy">Recharger (PayPal)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Inscription -->
+<dialog id="dlgSignup"><div class="modal-h"><strong>Créer un compte</strong><button class="btn small ghost" data-close="dlgSignup">✖</button></div>
+  <div class="modal-b">
+    <div class="hint">Bonus d’essai : <strong>+2000 tokens</strong> une seule fois après validation.</div>
+    <label>Email</label><input id="suEmail" type="email" autocomplete="email" placeholder="ton@email.com">
+    <label>Mot de passe</label><input id="suPass" type="password" autocomplete="new-password" placeholder="••••••••">
+    <div class="row" style="justify-content:flex-end"><button class="btn" data-close="dlgSignup">Annuler</button><button class="btn primary" id="doSignup">Valider</button></div>
+    <div id="suMsg" class="hint"></div>
+  </div>
+</dialog>
+
+<!-- Modal Connexion -->
+<dialog id="dlgLogin"><div class="modal-h"><strong>Se connecter</strong><button class="btn small ghost" data-close="dlgLogin">✖</button></div>
+  <div class="modal-b">
+    <label>Email</label><input id="lgEmail" type="email" autocomplete="email" placeholder="ton@email.com">
+    <label>Mot de passe</label><input id="lgPass" type="password" autocomplete="current-password" placeholder="••••••••">
+    <div class="row" style="justify-content:flex-end"><button class="btn" data-close="dlgLogin">Annuler</button><button class="btn primary" id="doLogin">Entrer</button></div>
+    <div id="lgMsg" class="hint"></div>
+  </div>
+</dialog>
+
+<script>
+/* ==============================
+   Config + helpers
+================================ */
+const BACKEND_URL = 'https://philo-backend-su29.onrender.com'; // ← ton backend Render
+
+const $   = id => document.getElementById(id);
+const msgs= $('msgs');
+const txt = $('txt');
 
 function addMsg(who, text){
   const div = document.createElement('div');
-  div.className = 'bubble ' + (who==='me' ? 'me' : 'bot');
+  div.className = 'bubble ' + (who==='me'?'me':'bot');
   div.textContent = text;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
+function showError(e){ console.error(e); addMsg('bot','⚠️ Load failed'); }
 
 function setHUD(state = {}){
   const t = n => Number(n||0).toLocaleString('fr-FR');
-  const free = state.freeRemaining||0;
-  const paid = state.paidBalance||0;
-  const total = free + paid;
-  $('tkFree').textContent  = t(free);
-  $('tkPaid').textContent  = t(paid);
-  $('tkTotal').textContent = t(total);
-  $('hudFree') && ($('hudFree').textContent = t(free));
-  $('hudPaid') && ($('hudPaid').textContent = t(paid));
-  $('hudBalance') && ($('hudBalance').textContent = 'Solde : ' + t(total));
-
-  const logged = !!state.email && !state.isAnonymous;
-  $('btnSignup').style.display = logged ? 'none' : '';
-  $('btnLogin').style.display  = logged ? 'none' : '';
-  $('btnLogout').style.display = logged ? '' : 'none';
-  $('hello').textContent = logged
-    ? `Connecté : ${state.email}`
-    : 'Bonjour 👋 • Tape @motclé pour l’actualité';
+  $('tkFree').textContent  = t(state.freeRemaining||0);
+  $('tkPaid').textContent  = t(state.paidBalance||0);
+  $('tkTotal').textContent = t((state.freeRemaining||0)+(state.paidBalance||0));
+  $('hudFree').textContent = t(state.freeRemaining||0);
+  $('hudPaid').textContent = t(state.paidBalance||0);
+  $('hudBalance').textContent = 'Solde : '+ t((state.freeRemaining||0)+(state.paidBalance||0));
+  const logged = !!state.email;
+  $('btnSignup').style.display = logged?'none':'';
+  $('btnLogin').style.display  = logged?'none':'';
+  $('btnLogout').style.display = logged?'':'none';
+  $('hello').textContent = logged ? ('Connecté : '+state.email) : 'Bonjour 👋 • Tape @motclé pour l’actualité';
 }
 
-// ============================
-//  API (unique)
-// ============================
 async function api(path, opt = {}){
   const r = await fetch(BACKEND_URL + path, {
     method: opt.method || 'GET',
-    headers: { 'Content-Type':'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: opt.body ? JSON.stringify(opt.body) : undefined
   });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
+  if (!r.ok) throw new Error('HTTP '+r.status);
   return r.json();
 }
 
-// ============================
-//  App logic
-// ============================
+/* ==============================
+   App logic
+================================ */
 async function initUser(){
   try{
     const res = await api('/api/start', { method:'POST' });
     if (res && res.user) setHUD(res.user);
-    else addMsg('bot','⚠️ start: réponse inattendue');
-  }catch(e){
-    addMsg('bot','⚠️ Erreur de démarrage: ' + e.message);
-    console.error(e);
-  }
+  }catch(e){ showError(e); }
 }
-
 async function refreshMe(){
-  try{
-    const me = await api('/api/me');   // OK seulement si connecté
-    setHUD(me);
-    return me;
-  }catch(_){
-    // ignoré si anonyme/non connecté
-  }
+  try{ const me = await api('/api/me'); setHUD(me); return me; }
+  catch(e){ /* ignoré si anonyme */ }
 }
-
 async function doSend(){
-  const text = txt.value.trim();
-  if (!text) return;
+  const text = txt.value.trim(); if (!text) return;
   const cost = 50;
-
-  // 1) Débiter
   try{
     const use = await api('/api/use', { method:'POST', body:{ cost } });
     setHUD(use);
   }catch(e){
-    addMsg('bot','⚠️ Plus de tokens. Clique sur ⚙️ puis “Recharger”.');
-    return;
+    addMsg('bot','⚠️ Plus de tokens. Clique sur ⚙️ puis “Recharger”.'); return;
   }
-
-  // 2) Afficher mon message
-  addMsg('me', text);
-  txt.value='';
-
-  // 3) Appeler le chat (si tu as un /api/chat)
+  addMsg('me', text); txt.value='';
   try{
     const r = await api('/api/chat', { method:'POST', body:{ message:text } });
-    addMsg('bot', r.reply || '…');
-    await refreshMe();
-  }catch(e){
-    addMsg('bot','[Erreur réseau]');
-    console.error(e);
-  }
+    addMsg('bot', r.reply || '…'); refreshMe();
+  }catch(e){ addMsg('bot','[Erreur réseau]'); console.error(e); }
 }
-
-// Modales
 function openDlg(id){ $(id).showModal(); }
 function closeDlg(id){ $(id).close(); }
 
-// Auth
 async function signup(){
   const email = $('suEmail').value.trim();
   const password = $('suPass').value;
   $('suMsg').textContent='';
   try{
-    await api('/api/signup',{ method:'POST', body:{ email, password } });
+    await api('/api/signup',{ method:'POST', body:{ email,password }});
     $('suMsg').innerHTML = '<span class="ok">Compte créé ✔ +2000 tokens</span>';
-    setTimeout(()=>closeDlg('dlgSignup'),600);
-    await refreshMe();
-  }catch(e){
-    $('suMsg').innerHTML = '<span class="ko">Création impossible</span>';
-    console.error(e);
-  }
+    setTimeout(()=>closeDlg('dlgSignup'),600); refreshMe();
+  }catch(e){ $('suMsg').innerHTML = '<span class="ko">Création impossible</span>'; showError(e); }
 }
-
 async function login(){
   const email = $('lgEmail').value.trim();
   const password = $('lgPass').value;
   $('lgMsg').textContent='';
   try{
-    await api('/api/login',{ method:'POST', body:{ email, password } });
+    await api('/api/login',{ method:'POST', body:{ email,password }});
     $('lgMsg').innerHTML = '<span class="ok">Connecté ✔</span>';
-    setTimeout(()=>closeDlg('dlgLogin'),400);
-    await refreshMe();
-  }catch(e){
-    $('lgMsg').innerHTML = '<span class="ko">Email ou mot de passe invalide</span>';
-    console.error(e);
-  }
+    setTimeout(()=>closeDlg('dlgLogin'),400); refreshMe();
+  }catch(e){ $('lgMsg').innerHTML = '<span class="ko">Email ou mot de passe invalide</span>'; }
 }
+async function logout(){ try{ await api('/api/logout'); }catch(_){} refreshMe(); }
+function buy(){ alert("Paiement indisponible pour le moment. On l’active dès que PayPal est prêt ✅"); }
 
-async function logout(){
-  try{ await api('/api/logout',{ method:'POST' }); }catch(_){}
-  await initUser(); // revient en anonyme
-}
+/* ==============================
+   Wiring
+================================ */
+document.addEventListener('click', ev=>{ const c = ev.target.dataset && ev.target.dataset.close; if(c) closeDlg(c); });
 
-// ============================
-//  Wiring
-// ============================
-document.addEventListener('click', (ev)=>{
-  const c = ev.target.dataset && ev.target.dataset.close;
-  if (c) closeDlg(c);
-});
 $('btnSend').onclick = doSend;
-txt.addEventListener('keydown', e=>{
-  if (e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doSend(); }
-});
+txt.addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doSend(); }});
+
 $('btnSignup').onclick = ()=>openDlg('dlgSignup');
 $('btnLogin').onclick  = ()=>openDlg('dlgLogin');
 $('btnLogout').onclick = logout;
 $('doSignup').onclick  = signup;
 $('doLogin').onclick   = login;
-$('btnBuy').onclick    = ()=>alert('Paiement indisponible pour le moment.');
 
-// Lang (placeholders)
-$('btnFR').onclick = ()=>addMsg('bot','🇫🇷 Français sélectionné');
-$('btnEN').onclick = ()=>addMsg('bot','🇬🇧 English selected');
-$('btnNL').onclick = ()=>addMsg('bot','🇳🇱 Nederlands geselecteerd');
+$('btnBuy').onclick = buy;
+
+// Lang
+$('btnFR').onclick=()=>addMsg('bot','🇫🇷 Français sélectionné');
+$('btnEN').onclick=()=>addMsg('bot','🇬🇧 English selected');
+$('btnNL').onclick=()=>addMsg('bot','🇳🇱 Nederlands geselecteerd');
 
 // Boot
 document.addEventListener('DOMContentLoaded', async ()=>{
