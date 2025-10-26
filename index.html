@@ -314,15 +314,8 @@ refreshMe();
 addMsg('bot','Bonjour ! Comment puis-je vous aider aujourd’hui ?');
 const API_BASE = 'https://philo-backend-xxxx.onrender.com'; // ← remplace
 
-function api(path, opts = {}) {
-  return fetch(API_BASE + path, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',     // ← INDISPENSABLE pour les cookies
-    ...opts,
-    body: opts.body ? JSON.stringify(opts.body) : undefined
-  }).then(r => r.json());
-}
+
+
 
 
 // --- HUD ---
