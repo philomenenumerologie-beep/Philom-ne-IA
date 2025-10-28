@@ -1,64 +1,100 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Philomenia Messenger</title>
-
-  <!-- Clerk Frontend Script -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRYZWVmcm9nLTluY2xlcmsuYWNjb3VudHMmZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
-  </script>
-
-  <script>
-    window.addEventListener("load", async () => {
-      await Clerk.load();
-
-      const user = Clerk.user;
-
-      document.getElementById("auth").innerHTML = `
-        ${
-          user
-            ? `<p style="color:#0f0;">✅ Connecté en tant que : ${user.emailAddresses[0].emailAddress}</p>`
-            : `<button onclick="Clerk.openSignUp()">Créer un compte</button>
-               <button onclick="Clerk.openSignIn()">Se connecter</button>`
-        }
-      `;
-    });
-  </script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Philomenia – Connexion</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0e1a2b;
-      color: white;
-      text-align: center;
-      padding: 50px;
-    }
-    button {
-      margin: 10px;
-      padding: 12px 18px;
-      border-radius: 6px;
-      border: none;
-      background: #4169e1;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #3153b5;
-    }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0b0f14; color:#e7ecf2; margin:0; }
+    header { padding:24px; text-align:center; border-bottom:1px solid #1d2733; }
+    main { max-width:720px; margin:40px auto; padding:0 20px; }
+    .card { background:#0f1520; border:1px solid #1d2733; border-radius:12px; padding:24px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+    button { padding:12px 16px; border-radius:10px; border:1px solid #2a3a4f; background:#1a2332; color:#e7ecf2; cursor:pointer; }
+    button:hover { background:#223049; }
+    .muted { color:#9fb3c8; font-size:14px; }
+    .ok { color:#6ee7a2; }
+    .err { color:#ff8c8c; }
+    #userBox { margin-top:16px; padding:12px; border:1px dashed #2a3a4f; border-radius:8px; }
   </style>
+
+  <!-- Clerk Frontend -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_XXXXXXXXXXXXXXXXXXXXXXXXXXXX" 
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest">
+  </script>
 </head>
 <body>
+  <header>
+    <h1>Philomenia</h1>
+    <p class="muted">Démo de connexion avec Clerk (hosted)</p>
+  </header>
 
-  <h1>Philomenia Messenger</h1>
-  <p>Bienvenue 👋</p>
+  <main>
+    <div class="card">
+      <div id="status" class="muted">Initialisation…</div>
+      <div id="actions" class="row" style="display:none">
+        <button id="signup">Créer un compte</button>
+        <button id="signin">Se connecter</button>
+        <button id="signout" style="display:none">Se déconnecter</button>
+      </div>
+      <div id="userBox" style="display:none"></div>
+    </div>
+  </main>
 
-  <div id="auth">Chargement...</div>
+  <script>
+    // Remplace la clé ci-dessus par ta clé "Publishable key" qui commence par pk_test_...
+    // Puis déploie. Les redirections Clerk dans le dashboard pointent déjà vers ton domaine.
 
+    async function initClerk() {
+      try {
+        await Clerk.load();
+
+        const status = document.getElementById('status');
+        const actions = document.getElementById('actions');
+        const signInBtn = document.getElementById('signin');
+        const signUpBtn = document.getElementById('signup');
+        const signOutBtn = document.getElementById('signout');
+        const userBox = document.getElementById('userBox');
+
+        actions.style.display = 'flex';
+
+        function renderUser() {
+          const user = Clerk.user;
+          if (user) {
+            status.innerHTML = 'Connecté · <span class="ok">OK</span>';
+            signOutBtn.style.display = 'inline-block';
+            signInBtn.style.display = 'none';
+            signUpBtn.style.display = 'none';
+            userBox.style.display = 'block';
+            userBox.innerHTML = `
+              <div><strong>Utilisateur :</strong> ${user.primaryEmailAddress?.emailAddress ?? '(email inconnu)'}</div>
+              <div class="muted">User ID: ${user.id}</div>
+            `;
+          } else {
+            status.textContent = 'Non connecté';
+            signOutBtn.style.display = 'none';
+            signInBtn.style.display = 'inline-block';
+            signUpBtn.style.display = 'inline-block';
+            userBox.style.display = 'none';
+          }
+        }
+
+        signInBtn.addEventListener('click', () => Clerk.openSignIn());
+        signUpBtn.addEventListener('click', () => Clerk.openSignUp());
+        signOutBtn.addEventListener('click', async () => { await Clerk.signOut(); renderUser(); });
+
+        // Re-render quand l’auth change
+        Clerk.addListener(({ user }) => renderUser());
+        renderUser();
+      } catch (e) {
+        const status = document.getElementById('status');
+        status.innerHTML = 'Erreur d’initialisation Clerk · <span class="err">' + (e?.message || e) + '</span>';
+        console.error(e);
+      }
+    }
+
+    window.addEventListener('load', initClerk);
+  </script>
 </body>
 </html>
