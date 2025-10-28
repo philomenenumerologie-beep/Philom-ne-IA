@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Philomenia Messenger</title>
+
+  <!-- Clerk Frontend -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+  </script>
+
+  <style>
+    body { background:#02101e;color:white;text-align:center;font-family:sans-serif; }
+    button { margin-top:20px;padding:10px 20px }
+  </style>
+</head>
+<body>
+
+  <h1>Philomenia Messenger</h1>
+  <p id="connectedAs"></p>
+
+  <button id="logout" style="background:#ff4646;color:white">
+    Se déconnecter
+  </button>
+
+  <script>
+    window.addEventListener("load", async () => {
+      await Clerk.load();
+
+      // SI NON CONNECTÉ -> PAGE D'ACCUEIL
+      if (!Clerk.user) {
+        window.location.href = "/";
+        return;
+      }
+
+      // Afficher l'email
+      const mail = Clerk.user.primaryEmailAddress.emailAddress;
+      document.getElementById("connectedAs").textContent = "Connecté ✅ : " + mail;
+
+      // Déconnexion
+      document.getElementById("logout").onclick = async () => {
+        await Clerk.signOut();
+        window.location.href = "/";
+      };
+    });
+  </script>
+
+</body>
+</html>
