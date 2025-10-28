@@ -1,100 +1,100 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Philomenia – Connexion</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0b0f14; color:#e7ecf2; margin:0; }
-    header { padding:24px; text-align:center; border-bottom:1px solid #1d2733; }
-    main { max-width:720px; margin:40px auto; padding:0 20px; }
-    .card { background:#0f1520; border:1px solid #1d2733; border-radius:12px; padding:24px; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
-    button { padding:12px 16px; border-radius:10px; border:1px solid #2a3a4f; background:#1a2332; color:#e7ecf2; cursor:pointer; }
-    button:hover { background:#223049; }
-    .muted { color:#9fb3c8; font-size:14px; }
-    .ok { color:#6ee7a2; }
-    .err { color:#ff8c8c; }
-    #userBox { margin-top:16px; padding:12px; border:1px dashed #2a3a4f; border-radius:8px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Philomenia Messenger</title>
 
-  <!-- Clerk Frontend -->
-  <script async crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_XXXXXXXXXXXXXXXXXXXXXXXXXXXX" 
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest">
+  <!-- Clerk Frontend Script -->
+  <script 
+    async 
+    crossorigin="anonymous"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA">
   </script>
-</head>
-<body>
-  <header>
-    <h1>Philomenia</h1>
-    <p class="muted">Démo de connexion avec Clerk (hosted)</p>
-  </header>
 
-  <main>
-    <div class="card">
-      <div id="status" class="muted">Initialisation…</div>
-      <div id="actions" class="row" style="display:none">
-        <button id="signup">Créer un compte</button>
-        <button id="signin">Se connecter</button>
-        <button id="signout" style="display:none">Se déconnecter</button>
-      </div>
-      <div id="userBox" style="display:none"></div>
-    </div>
-  </main>
-
-  <script>
-    // Remplace la clé ci-dessus par ta clé "Publishable key" qui commence par pk_test_...
-    // Puis déploie. Les redirections Clerk dans le dashboard pointent déjà vers ton domaine.
-
-    async function initClerk() {
-      try {
-        await Clerk.load();
-
-        const status = document.getElementById('status');
-        const actions = document.getElementById('actions');
-        const signInBtn = document.getElementById('signin');
-        const signUpBtn = document.getElementById('signup');
-        const signOutBtn = document.getElementById('signout');
-        const userBox = document.getElementById('userBox');
-
-        actions.style.display = 'flex';
-
-        function renderUser() {
-          const user = Clerk.user;
-          if (user) {
-            status.innerHTML = 'Connecté · <span class="ok">OK</span>';
-            signOutBtn.style.display = 'inline-block';
-            signInBtn.style.display = 'none';
-            signUpBtn.style.display = 'none';
-            userBox.style.display = 'block';
-            userBox.innerHTML = `
-              <div><strong>Utilisateur :</strong> ${user.primaryEmailAddress?.emailAddress ?? '(email inconnu)'}</div>
-              <div class="muted">User ID: ${user.id}</div>
-            `;
-          } else {
-            status.textContent = 'Non connecté';
-            signOutBtn.style.display = 'none';
-            signInBtn.style.display = 'inline-block';
-            signUpBtn.style.display = 'inline-block';
-            userBox.style.display = 'none';
-          }
-        }
-
-        signInBtn.addEventListener('click', () => Clerk.openSignIn());
-        signUpBtn.addEventListener('click', () => Clerk.openSignUp());
-        signOutBtn.addEventListener('click', async () => { await Clerk.signOut(); renderUser(); });
-
-        // Re-render quand l’auth change
-        Clerk.addListener(({ user }) => renderUser());
-        renderUser();
-      } catch (e) {
-        const status = document.getElementById('status');
-        status.innerHTML = 'Erreur d’initialisation Clerk · <span class="err">' + (e?.message || e) + '</span>';
-        console.error(e);
-      }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background:black;
+      color:white;
+      text-align:center;
+      margin:0;
+      padding:0;
     }
 
-    window.addEventListener('load', initClerk);
+    h1 {
+      margin-top: 35px;
+      font-size:28px;
+    }
+
+    .card {
+      background:#121212;
+      width: 90%;
+      max-width: 380px;
+      padding:20px;
+      margin:25px auto;
+      border-radius:8px;
+      border:1px solid #333;
+    }
+
+    button {
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border:none;
+      border-radius:6px;
+      font-size:18px;
+      cursor:pointer;
+      background:#9146FF;
+      color:white;
+    }
+    button:hover { opacity:0.9; }
+
+    #status { margin-bottom:15px; font-size: 16px; opacity:.8; }
+  </style>
+</head>
+
+<body>
+  <h1>Philomenia</h1>
+  <p class="muted">Connexion sécurisée</p>
+
+  <div class="card">
+    <div id="status">Initialisation…</div>
+    <button id="signin">Se connecter</button>
+    <button id="signup">Créer un compte</button>
+    <button id="signout" style="display:none;background:#FF5555">Se déconnecter</button>
+  </div>
+
+  <script>
+    async function initClerk() {
+      await Clerk.load();
+
+      const user = Clerk.user;
+      const status = document.getElementById("status");
+      const signin = document.getElementById("signin");
+      const signup = document.getElementById("signup");
+      const signout = document.getElementById("signout");
+
+      if (user) {
+        status.textContent = "Connecté ✅ : " + user.primaryEmailAddress.emailAddress;
+        signin.style.display = "none";
+        signup.style.display = "none";
+        signout.style.display = "block";
+      } else {
+        status.textContent = "Veuillez vous connecter";
+        signin.style.display = "block";
+        signup.style.display = "block";
+        signout.style.display = "none";
+      }
+
+      signin.onclick = () => Clerk.openSignIn();
+      signup.onclick = () => Clerk.openSignUp();
+      signout.onclick = () => Clerk.signOut();
+    }
+
+    window.addEventListener("load", initClerk);
   </script>
+
 </body>
 </html>
