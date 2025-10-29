@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- ⚙️ adapte si nécessaire -->
-  <meta name="api-base" content="https://api.philomeneia.com">
+  <!-- ⚙️ Remplace ici si ton backend Render a une autre URL -->
+  <meta name="api-base" content="https://philo-backend.onrender.com">
   <title>Philomène IA – Messenger</title>
 
   <style>
@@ -28,55 +28,33 @@
     .logo{font-weight:800;font-size:20px;letter-spacing:.3px}
     .badge{margin-left:auto;display:flex;gap:10px;align-items:center}
     .chip{background:var(--chip);color:var(--text);border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-size:12px}
-    .chip svg{vertical-align:-2px;margin-right:6px}
     .btn{background:var(--btn);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
     .btn:hover{filter:brightness(1.06)}
     .btn.accent{background:var(--accent);color:#fff;border-color:transparent}
     .btn.green{background:var(--accent-2);color:#04251b;border-color:transparent}
     .btn.ghost{background:transparent}
-    .btn.warn{background:var(--warn);color:#1c1206}
     .btn.icon{padding:10px 12px;display:inline-flex;align-items:center;gap:8px}
 
     .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
-    .topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-    .tokens{font-weight:700}
-    .tokens small{font-weight:400;color:var(--muted)}
-
     .chatbox{height:62vh;min-height:360px;overflow:auto;border-radius:14px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.03));padding:10px}
     .msg{max-width:80%;padding:10px 12px;border-radius:14px;border:1px solid var(--line);margin:8px 4px;white-space:pre-wrap}
     .me{margin-left:auto;background:var(--chip)}
     .bot{background:#0f2b47}
     [data-theme="light"] .bot{background:#f1f6ff}
-
     .row{display:flex;gap:10px;margin-top:12px}
     textarea{flex:1;height:56px;resize:none;border-radius:12px;border:1px solid var(--line);background:var(--input);color:var(--text);padding:12px}
     textarea:focus{outline:2px solid var(--accent)}
-    .bar{display:flex;gap:10px;flex-wrap:wrap}
 
-    .footerbar{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-    .thin{font-weight:400;color:var(--muted);font-size:12px}
-
-    /* Modal */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;padding:16px;z-index:50}
     .modal .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:720px;width:100%;box-shadow:var(--shadow)}
     .card header{padding:14px;border-bottom:1px solid var(--line)}
-    .card .content{padding:14px}
     .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
     @media (max-width:760px){.grid{grid-template-columns:1fr}}
     .offer{background:var(--chip);border:1px dashed var(--line);padding:14px;border-radius:12px}
     .offer h4{margin:6px 0 8px}
-    .close{float:right;background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer}
     .switch{display:inline-flex;align-items:center;gap:10px}
-    .select,select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--input);color:var(--text)}
-
-    /* Print-friendly */
-    @media print{
-      header,.bar,.footerbar,.modal{display:none !important}
-      .panel{border:0;box-shadow:none}
-      body{background:#fff;color:#000}
-      .chatbox{height:auto;overflow:visible}
-      .msg{page-break-inside:avoid}
-    }
+    select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--input);color:var(--text)}
+    @media print{header,.bar,.modal{display:none !important}}
   </style>
 </head>
 <body>
@@ -84,310 +62,102 @@
     <header>
       <div class="logo">🧠 Philomène IA – Messenger</div>
       <div class="badge">
-        <span class="chip" id="conn">✅ Connecté</span>
-        <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.2L18 21l-6-4-6 4 1.5-7.8L2 9h7z"/></svg><span id="tok">–</span></span>
+        <span class="chip">✅ Connecté</span>
         <button id="printBtn" class="btn icon ghost">🖨️ Imprimer</button>
         <button id="settingsBtn" class="btn icon ghost">⚙️ Réglages</button>
       </div>
     </header>
 
     <div class="panel">
-      <div class="topline">
-        <div><strong id="title">Prêt ✅</strong></div>
-        <div class="tokens"><span id="tokensLabel">Tokens</span> : <span id="balance">0</span> <small>/ <span id="paidBalance">0</span></small></div>
-      </div>
-
-      <div id="chat" class="chatbox panel">
-        <!-- Messages -->
-      </div>
-
-      <div class="bar">
-        <div class="row" style="width:100%">
-          <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
-          <button id="photoBtn" class="btn icon" title="Envoyer une image">📷 Photo</button>
-          <input id="file" type="file" accept="image/*" style="display:none" />
-          <button id="sendBtn" class="btn accent">Envoyer</button>
-        </div>
-      </div>
-
-      <div class="footerbar">
-        <div class="thin">Philomène au service des gens • <span id="langFoot">Français</span></div>
-        <div class="thin">Astuce: Maj+Entrée pour un retour à la ligne</div>
+      <div id="chat" class="chatbox"></div>
+      <div class="row">
+        <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+        <button id="photoBtn" class="btn icon">📷 Photo</button>
+        <input id="file" type="file" accept="image/*" style="display:none" />
+        <button id="sendBtn" class="btn accent">Envoyer</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL Réglages -->
-  <div id="settingsModal" class="modal" aria-hidden="true">
+  <!-- Réglages -->
+  <div id="settingsModal" class="modal">
     <div class="card">
       <header>
-        <button class="close" id="closeSettings" title="Fermer">×</button>
         <h3>Réglages</h3>
       </header>
-      <div class="content">
-        <div class="grid">
-          <div class="panel">
-            <h4>Thème</h4>
-            <label class="switch">
-              <input type="checkbox" id="themeToggle" />
-              <span id="themeLabel">Mode sombre</span>
-            </label>
-          </div>
-
-          <div class="panel">
-            <h4>Langue</h4>
-            <select id="langSelect" class="select">
-              <option value="fr">Français</option>
-              <option value="en">English</option>
-              <option value="nl">Nederlands</option>
-            </select>
-          </div>
-
-          <div class="panel">
-            <h4>Abonnements</h4>
-            <div class="offer">
-              <h4>Pack 5 €</h4>
-              <p>70k tokens • Lancement: 1er achat = x2</p>
-              <button data-plan="p5" class="btn green" style="width:100%">S’abonner</button>
-            </div>
-            <div class="offer">
-              <h4>Pack 10 €</h4>
-              <p>150k tokens • Lancement: 1er achat = x2</p>
-              <button data-plan="p10" class="btn green" style="width:100%">S’abonner</button>
-            </div>
-            <div class="offer">
-              <h4>Pack 20 €</h4>
-              <p>320k tokens • Lancement: 1er achat = x2</p>
-              <button data-plan="p20" class="btn green" style="width:100%">S’abonner</button>
-            </div>
-          </div>
+      <div class="grid">
+        <div>
+          <h4>Thème</h4>
+          <label class="switch">
+            <input type="checkbox" id="themeToggle" />
+            <span id="themeLabel">Mode sombre</span>
+          </label>
         </div>
-
-        <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
-          <button id="saveSettings" class="btn accent">Enregistrer</button>
-          <button id="cancelSettings" class="btn ghost">Fermer</button>
+        <div>
+          <h4>Langue</h4>
+          <select id="langSelect">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="nl">Nederlands</option>
+          </select>
+        </div>
+        <div>
+          <h4>Abonnements</h4>
+          <div class="offer">
+            <h4>Pack 5 €</h4><p>70k tokens (x2 premier achat)</p>
+            <button data-plan="p5" class="btn green" style="width:100%">S’abonner</button>
+          </div>
+          <div class="offer">
+            <h4>Pack 10 €</h4><p>150k tokens (x2 premier achat)</p>
+            <button data-plan="p10" class="btn green" style="width:100%">S’abonner</button>
+          </div>
+          <div class="offer">
+            <h4>Pack 20 €</h4><p>320k tokens (x2 premier achat)</p>
+            <button data-plan="p20" class="btn green" style="width:100%">S’abonner</button>
+          </div>
         </div>
       </div>
+      <button id="closeSettings" class="btn accent" style="margin:14px auto;display:block">Fermer</button>
     </div>
   </div>
 
   <script>
-    // ========= Helpers =========
-    const $ = (q, r=document) => r.querySelector(q);
-    const apiBase = document.querySelector('meta[name="api-base"]').content.replace(/\/+$/,'');
-    const LS = {
-      get(k,v){ try{ return JSON.parse(localStorage.getItem(k)) ?? v }catch{ return v } },
-      set(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
+    const apiBase = document.querySelector('meta[name="api-base"]').content;
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const settings = document.getElementById('settingsModal');
+
+    function addMsg(role, text){
+      const div=document.createElement('div');
+      div.className='msg '+(role==='user'?'me':'bot');
+      div.textContent=text;
+      chat.appendChild(div);
+      chat.scrollTop=chat.scrollHeight;
+    }
+
+    addMsg('bot','Bonjour ! Comment puis-je vous aider aujourd’hui ?');
+
+    async function send(){
+      const txt=input.value.trim();
+      if(!txt)return;
+      addMsg('user',txt);
+      input.value='';
+      addMsg('bot','...');
+
+      const res=await fetch(apiBase+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({thread:txt})});
+      const data=await res.json();
+      chat.lastChild.textContent=data.reply || 'Erreur de connexion.';
+    }
+
+    document.getElementById('sendBtn').onclick=send;
+    input.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};
+    document.getElementById('photoBtn').onclick=()=>document.getElementById('file').click();
+    document.getElementById('printBtn').onclick=()=>window.print();
+    document.getElementById('settingsBtn').onclick=()=>settings.style.display='grid';
+    document.getElementById('closeSettings').onclick=()=>settings.style.display='none';
+    document.getElementById('themeToggle').onchange=e=>{
+      document.documentElement.setAttribute('data-theme', e.target.checked?'light':'dark');
     };
-
-    // ========= i18n minimal =========
-    const i18n = {
-      fr:{
-        ready:"Prêt ✅",
-        tokens:"Tokens",
-        placeholder:"Écris ton message… (Entrée = envoyer)",
-        connected:"✅ Connecté",
-        send_failed:"Désolé, impossible d’obtenir une réponse pour le moment.",
-        sending:"…",
-        photo_sent:"(Photo envoyée)"
-      },
-      en:{
-        ready:"Ready ✅",
-        tokens:"Tokens",
-        placeholder:"Type your message… (Enter = send)",
-        connected:"✅ Connected",
-        send_failed:"Sorry, I couldn’t get a reply right now.",
-        sending:"…",
-        photo_sent:"(Photo sent)"
-      },
-      nl:{
-        ready:"Klaar ✅",
-        tokens:"Tokens",
-        placeholder:"Schrijf je bericht… (Enter = verzenden)",
-        connected:"✅ Verbonden",
-        send_failed:"Sorry, geen antwoord op dit moment.",
-        sending:"…",
-        photo_sent:"(Foto verzonden)"
-      }
-    };
-
-    // ========= State =========
-    const state = {
-      lang: LS.get('lang','fr'),
-      theme: LS.get('theme','dark'),
-      thread: LS.get('thread', []),   // [{role:'user'|'assistant', content:'...'}]
-      userId: LS.get('userId', null), // côté prod, c’est l’email/ID Clerk si dispo
-      tokens:{free:0, paid:0}
-    };
-
-    // ========= UI init =========
-    document.documentElement.setAttribute('data-theme', state.theme);
-    $('#langSelect').value = state.lang;
-    $('#themeToggle').checked = state.theme === 'light';
-    $('#themeLabel').textContent = state.theme === 'light' ? 'Mode clair' : 'Mode sombre';
-
-    function t(key){ return (i18n[state.lang]||i18n.fr)[key] }
-    function applyTexts(){
-      $('#title').textContent = t('ready');
-      $('#tokensLabel').textContent = t('tokens');
-      $('#input').placeholder = t('placeholder');
-      $('#conn').textContent = t('connected');
-      $('#langFoot').textContent = {fr:'Français',en:'English',nl:'Nederlands'}[state.lang];
-    }
-    applyTexts();
-
-    function renderThread(){
-      const box = $('#chat'); box.innerHTML='';
-      state.thread.forEach(m=>{
-        const div = document.createElement('div');
-        div.className = 'msg ' + (m.role==='user'?'me':'bot');
-        div.textContent = m.content;
-        box.appendChild(div);
-      });
-      box.scrollTop = box.scrollHeight;
-    }
-    renderThread();
-
-    // ========= Balance =========
-    async function loadBalance(){
-      try{
-        const r = await fetch(apiBase + '/api/balance');
-        const b = await r.json();
-        state.tokens = b || {free:0,paid:0};
-        $('#balance').textContent = b.free ?? 0;
-        $('#paidBalance').textContent = b.paid ?? 0;
-        $('#tok').textContent = `${b.free ?? 0} / ${b.paid ?? 0}`;
-      }catch(e){ /* ignore */ }
-    }
-    loadBalance();
-
-    // ========= Send text =========
-    async function sendText(){
-      const ta = $('#input');
-      const content = ta.value.trim();
-      if(!content) return;
-      ta.value='';
-
-      state.thread.push({role:'user', content});
-      LS.set('thread', state.thread);
-      renderThread();
-
-      // placeholder assistant
-      state.thread.push({role:'assistant', content: t('sending')});
-      renderThread();
-
-      try{
-        const r = await fetch(apiBase + '/api/chat', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ userId: state.userId, lang: state.lang, thread: state.thread })
-        });
-        const data = await r.json();
-        // remplace le dernier placeholder
-        state.thread[state.thread.length-1] = {role:'assistant', content: data.reply || t('send_failed')};
-        LS.set('thread', state.thread);
-        renderThread();
-        loadBalance();
-      }catch(e){
-        state.thread[state.thread.length-1] = {role:'assistant', content: t('send_failed')};
-        renderThread();
-      }
-    }
-
-    // ========= Send image =========
-    async function sendImage(file){
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result; // data:image/..;base64,....
-        state.thread.push({role:'user', content: t('photo_sent')});
-        LS.set('thread', state.thread); renderThread();
-
-        state.thread.push({role:'assistant', content: t('sending')});
-        renderThread();
-
-        try{
-          const r = await fetch(apiBase + '/api/chat', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ userId: state.userId, lang: state.lang, thread: state.thread, image: base64 })
-          });
-          const data = await r.json();
-          state.thread[state.thread.length-1] = {role:'assistant', content: data.reply || t('send_failed')};
-          LS.set('thread', state.thread);
-          renderThread();
-          loadBalance();
-        }catch(e){
-          state.thread[state.thread.length-1] = {role:'assistant', content: t('send_failed')};
-          renderThread();
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // ========= Pay / Plans =========
-    async function startPlan(plan){
-      try{
-        const r = await fetch(apiBase + '/api/pay/create-order', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ plan })
-        });
-        const data = await r.json();
-        if(data.approvalUrl){ window.location.href = data.approvalUrl; }
-        else alert('Paiement indisponible pour le moment.');
-      }catch(e){ alert('Paiement indisponible pour le moment.'); }
-    }
-
-    // ========= Events =========
-    $('#sendBtn').addEventListener('click', sendText);
-    $('#input').addEventListener('keydown', e=>{
-      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendText(); }
-    });
-
-    $('#photoBtn').addEventListener('click', ()=> $('#file').click());
-    $('#file').addEventListener('change', e=> sendImage(e.target.files[0]));
-
-    $('#printBtn').addEventListener('click', ()=> window.print());
-
-    // Settings modal
-    const modal = $('#settingsModal');
-    function openSettings(){ modal.style.display='grid'; modal.setAttribute('aria-hidden','false'); }
-    function closeSettings(){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
-    $('#settingsBtn').addEventListener('click', openSettings);
-    $('#closeSettings').addEventListener('click', closeSettings);
-    $('#cancelSettings').addEventListener('click', closeSettings);
-    modal.addEventListener('click', e=> { if(e.target===modal) closeSettings(); });
-
-    // Theme toggle
-    $('#themeToggle').addEventListener('change', e=>{
-      state.theme = e.target.checked ? 'light' : 'dark';
-      LS.set('theme', state.theme);
-      document.documentElement.setAttribute('data-theme', state.theme);
-      $('#themeLabel').textContent = state.theme === 'light' ? 'Mode clair' : 'Mode sombre';
-    });
-
-    // Lang select
-    $('#langSelect').addEventListener('change', e=>{
-      state.lang = e.target.value; LS.set('lang', state.lang); applyTexts(); renderThread();
-    });
-
-    // Save settings
-    $('#saveSettings').addEventListener('click', ()=>{
-      closeSettings();
-      applyTexts();
-    });
-
-    // Plan buttons
-    document.querySelectorAll('[data-plan]').forEach(btn=>{
-      btn.addEventListener('click', ()=> startPlan(btn.dataset.plan));
-    });
-
-    // ========= Simple greeting if empty =========
-    if(state.thread.length===0){
-      state.thread.push({role:'assistant', content:'Bonjour ! Comment puis-je vous aider aujourd’hui ?'});
-      LS.set('thread', state.thread); renderThread();
-    }
   </script>
 </body>
 </html>
