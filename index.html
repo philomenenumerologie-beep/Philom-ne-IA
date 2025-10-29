@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Connexion sécurisée • Philomenia</title>
+  <title>Philomenia Messenger</title>
 
+  <!-- Clerk Auth -->
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
@@ -11,59 +12,84 @@
 
   <style>
     body {
-      background: #02101e;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
+      background:#02101e;
+      color:white;
+      font-family:sans-serif;
+      text-align:center;
+      min-height:100vh;
+      margin:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
     }
 
     h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size:30px;
+      margin-bottom:10px;
     }
 
-    .btn {
-      margin-top: 15px;
-      background: #1478FF;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 8px;
-      border: none;
-      font-size: 17px;
-      cursor: pointer;
-      width: 220px;
-    }
-
-    .btn2 {
-      background: #2b2b2b;
+    h2 {
+      font-size:18px;
+      color:#8eb8ff;
+      margin-bottom:20px;
     }
 
     .container {
-      background: rgba(255,255,255,0.05);
-      padding: 30px 20px;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      padding: 35px 25px;
+      border-radius: 14px;
       width: 85%;
-      max-width: 350px;
+      max-width: 360px;
       backdrop-filter: blur(6px);
+      box-shadow: 0 0 18px rgba(0,0,0,0.4);
+    }
+
+    .btn {
+      display:block;
+      width:100%;
+      margin-top:15px;
+      padding:13px;
+      border-radius:9px;
+      border:none;
+      font-size:17px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .btn-primary {
+      background:#1478FF;
+      color:white;
+    }
+
+    .btn-secondary {
+      background:#2b2b2b;
+      color:white;
+    }
+
+    .info {
+      font-size:13px;
+      color:#8ea0b8;
+      margin-top:20px;
     }
   </style>
-
 </head>
 
 <body>
 
   <div class="container">
-    <h1>Connexion sécurisée</h1>
-    <h3>Philomenia Messenger</h3>
+    <h1>Bienvenue 👋</h1>
+    <h2>Philomenia Messenger – GPT</h2>
 
-    <button class="btn" onclick="Clerk.openSignIn()">Se connecter</button>
-    <button class="btn btn2" onclick="Clerk.openSignUp()">Créer un compte</button>
+    <button class="btn btn-primary" onclick="Clerk.openSignIn()">
+      Se connecter
+    </button>
+
+    <button class="btn btn-secondary" onclick="Clerk.openSignUp()">
+      Créer un compte
+    </button>
+
+    <p class="info">Accès sécurisé • 5000 tokens offerts à l'inscription 🎁</p>
   </div>
 
   <script>
