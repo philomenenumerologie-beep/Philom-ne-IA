@@ -70,7 +70,11 @@
   </div>
 
   <script>
-    // Helpers d’UI
+    /* ========= 1) BASE D’API ========= */
+    const API_BASE = "https://api.philomeneia.com";        // ← ton backend Render
+    const api = (p) => `${API_BASE}${p}`;
+
+    /* ========= Helpers d’UI ========= */
     const $ = (id) => document.getElementById(id);
     const chat = $("chat");
     function addMsg(text, cls) {
@@ -93,27 +97,29 @@
       }
     }
 
-    // Clerk + page
+    /* ========= Clerk + logique page ========= */
     window.addEventListener("load", async () => {
       await Clerk.load();
 
       if (!Clerk.user) {
-        // Pas connecté -> retour accueil
         window.location.href = "/";
         return;
       }
 
-      // Afficher l’email utilisateur
+      // Ping backend pour afficher un état clair
+      safeFetch(api("/api/test")).then(ok => {
+        if (ok) $("alert").textContent = "Backend OK ✅";
+      });
+
       const mail = Clerk.user.primaryEmailAddress?.emailAddress || "inconnu";
       $("connectedAs").textContent = "Connecté ✅ : " + mail;
 
-      // Déconnexion
       $("logout").onclick = async () => {
         await Clerk.signOut();
         window.location.href = "/";
       };
 
-      // Charger les soldes/tokens
+      // Charger solde
       refreshBalances();
 
       // Envoi message
@@ -129,9 +135,10 @@
         sendBtn.disabled = true;
         sendBtn.textContent = "…";
 
-        // Appel backend (POST /api/chat)
         const payload = { message: text, email: mail };
-        const data = await safeFetch("/api/chat", {
+
+        // *** IMPORTANT: on appelle le backend avec API_BASE ***
+        const data = await safeFetch(api("/api/chat"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
@@ -140,7 +147,6 @@
         if (data && (data.reply || data.choices)) {
           const reply = data.reply || data.choices?.[0]?.message?.content || "Réponse reçue.";
           addMsg(reply, "bot");
-          // Recharge les soldes après consommation
           refreshBalances();
         } else {
           addMsg("Désolé, impossible d’obtenir une réponse pour le moment.", "bot");
@@ -152,7 +158,6 @@
 
       sendBtn.onclick = sendMessage;
 
-      // Entrée pour envoyer (Shift+Entrée = nouvelle ligne)
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
@@ -162,7 +167,7 @@
     });
 
     async function refreshBalances() {
-      const data = await safeFetch("/api/balance");
+      const data = await safeFetch(api("/api/balance"));
       if (!data) return;
       const free = Number(data.free || 0);
       const paid = Number(data.paid || 0);
