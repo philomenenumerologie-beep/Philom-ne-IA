@@ -1,172 +1,198 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Philomène IA – Accueil</title>
-  <meta name="description" content="Philomène IA, assistante personnelle propulsée par GPT-4 Turbo. 5000 tokens offerts à l’inscription. Packs 5€/10€/20€." />
+  <meta name="description" content="Philomène IA — ton assistante IA personnelle. Pose tes questions, envoie des photos, et gère tes tokens.">
+  <!-- Clerk -->
+  <script async crossorigin="anonymous"
+          data-clerk-publishable-key="pk_test_ZW5...REMPLACE_ICI..."
+          src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest">
+  </script>
 
   <style>
     :root{
-      --bg:#071826;--panel:#0e2238;--muted:#9bb3c9;--line:#1c3249;
-      --text:#eaf2f8;--accent:#3fb0ff;--accent-2:#25c59a;--danger:#f15b5b;
-      --chip:#133a5a;--chip-2:#0f3b34;--btn:#1b3c58;--shadow:0 10px 30px rgba(0,0,0,.35)
+      --bg:#071826; --panel:#0e2238; --text:#eaf2f8; --muted:#9fb7c7;
+      --accent:#3fb0ff; --accent-2:#5cf2a1; --chip:#133a5a; --danger:#f15b5b;
+      --btn:#1b3c58; --shadow:0 10px 30px rgba(0,0,0,.25);
     }
     [data-theme="light"]{
-      --bg:#f7faff;--panel:#ffffff;--muted:#516171;--line:#e8eef5;
-      --text:#0e2238;--accent:#0067ff;--accent-2:#0ea873;--danger:#bf2a2a;
-      --chip:#eaf2ff;--chip-2:#e8fff6;--btn:#eaf2ff;--shadow:0 8px 20px rgba(0,0,0,.08)
+      --bg:#f4f7fb; --panel:#ffffff; --text:#0f2234; --muted:#4e6b82;
+      --accent:#0067ff; --accent-2:#0bbd87; --chip:#eaf2ff; --danger:#bf2a2a;
+      --btn:#e9f1ff; --shadow:0 10px 30px rgba(0,0,0,.08);
     }
-
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial}
-    .wrap{max-width:1100px;margin:0 auto;padding:22px}
-
-    header{display:flex;align-items:center;gap:12px}
-    .logo{font-weight:800;font-size:20px;letter-spacing:.3px}
-    .right{margin-left:auto;display:flex;gap:10px;align-items:center}
-    .btn{background:var(--btn);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s;box-shadow:var(--shadow);text-decoration:none}
-    .btn:hover{filter:brightness(1.06)}
-    .accent{background:var(--accent);color:#fff;border-color:transparent}
-    .ghost{background:transparent}
-    .switch{padding:8px 12px}
-
-    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;margin-top:24px}
-    @media(max-width:960px){.hero{grid-template-columns:1fr}}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
-    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px}
-    h1{font-size:34px;margin:8px 0 8px}
-    p.lead{opacity:.95;margin:4px 0 16px}
-    .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
-    @media(max-width:960px){.grid{grid-template-columns:1fr}}
-    .tile{background:var(--chip-2);border:1px solid var(--line);border-radius:12px;padding:14px}
-
-    .pricing{margin-top:16px}
-    .plan{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
-    .price{font-size:22px;font-weight:800}
-    .muted{color:var(--muted)}
-
-    footer{margin:26px 0 12px;text-align:center;color:var(--muted);font-size:13px}
+    body{
+      margin:0; background:var(--bg); color:var(--text); font-family:system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:24px}
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+    .brand{display:flex; align-items:center; gap:14px}
+    .brand .logo{width:34px; height:34px; filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+    h1{margin:0; font-size:36px; letter-spacing:.2px}
+    .toggles{display:flex; gap:8px}
+    .chip{
+      background:var(--chip); color:var(--text); border:1px solid rgba(255,255,255,.08);
+      padding:10px 14px; border-radius:14px; display:inline-flex; align-items:center; gap:10px;
+    }
+    .actions{display:flex; flex-wrap:wrap; gap:10px}
+    .btn{
+      background:var(--btn); color:var(--text); border:1px solid rgba(255,255,255,.12);
+      padding:12px 16px; border-radius:12px; cursor:pointer; transition:.15s transform, .15s opacity;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--accent); color:white; border:none}
+    .btn.green{background:var(--accent-2); color:#032217; border:none}
+    .hero{
+      margin-top:22px; padding:28px; border-radius:18px; background:var(--panel); box-shadow:var(--shadow);
+    }
+    .hero p{margin:10px 0 0; color:var(--muted); font-size:18px}
+    .grid{display:grid; gap:16px; grid-template-columns:repeat(12, 1fr); margin-top:24px}
+    .card{
+      grid-column:span 12; background:var(--panel); border-radius:16px; padding:18px; border:1px solid rgba(255,255,255,.06)
+    }
+    .card h3{margin:8px 0 6px}
+    .price{font-weight:700}
+    .badges{display:flex; gap:8px; flex-wrap:wrap}
+    .badge{background:var(--chip); border:1px solid rgba(255,255,255,.08); padding:6px 10px; border-radius:10px; font-size:13px}
+    .footer{margin:28px 0 6px; text-align:center; color:var(--muted); font-size:14px}
+    .models{display:flex; gap:12px; flex-wrap:wrap; margin-top:8px}
+    .models .badge b{font-weight:700}
+    .notice{background:#082034; border:1px dashed rgba(255,255,255,.12); padding:12px 14px; border-radius:12px; color:var(--muted)}
+    .controls{display:flex; flex-wrap:wrap; gap:10px}
+    @media (min-width:760px){
+      .card.span-7{grid-column:span 7}
+      .card.span-5{grid-column:span 5}
+      .card.span-4{grid-column:span 4}
+      .card.span-8{grid-column:span 8}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="logo">🧠 Philomène IA</div>
-      <div class="right">
-        <button id="themeToggle" class="btn switch">☀️ / 🌙</button>
-        <a class="btn" href="/sign-in?redirect_url=/messenger.html">Se connecter</a>
-        <a class="btn accent" href="/sign-up?redirect_url=/messenger.html">Créer un compte</a>
+      <div class="brand">
+        <img class="logo" alt="logo" src="https://em-content.zobj.net/source/apple/391/brain_1f9e0.png">
+        <h1>Philomène IA</h1>
+      </div>
+      <div class="toggles">
+        <button id="themeBtn" class="chip" title="Thème clair/sombre">☀️ / 🌙</button>
+        <div class="chip" style="padding:8px 10px">
+          <select id="langSel" class="btn" style="padding:8px 10px">
+            <option value="fr" selected>Français</option>
+            <option value="en">English</option>
+            <option value="nl">Nederlands</option>
+          </select>
+        </div>
+        <button id="printBtn" class="chip">🖨️ Imprimer</button>
       </div>
     </header>
 
-    <!-- HERO -->
     <section class="hero">
-      <div class="card">
-        <span class="chip">Propulsé par <strong>GPT-4 Turbo</strong> ⚡</span>
-        <h1>Votre assistante IA complète</h1>
-        <p class="lead">
-          Devoirs, emails, cuisine, dépannage tech, idées business… même via <strong>photo</strong>.  
-          Réponses claires, en <strong>FR · EN · NL</strong>, avec un style simple et utile.
-        </p>
-        <ul class="muted">
-          <li>• <strong>5000 tokens offerts</strong> à l’inscription</li>
-          <li>• Décompte <strong>réel</strong> des tokens à chaque réponse</li>
-          <li>• Interface moderne, mobile, thème clair/sombre</li>
-        </ul>
-        <div class="cta">
-          <a class="btn accent" href="/sign-up?redirect_url=/messenger.html">Essayer gratuitement</a>
-          <a class="btn" href="/sign-in?redirect_url=/messenger.html">Déjà inscrit ? Se connecter</a>
+      <div class="controls" style="justify-content:space-between">
+        <div>
+          <div class="chip">Connecté sécurisé via Clerk ✅</div>
         </div>
-        <p class="muted" style="margin-top:10px">
-          Remarque: le **free** utilise aussi GPT-4 Turbo, avec 5000 tokens offerts pour tester.  
-          Ensuite, choisissez un pack ci-dessous.
-        </p>
+        <div class="actions">
+          <button id="signupBtn" class="btn">Créer un compte</button>
+          <button id="signinBtn" class="btn">Se connecter</button>
+          <a class="btn primary" href="/messenger">Ouvrir Messenger</a>
+        </div>
       </div>
 
-      <div class="card">
-        <h3>Pourquoi Philomène IA ?</h3>
-        <div class="grid" style="grid-template-columns:1fr">
-          <div class="tile">
-            <strong>Plus qu’un chat</strong><br/>
-            Mémoire de conversation, langage clair, conseils pratiques.  
-          </div>
-          <div class="tile">
-            <strong>Multimodal</strong><br/>
-            Envoyez une photo (panne, facture, exo), elle analyse et aide.
-          </div>
-          <div class="tile">
-            <strong>Transparence</strong><br/>
-            Affichage des tokens utilisés et de votre solde restant.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FEATURES -->
-    <section style="margin-top:22px">
-      <div class="grid">
-        <div class="tile">
-          <h4>🧠 GPT-4 Turbo</h4>
-          <p class="muted">Modèle premium d’OpenAI. Réponses plus solides, meilleures explications et synthèses.</p>
-        </div>
-        <div class="tile">
-          <h4>🌍 FR • EN • NL</h4>
-          <p class="muted">Bilingue/trilingue instantané pour vos études, voyages, clients ou collègues.</p>
-        </div>
-        <div class="tile">
-          <h4>🔐 Compte sécurisé</h4>
-          <p class="muted">Connexion simple. Redirection automatique vers le Messenger après login.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRICING -->
-    <section class="pricing">
-      <h2>Packs de tokens</h2>
-      <p class="muted">Promo lancement: <strong>1er achat = tokens ×2</strong></p>
-      <div class="grid">
-        <div class="plan">
-          <div class="price">5 €</div>
-          <div>70 000 tokens</div>
-          <div class="muted">Idéal pour commencer</div>
-          <a class="btn accent" href="/messenger.html">Choisir ce pack</a>
-        </div>
-        <div class="plan">
-          <div class="price">10 €</div>
-          <div>150 000 tokens</div>
-          <div class="muted">Le plus populaire</div>
-          <a class="btn accent" href="/messenger.html">Choisir ce pack</a>
-        </div>
-        <div class="plan">
-          <div class="price">20 €</div>
-          <div>320 000 tokens</div>
-          <div class="muted">Pour les gros usages</div>
-          <a class="btn accent" href="/messenger.html">Choisir ce pack</a>
-        </div>
-      </div>
-      <p class="muted" style="margin-top:10px">
-        Les réponses affichent toujours les <strong>tokens consommés</strong> et votre <strong>solde restant</strong>.
+      <p style="margin-top:16px">
+        Philomène IA est ton assistante personnelle. Pose tes questions, envoie des photos
+        pour un diagnostic, imprime les réponses utiles, et suis ta consommation de tokens en direct.
       </p>
     </section>
 
-    <footer>
-      © 2025 Philomène IA — Tous droits réservés
-    </footer>
+    <section class="grid">
+      <div class="card span-7">
+        <h3>Ce que tu peux faire 🔧</h3>
+        <ul>
+          <li>Questions générales, résumés, corrections, rédaction professionnelle.</li>
+          <li>Envoi de <b>photos</b> (pannes, messages d’erreur, documents) pour analyse.</li>
+          <li>Suivi de <b>tokens</b> consommés et restants.</li>
+          <li>Mode clair/sombre, impression en 1 clic, français/anglais/néerlandais.</li>
+        </ul>
+        <div class="notice" style="margin-top:8px">
+          Conseil: crée un compte puis ouvre Messenger. Tes sessions sont sauvegardées et
+          le modèle se souvient du contexte de la conversation.
+        </div>
+      </div>
+
+      <div class="card span-5">
+        <h3>Modèles & tarification 💡</h3>
+        <div class="models">
+          <span class="badge"><b>Gratuit</b> • GPT-3.5 (limité)</span>
+          <span class="badge"><b>Payant</b> • GPT-4 Turbo & Vision</span>
+        </div>
+        <p style="margin-top:6px">
+          À l’inscription: <b>5 000 tokens offerts</b> sur GPT-4 Turbo.
+          Ensuite, achète des packs au besoin. L’app affiche le coût réel par requête,
+          basé sur les tokens input/output (estimation proche d’OpenAI).
+        </p>
+        <p class="price">Exemples de packs: 5€ → 70k • 10€ → 150k • 20€ → 320k</p>
+      </div>
+
+      <div class="card span-4">
+        <h3>Sécurité 🔒</h3>
+        <p>Authentification via Clerk, transport chiffré, journalisation minimale côté serveur,
+          et CORS stricts. Les contenus sensibles ne sont pas conservés au-delà du nécessaire.</p>
+      </div>
+
+      <div class="card span-8">
+        <h3>FAQ rapide ❓</h3>
+        <p><b>Pourquoi “Se connecter” ne marchait pas ?</b> Parce qu’un lien brut vers <code>/sign-in</code>
+           exige une page/route côté front. Ici, on ouvre les <b>modales Clerk</b>, qui ne nécessitent
+           aucune route et fonctionnent partout.</p>
+        <p style="margin-top:8px"><b>Je veux des pages complètes de connexion.</b>
+           Pas de souci: on peut aussi utiliser les pages hébergées par Clerk via des URLs
+           publiques. Dis-le moi si tu préfères cette option.</p>
+      </div>
+    </section>
+
+    <div class="footer">© 2025 Philomène IA — Tous droits réservés</div>
   </div>
 
   <script>
-    // Bascule thème clair/sombre (persisté)
-    const tBtn = document.getElementById('themeToggle');
-    const saved = localStorage.getItem('theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-    tBtn.addEventListener('click', ()=>{
-      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-      const next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
+    // Thème
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+    });
+
+    // Impression
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    // Langue (placeholder — à brancher si tu veux i18n complet)
+    document.getElementById('langSel').addEventListener('change', (e) => {
+      localStorage.setItem('phi_lang', e.target.value);
+      alert('Langue choisie: ' + e.target.value + ' (UI statique pour le moment)');
+    });
+
+    // Clerk (modales)
+    window.addEventListener('load', async () => {
+      await window.Clerk.load();
+      const signinBtn = document.getElementById('signinBtn');
+      const signupBtn = document.getElementById('signupBtn');
+
+      signinBtn.addEventListener('click', () => {
+        window.Clerk.openSignIn({
+          appearance: { variables: { colorPrimary: getComputedStyle(document.documentElement).getPropertyValue('--accent') } },
+          redirectUrl: "/messenger"
+        });
+      });
+
+      signupBtn.addEventListener('click', () => {
+        window.Clerk.openSignUp({
+          appearance: { variables: { colorPrimary: getComputedStyle(document.documentElement).getPropertyValue('--accent') } },
+          redirectUrl: "/messenger"
+        });
+      });
     });
   </script>
 </body>
