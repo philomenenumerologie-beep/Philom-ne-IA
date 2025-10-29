@@ -4,13 +4,10 @@
   <meta charset="UTF-8" />
   <title>Philomène IA – Messenger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Clerk Frontend -->
+  <!-- Clerk -->
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
-  </script>
-
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
   <style>
     :root{--bg:#071826;--panel:#0e2238;--muted:#9bb3c9;--accent:#3aa0ff;--danger:#ff4646}
     html,body{height:100%}
@@ -28,14 +25,24 @@
     .msg{max-width:88%;margin:8px 0;padding:10px 12px;border-radius:10px;line-height:1.35;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
     .me{margin-left:auto;background:#133a6d;border:1px solid #2d65a2}
     .bot{background:#0f2b47;border:1px solid #2a527e}
-    .row{display:flex;gap:10px;margin-top:10px}
+    .row{display:flex;gap:10px;margin-top:10px;align-items:center}
     textarea{flex:1;height:54px;resize:none;background:#0b1d31;border:1px solid #173a5c;color:#fff;border-radius:10px;padding:12px;font-size:15px;outline:none}
-    .send{background:var(--accent);color:#001427;border:0;border-radius:10px;padding:0 18px;font-weight:700;cursor:pointer}
-    .buy{background:#00c853;color:#021014;border:0;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer;display:none}
-    .photo{background:#00bcd4;color:#021014;border:0;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer}
+    .send{background:var(--accent);color:#001427;border:0;border-radius:10px;padding:0 18px;font-weight:700;cursor:pointer;height:54px}
+    .buy{background:#00c853;color:#021014;border:0;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer;height:54px}
+    .photo{background:#00bcd4;color:#021014;border:0;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer;height:54px}
     .foot{margin-top:10px;text-align:right;color:var(--muted);font-size:13px}
     .thin{font-weight:400;opacity:.9}
     .preview{font-size:12px;color:#beddff;opacity:.9;margin-top:6px}
+
+    /* Modale offres */
+    .modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:20px}
+    .card{background:#0b1d31;border:1px solid #173a5c;border-radius:12px;padding:16px;max-width:560px;width:100%}
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .offer{background:#0f2b47;border:1px solid #2a527e;border-radius:10px;padding:12px}
+    .offer h4{margin:4px 0 8px}
+    .offer button{width:100%;margin-top:8px;background:#00c853;color:#021014;border:0;border-radius:10px;padding:10px;font-weight:700;cursor:pointer}
+    .close{float:right;background:#223a57;border:0;color:#9bb3c9;border-radius:8px;padding:6px 10px;cursor:pointer}
   </style>
 </head>
 <body>
@@ -52,7 +59,7 @@
       <div id="alert" class="alert">Bonjour 👋 Tape un message, ajoute une photo si besoin, et envoie.</div>
       <div id="lowWarn" class="warn">
         Il vous reste peu de tokens. Voulez-vous en ajouter ?
-        <button id="topup1" style="margin-left:8px">Ajouter des tokens 🔋</button>
+        <button id="openOffers" style="margin-left:8px">Voir les offres 🔋</button>
       </div>
 
       <div id="chat" class="chatbox">
@@ -62,8 +69,8 @@
       <div class="row">
         <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
         <button id="send" class="send">Envoyer</button>
-        <button id="buy" class="buy">Ajouter des tokens</button>
         <button id="photoBtn" class="photo">📷 Photo</button>
+        <button id="buy" class="buy">Acheter des tokens</button>
         <input id="file" type="file" accept="image/*" capture="environment" style="display:none" />
       </div>
       <div id="preview" class="preview"></div>
@@ -75,13 +82,38 @@
     </div>
   </div>
 
-  <script>
-    // === Backend API ===
-    const API_BASE = "https://api.philomeneia.com";
+  <!-- Modale Offres -->
+  <div id="offers" class="modal" role="dialog" aria-modal="true">
+    <div class="card">
+      <button class="close" id="closeOffers">Fermer</button>
+      <h3>Choisissez votre pack</h3>
+      <p style="color:#9bb3c9;margin-top:4px">Paiement PayPal (bientôt). Pour l’instant, ajout immédiat de tokens (démo).</p>
+      <div class="grid">
+        <div class="offer">
+          <h4>Pack Starter</h4>
+          <div>70 000 tokens • 5 €</div>
+          <button data-amount="70000">Choisir</button>
+        </div>
+        <div class="offer">
+          <h4>Pack Plus</h4>
+          <div>150 000 tokens • 10 €</div>
+          <button data-amount="150000">Choisir</button>
+        </div>
+        <div class="offer">
+          <h4>Pack Pro</h4>
+          <div>320 000 tokens • 20 €</div>
+          <button data-amount="320000">Choisir</button>
+        </div>
+      </div>
+      <p style="margin-top:10px;color:#9bb3c9">Promo lancement: <b>1er achat = tokens x2</b> (à implémenter côté serveur si besoin).</p>
+    </div>
+  </div>
 
-    // === DOM helpers ===
+  <script>
+    const API_BASE = "https://api.philomeneia.com";
     const $ = (id) => document.getElementById(id);
     const chat = $("chat");
+
     function addMsg(text, cls) {
       const div = document.createElement("div");
       div.className = "msg " + cls;
@@ -91,7 +123,6 @@
     }
     function setAlert(txt) { $("alert").textContent = txt; }
     function showLowWarn(show) { $("lowWarn").style.display = show ? "block" : "none"; }
-    function showBuy(show) { $("buy").style.display = show ? "inline-block" : "none"; }
 
     async function jsonFetch(url, options = {}) {
       try {
@@ -105,40 +136,55 @@
       }
     }
 
-    // === Clerk + App ===
     let email = "inconnu";
     let greetedKey = "";
-    let pendingImages = []; // dataURLs des images sélectionnées (envoyées au prochain message)
+    let pendingImages = []; // dataURL images
 
     window.addEventListener("load", async () => {
       await Clerk.load();
-
-      if (!Clerk.user) {
-        window.location.href = "/";
-        return;
-      }
-
+      if (!Clerk.user) { window.location.href = "/"; return; }
       email = Clerk.user.primaryEmailAddress?.emailAddress || "inconnu";
       $("connectedAs").textContent = "Connecté ✅ : " + email;
       greetedKey = "ph_greeted_" + email;
 
-      $("logout").onclick = async () => {
-        await Clerk.signOut();
-        window.location.href = "/";
-      };
-
-      $("topup1").onclick = doTopup;
-      $("buy").onclick = doTopup;
+      $("logout").onclick = async () => { await Clerk.signOut(); window.location.href = "/"; };
 
       // Photo
       $("photoBtn").onclick = () => $("file").click();
       $("file").addEventListener("change", handleFile);
+
+      // Offres
+      $("buy").onclick = () => $("offers").style.display = "flex";
+      $("openOffers").onclick = () => $("offers").style.display = "flex";
+      $("closeOffers").onclick = () => $("offers").style.display = "none";
+      document.querySelectorAll(".offer button").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const amt = Number(btn.dataset.amount || 0);
+          if (!amt) return;
+          const data = await jsonFetch(`${API_BASE}/api/topup_custom`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, amount: amt })
+          });
+          if (data?.ok) {
+            setAlert(`+${amt} tokens ajoutés ✅`);
+            $("offers").style.display = "none";
+            await refreshBalances();
+          } else {
+            setAlert("Impossible d’ajouter des tokens pour le moment.");
+          }
+        });
+      });
 
       await refreshBalances();
       setAlert("Prêt ✅");
 
       const input = $("input");
       const sendBtn = $("send");
+      sendBtn.onclick = sendMessage;
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      });
 
       async function sendMessage() {
         const text = input.value.trim();
@@ -154,7 +200,7 @@
           message: text,
           email,
           first: !localStorage.getItem(greetedKey),
-          images: pendingImages // tableau de dataURL
+          images: pendingImages
         };
 
         const data = await jsonFetch(`${API_BASE}/api/chat`, {
@@ -163,7 +209,6 @@
           body: JSON.stringify(payload)
         });
 
-        // reset images sélectionnées après envoi
         pendingImages = [];
         $("preview").textContent = "";
 
@@ -173,9 +218,8 @@
           await refreshBalances();
         } else if (data?.error || !data) {
           if (data?.error === "Crédits insuffisants") {
-            addMsg("Vous avez utilisé tous vos tokens. Rechargez pour continuer ✨", "bot");
-            showBuy(true);
-            showLowWarn(false);
+            addMsg("Vous avez utilisé tous vos tokens. Ouvrez les offres pour recharger ✨", "bot");
+            showLowWarn(true);
           } else {
             addMsg("Désolé, impossible d’obtenir une réponse pour le moment.", "bot");
           }
@@ -183,45 +227,16 @@
 
         sendBtn.disabled = false; sendBtn.textContent = old;
       }
-
-      sendBtn.onclick = sendMessage;
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
-      });
     });
 
     async function refreshBalances() {
       const url = `${API_BASE}/api/balance?email=${encodeURIComponent(email)}`;
       const data = await jsonFetch(url);
       if (!data) return;
-
-      const free = Number(data.free || 0);
-      const paid = Number(data.paid || 0);
-      $("tokFree").textContent = free;
-      $("tokPaid").textContent = paid;
-      $("fBalance").textContent = free;
-      $("pBalance").textContent = paid;
-
-      const total = free + paid;
+      const free = Number(data.free || 0), paid = Number(data.paid || 0), total = free + paid;
+      $("tokFree").textContent = free; $("tokPaid").textContent = paid;
+      $("fBalance").textContent = free; $("pBalance").textContent = paid;
       showLowWarn(total > 0 && total <= 200);
-      showBuy(total <= 200);
-    }
-
-    async function doTopup() {
-      const data = await jsonFetch(`${API_BASE}/api/topup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
-      if (data?.ok) {
-        setAlert(`+${data.added} tokens ajoutés ✅`);
-        await refreshBalances();
-      } else {
-        setAlert("Impossible d’ajouter des tokens pour le moment.");
-      }
     }
 
     function handleFile(ev) {
@@ -229,12 +244,11 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        const dataUrl = reader.result; // "data:image/...;base64,AAAA"
+        const dataUrl = reader.result;
         pendingImages.push(dataUrl);
         $("preview").textContent = `Image prête à être envoyée (${pendingImages.length})`;
       };
       reader.readAsDataURL(file);
-      // reset pour pouvoir re-sélectionner la même photo ensuite
       ev.target.value = "";
     }
   </script>
