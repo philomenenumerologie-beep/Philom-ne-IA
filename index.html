@@ -1,130 +1,215 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Philomène IA — Accueil</title>
-  <meta name="color-scheme" content="dark light" />
+  <meta charset="UTF-8" />
+  <title>Philomène IA — Messenger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Clerk (auth) -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+  </script>
+
   <style>
-    :root{
-      --bg:#071826;--panel:#0e2238;--text:#eaf2f8;--muted:#93a7bb;
-      --accent:#3fb0ff;--accent-2:#6ad3ff;--chip:#133a5a;--shadow:rgba(0,0,0,.35)
-    }
-    [data-theme="light"]{
-      --bg:#f4f7fb;--panel:#ffffff;--text:#1c2732;--muted:#556677;
-      --accent:#0067ff;--accent-2:#3a8bff;--chip:#eaf2ff;--shadow:rgba(0,0,0,.08)
-    }
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    .wrap{max-width:960px;margin:0 auto;padding:28px 18px}
-    header{display:flex;align-items:center;gap:16px;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand .logo{width:34px;height:34px;border-radius:12px;background:#ff7aac;display:grid;place-items:center;box-shadow:0 8px 24px var(--shadow)}
-    .brand h1{margin:0;font-size:28px;letter-spacing:.3px}
-    .toolbar{display:flex;gap:10px;align-items:center}
-    .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;background:var(--panel);color:var(--text);
-         box-shadow:0 8px 24px var(--shadow);display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:600}
-    .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#001a2b}
-    .btn.ghost{background:transparent;outline:1px solid rgba(255,255,255,.12)}
-    .hero{margin:36px 0 22px;padding:24px;border-radius:18px;background:linear-gradient(180deg,rgba(63,176,255,.08),transparent)}
-    .hero h2{margin:8px 0 10px;font-size:34px;letter-spacing:.2px}
-    .lead{margin:0;color:var(--muted);max-width:700px}
-    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:24px 0}
-    .card{background:var(--panel);border-radius:16px;padding:16px;box-shadow:0 12px 28px var(--shadow)}
-    .card h3{margin:0 0 8px;font-size:18px}
-    .card p{margin:0;color:var(--muted)}
-    .cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0}
-    footer{margin:36px 0 12px;color:var(--muted);font-size:13px;text-align:center}
-    .lang{display:flex;gap:8px}
-    .chip{background:var(--chip);color:var(--text);padding:8px 10px;border-radius:999px;font-size:13px}
-    .tiny{font-size:12px;color:var(--muted)}
-    .tag{display:inline-block;margin-left:8px;font-size:12px;color:var(--muted)}
+    :root { --bg:#071826; --panel:#0e2238; --muted:#9bb3c9; --accent:#2e7df6; --danger:#ff4646; --line:#173a5c; }
+    html, body { height:100%; }
+    body { margin:0; background:var(--bg); color:#fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+    /* Header */
+    header { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); background:#061522; position:sticky; top:0; z-index:3; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand .logo { width:28px; height:28px; display:grid; place-items:center; background:#ff7aac; border-radius:8px; }
+    .brand b { font-size:16px; letter-spacing:.2px; }
+    .spacer { flex:1; }
+    .pill { display:inline-flex; align-items:center; gap:8px; padding:8px 10px; background:#0f2b47; border:1px solid #234c77; border-radius:999px; font-size:13px; }
+    .btn { border:0; border-radius:10px; padding:10px 12px; font-weight:600; cursor:pointer; }
+    .btn.primary { background:var(--accent); color:#001427; }
+    .btn.ghost { background:#203345; color:#fff; border:1px solid var(--line); }
+    .btn.danger { background:var(--danger); color:#fff; }
+
+    /* Wrap */
+    .wrap { max-width:980px; margin:0 auto; padding:16px; }
+    h1 { margin:10px 0 8px; font-size:26px; text-align:center; }
+    .topline { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; color:var(--muted); margin-bottom:14px; font-size:14px; }
+
+    /* Panel & chat */
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
+    .alert { margin:0 4px 8px; color:var(--muted); }
+    .chatbox { height:62vh; min-height:320px; overflow:auto; padding:12px; background:#0b1d31; border:1px solid #153150; border-radius:10px; }
+    .msg { max-width:88%; margin:8px 0; padding:10px 12px; border-radius:10px; line-height:1.35; font-size:15px; white-space:pre-wrap; word-wrap:break-word; }
+    .me { margin-left:auto; background:#133a6d; border:1px solid #2d65a2; }
+    .bot { background:#0f2b47; border:1px solid #2a527e; }
+
+    .row { display:flex; gap:10px; margin-top:10px; }
+    textarea { flex:1; height:56px; resize:none; background:#0b1d31; border:1px solid var(--line); color:#fff; border-radius:10px; padding:12px; font-size:15px; outline:none; }
+    button { cursor:pointer; border:0; border-radius:10px; padding:12px 14px; font-weight:600; }
+    .send { background:var(--accent); color:#001427; min-width:120px; }
+    .photo { background:#00bcd4; color:#001427; min-width:120px; }
+    input[type=file] { display:none; }
+
+    .mini { font-size:12px; opacity:.9; }
+    .muted { color:var(--muted); }
   </style>
 </head>
 <body>
+
+  <!-- Header global -->
+  <header>
+    <div class="brand">
+      <div class="logo">🧠</div>
+      <b>Philomène IA</b>
+    </div>
+    <div class="spacer"></div>
+    <span id="connectedAs" class="pill">Statut: non connecté</span>
+    <span class="pill">Tokens: <span id="tokRemain">0</span></span>
+    <button id="signup" class="btn ghost">Créer un compte</button>
+    <button id="signin" class="btn primary">Se connecter</button>
+    <button id="logout" class="btn danger" style="display:none">Se déconnecter</button>
+  </header>
+
   <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">🧠</div>
-        <h1>Philomène IA</h1>
-      </div>
-      <div class="toolbar">
-        <button id="themeBtn" class="btn ghost" aria-label="Basculer le thème">☀️/🌙</button>
-        <div class="lang">
-          <button class="btn ghost" data-lang="fr">FR</button>
-          <button class="btn ghost" data-lang="en">EN</button>
-          <button class="btn ghost" data-lang="nl">NL</button>
-        </div>
-      </div>
-    </header>
+    <h1>Messenger</h1>
+    <div class="topline">
+      <span class="muted">GPT-4 Turbo • 5000 tokens offerts à l’inscription • FR/EN/NL • Upload photo</span>
+    </div>
 
-    <section class="hero">
-      <span class="chip">Assistant personnel</span>
-      <h2>Discute, demande, résous. Simple.</h2>
-      <p class="lead">
-        Philomène IA t’aide au quotidien: devoirs, lettres, idées business, dépannage technique, recettes,
-        organisation… même **analyse de photo**. Connexion sécurisée, essai gratuit, puis packs accessibles.
-      </p>
-      <div class="cta">
-        <!-- Liens vers les pages hébergées Clerk (remplace le domaine si besoin) -->
-        <a class="btn primary" href="https://philomeneia.clerk.accounts.dev/sign-up?redirect_url=https://philomeneia.com/messenger">Créer un compte</a>
-        <a class="btn" href="https://philomeneia.clerk.accounts.dev/sign-in?redirect_url=https://philomeneia.com/messenger">Se connecter</a>
-        <a class="btn ghost" href="/messenger">Accéder au Messenger</a>
-      </div>
-      <div class="tiny">Après connexion, tu arrives directement dans le Messenger.</div>
-    </section>
+    <div class="panel">
+      <div id="alert" class="alert">Prêt ✅</div>
 
-    <section class="grid">
-      <div class="card">
-        <h3>🎓 Aide immédiate <span class="tag">GPT-4 Turbo</span></h3>
-        <p>Explications, résumés, corrections, emails, CV… Parfait pour l’école et le boulot.</p>
-      </div>
-      <div class="card">
-        <h3>🛠️ Dépannage par photo</h3>
-        <p>Envoie une photo d’une panne ou d’un message d’erreur. Je diagnostique & te guide.</p>
-      </div>
-      <div class="card">
-        <h3>🧾 Packs de tokens</h3>
-        <p>Essai gratuit 5 000 tokens. Ensuite, packs au choix. Le solde est affiché en direct dans le chat.</p>
-      </div>
-      <div class="card">
-        <h3>🌍 Langues</h3>
-        <p>Français, English, Nederlands. Dark/Light mode selon tes préférences.</p>
-      </div>
-    </section>
+      <div id="chat" class="chatbox"></div>
+      <div class="mini" id="lastUsage" style="margin:6px 2px 0;"></div>
 
-    <section class="card">
-      <h3>ℹ️ Modèles & coûts</h3>
-      <p class="tiny">
-        Réponses propulsées par <strong>GPT-4 Turbo</strong> (payant, précis) pour le Messenger.
-        La page d’accueil et l’inscription n’utilisent pas de modèle.
-        Les tokens consommés sont comptés côté serveur comme sur l’API officielle.
-      </p>
-    </section>
-
-    <footer>© 2025 Philomène IA — Tous droits réservés</footer>
+      <div class="row">
+        <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+        <label for="file" class="btn photo" title="Envoyer une photo">📷 Photo</label>
+        <input id="file" type="file" accept="image/*" />
+        <button id="send" class="send">Envoyer</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // Thème persistant
-    const root = document.documentElement;
-    const themeBtn = document.getElementById('themeBtn');
-    const saved = localStorage.getItem('theme');
-    if(saved){ root.setAttribute('data-theme', saved); }
-    themeBtn.addEventListener('click', ()=>{
-      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
+    // ====== Helpers UI
+    const $ = (id) => document.getElementById(id);
+    const chat = $("chat");
+    function addMsg(text, who = "bot") {
+      const div = document.createElement("div");
+      div.className = "msg " + (who === "me" ? "me" : "bot");
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-    // Changeur de langue (placeholder visuel pour l’instant)
-    document.querySelectorAll('[data-lang]').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        const lang = b.getAttribute('data-lang');
-        localStorage.setItem('lang', lang);
-        alert('Langue choisie: '+lang+' (contenu multilingue à venir)');
+    async function safeJSON(url, options = {}) {
+      try {
+        const r = await fetch(url, options);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return await r.json();
+      } catch (e) {
+        console.error(e);
+        $("alert").textContent = "⚠️ Erreur réseau: " + (e.message || "inconnue");
+        return null;
+      }
+    }
+
+    // ====== Etat
+    let userId = null;
+    let imageDataUrl = null;
+
+    // ====== Au chargement
+    window.addEventListener("load", async () => {
+      // 1) Clerk (si dispo). Sinon mode “anonyme” (tests).
+      try { await Clerk.load(); } catch(_) {}
+      if (window.Clerk && Clerk.user) {
+        userId = Clerk.user.id;
+        const mail = Clerk.user.primaryEmailAddress?.emailAddress || "inconnu";
+        $("connectedAs").textContent = "Connecté ✅ : " + mail;
+        $("signin").style.display = "none";
+        $("signup").style.display = "none";
+        $("logout").style.display = "inline-block";
+      } else {
+        userId = localStorage.getItem("anon_id");
+        if (!userId) { userId = "anon_" + Math.random().toString(36).slice(2); localStorage.setItem("anon_id", userId); }
+        $("connectedAs").textContent = "Mode visiteur";
+      }
+
+      // 2) Boutons auth
+      $("signin").onclick = () => window.Clerk ? Clerk.openSignIn({ redirectUrl: "/" }) : alert("Auth indisponible");
+      $("signup").onclick = () => window.Clerk ? Clerk.openSignUp({ redirectUrl: "/" }) : alert("Auth indisponible");
+      $("logout").onclick = async () => { if (window.Clerk) { await Clerk.signOut(); location.reload(); } };
+
+      // 3) Message d’accueil auto (style “présentation”)
+      addMsg("👋 Bienvenue sur Philomène IA !\n\nJe suis ton assistante personnelle. Pose tes questions (devoirs, recettes, dépannage, idées…). Tu peux aussi envoyer une 📷 photo.\n\nTu as 5000 tokens gratuits pour tester. Je montre à chaque message combien de tokens sont utilisés et ce qu’il te reste. C’est parti !");
+
+      // 4) Solde initial
+      await refreshBalance();
+
+      // 5) Entrées utilisateur
+      $("send").onclick = sendMessage;
+      const input = $("input");
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      });
+
+      // 6) Upload photo
+      $("file").addEventListener("change", async () => {
+        const f = $("file").files?.[0];
+        if (!f) return;
+        if (!f.type.startsWith("image/")) { imageDataUrl = null; return; }
+        imageDataUrl = await toDataURL(f);
+        $("alert").textContent = "Photo attachée ✅";
       });
     });
+
+    async function refreshBalance() {
+      const d = await safeJSON(`/api/balance?userId=${encodeURIComponent(userId)}`);
+      if (!d) return;
+      $("tokRemain").textContent = d.free ?? 0;
+    }
+
+    async function sendMessage() {
+      const input = $("input");
+      const text = input.value.trim();
+      if (!text && !imageDataUrl) return;
+      addMsg(text || "(photo)", "me");
+      input.value = "";
+
+      const body = { userId, message: text || "", imageDataUrl: imageDataUrl || null };
+      const data = await safeJSON(`/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      if (!data) { addMsg("Désolé, impossible d’obtenir une réponse pour le moment.", "bot"); return; }
+      if (data.error) {
+        addMsg(data.error === "Solde insuffisant" ? "⛔ Solde insuffisant. Recharge bientôt disponible." : data.error, "bot");
+        $("tokRemain").textContent = data.remaining ?? 0;
+        return;
+      }
+
+      addMsg(data.reply, "bot");
+
+      // Affiche usage & reste
+      const u = data.usage || {};
+      $("lastUsage").textContent =
+        `Utilisés: prompt ${u.prompt_tokens||0} + output ${u.completion_tokens||0} = ${u.total_tokens||0} tokens  •  Reste: ${data.remaining}`;
+      $("tokRemain").textContent = data.remaining ?? 0;
+
+      // reset pièce jointe
+      imageDataUrl = null;
+      $("alert").textContent = "Prêt ✅";
+    }
+
+    function toDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsDataURL(file);
+      });
+    }
   </script>
 </body>
 </html>
