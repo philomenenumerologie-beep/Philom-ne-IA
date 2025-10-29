@@ -1,163 +1,137 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- ⚙️ Remplace ici si ton backend Render a une autre URL -->
-  <meta name="api-base" content="https://philo-backend.onrender.com">
-  <title>Philomène IA – Messenger</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Philomène IA – Accueil</title>
 
   <style>
-    :root{
-      --bg:#071826;--panel:#0e2238;--muted:#8aa3b6;--line:#1c3249;
-      --text:#eaf2f8;--accent:#3fb0ff;--accent-2:#25c59a;--warn:#ffb64d;
-      --danger:#f15b5b;--chip:#133a5a;--chip-2:#0f3b34;
-      --input:#0c1a28;--btn:#1b3c58;--shadow:0 10px 30px rgba(0,0,0,.35)
-    }
-    [data-theme="light"]{
-      --bg:#f4f7fb;--panel:#ffffff;--muted:#516171;--line:#e8eef5;
-      --text:#1c2732;--accent:#0067ff;--accent-2:#0ea873;--warn:#b36a00;
-      --danger:#bf2a2a;--chip:#eaf2ff;--chip-2:#e8fff6;--input:#f5f8fc;--btn:#eaf2ff;
-      --shadow:0 8px 20px rgba(0,0,0,.08)
+    :root {
+      --bg: #071826;
+      --panel: #0e2238;
+      --text: #eaf2f8;
+      --accent: #3fb0ff;
+      --btn-hover: #52c0ff;
     }
 
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial}
-    .wrap{max-width:980px;margin:0 auto;padding:18px}
-    header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .logo{font-weight:800;font-size:20px;letter-spacing:.3px}
-    .badge{margin-left:auto;display:flex;gap:10px;align-items:center}
-    .chip{background:var(--chip);color:var(--text);border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-size:12px}
-    .btn{background:var(--btn);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
-    .btn:hover{filter:brightness(1.06)}
-    .btn.accent{background:var(--accent);color:#fff;border-color:transparent}
-    .btn.green{background:var(--accent-2);color:#04251b;border-color:transparent}
-    .btn.ghost{background:transparent}
-    .btn.icon{padding:10px 12px;display:inline-flex;align-items:center;gap:8px}
+    [data-theme="light"] {
+      --bg: #f7faff;
+      --panel: #ffffff;
+      --text: #0e2238;
+      --accent: #0076ff;
+      --btn-hover: #339aff;
+    }
 
-    .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
-    .chatbox{height:62vh;min-height:360px;overflow:auto;border-radius:14px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.03));padding:10px}
-    .msg{max-width:80%;padding:10px 12px;border-radius:14px;border:1px solid var(--line);margin:8px 4px;white-space:pre-wrap}
-    .me{margin-left:auto;background:var(--chip)}
-    .bot{background:#0f2b47}
-    [data-theme="light"] .bot{background:#f1f6ff}
-    .row{display:flex;gap:10px;margin-top:12px}
-    textarea{flex:1;height:56px;resize:none;border-radius:12px;border:1px solid var(--line);background:var(--input);color:var(--text);padding:12px}
-    textarea:focus{outline:2px solid var(--accent)}
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
 
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;padding:16px;z-index:50}
-    .modal .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:720px;width:100%;box-shadow:var(--shadow)}
-    .card header{padding:14px;border-bottom:1px solid var(--line)}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    @media (max-width:760px){.grid{grid-template-columns:1fr}}
-    .offer{background:var(--chip);border:1px dashed var(--line);padding:14px;border-radius:12px}
-    .offer h4{margin:6px 0 8px}
-    .switch{display:inline-flex;align-items:center;gap:10px}
-    select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--input);color:var(--text)}
-    @media print{header,.bar,.modal{display:none !important}}
+    header {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.8em;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .intro {
+      max-width: 600px;
+      margin-top: 60px;
+      font-size: 1.1em;
+      line-height: 1.5;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .actions {
+      margin-top: 40px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--btn-hover);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.9em;
+      opacity: 0.7;
+    }
+
+    .logo {
+      font-size: 3em;
+      margin-bottom: 15px;
+    }
+
+    .switch {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: var(--panel);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text);
+      cursor: pointer;
+    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">🧠 Philomène IA – Messenger</div>
-      <div class="badge">
-        <span class="chip">✅ Connecté</span>
-        <button id="printBtn" class="btn icon ghost">🖨️ Imprimer</button>
-        <button id="settingsBtn" class="btn icon ghost">⚙️ Réglages</button>
-      </div>
-    </header>
+  <button class="switch" id="themeToggle">☀️ / 🌙</button>
+  <header>Philomène IA</header>
 
-    <div class="panel">
-      <div id="chat" class="chatbox"></div>
-      <div class="row">
-        <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
-        <button id="photoBtn" class="btn icon">📷 Photo</button>
-        <input id="file" type="file" accept="image/*" style="display:none" />
-        <button id="sendBtn" class="btn accent">Envoyer</button>
-      </div>
-    </div>
+  <div class="logo">🧠</div>
+  <div class="intro">
+    <p><strong>Philomène IA</strong> est ton assistante intelligente personnelle.<br>
+    Pose-lui tes questions, discute avec elle, et explore ses différentes spécialités — toujours à ton service.</p>
   </div>
 
-  <!-- Réglages -->
-  <div id="settingsModal" class="modal">
-    <div class="card">
-      <header>
-        <h3>Réglages</h3>
-      </header>
-      <div class="grid">
-        <div>
-          <h4>Thème</h4>
-          <label class="switch">
-            <input type="checkbox" id="themeToggle" />
-            <span id="themeLabel">Mode sombre</span>
-          </label>
-        </div>
-        <div>
-          <h4>Langue</h4>
-          <select id="langSelect">
-            <option value="fr">Français</option>
-            <option value="en">English</option>
-            <option value="nl">Nederlands</option>
-          </select>
-        </div>
-        <div>
-          <h4>Abonnements</h4>
-          <div class="offer">
-            <h4>Pack 5 €</h4><p>70k tokens (x2 premier achat)</p>
-            <button data-plan="p5" class="btn green" style="width:100%">S’abonner</button>
-          </div>
-          <div class="offer">
-            <h4>Pack 10 €</h4><p>150k tokens (x2 premier achat)</p>
-            <button data-plan="p10" class="btn green" style="width:100%">S’abonner</button>
-          </div>
-          <div class="offer">
-            <h4>Pack 20 €</h4><p>320k tokens (x2 premier achat)</p>
-            <button data-plan="p20" class="btn green" style="width:100%">S’abonner</button>
-          </div>
-        </div>
-      </div>
-      <button id="closeSettings" class="btn accent" style="margin:14px auto;display:block">Fermer</button>
-    </div>
+  <div class="actions">
+    <a href="/sign-up?redirect_url=/messenger.html" class="btn">Créer un compte</a>
+    <a href="/sign-in?redirect_url=/messenger.html" class="btn">Se connecter</a>
   </div>
+
+  <footer>
+    © 2025 Philomène IA – Tous droits réservés
+  </footer>
 
   <script>
-    const apiBase = document.querySelector('meta[name="api-base"]').content;
-    const chat = document.getElementById('chat');
-    const input = document.getElementById('input');
-    const settings = document.getElementById('settingsModal');
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const newTheme = theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
 
-    function addMsg(role, text){
-      const div=document.createElement('div');
-      div.className='msg '+(role==='user'?'me':'bot');
-      div.textContent=text;
-      chat.appendChild(div);
-      chat.scrollTop=chat.scrollHeight;
-    }
-
-    addMsg('bot','Bonjour ! Comment puis-je vous aider aujourd’hui ?');
-
-    async function send(){
-      const txt=input.value.trim();
-      if(!txt)return;
-      addMsg('user',txt);
-      input.value='';
-      addMsg('bot','...');
-
-      const res=await fetch(apiBase+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({thread:txt})});
-      const data=await res.json();
-      chat.lastChild.textContent=data.reply || 'Erreur de connexion.';
-    }
-
-    document.getElementById('sendBtn').onclick=send;
-    input.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};
-    document.getElementById('photoBtn').onclick=()=>document.getElementById('file').click();
-    document.getElementById('printBtn').onclick=()=>window.print();
-    document.getElementById('settingsBtn').onclick=()=>settings.style.display='grid';
-    document.getElementById('closeSettings').onclick=()=>settings.style.display='none';
-    document.getElementById('themeToggle').onchange=e=>{
-      document.documentElement.setAttribute('data-theme', e.target.checked?'light':'dark');
-    };
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
   </script>
 </body>
 </html>
