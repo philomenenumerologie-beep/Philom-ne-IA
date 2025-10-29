@@ -1,188 +1,149 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>Philomène IA — Messenger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Si tu utilises Clerk, laisse ce script. Sinon, on fabriquera un userId local. -->
-  <script async crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
-  </script>
-
+  <title>Philomène IA</title>
   <style>
-    :root { --bg:#071826; --panel:#0e2238; --muted:#9bb3c9; --accent:#2e7df6; --danger:#ff4646; }
-    body { margin:0; background:var(--bg); color:#fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    .wrap { max-width:980px; margin:0 auto; padding:18px; }
-    h1 { margin:6px 0 12px; font-size:28px; text-align:center; }
-    .topline { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; color:var(--muted); margin-bottom:14px; font-size:14px; }
-    .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; background:#0f2b47; border:1px solid #234c77; border-radius:999px; }
-    .tokens { font-weight:700; color:#fff; }
-    .logout { background:var(--danger); color:#fff; border:0; border-radius:10px; padding:8px 12px; font-weight:600; cursor:pointer; }
+    :root {
+      --bg: #071826;
+      --panel: #0e2238;
+      --text: #eaf2f8;
+      --accent: #3fb0ff;
+      --btn-bg: #1b3c58;
+      --btn-hover: #3fb0ff;
+    }
 
-    .panel { background:var(--panel); border:1px solid #173a5c; border-radius:12px; padding:14px; }
-    .alert { margin:0 4px 8px; color:var(--muted); }
-    .chatbox { height:62vh; min-height:320px; overflow:auto; padding:12px; background:#0b1d31; border:1px solid #153150; border-radius:10px; }
-    .msg { max-width:88%; margin:8px 0; padding:10px 12px; border-radius:10px; line-height:1.35; font-size:15px; white-space:pre-wrap; word-wrap:break-word; }
-    .me { margin-left:auto; background:#133a6d; border:1px solid #2d65a2; }
-    .bot { background:#0f2b47; border:1px solid #2a527e; }
+    [data-theme="light"] {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #1c2732;
+      --accent: #0067ff;
+      --btn-bg: #cce3ff;
+      --btn-hover: #0067ff;
+    }
 
-    .row { display:flex; gap:10px; margin-top:10px; }
-    textarea { flex:1; height:54px; resize:none; background:#0b1d31; border:1px solid #173a5c; color:#fff; border-radius:10px; padding:12px; font-size:15px; outline:none; }
-    button { cursor:pointer; border:0; border-radius:10px; padding:12px 14px; font-weight:600; }
-    .send { background:var(--accent); color:#001427; min-width:120px; }
-    .photo { background:#00bcd4; color:#001427; min-width:120px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
 
-    input[type=file] { display:none; }
-    .mini { font-size:12px; opacity:.9; }
+    h1 {
+      color: var(--accent);
+      font-size: 2rem;
+      margin: 0 0 1rem 0;
+    }
+
+    p {
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .logo {
+      font-size: 3rem;
+      margin: 1rem 0;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    button {
+      padding: 0.8rem 1.4rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--btn-bg);
+      color: var(--text);
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: var(--btn-hover);
+      color: #fff;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 1rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    /* Chat container (hidden by default) */
+    #chat {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    #chat iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>Philomène IA — Messenger</h1>
+  <div class="theme-toggle" onclick="toggleTheme()">☀️ / 🌙</div>
 
-    <div class="topline">
-      <span id="connectedAs" class="badge">Connexion…</span>
-      <span class="badge tokens">Tokens restants : <span id="tokRemain">0</span></span>
-      <button id="logout" class="logout">Se déconnecter</button>
-    </div>
+  <div id="intro">
+    <h1>Philomène IA</h1>
+    <div class="logo">🧠</div>
+    <p>
+      <strong>Philomène IA</strong> est ton assistante intelligente personnelle.<br />
+      Pose-lui tes questions, discute avec elle et explore ses différentes spécialités — toujours à ton service.
+    </p>
 
-    <div class="panel">
-      <div id="alert" class="alert">GPT-4 Turbo activé. 5000 tokens offerts à l’inscription. Chaque réponse affiche les tokens consommés.</div>
-
-      <div id="chat" class="chatbox">
-        <div class="msg bot">Bonjour ! Pose ta question. Le décompte est réel (OpenAI).</div>
-      </div>
-
-      <div class="mini" id="lastUsage" style="margin:6px 2px 0;"></div>
-
-      <div class="row">
-        <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
-        <label for="file" class="photo" title="Envoyer une photo">📷 Photo</label>
-        <input id="file" type="file" accept="image/*" />
-        <button id="send" class="send">Envoyer</button>
-      </div>
+    <div class="btn-container">
+      <button onclick="openMessenger()">Entrer</button>
     </div>
   </div>
 
+  <div id="chat">
+    <iframe src="/messenger.html"></iframe>
+  </div>
+
+  <footer>© 2025 Philomène IA — Tous droits réservés</footer>
+
   <script>
-    const API_URL = (location.hostname.includes("philomeneia"))
-      ? "https://api.philomeneia.com"
-      : "http://localhost:10000";
-
-    const $ = (id) => document.getElementById(id);
-    const chat = $("chat");
-    const fileInput = $("file");
-    const lastUsage = $("lastUsage");
-
-    let imageDataUrl = null;
-    let userId = null;
-
-    function addMsg(text, who) {
-      const div = document.createElement("div");
-      div.className = "msg " + (who === "me" ? "me" : "bot");
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
     }
 
-    async function safeJSON(url, options = {}) {
-      try {
-        const r = await fetch(url, options);
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return await r.json();
-      } catch (e) {
-        console.error(e);
-        $("alert").textContent = "⚠️ Erreur réseau: " + (e.message || "inconnue");
-        return null;
-      }
-    }
-
-    // ——— Auth (Clerk si dispo, sinon ID local) ———
-    window.addEventListener("load", async () => {
-      try {
-        await Clerk.load();
-      } catch (_) {}
-      if (window.Clerk && Clerk.user) {
-        userId = Clerk.user.id;
-        const mail = Clerk.user.primaryEmailAddress?.emailAddress || "inconnu";
-        $("connectedAs").textContent = "Connecté ✅ : " + mail;
-        $("logout").onclick = async () => { await Clerk.signOut(); window.location.href = "/"; };
-      } else {
-        // fallback: ID local pour tests
-        userId = localStorage.getItem("anon_id");
-        if (!userId) { userId = "anon_" + Math.random().toString(36).slice(2); localStorage.setItem("anon_id", userId); }
-        $("connectedAs").textContent = "Mode test ✅ (sans compte)";
-        $("logout").style.display = "none";
-      }
-
-      await refreshBalance();
-
-      // Envoi texte
-      $("send").onclick = sendMessage;
-      const input = $("input");
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-      });
-
-      // Upload photo
-      fileInput.addEventListener("change", async () => {
-        if (!fileInput.files?.length) return;
-        const f = fileInput.files[0];
-        if (!f.type.startsWith("image/")) { imageDataUrl = null; return; }
-        imageDataUrl = await toDataURL(f);
-        $("alert").textContent = "Photo attachée ✅";
-      });
-    });
-
-    async function refreshBalance() {
-      const d = await safeJSON(`${API_URL}/api/balance?userId=${encodeURIComponent(userId)}`);
-      if (!d) return;
-      $("tokRemain").textContent = d.free ?? 0;
-    }
-
-    async function sendMessage() {
-      const input = $("input");
-      const text = input.value.trim();
-      if (!text && !imageDataUrl) return;
-
-      addMsg(text || "(photo)", "me");
-      input.value = "";
-
-      const body = { userId, message: text || "", imageDataUrl: imageDataUrl || null };
-      const data = await safeJSON(`${API_URL}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-      });
-
-      if (!data) { addMsg("Désolé, impossible d’obtenir une réponse pour le moment.", "bot"); return; }
-      if (data.error) {
-        addMsg(data.error === "Solde insuffisant" ? "⛔ Solde insuffisant. Veuillez recharger vos tokens." : data.error, "bot");
-        $("tokRemain").textContent = data.remaining ?? 0;
-        return;
-      }
-
-      addMsg(data.reply, "bot");
-
-      // Affiche usage et reste
-      const u = data.usage || {};
-      lastUsage.textContent =
-        `Utilisés: prompt ${u.prompt_tokens||0} + output ${u.completion_tokens||0} = ${u.total_tokens||0} tokens  •  Reste: ${data.remaining}`;
-      $("tokRemain").textContent = data.remaining ?? 0;
-
-      // reset pièce jointe
-      imageDataUrl = null;
-      $("alert").textContent = "Prêt ✅";
-    }
-
-    function toDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const fr = new FileReader();
-        fr.onload = () => resolve(fr.result);
-        fr.onerror = reject;
-        fr.readAsDataURL(file);
-      });
+    function openMessenger() {
+      document.getElementById("intro").style.display = "none";
+      document.getElementById("chat").style.display = "flex";
     }
   </script>
 </body>
