@@ -1,152 +1,151 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Philomenia Messenger – Votre assistant personnel IA</title>
+  <meta charset="UTF-8">
+  <title>Philomène IA Messenger – GPT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Clerk Frontend -->
+  <!-- Clerk Auth -->
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
   </script>
 
   <style>
-    :root{
-      --bg:#061723;
-      --panel:#111c27;
-      --panel2:#0b1520;
-      --txt:#e9f0f6;
-      --muted:#92a4b5;
-      --primary:#2f80ff;
-      --accent:#2dd4bf;
-      --ring:rgba(47,128,255,.35);
-      --card-w: min(980px, 92vw);
+    body {
+      background: #02101e;
+      color: white;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      text-align: center;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; background:linear-gradient(180deg,#05111d 0%, #061723 50%, #071a28 100%);
-      color:var(--txt); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1200px;margin:0 auto;padding:32px 20px 100px}
 
-    /* HERO */
-    .hero{
-      display:flex; align-items:center; justify-content:center; flex-direction:column;
-      gap:22px; padding:54px 18px 18px; text-align:center;
+    section {
+      width: 92%;
+      max-width: 600px;
+      margin: 0 auto 40px;
+      padding: 20px;
     }
-    .badge{font-size:13px; color:var(--accent); letter-spacing:.6px; text-transform:uppercase}
-    .title{font-weight:800; line-height:1.08; margin:0; 
-      font-size: clamp(28px, 5.5vw, 44px);
-    }
-    .subtitle{color:var(--muted); font-size:clamp(15px, 2.6vw, 18px); max-width:var(--card-w)}
-    .lang{color:var(--muted); font-size:14px}
 
-    .cta{
-      display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px
+    h1 {
+      font-size: 34px;
+      margin-bottom: 10px;
     }
-    .btn{
-      appearance:none; border:0; border-radius:12px; padding:14px 22px; font-weight:700; font-size:16px;
-      background:var(--primary); color:white; cursor:pointer; box-shadow:0 0 0 0 var(--ring);
-      transition:transform .06s ease, box-shadow .15s ease, background .2s ease;
-    }
-    .btn:hover{transform:translateY(-1px); box-shadow:0 8px 24px -10px var(--ring)}
-    .btn.secondary{background:#263445; color:#e7eef6}
-    .note{color:var(--muted); font-size:14px; margin-top:6px}
 
-    /* CARDS SECTION */
-    .grid{
-      display:grid; gap:18px; margin:34px auto 0; width:var(--card-w);
-      grid-template-columns:repeat(3, 1fr);
+    h2 {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-size: 26px;
     }
-    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
-    .card{
-      background:linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
-      border:1px solid #152330; border-radius:16px; padding:18px 18px 16px;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 10px 30px rgba(0,0,0,.25);
-    }
-    .card h3{margin:6px 0 8px; font-size:18px}
-    .card p{margin:0; color:var(--muted); font-size:15px}
-    .icon{font-size:20px; margin-right:8px}
 
-    /* HOW IT WORKS */
-    .steps{
-      width:var(--card-w); margin:28px auto 0; padding:18px; border-radius:16px;
-      background:linear-gradient(180deg,#0b1b2a 0%, #0a1927 100%); border:1px solid #152330;
+    p {
+      line-height: 1.4;
+      opacity: .95;
+      font-size: 16px;
     }
-    .steps h3{margin:0 0 8px}
-    .steps ol{margin:0; padding-left:18px; color:var(--muted)}
-    .steps li{margin:8px 0}
 
-    /* Footer mini */
-    footer{margin:40px 0 0; text-align:center; color:#7f94a7; font-size:12px}
+    .cta {
+      margin: 25px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 80%;
+      max-width: 280px;
+    }
+
+    button {
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #1478FF;
+      color: white;
+      font-weight: bold;
+    }
+
+    .secondary {
+      background: #2b2b2b;
+      color: white;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 18px 15px;
+      margin-top: 16px;
+      text-align: left;
+    }
+
+    footer {
+      margin-top: 50px;
+      opacity: .5;
+      font-size: 13px;
+      padding-bottom: 40px;
+    }
   </style>
+
 </head>
 
 <body>
-  <div class="wrap">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="badge">Assistant personnel tout-en-un</div>
-      <h1 class="title">Philomenia Messenger – GPT ✨</h1>
-      <p class="subtitle">
-        Devoirs, recettes, lettres, idées de business, dépannage technique… même via photo 🔧📷.<br>
-        Posez votre question, j’explique, je corrige, je guide, pas à pas.
-      </p>
-      <div class="lang">Disponible en 🇫🇷 Français • 🇬🇧 English • 🇳🇱 Nederlands</div>
 
-      <div class="cta">
-        <button class="btn secondary" id="signupBtn">Créer un compte</button>
-        <button class="btn" id="signinBtn">Se connecter</button>
-      </div>
-      <div class="note">Accès sécurisé • <strong>5000 tokens offerts</strong> à l’inscription 🎁</div>
-    </section>
+  <!-- SECTION HEADER -->
+  <section>
+    <h1>Philomène IA Messenger – GPT ✨</h1>
+    <p>Devoirs, recettes, lettres, idées business, dépannage tech… même via photo 🔧📸<br>
+    Posez votre question. Je réponds, j’explique et je guide pas à pas.</p>
+    <p><strong>Disponible en 🇫🇷 Français • 🇬🇧 English • 🇳🇱 Nederlands</strong></p>
 
-    <!-- WHAT I CAN DO -->
-    <section class="grid">
-      <div class="card">
-        <h3><span class="icon">🧠</span>Aide immédiate</h3>
-        <p>Résumés, explications, révisions, emails, CV, textes optimisés. Idéal pour les devoirs et le boulot.</p>
-      </div>
-      <div class="card">
-        <h3><span class="icon">🍳</span>Au quotidien</h3>
-        <p>Recettes selon ce qu’il y a dans votre frigo, listes de courses, organisation perso, idées cadeaux.</p>
-      </div>
-      <div class="card">
-        <h3><span class="icon">🔧</span>Dépannage par photo</h3>
-        <p>Envoyez une image d’un câble, d’un message d’erreur ou d’une pièce. Je diagnostique et je guide.</p>
-      </div>
-    </section>
+    <div class="cta">
+      <button class="secondary" onclick="Clerk.openSignUp()">Créer un compte</button>
+      <button class="primary" onclick="Clerk.openSignIn()">Se connecter</button>
+    </div>
 
-    <!-- HOW IT WORKS -->
-    <section class="steps">
-      <h3>Comment ça marche</h3>
-      <ol>
-        <li>Créez un compte ou connectez-vous.</li>
-        <li>Ouvrez <strong>Messenger</strong> et choisissez la langue FR/EN/NL.</li>
-        <li>Écrivez votre demande… ou envoyez une <strong>photo</strong> si c’est plus simple.</li>
-        <li>Recevez une réponse claire, avec des étapes concrètes.</li>
-      </ol>
-    </section>
+    <p><strong>Accès sécurisé • 5000 tokens offerts à l’inscription 🎁</strong></p>
+  </section>
 
-    <footer>© Philomenia — IA au service des gens.</footer>
-  </div>
+  <!-- AVANTAGES -->
+  <section>
+    <div class="card">
+      <h3>🧠 Aide immédiate</h3>
+      <p>Explications, résumés, corrections, emails, CV… Parfait pour les devoirs et le boulot.</p>
+    </div>
+
+    <div class="card">
+      <h3>🍳 Au quotidien</h3>
+      <p>Recettes selon votre frigo, listes de courses, idées cadeaux et organisation perso.</p>
+    </div>
+
+    <div class="card">
+      <h3>🔧 Dépannage par photo</h3>
+      <p>Envoyez une photo d’une panne ou d’un message d’erreur. Je diagnostique & vous aide.</p>
+    </div>
+  </section>
+
+  <!-- HOW TO -->
+  <section>
+    <h2>Comment ça marche 📌</h2>
+    <p>1. Créez un compte ou connectez-vous.<br>
+       2. Ouvrez Messenger & choisissez FR / EN / NL.<br>
+       3. Posez votre question… ou envoyez une photo.<br>
+       4. Recevez une solution claire & étape par étape ✅
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © Philomène IA — L’intelligence au service des gens.
+  </footer>
 
   <script>
-    // Démarrage Clerk + redirection si déjà connecté
     window.addEventListener("load", async () => {
       await Clerk.load();
-      if (Clerk.user) {
-        window.location.href = "/messenger.html";
-        return;
-      }
-      const goSignIn  = () => Clerk.openSignIn({ redirectUrl: "/messenger.html" });
-      const goSignUp  = () => Clerk.openSignUp({ redirectUrl: "/messenger.html" });
-      document.getElementById("signinBtn").addEventListener("click", goSignIn);
-      document.getElementById("signupBtn").addEventListener("click", goSignUp);
+      if (Clerk.user) window.location.href = "/messenger.html";
     });
   </script>
+
 </body>
 </html>
