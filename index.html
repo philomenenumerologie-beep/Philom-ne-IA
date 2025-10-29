@@ -1,93 +1,152 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Philomenia Messenger – GPT</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Philomenia Messenger – Votre assistant personnel IA</title>
 
+  <!-- Clerk Frontend -->
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
   </script>
 
   <style>
-    body {
-      background: #02101e;
-      color: white;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh;
-      padding-top: 10vh;
-      text-align: center;
+    :root{
+      --bg:#061723;
+      --panel:#111c27;
+      --panel2:#0b1520;
+      --txt:#e9f0f6;
+      --muted:#92a4b5;
+      --primary:#2f80ff;
+      --accent:#2dd4bf;
+      --ring:rgba(47,128,255,.35);
+      --card-w: min(980px, 92vw);
     }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,#05111d 0%, #061723 50%, #071a28 100%);
+      color:var(--txt); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1200px;margin:0 auto;padding:32px 20px 100px}
 
-    h1 {
-      font-size: 42px;
-      margin-bottom: 12px;
-      font-weight: 700;
+    /* HERO */
+    .hero{
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      gap:22px; padding:54px 18px 18px; text-align:center;
     }
+    .badge{font-size:13px; color:var(--accent); letter-spacing:.6px; text-transform:uppercase}
+    .title{font-weight:800; line-height:1.08; margin:0; 
+      font-size: clamp(28px, 5.5vw, 44px);
+    }
+    .subtitle{color:var(--muted); font-size:clamp(15px, 2.6vw, 18px); max-width:var(--card-w)}
+    .lang{color:var(--muted); font-size:14px}
 
-    p.subtitle {
-      font-size: 20px;
-      opacity: .9;
-      margin-bottom: 50px;
-      line-height: 26px;
+    .cta{
+      display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px
     }
+    .btn{
+      appearance:none; border:0; border-radius:12px; padding:14px 22px; font-weight:700; font-size:16px;
+      background:var(--primary); color:white; cursor:pointer; box-shadow:0 0 0 0 var(--ring);
+      transition:transform .06s ease, box-shadow .15s ease, background .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 8px 24px -10px var(--ring)}
+    .btn.secondary{background:#263445; color:#e7eef6}
+    .note{color:var(--muted); font-size:14px; margin-top:6px}
 
-    .btn {
-      width: 300px;
-      padding: 16px;
-      margin: 12px auto;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 19px;
-      font-weight: 500;
+    /* CARDS SECTION */
+    .grid{
+      display:grid; gap:18px; margin:34px auto 0; width:var(--card-w);
+      grid-template-columns:repeat(3, 1fr);
     }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background:linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
+      border:1px solid #152330; border-radius:16px; padding:18px 18px 16px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 10px 30px rgba(0,0,0,.25);
+    }
+    .card h3{margin:6px 0 8px; font-size:18px}
+    .card p{margin:0; color:var(--muted); font-size:15px}
+    .icon{font-size:20px; margin-right:8px}
 
-    .btn-login {
-      background: #1478ff;
-      color: white;
+    /* HOW IT WORKS */
+    .steps{
+      width:var(--card-w); margin:28px auto 0; padding:18px; border-radius:16px;
+      background:linear-gradient(180deg,#0b1b2a 0%, #0a1927 100%); border:1px solid #152330;
     }
-    .btn-register {
-      background: #2b2b2b;
-      color: white;
-    }
+    .steps h3{margin:0 0 8px}
+    .steps ol{margin:0; padding-left:18px; color:var(--muted)}
+    .steps li{margin:8px 0}
 
-    .info {
-      margin-top: 28px;
-      font-size: 15px;
-      opacity: .85;
-    }
+    /* Footer mini */
+    footer{margin:40px 0 0; text-align:center; color:#7f94a7; font-size:12px}
   </style>
-
 </head>
+
 <body>
+  <div class="wrap">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="badge">Assistant personnel tout-en-un</div>
+      <h1 class="title">Philomenia Messenger – GPT ✨</h1>
+      <p class="subtitle">
+        Devoirs, recettes, lettres, idées de business, dépannage technique… même via photo 🔧📷.<br>
+        Posez votre question, j’explique, je corrige, je guide, pas à pas.
+      </p>
+      <div class="lang">Disponible en 🇫🇷 Français • 🇬🇧 English • 🇳🇱 Nederlands</div>
 
-  <h1>Philomenia Messenger – GPT ✨</h1>
+      <div class="cta">
+        <button class="btn secondary" id="signupBtn">Créer un compte</button>
+        <button class="btn" id="signinBtn">Se connecter</button>
+      </div>
+      <div class="note">Accès sécurisé • <strong>5000 tokens offerts</strong> à l’inscription 🎁</div>
+    </section>
 
-  <p class="subtitle">
-    Chattez, explorez, découvrez.<br>
-    L’intelligence artificielle à votre service 🤖
-  </p>
+    <!-- WHAT I CAN DO -->
+    <section class="grid">
+      <div class="card">
+        <h3><span class="icon">🧠</span>Aide immédiate</h3>
+        <p>Résumés, explications, révisions, emails, CV, textes optimisés. Idéal pour les devoirs et le boulot.</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">🍳</span>Au quotidien</h3>
+        <p>Recettes selon ce qu’il y a dans votre frigo, listes de courses, organisation perso, idées cadeaux.</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">🔧</span>Dépannage par photo</h3>
+        <p>Envoyez une image d’un câble, d’un message d’erreur ou d’une pièce. Je diagnostique et je guide.</p>
+      </div>
+    </section>
 
-  <button class="btn btn-register" onclick="Clerk.openSignUp()">Créer un compte</button>
-  <button class="btn btn-login" onclick="Clerk.openSignIn()">Se connecter</button>
+    <!-- HOW IT WORKS -->
+    <section class="steps">
+      <h3>Comment ça marche</h3>
+      <ol>
+        <li>Créez un compte ou connectez-vous.</li>
+        <li>Ouvrez <strong>Messenger</strong> et choisissez la langue FR/EN/NL.</li>
+        <li>Écrivez votre demande… ou envoyez une <strong>photo</strong> si c’est plus simple.</li>
+        <li>Recevez une réponse claire, avec des étapes concrètes.</li>
+      </ol>
+    </section>
 
-  <p class="info">
-    Accès sécurisé • 5000 tokens offerts à l’inscription 🎁
-  </p>
+    <footer>© Philomenia — IA au service des gens.</footer>
+  </div>
 
   <script>
+    // Démarrage Clerk + redirection si déjà connecté
     window.addEventListener("load", async () => {
       await Clerk.load();
-      if (Clerk.user) window.location.href = "/messenger.html";
+      if (Clerk.user) {
+        window.location.href = "/messenger.html";
+        return;
+      }
+      const goSignIn  = () => Clerk.openSignIn({ redirectUrl: "/messenger.html" });
+      const goSignUp  = () => Clerk.openSignUp({ redirectUrl: "/messenger.html" });
+      document.getElementById("signinBtn").addEventListener("click", goSignIn);
+      document.getElementById("signupBtn").addEventListener("click", goSignUp);
     });
   </script>
-
 </body>
 </html>
