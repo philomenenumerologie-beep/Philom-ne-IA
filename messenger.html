@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Philomenia Messenger</title>
+  <title>Philomène IA – Messenger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Clerk Frontend -->
@@ -12,64 +12,66 @@
   </script>
 
   <style>
-    :root { --bg:#071826; --panel:#0e2238; --muted:#9bb3c9; --accent:#3aa0ff; --danger:#ff4646; }
-    html, body { height:100%; }
-    body { margin:0; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-    .wrap { max-width:900px; margin:0 auto; padding:22px; }
-    h1 { margin:6px 0 2px; font-size:28px; text-align:center; }
-    .topline { text-align:center; color:var(--muted); margin-bottom:14px; font-size:14px; }
-    .badge { display:inline-block; padding:2px 8px; background:#0f2b47; border:1px solid #234c77; border-radius:999px; margin:0 6px; }
-    .tokens { font-weight:600; color:#fff; }
-    .panel { background:var(--panel); border:1px solid #173a5c; border-radius:12px; padding:14px; }
-    .row { display:flex; gap:10px; }
-    .grow { flex:1; }
-    .chatbox { height:54vh; min-height:280px; overflow:auto; padding:12px; background:#0b1d31; border:1px solid #153150; border-radius:10px; }
-    .msg { max-width:88%; margin:8px 0; padding:10px 12px; border-radius:10px; line-height:1.35; font-size:15px; white-space:pre-wrap; word-wrap:break-word; }
-    .me { margin-left:auto; background:#133a6d; border:1px solid #2d65a2; }
-    .bot { background:#0f2b47; border:1px solid #2a527e; }
-    .muted { color:var(--muted); }
-    textarea { width:100%; background:#0b1d31; border:1px solid #173a5c; color:#fff; border-radius:10px; padding:12px; font-size:15px; outline:none; height:52px; resize:none; }
-    button { cursor:pointer; border:0; border-radius:10px; padding:12px 14px; font-weight:600; }
-    .send { background:var(--accent); color:#001427; }
-    .logout { background:var(--danger); color:#fff; padding:8px 12px; }
-    .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:10px 0 16px; }
-    .small { font-size:13px; }
-    .right { text-align:right; }
+    :root{--bg:#071826;--panel:#0e2238;--muted:#9bb3c9;--accent:#3aa0ff;--danger:#ff4646}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .wrap{max-width:920px;margin:0 auto;padding:22px}
+    h1{margin:6px 0 2px;font-size:28px;text-align:center}
+    .topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;color:var(--muted);margin-bottom:14px;font-size:14px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#0f2b47;border:1px solid #234c77;border-radius:999px}
+    .tokens{font-weight:700;color:#fff}
+    .logout{background:var(--danger);color:#fff;border:0;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .panel{background:var(--panel);border:1px solid #173a5c;border-radius:12px;padding:14px}
+    .alert{margin:0 4px 10px;color:var(--muted);font-size:13px}
+    .chatbox{height:56vh;min-height:280px;overflow:auto;padding:12px;background:#0b1d31;border:1px solid #153150;border-radius:10px}
+    .msg{max-width:88%;margin:8px 0;padding:10px 12px;border-radius:10px;line-height:1.35;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+    .me{margin-left:auto;background:#133a6d;border:1px solid #2d65a2}
+    .bot{background:#0f2b47;border:1px solid #2a527e}
+    .row{display:flex;gap:10px;margin-top:10px}
+    textarea{flex:1;height:54px;resize:none;background:#0b1d31;border:1px solid #173a5c;color:#fff;border-radius:10px;padding:12px;font-size:15px;outline:none}
+    .send{background:var(--accent);color:#001427;border:0;border-radius:10px;padding:0 18px;font-weight:700;cursor:pointer}
+    .foot{margin-top:10px;text-align:right;color:var(--muted);font-size:13px}
+    .lang{margin-left:auto;background:#0f2b47;border:1px solid #234c77;color:#beddff;border-radius:999px;padding:6px 10px}
+    .thin{font-weight:400;opacity:.9}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Philomenia Messenger</h1>
+    <h1>Philomène IA – Messenger</h1>
 
     <div class="topline">
       <span id="connectedAs" class="badge">Connexion…</span>
       <span class="badge tokens">Tokens : <span id="tokFree">0</span> / <span id="tokPaid">0</span></span>
-      <button id="logout" class="logout small">Se déconnecter</button>
+      <select id="lang" class="lang" title="Langue">
+        <option value="fr" selected>FR</option>
+        <option value="en">EN</option>
+        <option value="nl">NL</option>
+      </select>
+      <button id="logout" class="logout">Se déconnecter</button>
     </div>
 
     <div class="panel">
-      <div id="alert" class="muted small" style="margin:0 4px 8px;">Bonjour 👋 Tape un message et envoie.</div>
-
+      <div id="alert" class="alert">Bonjour 👋 Tape un message et envoie.</div>
       <div id="chat" class="chatbox">
         <div class="msg bot">Bonjour ! Comment puis-je vous aider aujourd’hui ?</div>
       </div>
-
-      <div class="row" style="margin-top:10px;">
-        <textarea id="input" class="grow" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+      <div class="row">
+        <textarea id="input" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
         <button id="send" class="send">Envoyer</button>
       </div>
     </div>
 
-    <div class="right muted small" style="margin-top:10px;">
+    <div class="foot">
       Solde • Gratuit : <span id="fBalance">0</span> • Payant : <span id="pBalance">0</span>
+      <span class="thin">• Philomène au service des gens</span>
     </div>
   </div>
 
   <script>
-    // ===== CONFIG: pointe bien vers l'API =====
+    // === Config API (backend Render) ===
     const API_BASE = "https://api.philomeneia.com";
 
-    // Helpers d’UI
+    // === Helpers DOM ===
     const $ = (id) => document.getElementById(id);
     const chat = $("chat");
     function addMsg(text, cls) {
@@ -79,53 +81,73 @@
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
     }
+    function setAlert(txt) { $("alert").textContent = txt; }
 
-    async function safeFetch(path, options={}) {
-      const url = path.startsWith("http") ? path : `${API_BASE}${path}`;
+    async function safeJson(url, options = {}) {
       try {
         const res = await fetch(url, options);
         if (!res.ok) throw new Error("HTTP " + res.status);
         return await res.json();
       } catch (e) {
         console.error(e);
-        $("alert").textContent = "⚠️ Échec de chargement (" + (e.message || "erreur") + ")";
+        setAlert("⚠️ Échec de chargement (" + (e.message || "erreur") + ")");
         return null;
       }
     }
 
-    // Clerk + page
+    // === Clerk + Messenger ===
     window.addEventListener("load", async () => {
       await Clerk.load();
 
       if (!Clerk.user) {
+        // Non connecté -> retour accueil
         window.location.href = "/";
         return;
       }
 
-      const mail = Clerk.user.primaryEmailAddress?.emailAddress || "inconnu";
-      $("connectedAs").textContent = "Connecté ✅ : " + mail;
+      const email = Clerk.user.primaryEmailAddress?.emailAddress || "inconnu";
+      $("connectedAs").textContent = "Connecté ✅ : " + email;
 
+      // Déconnexion
       $("logout").onclick = async () => {
         await Clerk.signOut();
         window.location.href = "/";
       };
 
-      await refreshBalances();
+      // Langue (stockée localStorage, purement cosmétique pour l’instant)
+      const langSel = $("lang");
+      langSel.value = localStorage.getItem("ph_lang") || "fr";
+      langSel.onchange = () => localStorage.setItem("ph_lang", langSel.value);
 
-      const sendBtn = $("send");
+      // Crédit + état "greeted" par utilisateur
+      const greetKey = "ph_greeted_" + email;
+      const alreadyGreeted = localStorage.getItem(greetKey) === "1";
+
+      await refreshBalances(email);
+      setAlert("Prêt ✅");
+
       const input = $("input");
+      const sendBtn = $("send");
 
       async function sendMessage() {
         const text = input.value.trim();
         if (!text) return;
+
         input.value = "";
         addMsg(text, "me");
 
         sendBtn.disabled = true;
+        const old = sendBtn.textContent;
         sendBtn.textContent = "…";
 
-        const payload = { message: text, email: mail };
-        const data = await safeFetch("/api/chat", {
+        // first = présentation uniquement si pas encore salué
+        const payload = {
+          message: text,
+          email,
+          first: !localStorage.getItem(greetKey)
+        };
+
+        const data = await safeJson(`${API_BASE}/api/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
@@ -134,17 +156,18 @@
         if (data && (data.reply || data.choices)) {
           const reply = data.reply || data.choices?.[0]?.message?.content || "Réponse reçue.";
           addMsg(reply, "bot");
-          refreshBalances();
+          // Marquer comme salué si c’était la 1re
+          if (payload.first) localStorage.setItem(greetKey, "1");
+          await refreshBalances(email);
         } else {
           addMsg("Désolé, impossible d’obtenir une réponse pour le moment.", "bot");
         }
 
         sendBtn.disabled = false;
-        sendBtn.textContent = "Envoyer";
+        sendBtn.textContent = old;
       }
 
       sendBtn.onclick = sendMessage;
-
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
@@ -153,8 +176,10 @@
       });
     });
 
-    async function refreshBalances() {
-      const data = await safeFetch("/api/balance");
+    async function refreshBalances(email) {
+      // backend accepte GET /api/balance?email=...
+      const url = `${API_BASE}/api/balance?email=${encodeURIComponent(email)}`;
+      const data = await safeJson(url);
       if (!data) return;
       const free = Number(data.free || 0);
       const paid = Number(data.paid || 0);
@@ -162,7 +187,6 @@
       $("tokPaid").textContent = paid;
       $("fBalance").textContent = free;
       $("pBalance").textContent = paid;
-      $("alert").textContent = "Prêt ✅";
     }
   </script>
 </body>
