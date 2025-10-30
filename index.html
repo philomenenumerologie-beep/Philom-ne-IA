@@ -1,299 +1,765 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Philomène IA Messenger – GPT ✨</title>
+  <!-- Clerk (connexion / email utilisateur) -->
+  <meta name="clerk-publishable-key" content="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA" />
+  <!-- URL backend Express -->
+  <meta name="api-base" content="https://philo-backend.onrender.com" />
+
+  <title>Philomène IA — Messenger GPT</title>
+
   <style>
     :root {
-      --bg:#0b1a24;
-      --panel:#112637;
-      --text:#ffffff;
-      --text-dim:#aeb9c7;
-      --accent:#1673ff;
-      --card-border:rgba(255,255,255,0.07);
-      --radius-xl:18px;
-      --radius-lg:14px;
-      --radius-md:10px;
-      --radius-sm:8px;
+      --bg: #071826;
+      --panel: #0e2238;
+      --panel-soft: #122d4d;
+      --text: #eaf2f8;
+      --muted: #9bb4c9;
+      --accent: #3fb0ff;
+      --accent-solid: #0f2b47;
+      --danger: #f15b5b;
+      --chip: #133a5a;
+      --chip-text: #a8d8ff;
+      --input-bg: #0c1a28;
+      --btn-bg: #1b3c58;
+      --btn-text: #ffffff;
+      --border: rgba(255,255,255,0.08);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+    }
+    [data-theme="light"] {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-soft: #eef3ff;
+      --text: #1c2732;
+      --muted: #4a5a6b;
+      --accent: #0067ff;
+      --accent-solid: #d8e7ff;
+      --danger: #b52b2b;
+      --chip: #eaf2ff;
+      --chip-text: #003a7a;
+      --input-bg: #ffffff;
+      --btn-bg: #0067ff;
+      --btn-text: #ffffff;
+      --border: rgba(0,0,0,0.08);
     }
 
-    *{
-      box-sizing:border-box;
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
-    }
-    body{
-      margin:0;
-      padding:0 16px 80px;
-      background:var(--bg);
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Roboto",system-ui,sans-serif;
-      line-height:1.5;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", Roboto, system-ui, sans-serif;
     }
 
-    .page{
-      width:100%;
-      max-width:480px;
-      margin:32px auto 120px;
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* HERO */
-    .pretitle{
-      color:#36c1a3;
-      font-size:13px;
-      font-weight:500;
-      letter-spacing:.05em;
-      text-transform:uppercase;
-      text-align:center;
-      margin-bottom:12px;
-    }
-    h1.title{
-      margin:0 0 16px;
-      font-size:28px;
-      line-height:1.25;
-      font-weight:600;
-      text-align:center;
-      color:#fff;
-    }
-    .desc{
-      font-size:17px;
-      line-height:1.45;
-      text-align:center;
-      color:var(--text);
-      font-weight:400;
-      margin:0 auto 20px;
-      max-width:480px;
+    .page {
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 16px 120px;
     }
 
-    .langs{
-      text-align:center;
-      color:var(--text);
-      font-size:15px;
-      line-height:1.4;
-      margin-bottom:24px;
-    }
-    .langs span.flag{
-      font-size:18px;
-      margin:0 4px;
+    /* HEADER TOP */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 20px;
     }
 
-    /* CTA buttons */
-    .cta-group{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin:0 auto 16px;
-      width:100%;
-      max-width:420px;
-    }
-    .btn-main{
-      width:100%;
-      border-radius:var(--radius-lg);
-      border:none;
-      font-size:17px;
-      font-weight:600;
-      line-height:1.2;
-      padding:16px 20px;
-      color:#fff;
-      background:var(--accent);
-      text-align:center;
-      text-decoration:none;
-      display:block;
-    }
-    .btn-ghost{
-      width:100%;
-      border-radius:var(--radius-lg);
-      border:1px solid var(--card-border);
-      background:#1a2534;
-      font-size:17px;
-      font-weight:600;
-      line-height:1.2;
-      padding:16px 20px;
-      color:#fff;
-      text-align:center;
-      text-decoration:none;
-      display:block;
+    .brand {
+      flex: 1;
+      min-width: 180px;
     }
 
-    .bonus{
-      font-size:15px;
-      text-align:center;
-      color:#fff;
-      margin:0 auto 28px;
-      max-width:420px;
-      line-height:1.4;
-    }
-    .bonus .gift{
-      font-size:18px;
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 20px;
+      color: var(--text);
     }
 
-    /* CARDS SECTION */
-    .cards{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      margin:32px auto 32px;
-      max-width:480px;
-    }
-    .card{
-      background:var(--panel);
-      border:1px solid var(--card-border);
-      border-radius:var(--radius-xl);
-      padding:20px 20px 16px;
-      box-shadow:0 30px 60px rgba(0,0,0,0.6);
-    }
-    .card-title{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      font-size:18px;
-      line-height:1.3;
-      font-weight:600;
-      color:#fff;
-      margin:0 0 10px;
-    }
-    .card-title .emoji{
-      font-size:20px;
-      line-height:1;
-    }
-    .card-text{
-      font-size:15px;
-      color:var(--text-dim);
-      line-height:1.4;
-      margin:0;
+    .brand-row .brain {
+      font-size: 24px;
     }
 
-    /* HOW IT WORKS */
-    .howwrap{
-      max-width:480px;
-      margin:40px auto 48px;
-      text-align:left;
-      color:#fff;
-    }
-    .howtitle{
-      font-size:24px;
-      line-height:1.25;
-      font-weight:600;
-      text-align:center;
-      margin:0 0 20px;
-      color:#fff;
-    }
-    .howtitle .pin{
-      font-size:22px;
-    }
-    ol.how{
-      margin:0;
-      padding-left:20px;
-      font-size:17px;
-      line-height:1.45;
-      color:var(--text);
-    }
-    ol.how li{
-      margin-bottom:12px;
-    }
-    ol.how li:last-child{
-      margin-bottom:0;
+    .brand-sub {
+      font-size: 13px;
+      line-height: 1.3;
+      color: var(--muted);
+      font-weight: 500;
     }
 
-    /* FOOTER */
-    footer{
-      width:100%;
-      text-align:center;
-      color:var(--text-dim);
-      font-size:14px;
-      line-height:1.4;
-      margin-top:40px;
-      margin-bottom:80px;
+    .status-blocks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip-block {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      min-width: 140px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 56px;
+      justify-content: center;
+    }
+
+    .chip-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .chip-title .dot {
+      display: inline-flex;
+      width: 10px;
+      height: 10px;
+      background: #00c853;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.4);
+    }
+
+    .chip-desc {
+      font-size: 12px;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .tokens-line {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-ghost,
+    .btn-solid {
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 600;
+      padding: 12px 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid transparent;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+    }
+    .btn-ghost {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-solid.pay {
+      background: var(--accent);
+      color: #001428;
+      border: 1px solid var(--accent);
+    }
+
+    /* CHAT AREA */
+    .chatbox {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      min-height: 320px;
+      max-height: 50vh;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .msg-row {
+      max-width: 90%;
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 16px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text);
+    }
+
+    .msg-row.me {
+      margin-left: auto;
+      background: var(--btn-bg);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--btn-text);
+    }
+
+    /* INPUT BAR */
+    .input-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      background: transparent;
+    }
+
+    .field-wrap {
+      flex: 1;
+      min-width: 200px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.4;
+      min-height: 56px;
+      display: flex;
+    }
+    .field-wrap textarea {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.4;
+      resize: none;
+      outline: none;
+    }
+    .field-wrap textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .send-group {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 10px;
+    }
+
+    .photo-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-md);
+      min-width: 74px;
+      min-height: 56px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .send-btn {
+      background: var(--accent);
+      border: 0;
+      color: #001428;
+      border-radius: var(--radius-md);
+      min-width: 96px;
+      min-height: 56px;
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* SETTINGS MODAL */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
+    .overlay.show { display: flex; }
+
+    .sheet {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      max-width: 360px;
+      width: 100%;
+      padding: 16px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sheet-head h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .close-x {
+      background: transparent;
+      border: 0;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .sheet-section h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .sheet-section p {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .lang-row,
+    .token-pack-row,
+    .settings-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mini-btn,
+    .pack-btn,
+    .small-action {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.3;
+      padding: 10px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pack-btn .price {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .danger-btn {
+      background: var(--danger);
+      color: #000;
+      border: 0;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+      padding: 10px 12px;
+    }
+
+    /* small footer info */
+    .footnote {
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--muted);
+      margin-top: 24px;
+    }
+
+    @media (min-width: 480px) {
+      .topbar {align-items: flex-start;}
+      .status-blocks {flex-direction: row;}
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <!-- Hero / Header -->
-    <div class="pretitle">ASSISTANT PERSONNEL TOUT-EN-UN</div>
 
-    <h1 class="title">Philomène IA Messenger – GPT ✨</h1>
+  <div class="page">
 
-    <p class="desc">
-      Devoirs, recettes, lettres, idées business, dépannage technique…
-      même via photo 🛠️📸.<br />
-      Posez votre question. Je réponds, j’explique, je corrige,
-      je guide pas à pas.
-    </p>
+    <!-- HEADER / INTRO / STATUS -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-row">
+          <div class="brain">🧠</div>
+          <div>
+            <div>Philomène IA – Messenger GPT ✨</div>
+          </div>
+        </div>
+        <div class="brand-sub">
+          Pose ta question. J’explique, je corrige, je guide pas à pas.<br/>
+          FR • EN • NL • Texte ou photo.
+        </div>
+      </div>
 
-    <div class="langs">
-      Disponible en
-      <span class="flag">🇫🇷</span> Français ·
-      <span class="flag">🇬🇧</span> English ·
-      <span class="flag">🇳🇱</span> Nederlands
-    </div>
+      <div class="status-blocks">
 
-    <div class="cta-group">
-      <a class="btn-ghost" href="/sign-up">Créer un compte</a>
-      <a class="btn-main" href="/sign-in">Se connecter</a>
-    </div>
+        <!-- connexion / email / tokens -->
+        <div class="chip-block" id="userStatus">
+          <div class="chip-title">
+            <div class="dot"></div>
+            <span id="statusLine">Connecté</span>
+          </div>
+          <div class="chip-desc" id="userEmail">email@example.com</div>
+          <div class="tokens-line" id="tokenLine">Tokens restants : 5000</div>
+        </div>
 
-    <div class="bonus">
-      Accès sécurisé · <strong>5000 tokens offerts</strong> à l’inscription
-      <span class="gift">🎁</span>
-    </div>
+        <!-- réglages -->
+        <div class="actions-row">
+          <button class="btn-ghost" id="printBtn">🖨 Imprimer</button>
+          <button class="btn-ghost" id="openSettings">⚙ Réglages</button>
+        </div>
 
-    <!-- Feature cards -->
-    <section class="cards">
-      <article class="card">
-        <h2 class="card-title">
-          <span class="emoji">🧠</span>
-          <span>Aide immédiate</span>
-        </h2>
-        <p class="card-text">
-          Explications, résumés, corrections, emails, CV… Parfait pour les devoirs
-          et le boulot. Je t’écris les textes optimisés, je simplifie ce que tu
-          ne comprends pas.
-        </p>
-      </article>
+      </div>
+    </header>
 
-      <article class="card">
-        <h2 class="card-title">
-          <span class="emoji">🔍</span>
-          <span>Au quotidien</span>
-        </h2>
-        <p class="card-text">
-          Recettes selon ton frigo, idées de repas, listes de courses, cadeaux,
-          organisation perso, messages à envoyer à quelqu’un… Je fais le brouillon
-          pour toi.
-        </p>
-      </article>
-
-      <article class="card">
-        <h2 class="card-title">
-          <span class="emoji">🛠️</span>
-          <span>Dépannage par photo</span>
-        </h2>
-        <p class="card-text">
-          Envoie une photo d’une panne, d’un câble, d’un message d’erreur. Je te
-          dis ce que c’est, ce qui ne va pas, et je te guide étape par étape.
-        </p>
-      </article>
+    <!-- CHAT VIEW -->
+    <section class="chatbox" id="chatBox">
+      <!-- messages apparaissent ici -->
+      <div class="msg-row">
+        Bonjour ! Comment puis-je vous aider aujourd’hui ?
+      </div>
     </section>
 
-    <!-- How it works -->
-    <section class="howwrap">
-      <h2 class="howtitle">Comment ça marche <span class="pin">📌</span></h2>
-      <ol class="how">
-        <li>Crée un compte ou connecte-toi.</li>
-        <li>Ouvre Messenger et choisis ta langue FR / EN / NL.</li>
-        <li>Pose ta question… ou envoie une photo.</li>
-        <li>Reçois une solution claire avec des étapes concrètes.</li>
-      </ol>
+    <!-- INPUT BAR -->
+    <section class="input-bar">
+      <div class="field-wrap">
+        <textarea id="userInput" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+      </div>
+
+      <div class="send-group">
+        <label class="photo-btn">
+          📷 Photo
+          <input id="photoInput" type="file" accept="image/*" style="display:none" />
+        </label>
+
+        <button class="send-btn" id="sendBtn">Envoyer</button>
+      </div>
     </section>
 
-    <footer>
-      © 2025 Philomène IA — IA au service des gens.
-    </footer>
-  </main>
+    <div class="footnote">
+      Modèle utilisé : GPT-4 Turbo (OpenAI).<br/>
+      Les réponses sont générées automatiquement. L’actualité peut être incomplète ou incertaine.
+    </div>
+
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="overlay" id="settingsOverlay">
+    <div class="sheet">
+      <div class="sheet-head">
+        <h2>Réglages & Compte</h2>
+        <button class="close-x" id="closeSettings">✕</button>
+      </div>
+
+      <div class="sheet-section">
+        <h3>Langue</h3>
+        <p>Choisis dans quelle langue Philomène répond.</p>
+        <div class="lang-row">
+          <button class="mini-btn" data-lang="fr">🇫🇷 Français</button>
+          <button class="mini-btn" data-lang="en">🇬🇧 English</button>
+          <button class="mini-btn" data-lang="nl">🇳🇱 Nederlands</button>
+        </div>
+      </div>
+
+      <div class="sheet-section">
+        <h3>Tokens payants</h3>
+        <p>Besoin de plus ? Packs instantanés via PayPal.</p>
+        <div class="token-pack-row">
+          <button class="pack-btn" data-pack="5">
+            <span class="price">5€</span> • 70k tokens
+          </button>
+          <button class="pack-btn" data-pack="10">
+            <span class="price">10€</span> • 150k tokens
+          </button>
+          <button class="pack-btn" data-pack="20">
+            <span class="price">20€</span> • 320k tokens
+          </button>
+        </div>
+      </div>
+
+      <div class="sheet-section">
+        <h3>Actions</h3>
+        <div class="settings-row">
+          <button class="small-action" id="toggleThemeBtn">🌞 / 🌙 Thème</button>
+          <button class="small-action" id="printBtn2">🖨 Imprimer</button>
+          <button class="danger-btn" id="logoutBtn">Se déconnecter</button>
+        </div>
+      </div>
+
+      <div class="sheet-section">
+        <p style="font-size:12px;color:var(--muted);line-height:1.4">
+          Compte protégé. Paiements sécurisés. Aucune publicité.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======================================================
+    // CONFIG
+    // ======================================================
+    const apiBase = document.querySelector('meta[name="api-base"]').content;
+    const clerkKey = document.querySelector('meta[name="clerk-publishable-key"]').content;
+
+    // en dur pour l’instant sur iPhone
+    let userId = "anonymous";
+    let userEmail = "anonymous@philomeneia.com";
+    let currentLang = "fr";
+    let freeTokens = 5000; // sera mis à jour via /api/balance
+    let chatHistory = [];  // {from:"me"|"bot", text:"..."}
+
+    // ======================================================
+    // DOM refs
+    // ======================================================
+    const chatBox = document.getElementById("chatBox");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const photoInput = document.getElementById("photoInput");
+
+    const statusLine = document.getElementById("statusLine");
+    const userEmailEl = document.getElementById("userEmail");
+    const tokenLine = document.getElementById("tokenLine");
+
+    const openSettings = document.getElementById("openSettings");
+    const settingsOverlay = document.getElementById("settingsOverlay");
+    const closeSettings = document.getElementById("closeSettings");
+    const toggleThemeBtn = document.getElementById("toggleThemeBtn");
+    const printBtn = document.getElementById("printBtn");
+    const printBtn2 = document.getElementById("printBtn2");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // ======================================================
+    // THEME TOGGLE
+    // ======================================================
+    toggleThemeBtn.addEventListener("click", () => {
+      const html = document.documentElement;
+      const cur = html.getAttribute("data-theme") || "dark";
+      html.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+    });
+
+    // ======================================================
+    // SETTINGS MODAL
+    // ======================================================
+    openSettings.addEventListener("click", () => {
+      settingsOverlay.classList.add("show");
+    });
+    closeSettings.addEventListener("click", () => {
+      settingsOverlay.classList.remove("show");
+    });
+    settingsOverlay.addEventListener("click", (e) => {
+      if (e.target === settingsOverlay) {
+        settingsOverlay.classList.remove("show");
+      }
+    });
+
+    // Choix langue
+    document.querySelectorAll(".mini-btn[data-lang]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentLang = btn.getAttribute("data-lang");
+        addBot("Langue réglée sur " + currentLang.toUpperCase() + " ✅");
+        settingsOverlay.classList.remove("show");
+      });
+    });
+
+    // Packs tokens (placeholder achat)
+    document.querySelectorAll(".pack-btn[data-pack]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const price = btn.getAttribute("data-pack");
+        addBot("Paiement " + price + "€ pas encore branché ici, mais le bouton existe 😎");
+      });
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", () => {
+      userId = "anonymous";
+      userEmail = "anonymous@philomeneia.com";
+      statusLine.textContent = "Anonyme";
+      userEmailEl.textContent = "Non connecté";
+      addBot("Tu es maintenant déconnecté.");
+      settingsOverlay.classList.remove("show");
+    });
+
+    // Print
+    function doPrint() {
+      window.print();
+    }
+    printBtn.addEventListener("click", doPrint);
+    printBtn2.addEventListener("click", doPrint);
+
+    // ======================================================
+    // UI HELPERS
+    // ======================================================
+    function renderHistory() {
+      chatBox.innerHTML = "";
+      chatHistory.forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "msg-row" + (msg.from === "me" ? " me" : "");
+        div.textContent = msg.text;
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addMe(text) {
+      chatHistory.push({ from: "me", text });
+      renderHistory();
+    }
+    function addBot(text) {
+      chatHistory.push({ from: "bot", text });
+      renderHistory();
+    }
+
+    function updateHeaderInfo() {
+      statusLine.textContent = userId === "anonymous" ? "Anonyme" : "Connecté";
+      userEmailEl.textContent = userId === "anonymous" ? "Non connecté" : userEmail;
+      tokenLine.textContent = "Tokens restants : " + freeTokens;
+    }
+
+    // ======================================================
+    // INIT BALANCE
+    // ======================================================
+    async function refreshBalance() {
+      try {
+        const url = apiBase + "/api/balance?userId=" + encodeURIComponent(userId);
+        const r = await fetch(url);
+        const j = await r.json();
+        if (j && typeof j.free === "number") {
+          freeTokens = j.free;
+        }
+      } catch (err) {
+        console.log("balance error", err);
+      }
+      updateHeaderInfo();
+    }
+
+    // ======================================================
+    // SEND MESSAGE
+    // ======================================================
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      const file = photoInput.files[0];
+
+      if (!text && !file) {
+        return;
+      }
+
+      // affiche moi
+      if (text) addMe(text);
+      if (file) addMe("(Photo envoyée)");
+
+      userInput.value = "";
+      photoInput.value = "";
+
+      // encode l'image en base64 DataURL si besoin
+      let imageDataUrl = "";
+      if (file) {
+        imageDataUrl = await new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // appeller le backend /api/chat
+      try {
+        const r = await fetch(apiBase + "/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId,
+            message: text,
+            imageDataUrl
+          })
+        });
+
+        const j = await r.json();
+
+        if (!r.ok) {
+          addBot("Désolé, impossible d’obtenir une réponse (" + (j.error || "erreur serveur") + ").");
+          return;
+        }
+
+        // réponse du bot
+        addBot(j.reply || "OK.");
+
+        // mettre à jour solde
+        if (typeof j.remaining === "number") {
+          freeTokens = j.remaining;
+          updateHeaderInfo();
+        }
+
+      } catch (err) {
+        console.log("chat error", err);
+        addBot("Désolé, problème de connexion.");
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    // Envoi avec Entrée (sans Shift)
+    userInput.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ======================================================
+    // START
+    // ======================================================
+    // petit message d'accueil
+    chatHistory = [
+      {
+        from: "bot",
+        text:
+`Salut 👋
+
+Je suis Philomène IA.
+Tu peux me demander:
+• expliquer un devoir
+• écrire un mail / CV / texte
+• donner une idée business
+• t'aider à réparer un truc (tu peux m'envoyer une photo 📷)
+• cuisiner avec ce qu'il y a dans ton frigo
+
+Écris ou envoie une photo.`
+      }
+    ];
+    renderHistory();
+    refreshBalance();
+  </script>
 </body>
 </html>
