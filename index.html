@@ -3,763 +3,724 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Clerk (connexion / email utilisateur) -->
-  <meta name="clerk-publishable-key" content="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA" />
-  <!-- URL backend Express -->
-  <meta name="api-base" content="https://philo-backend.onrender.com" />
+  <title>Philomène IA – Messenger GPT ✨</title>
 
-  <title>Philomène IA — Messenger GPT</title>
+  <!-- À TOI DE METTRE LES BONNES VALEURS ICI -->
+  <meta name="api-base" content="https://api.philomeneia.com" />
+  <meta name="clerk-publishable-key" content="pk_test_xxx" />
 
   <style>
     :root {
-      --bg: #071826;
-      --panel: #0e2238;
-      --panel-soft: #122d4d;
-      --text: #eaf2f8;
-      --muted: #9bb4c9;
-      --accent: #3fb0ff;
-      --accent-solid: #0f2b47;
-      --danger: #f15b5b;
-      --chip: #133a5a;
-      --chip-text: #a8d8ff;
-      --input-bg: #0c1a28;
-      --btn-bg: #1b3c58;
-      --btn-text: #ffffff;
-      --border: rgba(255,255,255,0.08);
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --radius-sm: 6px;
-    }
-    [data-theme="light"] {
-      --bg: #f4f7fb;
-      --panel: #ffffff;
-      --panel-soft: #eef3ff;
-      --text: #1c2732;
-      --muted: #4a5a6b;
-      --accent: #0067ff;
-      --accent-solid: #d8e7ff;
-      --danger: #b52b2b;
-      --chip: #eaf2ff;
-      --chip-text: #003a7a;
-      --input-bg: #ffffff;
-      --btn-bg: #0067ff;
-      --btn-text: #ffffff;
-      --border: rgba(0,0,0,0.08);
+      --bg:#071826;
+      --panel:#0e2238;
+      --panel-border:#1a314c;
+      --text:#eaf2f8;
+      --text-dim:#9db4c8;
+      --accent:#3fb0ff;
+      --chip:#133a5a;
+      --chip-border:#1f567d;
+      --chip-text:#d5ecff;
+      --danger:#f15b5b;
+      --input-bg:#0c1a28;
+      --input-border:#1b3c58;
+      --btn-bg:#1b3c58;
+      --btn-text:#fff;
+      --radius-lg:18px;
+      --radius-md:12px;
+      --radius-sm:8px;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-font-smoothing: antialiased;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", Roboto, system-ui, sans-serif;
+    [data-theme="light"]{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --panel-border:#dbe5ef;
+      --text:#1c2732;
+      --text-dim:#4a5d70;
+      --accent:#0067ff;
+      --chip:#eaf2ff;
+      --chip-border:#c9dcff;
+      --chip-text:#002855;
+      --danger:#bf2a2a;
+      --input-bg:#ffffff;
+      --input-border:#94a9c4;
+      --btn-bg:#0067ff;
+      --btn-text:#fff;
     }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    body{
+      background-color:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,system-ui,"Inter",Roboto,"Helvetica Neue",sans-serif;
+      margin:0;
+      padding:16px 16px 120px;
+      line-height:1.45;
+      max-width:720px;
+      margin-left:auto;
+      margin-right:auto;
     }
 
-    .page {
-      max-width: 700px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 16px 16px 120px;
+    header.app-header{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:16px;
     }
 
-    /* HEADER TOP */
-    .topbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 20px;
+    .top-row{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      gap:12px 16px;
     }
 
-    .brand {
-      flex: 1;
-      min-width: 180px;
+    .brand-block{
+      flex:1;
+      min-width:180px;
     }
 
-    .brand-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 20px;
-      color: var(--text);
+    .brand-title{
+      font-size:20px;
+      font-weight:600;
+      color:var(--text);
+      display:flex;
+      flex-wrap:wrap;
+      line-height:1.25;
     }
 
-    .brand-row .brain {
-      font-size: 24px;
+    .brand-sub{
+      font-size:14px;
+      color:var(--text-dim);
+      line-height:1.4;
+      margin-top:4px;
     }
 
-    .brand-sub {
-      font-size: 13px;
-      line-height: 1.3;
-      color: var(--muted);
-      font-weight: 500;
+    .status-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
     }
 
-    .status-blocks {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .status-chip{
+      background-color:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:var(--radius-md);
+      padding:12px 16px;
+      min-width:180px;
+      display:flex;
+      flex-direction:column;
+      font-size:14px;
+      line-height:1.4;
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
     }
 
-    .chip-block {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      min-width: 140px;
-      font-size: 13px;
-      line-height: 1.4;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      min-height: 56px;
-      justify-content: center;
+    .status-line{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:500;
+      color:var(--text);
     }
 
-    .chip-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 600;
-      color: var(--text);
-      font-size: 13px;
+    .dot-online{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#00d563;
+      box-shadow:0 0 8px #00d563;
+      flex-shrink:0;
     }
 
-    .chip-title .dot {
-      display: inline-flex;
-      width: 10px;
-      height: 10px;
-      background: #00c853;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.4);
+    .status-email{
+      font-size:13px;
+      color:var(--text-dim);
+      word-break:break-all;
     }
 
-    .chip-desc {
-      font-size: 12px;
-      color: var(--muted);
-      word-break: break-word;
+    .status-tokens{
+      font-size:14px;
+      color:var(--accent);
+      font-weight:600;
     }
 
-    .tokens-line {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--accent);
+    .header-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
     }
 
-    .actions-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .btn-ghost,
-    .btn-solid {
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      line-height: 1.3;
-      font-weight: 600;
-      padding: 12px 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      border: 1px solid transparent;
-      background: var(--btn-bg);
-      color: var(--btn-text);
-    }
-    .btn-ghost {
-      background: var(--panel);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-solid.pay {
-      background: var(--accent);
-      color: #001428;
-      border: 1px solid var(--accent);
+    .btn-square{
+      background-color:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:var(--radius-md);
+      padding:12px 16px;
+      font-size:14px;
+      line-height:1.4;
+      color:var(--text);
+      min-width:120px;
+      text-align:center;
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
-    /* CHAT AREA */
-    .chatbox {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      min-height: 320px;
-      max-height: 50vh;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .btn-square strong{
+      font-weight:500;
     }
 
-    .msg-row {
-      max-width: 90%;
-      background: var(--panel-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      font-size: 16px;
-      line-height: 1.45;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: var(--text);
+    /* zone chat */
+    .chat-shell{
+      background-color:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:var(--radius-lg);
+      padding:16px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.7);
+      margin-bottom:16px;
     }
 
-    .msg-row.me {
-      margin-left: auto;
-      background: var(--btn-bg);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: var(--btn-text);
+    .bubble{
+      background-color:#102a45;
+      border:1px solid var(--panel-border);
+      border-radius:var(--radius-md);
+      padding:16px;
+      color:var(--text);
+      line-height:1.5;
+      font-size:16px;
+    }
+    [data-theme="light"] .bubble{
+      background-color:#eef5ff;
+      border:1px solid #c9dcff;
+      color:#002855;
     }
 
-    /* INPUT BAR */
-    .input-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-      background: transparent;
+    .bubble h2{
+      font-size:18px;
+      font-weight:600;
+      margin:0 0 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--text);
+    }
+    .bubble p{
+      margin:0 0 8px;
+    }
+    .bubble ul{
+      margin:0 0 12px 0;
+      padding-left:20px;
+    }
+    .bubble li{
+      margin-bottom:6px;
     }
 
-    .field-wrap {
-      flex: 1;
-      min-width: 200px;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      color: var(--text);
-      font-size: 15px;
-      line-height: 1.4;
-      min-height: 56px;
-      display: flex;
+    /* messages dynamiques */
+    .messages{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:16px;
+      max-height:40vh;
+      overflow-y:auto;
+      scrollbar-width:thin;
+      scrollbar-color:var(--panel-border) transparent;
     }
-    .field-wrap textarea {
-      flex: 1;
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      font-size: 15px;
-      line-height: 1.4;
-      resize: none;
-      outline: none;
+    .messages::-webkit-scrollbar{
+      width:4px;
     }
-    .field-wrap textarea::placeholder {
-      color: var(--muted);
+    .messages::-webkit-scrollbar-thumb{
+      background:var(--panel-border);
+      border-radius:999px;
     }
 
-    .send-group {
-      display: flex;
-      flex: 0 0 auto;
-      gap: 10px;
+    .msg{
+      max-width:90%;
+      border-radius:var(--radius-md);
+      padding:12px 14px;
+      line-height:1.45;
+      font-size:15px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      border:1px solid var(--panel-border);
+    }
+    .msg.me{
+      align-self:flex-end;
+      background-color:var(--accent);
+      color:#000;
+      border-color:var(--accent);
+      font-weight:500;
+      box-shadow:0 20px 40px rgba(0,0,0,0.5);
+    }
+    .msg.bot{
+      align-self:flex-start;
+      background-color:#102a45;
+      color:var(--text);
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
+    }
+    [data-theme="light"] .msg.bot{
+      background-color:#eef5ff;
+      color:#002855;
+      border-color:#c9dcff;
     }
 
-    .photo-btn {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: var(--radius-md);
-      min-width: 74px;
-      min-height: 56px;
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+    /* barre d'entrée */
+    .composer-shell{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+      padding:16px;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+    }
+    [data-theme="light"] .composer-shell{
+      background:linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);
     }
 
-    .send-btn {
-      background: var(--accent);
-      border: 0;
-      color: #001428;
-      border-radius: var(--radius-md);
-      min-width: 96px;
-      min-height: 56px;
-      font-weight: 600;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .composer-inner{
+      background-color:var(--panel);
+      border:1px solid var(--panel-border);
+      box-shadow:0 30px 60px rgba(0,0,0,0.8);
+      border-radius:var(--radius-lg);
+      padding:16px;
+      width:100%;
+      max-width:720px;
+      pointer-events:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
     }
 
-    /* SETTINGS MODAL */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 9999;
+    .input-area{
+      flex:1;
+      min-width:180px;
+      background-color:var(--input-bg);
+      border:1px solid var(--input-border);
+      border-radius:var(--radius-md);
+      padding:12px;
+      color:var(--text);
+      font-size:15px;
+      line-height:1.4;
     }
-    .overlay.show { display: flex; }
-
-    .sheet {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      max-width: 360px;
-      width: 100%;
-      padding: 16px;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    [data-theme="light"] .input-area{
+      color:#1c2732;
     }
-    .sheet-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .sheet-head h2 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .close-x {
-      background: transparent;
-      border: 0;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1;
+    .input-area:focus{
+      outline:2px solid var(--accent);
+      outline-offset:-2px;
     }
 
-    .sheet-section h3 {
-      margin: 0 0 6px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
+    .row-actions{
+      display:flex;
+      flex-wrap:nowrap;
+      gap:12px;
+      width:100%;
     }
-    .sheet-section p {
-      margin: 0 0 10px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .lang-row,
-    .token-pack-row,
-    .settings-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    @media(min-width:480px){
+      .row-actions{
+        width:auto;
+        margin-left:auto;
+      }
     }
 
-    .mini-btn,
-    .pack-btn,
-    .small-action {
-      background: var(--panel-soft);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 500;
-      line-height: 1.3;
-      padding: 10px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .btn-action{
+      background-color:var(--input-bg);
+      border:1px solid var(--input-border);
+      border-radius:var(--radius-md);
+      color:var(--text);
+      min-width:44px;
+      min-height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
+      line-height:1.2;
+      padding:0 12px;
+    }
+    [data-theme="light"] .btn-action{
+      color:#1c2732;
     }
 
-    .pack-btn .price {
-      font-weight: 600;
-      color: var(--accent);
-    }
-    .danger-btn {
-      background: var(--danger);
-      color: #000;
-      border: 0;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.3;
-      padding: 10px 12px;
-    }
-
-    /* small footer info */
-    .footnote {
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.4;
-      color: var(--muted);
-      margin-top: 24px;
+    .btn-send{
+      background-color:var(--btn-bg);
+      border:1px solid var(--btn-bg);
+      color:var(--btn-text);
+      font-weight:600;
+      min-width:110px;
+      border-radius:var(--radius-md);
+      font-size:16px;
+      line-height:1.2;
+      padding:0 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
     }
 
-    @media (min-width: 480px) {
-      .topbar {align-items: flex-start;}
-      .status-blocks {flex-direction: row;}
+    /* modal réglages */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      z-index:9999;
     }
+    .modal{
+      width:100%;
+      max-width:360px;
+      background-color:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:var(--radius-lg);
+      box-shadow:0 40px 80px rgba(0,0,0,0.9);
+      color:var(--text);
+      padding:20px;
+      font-size:15px;
+      line-height:1.4;
+    }
+    .modal h3{
+      margin-top:0;
+      margin-bottom:12px;
+      font-size:17px;
+      font-weight:600;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .modal section{
+      border-top:1px solid var(--panel-border);
+      padding-top:12px;
+      margin-top:12px;
+    }
+    .modal label{
+      display:block;
+      font-size:14px;
+      font-weight:500;
+      color:var(--text-dim);
+      margin-bottom:6px;
+    }
+    .modal-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .chip-option{
+      background-color:var(--chip);
+      border:1px solid var(--chip-border);
+      color:var(--chip-text);
+      padding:8px 12px;
+      border-radius:var(--radius-md);
+      font-size:14px;
+      font-weight:500;
+    }
+    .close-settings{
+      display:block;
+      width:100%;
+      margin-top:16px;
+      text-align:center;
+      font-size:15px;
+      font-weight:500;
+      background-color:var(--btn-bg);
+      border:1px solid var(--btn-bg);
+      color:var(--btn-text);
+      border-radius:var(--radius-md);
+      padding:10px 12px;
+    }
+
   </style>
 </head>
 <body>
 
-  <div class="page">
+<header class="app-header">
+  <div class="top-row">
+    <div class="brand-block">
+      <div class="brand-title">
+        <span>🧠&nbsp;Philomène IA – Messenger GPT ✨</span>
+      </div>
+      <div class="brand-sub">
+        Pose ta question. J’explique, je corrige, je guide pas à pas.<br/>
+        FR • EN • NL • Texte ou photo.
+      </div>
+    </div>
 
-    <!-- HEADER / INTRO / STATUS -->
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-row">
-          <div class="brain">🧠</div>
-          <div>
-            <div>Philomène IA – Messenger GPT ✨</div>
-          </div>
+    <div class="header-buttons">
+      <div class="status-chip" id="statusBox">
+        <div class="status-line">
+          <div class="dot-online"></div>
+          <div>Connecté</div>
         </div>
-        <div class="brand-sub">
-          Pose ta question. J’explique, je corrige, je guide pas à pas.<br/>
-          FR • EN • NL • Texte ou photo.
+        <div class="status-email" id="userEmail">email@example.com</div>
+        <div class="status-tokens">
+          Tokens restants : <span id="tokenCount">5000</span>
         </div>
       </div>
 
-      <div class="status-blocks">
+      <button class="btn-square" id="printBtn">
+        🖨️ <strong>Imprimer</strong>
+      </button>
 
-        <!-- connexion / email / tokens -->
-        <div class="chip-block" id="userStatus">
-          <div class="chip-title">
-            <div class="dot"></div>
-            <span id="statusLine">Connecté</span>
-          </div>
-          <div class="chip-desc" id="userEmail">email@example.com</div>
-          <div class="tokens-line" id="tokenLine">Tokens restants : 5000</div>
-        </div>
+      <button class="btn-square" id="settingsBtn">
+        ⚙️ <strong>Réglages</strong>
+      </button>
+    </div>
+  </div>
+</header>
 
-        <!-- réglages -->
-        <div class="actions-row">
-          <button class="btn-ghost" id="printBtn">🖨 Imprimer</button>
-          <button class="btn-ghost" id="openSettings">⚙ Réglages</button>
-        </div>
+<main class="chat-shell">
 
-      </div>
-    </header>
+  <!-- Premier message de présentation -->
+  <div class="bubble">
+    <h2>Salut 👋</h2>
+    <p>Je suis Philomène IA.</p>
+    <p>Tu peux me demander :</p>
+    <ul>
+      <li>expliquer un devoir</li>
+      <li>écrire un mail / CV / texte</li>
+      <li>donner une idée business</li>
+      <li>t’aider à réparer un truc (tu peux m’envoyer une photo 📸)</li>
+      <li>cuisiner avec ce qu’il y a dans ton frigo</li>
+    </ul>
+    <p>Écris ou envoie une photo.</p>
+  </div>
 
-    <!-- CHAT VIEW -->
-    <section class="chatbox" id="chatBox">
-      <!-- messages apparaissent ici -->
-      <div class="msg-row">
-        Bonjour ! Comment puis-je vous aider aujourd’hui ?
+  <!-- zone qui va se remplir avec la vraie conversation -->
+  <div class="messages" id="messages"></div>
+
+</main>
+
+<!-- zone en bas pour écrire -->
+<div class="composer-shell">
+  <div class="composer-inner">
+    <textarea id="userInput" class="input-area" rows="2"
+      placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+
+    <div class="row-actions">
+      <button class="btn-action" id="photoBtn">📷</button>
+      <input type="file" id="photoFile" accept="image/*" style="display:none" />
+      <button class="btn-send" id="sendBtn">Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RÉGLAGES -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ Réglages</h3>
+
+    <section>
+      <label>Thème</label>
+      <div class="modal-row">
+        <div class="chip-option" data-theme-choice="light">🌞 Clair</div>
+        <div class="chip-option" data-theme-choice="dark">🌙 Sombre</div>
       </div>
     </section>
 
-    <!-- INPUT BAR -->
-    <section class="input-bar">
-      <div class="field-wrap">
-        <textarea id="userInput" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
-      </div>
-
-      <div class="send-group">
-        <label class="photo-btn">
-          📷 Photo
-          <input id="photoInput" type="file" accept="image/*" style="display:none" />
-        </label>
-
-        <button class="send-btn" id="sendBtn">Envoyer</button>
+    <section>
+      <label>Langue</label>
+      <div class="modal-row">
+        <div class="chip-option" data-lang="fr">🇫🇷 FR</div>
+        <div class="chip-option" data-lang="en">🇬🇧 EN</div>
+        <div class="chip-option" data-lang="nl">🇳🇱 NL</div>
       </div>
     </section>
 
-    <div class="footnote">
-      Modèle utilisé : GPT-4 Turbo (OpenAI).<br/>
-      Les réponses sont générées automatiquement. L’actualité peut être incomplète ou incertaine.
-    </div>
+    <section>
+      <label>Crédits / packs</label>
+      <div class="modal-row">
+        <div class="chip-option">5 € • 70 000 tokens</div>
+        <div class="chip-option">10 € • 150 000 tokens</div>
+        <div class="chip-option">20 € • 320 000 tokens</div>
+      </div>
+      <small style="color:var(--text-dim);font-size:12px;line-height:1.4;display:block;margin-top:8px;">
+        Paiement sécurisé (à brancher).
+      </small>
+    </section>
 
+    <button class="close-settings" id="closeSettingsBtn">Fermer</button>
   </div>
+</div>
 
-  <!-- SETTINGS MODAL -->
-  <div class="overlay" id="settingsOverlay">
-    <div class="sheet">
-      <div class="sheet-head">
-        <h2>Réglages & Compte</h2>
-        <button class="close-x" id="closeSettings">✕</button>
-      </div>
+<script>
+(function(){
+  // récupère les metas config
+  const apiBase = document.querySelector('meta[name="api-base"]').content.trim();
+  const clerkKey = document.querySelector('meta[name="clerk-publishable-key"]').content.trim();
 
-      <div class="sheet-section">
-        <h3>Langue</h3>
-        <p>Choisis dans quelle langue Philomène répond.</p>
-        <div class="lang-row">
-          <button class="mini-btn" data-lang="fr">🇫🇷 Français</button>
-          <button class="mini-btn" data-lang="en">🇬🇧 English</button>
-          <button class="mini-btn" data-lang="nl">🇳🇱 Nederlands</button>
-        </div>
-      </div>
+  // état local
+  let currentUser = {
+    id: "anonymous",
+    email: "email@example.com",
+    tokens: 5000
+  };
+  let currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+  let currentLang = "fr";
+  let attachedImageData = null; // base64 si photo envoyée
 
-      <div class="sheet-section">
-        <h3>Tokens payants</h3>
-        <p>Besoin de plus ? Packs instantanés via PayPal.</p>
-        <div class="token-pack-row">
-          <button class="pack-btn" data-pack="5">
-            <span class="price">5€</span> • 70k tokens
-          </button>
-          <button class="pack-btn" data-pack="10">
-            <span class="price">10€</span> • 150k tokens
-          </button>
-          <button class="pack-btn" data-pack="20">
-            <span class="price">20€</span> • 320k tokens
-          </button>
-        </div>
-      </div>
+  // DOM refs
+  const tokenCountEl = document.getElementById("tokenCount");
+  const userEmailEl = document.getElementById("userEmail");
+  const messagesEl = document.getElementById("messages");
+  const userInputEl = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const photoBtn = document.getElementById("photoBtn");
+  const photoFile = document.getElementById("photoFile");
+  const printBtn = document.getElementById("printBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsModal = document.getElementById("settingsModal");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
 
-      <div class="sheet-section">
-        <h3>Actions</h3>
-        <div class="settings-row">
-          <button class="small-action" id="toggleThemeBtn">🌞 / 🌙 Thème</button>
-          <button class="small-action" id="printBtn2">🖨 Imprimer</button>
-          <button class="danger-btn" id="logoutBtn">Se déconnecter</button>
-        </div>
-      </div>
+  // helpers UI
+  function addMessage(role, text){
+    const div = document.createElement("div");
+    div.className = "msg " + (role === "user" ? "me" : "bot");
+    div.textContent = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
 
-      <div class="sheet-section">
-        <p style="font-size:12px;color:var(--muted);line-height:1.4">
-          Compte protégé. Paiements sécurisés. Aucune publicité.
-        </p>
-      </div>
-    </div>
-  </div>
+  function setTokensLeft(n){
+    currentUser.tokens = n;
+    tokenCountEl.textContent = n;
+  }
 
-  <script>
-    // ======================================================
-    // CONFIG
-    // ======================================================
-    const apiBase = document.querySelector('meta[name="api-base"]').content;
-    const clerkKey = document.querySelector('meta[name="clerk-publishable-key"]').content;
+  function setUserEmail(email) {
+    currentUser.email = email;
+    userEmailEl.textContent = email;
+  }
 
-    // en dur pour l’instant sur iPhone
-    let userId = "anonymous";
-    let userEmail = "anonymous@philomeneia.com";
-    let currentLang = "fr";
-    let freeTokens = 5000; // sera mis à jour via /api/balance
-    let chatHistory = [];  // {from:"me"|"bot", text:"..."}
-
-    // ======================================================
-    // DOM refs
-    // ======================================================
-    const chatBox = document.getElementById("chatBox");
-    const userInput = document.getElementById("userInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const photoInput = document.getElementById("photoInput");
-
-    const statusLine = document.getElementById("statusLine");
-    const userEmailEl = document.getElementById("userEmail");
-    const tokenLine = document.getElementById("tokenLine");
-
-    const openSettings = document.getElementById("openSettings");
-    const settingsOverlay = document.getElementById("settingsOverlay");
-    const closeSettings = document.getElementById("closeSettings");
-    const toggleThemeBtn = document.getElementById("toggleThemeBtn");
-    const printBtn = document.getElementById("printBtn");
-    const printBtn2 = document.getElementById("printBtn2");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    // ======================================================
-    // THEME TOGGLE
-    // ======================================================
-    toggleThemeBtn.addEventListener("click", () => {
-      const html = document.documentElement;
-      const cur = html.getAttribute("data-theme") || "dark";
-      html.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
-    });
-
-    // ======================================================
-    // SETTINGS MODAL
-    // ======================================================
-    openSettings.addEventListener("click", () => {
-      settingsOverlay.classList.add("show");
-    });
-    closeSettings.addEventListener("click", () => {
-      settingsOverlay.classList.remove("show");
-    });
-    settingsOverlay.addEventListener("click", (e) => {
-      if (e.target === settingsOverlay) {
-        settingsOverlay.classList.remove("show");
+  // 1. Récupérer le solde initial
+  async function fetchBalance(){
+    try{
+      const url = apiBase + "/api/balance?userId=" + encodeURIComponent(currentUser.id);
+      const r = await fetch(url);
+      const j = await r.json();
+      if(j && typeof j.free === "number"){
+        setTokensLeft(j.free);
       }
-    });
+    }catch(e){
+      console.log("balance err", e);
+    }
+  }
 
-    // Choix langue
-    document.querySelectorAll(".mini-btn[data-lang]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        currentLang = btn.getAttribute("data-lang");
-        addBot("Langue réglée sur " + currentLang.toUpperCase() + " ✅");
-        settingsOverlay.classList.remove("show");
+  // 2. Envoyer message à l'API
+  async function sendToAI(){
+    const msg = userInputEl.value.trim();
+    if(!msg && !attachedImageData) return;
+    if(currentUser.tokens <= 0){
+      addMessage("assistant","Solde insuffisant. Merci d’acheter un pack 🔒");
+      return;
+    }
+
+    addMessage("user", msg || "(photo)");
+    userInputEl.value = "";
+
+    try{
+      const r = await fetch(apiBase + "/api/chat", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+          userId: currentUser.id,
+          message: msg,
+          imageDataUrl: attachedImageData
+        })
       });
-    });
-
-    // Packs tokens (placeholder achat)
-    document.querySelectorAll(".pack-btn[data-pack]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const price = btn.getAttribute("data-pack");
-        addBot("Paiement " + price + "€ pas encore branché ici, mais le bouton existe 😎");
-      });
-    });
-
-    // Logout
-    logoutBtn.addEventListener("click", () => {
-      userId = "anonymous";
-      userEmail = "anonymous@philomeneia.com";
-      statusLine.textContent = "Anonyme";
-      userEmailEl.textContent = "Non connecté";
-      addBot("Tu es maintenant déconnecté.");
-      settingsOverlay.classList.remove("show");
-    });
-
-    // Print
-    function doPrint() {
-      window.print();
-    }
-    printBtn.addEventListener("click", doPrint);
-    printBtn2.addEventListener("click", doPrint);
-
-    // ======================================================
-    // UI HELPERS
-    // ======================================================
-    function renderHistory() {
-      chatBox.innerHTML = "";
-      chatHistory.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "msg-row" + (msg.from === "me" ? " me" : "");
-        div.textContent = msg.text;
-        chatBox.appendChild(div);
-      });
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function addMe(text) {
-      chatHistory.push({ from: "me", text });
-      renderHistory();
-    }
-    function addBot(text) {
-      chatHistory.push({ from: "bot", text });
-      renderHistory();
-    }
-
-    function updateHeaderInfo() {
-      statusLine.textContent = userId === "anonymous" ? "Anonyme" : "Connecté";
-      userEmailEl.textContent = userId === "anonymous" ? "Non connecté" : userEmail;
-      tokenLine.textContent = "Tokens restants : " + freeTokens;
-    }
-
-    // ======================================================
-    // INIT BALANCE
-    // ======================================================
-    async function refreshBalance() {
-      try {
-        const url = apiBase + "/api/balance?userId=" + encodeURIComponent(userId);
-        const r = await fetch(url);
-        const j = await r.json();
-        if (j && typeof j.free === "number") {
-          freeTokens = j.free;
-        }
-      } catch (err) {
-        console.log("balance error", err);
-      }
-      updateHeaderInfo();
-    }
-
-    // ======================================================
-    // SEND MESSAGE
-    // ======================================================
-    async function sendMessage() {
-      const text = userInput.value.trim();
-      const file = photoInput.files[0];
-
-      if (!text && !file) {
+      const j = await r.json();
+      if(j.error){
+        addMessage("assistant","Erreur: " + j.error);
         return;
       }
-
-      // affiche moi
-      if (text) addMe(text);
-      if (file) addMe("(Photo envoyée)");
-
-      userInput.value = "";
-      photoInput.value = "";
-
-      // encode l'image en base64 DataURL si besoin
-      let imageDataUrl = "";
-      if (file) {
-        imageDataUrl = await new Promise(resolve => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
+      if(j.reply){
+        addMessage("assistant", j.reply);
+      }else{
+        addMessage("assistant","(Pas de réponse)");
       }
-
-      // appeller le backend /api/chat
-      try {
-        const r = await fetch(apiBase + "/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            userId,
-            message: text,
-            imageDataUrl
-          })
-        });
-
-        const j = await r.json();
-
-        if (!r.ok) {
-          addBot("Désolé, impossible d’obtenir une réponse (" + (j.error || "erreur serveur") + ").");
-          return;
-        }
-
-        // réponse du bot
-        addBot(j.reply || "OK.");
-
-        // mettre à jour solde
-        if (typeof j.remaining === "number") {
-          freeTokens = j.remaining;
-          updateHeaderInfo();
-        }
-
-      } catch (err) {
-        console.log("chat error", err);
-        addBot("Désolé, problème de connexion.");
+      if(typeof j.remaining === "number"){
+        setTokensLeft(j.remaining);
       }
+    }catch(err){
+      console.log(err);
+      addMessage("assistant","Erreur réseau.");
+    }finally{
+      attachedImageData = null;
     }
+  }
 
-    sendBtn.addEventListener("click", sendMessage);
+  // 3. photo -> base64 dans attachedImageData
+  photoBtn.addEventListener("click", ()=>{
+    photoFile.click();
+  });
+  photoFile.addEventListener("change", ()=>{
+    const file = photoFile.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+      attachedImageData = e.target.result; // data:image/...
+      addMessage("user","(photo ajoutée 📷)");
+    };
+    reader.readAsDataURL(file);
+  });
 
-    // Envoi avec Entrée (sans Shift)
-    userInput.addEventListener("keydown", e => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
+  // 4. envoyer
+  sendBtn.addEventListener("click", sendToAI);
+  userInputEl.addEventListener("keydown", e=>{
+    if(e.key==="Enter" && !e.shiftKey){
+      e.preventDefault();
+      sendToAI();
+    }
+  });
+
+  // 5. impression
+  printBtn.addEventListener("click", ()=>{
+    window.print();
+  });
+
+  // 6. modal réglages
+  settingsBtn.addEventListener("click", ()=>{
+    settingsModal.style.display = "flex";
+  });
+  closeSettingsBtn.addEventListener("click", ()=>{
+    settingsModal.style.display = "none";
+  });
+  settingsModal.addEventListener("click",(e)=>{
+    if(e.target===settingsModal){
+      settingsModal.style.display="none";
+    }
+  });
+
+  // theme switch
+  settingsModal.querySelectorAll("[data-theme-choice]").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const choice = el.getAttribute("data-theme-choice");
+      currentTheme = choice;
+      document.documentElement.setAttribute("data-theme", choice);
     });
+  });
 
-    // ======================================================
-    // START
-    // ======================================================
-    // petit message d'accueil
-    chatHistory = [
-      {
-        from: "bot",
-        text:
-`Salut 👋
+  // langue switch (pour plus tard)
+  settingsModal.querySelectorAll("[data-lang]").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      currentLang = el.getAttribute("data-lang");
+      // plus tard on pourra envoyer currentLang au backend
+    });
+  });
 
-Je suis Philomène IA.
-Tu peux me demander:
-• expliquer un devoir
-• écrire un mail / CV / texte
-• donner une idée business
-• t'aider à réparer un truc (tu peux m'envoyer une photo 📷)
-• cuisiner avec ce qu'il y a dans ton frigo
+  // 7. (Plus tard) Clerk:
+  // Ici on branchera Clerk pour récupérer le vrai userId + email.
+  // Pour l’instant on garde "anonymous".
+  // Quand Clerk sera prêt, on fera:
+  // currentUser.id = clerkUser.id;
+  // setUserEmail(clerkUser.email);
 
-Écris ou envoie une photo.`
-      }
-    ];
-    renderHistory();
-    refreshBalance();
-  </script>
+  // init
+  fetchBalance();
+  setUserEmail("email@example.com");
+
+})();
+</script>
 </body>
 </html>
