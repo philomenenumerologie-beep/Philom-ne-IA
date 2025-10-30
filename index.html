@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Philomène IA Messenger – GPT-4 Turbo</title>
 
+  <!-- On garde la clé Clerk pour plus tard -->
+  <meta name="clerk-publishable-key" content="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA" />
+
+  <!-- L'URL de ton backend -->
+  <meta name="api-base" content="https://api.philomeneia.com" />
+
   <style>
     :root {
       --bg:#071826;
@@ -21,7 +27,10 @@
       --radius-sm:8px;
     }
 
-    * { box-sizing:border-box; -webkit-tap-highlight-color:rgba(0,0,0,0); }
+    * {
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:rgba(0,0,0,0);
+    }
 
     body {
       margin:0;
@@ -33,6 +42,7 @@
       min-height:100vh;
     }
 
+    /******** HEADER ********/
     header {
       background:#0b1d31;
       border-bottom:1px solid var(--panel-border);
@@ -42,199 +52,626 @@
       align-items:flex-start;
       justify-content:space-between;
       row-gap:8px;
+      font-size:13px;
+      line-height:1.4;
     }
 
-    .id-block { display:flex; flex-direction:column; font-size:13px; line-height:1.4; }
-    .id-line { display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-weight:500; }
-    .badge { background:#0f2b47; border:1px solid #234c77; border-radius:999px; padding:2px 8px; font-size:12px; font-weight:500; color:#fff; }
-    .tokens-line { font-size:12px; color:var(--text-muted); }
-    .actions-line { display:flex; gap:8px; }
-    button.header-btn {
-      background:#2b2b2b; color:#fff; border:1px solid #3a3a3a;
-      border-radius:var(--radius-sm); font-size:13px; font-weight:500;
-      padding:8px 10px; line-height:1.2; cursor:pointer;
+    .leftHead {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
     }
-    button.header-btn.danger { background:var(--danger); border:1px solid var(--danger); color:#fff; }
 
+    .rowHeadTop {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:6px;
+      font-weight:500;
+    }
+
+    .badge {
+      background:#0f2b47;
+      border:1px solid #234c77;
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:12px;
+      font-weight:500;
+      color:#fff;
+    }
+
+    .tokensBadge {
+      background:#133a6d;
+      border:1px solid #2d65a2;
+    }
+
+    .emailLine {
+      font-size:12px;
+      color:var(--text-muted);
+    }
+
+    .rightHeadBtns {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    button.headBtn {
+      background:#2b2b2b;
+      color:#fff;
+      border:1px solid #3a3a3a;
+      border-radius:var(--radius-sm);
+      font-size:13px;
+      font-weight:500;
+      padding:8px 10px;
+      line-height:1.2;
+      cursor:pointer;
+    }
+
+    button.headClear {
+      background:var(--danger);
+      border:1px solid var(--danger);
+      color:#fff;
+    }
+
+    /******** LAYOUT PRINCIPAL ********/
     main {
-      flex:1; display:flex; flex-direction:column; padding:16px;
-      max-width:900px; width:100%; margin:0 auto;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      min-height:0; /* important pour le calc */
     }
 
-    .chat-card {
-      background:var(--panel); border:1px solid var(--panel-border);
-      border-radius:var(--radius); display:flex; flex-direction:column;
-      min-height:60vh; max-height:80vh;
+    /* On fait une zone chat-container qui prend tout l'écran
+       moins la barre d'envoi */
+    .chatContainer {
+      flex:1;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      background:var(--panel);
+      border-top:1px solid var(--panel-border);
+      border-bottom:1px solid var(--panel-border);
     }
 
+    /* Bloc intro (présentation) */
     #introBlock {
       border-bottom:1px solid var(--panel-border);
-      padding:16px; font-size:14px; line-height:1.4; color:var(--text-muted);
-    }
-    #introBlock h1 { margin:0 0 6px; font-size:16px; color:#fff; font-weight:600; }
-    #introBlock .offer {
-      margin-top:12px; background:rgba(255,255,255,0.06);
-      border:1px solid #234c77; border-radius:var(--radius-sm);
-      padding:10px 12px; font-size:13px; color:#fff;
+      padding:16px;
+      font-size:14px;
+      line-height:1.4;
+      color:var(--text-muted);
+      background:#0e2238;
     }
 
-    .chat-scroll { flex:1; overflow-y:auto; padding:16px; background:#0b1d31; border-bottom:1px solid var(--panel-border); -webkit-overflow-scrolling:touch; }
+    #introBlock h1 {
+      margin:0 0 6px;
+      font-size:16px;
+      color:#fff;
+      font-weight:600;
+    }
+
+    #introBlock .offer {
+      margin-top:12px;
+      background:rgba(255,255,255,0.06);
+      border:1px solid #234c77;
+      border-radius:var(--radius-sm);
+      padding:10px 12px;
+      font-size:13px;
+      color:#fff;
+    }
+
+    /* Zone scroll des messages */
+    #chatScroll {
+      flex:1;
+      min-height:0;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      padding:16px;
+      background:#0b1d31;
+    }
+
     .msg {
-      max-width:85%; padding:10px 12px; border-radius:10px;
-      line-height:1.4; font-size:15px; word-wrap:break-word; white-space:pre-wrap;
+      max-width:85%;
+      padding:10px 12px;
+      border-radius:10px;
+      line-height:1.4;
+      font-size:15px;
+      word-wrap:break-word;
+      white-space:pre-wrap;
       margin-bottom:10px;
     }
-    .msg.bot { background:var(--bubble-bot-bg); border:1px solid var(--bubble-bot-border); margin-right:auto; }
-    .msg.me { background:var(--bubble-user-bg); border:1px solid var(--bubble-user-border); margin-left:auto; }
+    .msg.bot {
+      background:var(--bubble-bot-bg);
+      border:1px solid var(--bubble-bot-border);
+      margin-right:auto;
+    }
+    .msg.me {
+      background:var(--bubble-user-bg);
+      border:1px solid var(--bubble-user-border);
+      margin-left:auto;
+    }
+    .msg.system {
+      background:#2b2b2b;
+      border:1px solid #3a3a3a;
+      margin-left:auto;
+      margin-right:auto;
+      font-size:13px;
+      opacity:.8;
+    }
 
-    .send-row {
-      display:flex; align-items:flex-start; gap:8px; padding:12px;
-      background:#0e2238; border-radius:0 0 var(--radius) var(--radius);
+    /* Effet Wizz (secousse) */
+    @keyframes shake {
+      0% { transform:translate(0, 0); }
+      20% { transform:translate(-2px, 1px); }
+      40% { transform:translate(3px, -2px); }
+      60% { transform:translate(-3px, 2px); }
+      80% { transform:translate(2px, -1px); }
+      100% { transform:translate(0, 0); }
     }
-    .file-btn {
-      background:#2b2b2b; color:#fff; border:1px solid #3a3a3a;
-      border-radius:var(--radius-sm); padding:10px; font-size:14px;
-      font-weight:500; cursor:pointer; flex-shrink:0;
+    .shake {
+      animation:shake 0.4s linear 1;
     }
+
+    /******** BARRE D'ENVOI EN BAS ********/
+    .sendBarWrap {
+      background:#0e2238;
+      padding:10px 12px;
+    }
+
+    .sendRow {
+      display:flex;
+      align-items:flex-start;
+      gap:8px;
+    }
+
+    .iconBtn {
+      background:#2b2b2b;
+      color:#fff;
+      border:1px solid #3a3a3a;
+      border-radius:var(--radius-sm);
+      padding:10px;
+      font-size:14px;
+      font-weight:500;
+      line-height:1.2;
+      cursor:pointer;
+      flex-shrink:0;
+      min-width:44px;
+      text-align:center;
+    }
+
     textarea#userInput {
-      flex:1; background:#0b1d31; border:1px solid var(--panel-border);
-      border-radius:var(--radius-sm); color:#fff; font-size:15px;
-      line-height:1.4; padding:10px 12px; resize:none; outline:none;
-      min-height:46px; max-height:120px;
+      flex:1;
+      background:#0b1d31;
+      border:1px solid var(--panel-border);
+      border-radius:var(--radius-sm);
+      color:#fff;
+      font-size:16px;
+      line-height:1.4;
+      padding:10px 12px;
+      resize:none;
+      outline:none;
+      min-height:46px;
+      max-height:120px;
     }
+
     button#sendBtn {
-      background:var(--accent); border:0; border-radius:var(--radius-sm);
-      color:#001427; font-size:15px; font-weight:600; padding:12px 14px;
-      line-height:1.2; flex-shrink:0; cursor:pointer;
+      background:var(--accent);
+      border:0;
+      border-radius:var(--radius-sm);
+      color:#001427;
+      font-size:15px;
+      font-weight:600;
+      padding:12px 14px;
+      line-height:1.2;
+      flex-shrink:0;
+      cursor:pointer;
     }
 
-    .footer-balance { text-align:right; font-size:12px; color:var(--text-muted); margin-top:10px; }
+    .balanceLine {
+      font-size:12px;
+      color:var(--text-muted);
+      text-align:right;
+      margin-top:6px;
+    }
 
+    /******** RÉGLAGES PANEL (slide-up) ********/
     #settingsPanel {
-      position:fixed; left:0; right:0; bottom:0; background:#0e2238;
-      border-top:1px solid var(--panel-border); border-radius:16px 16px 0 0;
-      padding:16px; box-shadow:0 -20px 40px rgba(0,0,0,0.6);
-      font-size:14px; color:#fff; display:none;
+      position:fixed;
+      left:0; right:0; bottom:0;
+      background:#0e2238;
+      border-top:1px solid var(--panel-border);
+      border-radius:16px 16px 0 0;
+      padding:16px;
+      box-shadow:0 -20px 40px rgba(0,0,0,0.6);
+      font-size:14px;
+      color:#fff;
+      display:none;
+      z-index:9999;
     }
-    #settingsPanel h2 { font-size:16px; margin:0 0 12px; font-weight:600; }
-    .closeSettingsBtn, .loginBtn, .dangerBtn {
-      border-radius:var(--radius-sm); font-size:14px; font-weight:600;
-      padding:8px 10px; line-height:1.2; cursor:pointer; margin-right:8px;
+
+    #settingsPanel h2 {
+      font-size:16px;
+      margin:0 0 12px;
+      font-weight:600;
     }
-    .closeSettingsBtn { background:#2b2b2b; color:#fff; border:1px solid #3a3a3a; }
-    .loginBtn { background:#1478FF; color:#001427; border:0; }
-    .dangerBtn { background:var(--danger); color:#fff; border:0; }
+
+    .panelLine {
+      font-size:13px;
+      color:var(--text-muted);
+      line-height:1.4;
+      margin-bottom:12px;
+    }
+
+    .panelBtns {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+
+    .loginBtn {
+      background:#1478FF;
+      color:#001427;
+      border:0;
+      border-radius:var(--radius-sm);
+      font-size:14px;
+      font-weight:600;
+      padding:10px 12px;
+      line-height:1.2;
+      cursor:pointer;
+    }
+
+    .closeSettingsBtn {
+      background:#2b2b2b;
+      color:#fff;
+      border:1px solid #3a3a3a;
+      border-radius:var(--radius-sm);
+      font-size:14px;
+      font-weight:600;
+      padding:10px 12px;
+      line-height:1.2;
+      cursor:pointer;
+    }
+
+    .printBtn {
+      background:var(--danger);
+      color:#fff;
+      border:0;
+      border-radius:var(--radius-sm);
+      font-size:14px;
+      font-weight:600;
+      padding:10px 12px;
+      line-height:1.2;
+      cursor:pointer;
+    }
+
   </style>
 </head>
 
 <body>
+
+  <!-- HEADER -->
   <header>
-    <div class="id-block">
-      <div class="id-line">
+    <div class="leftHead">
+      <div class="rowHeadTop">
         <span class="badge" id="userStatus">Invité 👤</span>
-        <span class="badge" id="tokenLeft">Tokens: 0</span>
+        <span class="badge tokensBadge" id="tokenBadge">Tokens: 0</span>
       </div>
-      <div class="tokens-line" id="userEmail">Non connecté</div>
+      <div class="emailLine" id="userEmail">Non connecté</div>
     </div>
-    <div class="actions-line">
-      <button class="header-btn" id="openSettingsBtn">Réglages</button>
-      <button class="header-btn danger" id="clearBtn">Vider chat</button>
+
+    <div class="rightHeadBtns">
+      <button class="headBtn" id="settingsBtn">Réglages</button>
+      <button class="headBtn headClear" id="clearBtn">Vider chat</button>
     </div>
   </header>
 
+  <!-- ZONE CHAT -->
   <main>
-    <div class="chat-card">
+    <div class="chatContainer" id="chatContainer">
+
       <div id="introBlock">
         <h1>Philomène IA – Assistant personnel</h1>
         Je peux t’aider pour tes devoirs, écrire un mail pro, corriger un texte,
         cuisiner avec ce que tu as dans ton frigo, traduire, expliquer une panne,
         préparer un CV, t’expliquer une facture, tout ça calmement étape par étape.
         <div class="offer">
-          • Mode invité: tu testes gratuitement.<br/>
-          • Mode inscrit (e-mail vérifié): plus de jetons et historique sauvegardé.<br/><br/>
-          Important: pour l’actualité politique / info du jour, je peux parfois ne pas avoir les dernières mises à jour.
+          • Mode invité : tu testes gratuitement (1000 tokens).<br/>
+          • Quand tu crées ton compte (e-mail vérifié) : tu passes à 5000 tokens et on garde l’historique.<br/><br/>
+          Politique / actu du jour : je peux parfois ne pas avoir la dernière info en temps réel.
         </div>
       </div>
 
-      <div class="chat-scroll" id="chatBox"></div>
+      <div id="chatScroll"></div>
 
-      <div class="send-row">
-        <button class="file-btn" id="photoBtn">📷</button>
-        <textarea id="userInput" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
-        <button id="sendBtn">Envoyer</button>
-      </div>
     </div>
 
-    <div class="footer-balance" id="balanceLine">Solde: 0 tokens restants</div>
+    <!-- BARRE D'ENVOI -->
+    <div class="sendBarWrap">
+      <div class="sendRow">
+        <button class="iconBtn" id="photoBtn">📷</button>
+
+        <textarea id="userInput" placeholder="Écris ton message… (Entrée = envoyer)"></textarea>
+
+        <button class="iconBtn" id="wizzBtn">⚡Wizz</button>
+
+        <button id="sendBtn">Envoyer</button>
+      </div>
+
+      <div class="balanceLine" id="balanceLine">
+        Solde: 0 tokens restants
+      </div>
+    </div>
   </main>
 
+  <!-- PANEL RÉGLAGES -->
   <div id="settingsPanel">
     <h2>Réglages</h2>
-    <div>
-      <button class="loginBtn" id="loginBtn">Créer un compte / Se connecter</button>
+    <div class="panelLine">
+      Statut actuel : <span id="panelStatus">Invité (1000 tokens)</span><br/>
+      Passe à 5000 tokens en créant un compte (connexion rapide par e-mail).
+    </div>
+
+    <div class="panelBtns">
+      <button class="loginBtn" id="loginPanelBtn">Créer un compte / Se connecter</button>
       <button class="closeSettingsBtn" id="closeSettingsBtn">Fermer</button>
-      <button class="dangerBtn" id="printBtn">Imprimer</button>
+      <button class="printBtn" id="printBtn">Imprimer</button>
     </div>
   </div>
 
   <script>
-    const apiBase = "https://api.philomeneia.com";
+    // Récupère les infos du <meta> dans le head
+    const apiBase = document.querySelector('meta[name="api-base"]').content;
+    const clerkKey = document.querySelector('meta[name="clerk-publishable-key"]').content;
 
-    let currentUser = null;
-    const chatBoxEl = document.getElementById("chatBox");
-    const userInputEl = document.getElementById("userInput");
-    const sendBtnEl = document.getElementById("sendBtn");
-    const introBlockEl = document.getElementById("introBlock");
-    const tokenLeftEl = document.getElementById("tokenLeft");
-    const userStatusEl = document.getElementById("userStatus");
-    const balanceLineEl = document.getElementById("balanceLine");
+    // Éléments DOM
+    const chatContainerEl = document.getElementById("chatContainer");
+    const introBlockEl   = document.getElementById("introBlock");
+    const chatScrollEl   = document.getElementById("chatScroll");
 
-    function addMessage(who, text){
-      const bubble = document.createElement("div");
-      bubble.className = "msg " + (who==="user"?"me":"bot");
-      bubble.textContent = text;
-      chatBoxEl.appendChild(bubble);
-      chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+    const userInputEl    = document.getElementById("userInput");
+    const sendBtnEl      = document.getElementById("sendBtn");
+    const wizzBtnEl      = document.getElementById("wizzBtn");
+    const photoBtnEl     = document.getElementById("photoBtn");
+
+    const tokenBadgeEl   = document.getElementById("tokenBadge");
+    const userStatusEl   = document.getElementById("userStatus");
+    const userEmailEl    = document.getElementById("userEmail");
+    const balanceLineEl  = document.getElementById("balanceLine");
+    const clearBtnEl     = document.getElementById("clearBtn");
+
+    const settingsBtnEl      = document.getElementById("settingsBtn");
+    const settingsPanelEl    = document.getElementById("settingsPanel");
+    const closeSettingsBtnEl = document.getElementById("closeSettingsBtn");
+    const loginPanelBtnEl    = document.getElementById("loginPanelBtn");
+    const panelStatusEl      = document.getElementById("panelStatus");
+    const printBtnEl         = document.getElementById("printBtn");
+
+    // Notre "session" côté front
+    // id: identifiant utilisateur (invité ou email une fois connecté)
+    // tokens: solde courant
+    // email: si connecté
+    let currentUser = {
+      id: null,
+      tokens: 0,
+      email: null,
+      isGuest: true
+    };
+
+    // Petit helper pour créer une bulle de chat
+    function addMessageBubble(who, text) {
+      const div = document.createElement("div");
+      div.className = "msg " + who;
+      div.textContent = text;
+      chatScrollEl.appendChild(div);
+      chatScrollEl.scrollTop = chatScrollEl.scrollHeight;
     }
 
-    function hideIntro(){ if(introBlockEl) introBlockEl.style.display="none"; }
+    // Message système (ex: Wizz)
+    function addSystemBubble(text) {
+      const div = document.createElement("div");
+      div.className = "msg system";
+      div.textContent = text;
+      chatScrollEl.appendChild(div);
+      chatScrollEl.scrollTop = chatScrollEl.scrollHeight;
+    }
 
-    function refreshHeader(){
-      if(!currentUser) return;
-      tokenLeftEl.textContent = "Tokens: " + currentUser.tokens;
+    // Cacher l'intro après le premier vrai message envoyé
+    function hideIntro() {
+      if (introBlockEl) {
+        introBlockEl.style.display = "none";
+      }
+    }
+
+    // Mise à jour des infos affichées en haut / bas
+    function refreshHeaderAndBalance() {
+      tokenBadgeEl.textContent = "Tokens: " + currentUser.tokens;
       balanceLineEl.textContent = "Solde: " + currentUser.tokens + " tokens restants";
+
+      if (currentUser.isGuest) {
+        userStatusEl.textContent = "Invité 👤";
+        userEmailEl.textContent  = "Non connecté";
+        panelStatusEl.textContent = "Invité ("+currentUser.tokens+" tokens)";
+      } else {
+        userStatusEl.textContent = "Connecté ✅";
+        userEmailEl.textContent  = currentUser.email || "Connecté";
+        panelStatusEl.textContent = "Connecté ("+currentUser.tokens+" tokens)";
+      }
     }
 
-    async function sendToAI(){
-      const msg = userInputEl.value.trim();
-      if(!msg) return;
-      if(currentUser.tokens<=0){ addMessage("bot","Plus de tokens 😅"); return; }
-      hideIntro(); addMessage("user", msg); userInputEl.value="";
-      sendBtnEl.disabled=true; sendBtnEl.textContent="...";
-      try{
-        const r = await fetch(apiBase+"/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:currentUser.id,message:msg})});
-        const j = await r.json();
-        addMessage("bot", j.reply || "Pas de réponse");
-        if(j.remaining!==undefined){ currentUser.tokens=j.remaining; refreshHeader(); }
-      }catch{ addMessage("bot","Erreur réseau."); }
-      sendBtnEl.disabled=false; sendBtnEl.textContent="Envoyer";
+    // Envoi d'un message à l'IA
+    async function sendMessageToAI() {
+      const text = userInputEl.value.trim();
+      if (!text) return;
+
+      if (currentUser.tokens <= 0) {
+        addMessageBubble("bot","Plus de tokens 😅 Va dans Réglages pour recharger.");
+        return;
+      }
+
+      hideIntro();
+      addMessageBubble("me", text);
+      userInputEl.value = "";
+      sendBtnEl.disabled = true;
+      sendBtnEl.textContent = "…";
+
+      try {
+        // Appel backend /api/chat
+        const response = await fetch(apiBase + "/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            message: text
+          })
+        });
+
+        const data = await response.json();
+
+        if (data && data.reply) {
+          addMessageBubble("bot", data.reply);
+        } else {
+          addMessageBubble("bot","Pas de réponse.");
+        }
+
+        // Tokens restants renvoyés par le serveur
+        if (typeof data.remaining !== "undefined") {
+          currentUser.tokens = data.remaining;
+          refreshHeaderAndBalance();
+        }
+
+      } catch (err) {
+        console.error(err);
+        addMessageBubble("bot","Erreur réseau.");
+      }
+
+      sendBtnEl.disabled = false;
+      sendBtnEl.textContent = "Envoyer";
     }
 
-    userInputEl.addEventListener("keydown",e=>{
-      if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendToAI();}
+    // Wizz MSN: secoue l'écran du chat
+    function doWizz() {
+      // bulle système
+      addSystemBubble("💥 WIZZ envoyé");
+      // secouer
+      chatContainerEl.classList.add("shake");
+      setTimeout(() => {
+        chatContainerEl.classList.remove("shake");
+      }, 450);
+    }
+
+    // Vider chat (efface visuel + dit au backend de reset la mémoire)
+    async function clearChat() {
+      chatScrollEl.innerHTML = "";
+      addMessageBubble("bot","Conversation effacée ✅");
+
+      // On ping le backend pour reset mémoire si possible
+      if (currentUser.id) {
+        try {
+          await fetch(apiBase + "/api/clear", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ userId: currentUser.id })
+          });
+        } catch(e){
+          console.warn("clear error", e);
+        }
+      }
+    }
+
+    // Ouvrir / fermer le panneau Réglages
+    function openSettings() {
+      settingsPanelEl.style.display = "block";
+    }
+    function closeSettings() {
+      settingsPanelEl.style.display = "none";
+    }
+
+    // "Imprimer"
+    function doPrint() {
+      window.print();
+    }
+
+    // Connexion / inscription (Clerk) — version simple pour l’instant:
+    // Pour le moment on ne déclenche pas Clerk ici (ça demande du script Clerk),
+    // mais on prépare la logique:
+    // 1. L'utilisateur se connecte (plus tard via Clerk)
+    // 2. On reçoit son email / un userId permanent
+    // 3. On appelle upgradeAccount() pour passer à 5000 tokens
+    async function upgradeAccount(fakeEmail) {
+      // Simulation du passage invité -> connecté
+      // Dans la vraie version Clerk:
+      //   - fakeEmail = Clerk.user.primaryEmailAddress.emailAddress
+      //   - userId = Clerk.user.id
+      currentUser.isGuest = false;
+      currentUser.email = fakeEmail || "user@example.com";
+      currentUser.id = currentUser.email; // on utilise l'email comme id simplifié
+      currentUser.tokens = 5000;
+      refreshHeaderAndBalance();
+      addMessageBubble("bot","Bienvenue, compte activé ✅ Tu as maintenant 5000 tokens.");
+    }
+
+    // Quand on clique sur "Créer un compte / Se connecter"
+    loginPanelBtnEl.addEventListener("click", () => {
+      // Pour l'instant on simule la connexion directe,
+      // comme si la personne venait de valider son e-mail.
+      upgradeAccount("exemple@philomeneia.com");
+      closeSettings();
     });
-    sendBtnEl.addEventListener("click",sendToAI);
 
-    async function initGuest(){
-      try{
-        const r=await fetch(apiBase+"/api/guest-start",{method:"POST"});
-        const j=await r.json();
-        currentUser={id:j.userId,tokens:j.tokens};
-        refreshHeader();
-        addMessage("bot","Bienvenue 👋 Tu as "+currentUser.tokens+" tokens gratuits.");
-      }catch{ addMessage("bot","Erreur de connexion au serveur."); }
+    // Gestion des boutons
+    sendBtnEl.addEventListener("click", sendMessageToAI);
+    userInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessageToAI();
+      }
+    });
+
+    wizzBtnEl.addEventListener("click", doWizz);
+    clearBtnEl.addEventListener("click", clearChat);
+    settingsBtnEl.addEventListener("click", openSettings);
+    closeSettingsBtnEl.addEventListener("click", closeSettings);
+    printBtnEl.addEventListener("click", doPrint);
+
+    // Le bouton 📷 pour plus tard (envoi d'image / panne etc.)
+    photoBtnEl.addEventListener("click", () => {
+      addSystemBubble("📷 Envoi d'image bientôt disponible");
+    });
+
+    // Au chargement: on demande un compte invité au backend
+    async function initGuest() {
+      try {
+        const r = await fetch(apiBase + "/api/guest-start", {
+          method:"POST"
+        });
+        const data = await r.json();
+
+        // data doit contenir { userId, tokens }
+        currentUser.id = data.userId;
+        currentUser.tokens = data.tokens;
+        currentUser.isGuest = true;
+        currentUser.email = null;
+
+        refreshHeaderAndBalance();
+
+        // message d'accueil
+        addMessageBubble(
+          "bot",
+          "Salut 👋 Je suis Philomène IA. Tu as " +
+          currentUser.tokens +
+          " tokens gratuits pour tester. Pose ta question."
+        );
+
+      } catch(e) {
+        console.error(e);
+        addMessageBubble("bot","Erreur de connexion au serveur 😢");
+      }
     }
+
     initGuest();
   </script>
+
 </body>
 </html>
