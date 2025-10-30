@@ -1,207 +1,618 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Philomène I.A.</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(160deg, #1b0025, #2b0040);
-      color: #fff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Philomène I.A.</title>
+<style>
+  :root {
+    --bg-grad-start: #2a003c;
+    --bg-grad-end: #0a0016;
+    --bubble-bg: rgba(0,0,0,0.45);
+    --bubble-text: #fff;
+    --ui-card-bg: rgba(0,0,0,0.75);
+    --ui-card-text: #fff;
+    --input-bg: rgba(255,255,255,0.08);
+    --input-text: #fff;
+    --send-bg: #6c00ff;
+    --send-text: #fff;
+    --accent: #6c00ff;
+    --header-text:#fff;
+    --token-text:#fff;
+    --status-text: rgba(255,255,255,0.6);
+    --menu-bg: rgba(0,0,0,0.8);
+    --menu-border: rgba(255,255,255,0.1);
+  }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 15px;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(8px);
-    }
+  body.light {
+    --bg-grad-start: #ffffff;
+    --bg-grad-end: #dcdcdc;
+    --bubble-bg: rgba(0,0,0,0.75);
+    --bubble-text: #fff;
+    --ui-card-bg: rgba(0,0,0,0.8);
+    --ui-card-text: #fff;
+    --input-bg: rgba(0,0,0,0.08);
+    --input-text: #000;
+    --send-bg: #6c00ff;
+    --send-text: #fff;
+    --accent: #6c00ff;
+    --header-text:#000;
+    --token-text:#000;
+    --status-text: rgba(0,0,0,0.6);
+    --menu-bg: rgba(0,0,0,0.8);
+    --menu-border: rgba(255,255,255,0.15);
+  }
 
-    .menu-left button, .menu-right button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
+  /* reset + layout */
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    .token-display {
-      font-size: 12px;
-      color: #ccc;
-    }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+    color: var(--bubble-text);
+    overflow: hidden;
+    background: radial-gradient(circle at 20% 20%, var(--bg-grad-start) 0%, var(--bg-grad-end) 70%);
+    background-attachment: fixed;
+    height: 100%;
+    min-height: 100dvh;
+  }
 
-    #chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-    }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .bubble {
-      max-width: 80%;
-      padding: 10px 15px;
-      margin: 8px;
-      border-radius: 15px;
-      line-height: 1.4;
-      word-wrap: break-word;
-    }
+  #app {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 
-    .user {
-      background: #7a00ff;
-      align-self: flex-end;
-    }
+  /* HEADER */
+  header {
+    flex-shrink: 0;
+    padding: 12px 16px 8px;
+    color: var(--header-text);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+  }
 
-    .bot {
-      background: #2a2a2a;
-      align-self: flex-start;
-    }
+  .left-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-    footer {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-    }
+  .burger-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--header-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
 
-    #user-input {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      border-radius: 20px;
-      outline: none;
-      font-size: 14px;
-    }
+  .id-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .id-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--header-text);
+  }
+  .id-role {
+    font-size: 12px;
+    opacity: 0.7;
+    color: var(--header-text);
+  }
 
-    button.send-btn, button.plus-btn {
-      background: #7a00ff;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      margin-left: 8px;
-      font-size: 18px;
-      cursor: pointer;
-    }
+  .right-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+  }
 
-    #plus-menu, #settings-menu {
-      display: none;
-      position: absolute;
-      bottom: 70px;
-      background: rgba(20, 20, 20, 0.9);
-      border-radius: 10px;
-      padding: 8px;
-      flex-direction: column;
-    }
+  .tokens-pill {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--token-text);
+    display: flex;
+    align-items: center;
+    gap:6px;
+  }
+  .tokens-pill .gem {
+    font-size:16px;
+    line-height:16px;
+  }
 
-    #plus-menu button, #settings-menu button {
-      background: none;
-      border: none;
-      color: #fff;
-      padding: 6px 10px;
-      text-align: left;
-      font-size: 14px;
-      cursor: pointer;
-    }
+  .menu-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--header-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
 
-    .hidden { display: none; }
-  </style>
+  /* MENU FLOTTANT (⋮) */
+  #topMenu {
+    position: absolute;
+    right: 12px;
+    top: 56px;
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    width: 200px;
+    display: none;
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  #topMenu .item {
+    display: flex;
+    align-items: center;
+    gap:8px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  #topMenu .item:last-child {
+    border-bottom: none;
+  }
+  #topMenu .icon {
+    font-size:16px;
+    line-height:16px;
+    width:20px;
+    text-align:center;
+  }
+  #topMenu .label {
+    flex:1;
+    color:#fff;
+  }
+
+  /* BULLE D'INTRO */
+  #introBubble {
+    margin: 0 16px 12px;
+    border-radius: 16px;
+    background: var(--bubble-bg);
+    color: var(--bubble-text);
+    padding: 16px;
+    font-size: 16px;
+    line-height: 1.4;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  #introBubble b {
+    font-weight:600;
+  }
+
+  /* MESSAGES ZONE */
+  #messages {
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    padding: 0 16px 16px;
+  }
+
+  .msg-row {
+    display: flex;
+    margin-bottom: 12px;
+    max-width: 90%;
+  }
+  .msg-row.me {
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+  .bubble {
+    background: var(--bubble-bg);
+    color: var(--bubble-text);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 16px;
+    line-height: 1.4;
+    border:1px solid rgba(255,255,255,0.1);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg-row.me .bubble {
+    background: var(--accent);
+    color: #fff;
+    border-color: rgba(0,0,0,0.15);
+  }
+
+  /* A PROPOS MODAL */
+  #aboutModal {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    top: 20%;
+    background: var(--ui-card-bg);
+    color: var(--ui-card-text);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 16px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+    font-size: 17px;
+    line-height:1.4;
+    display:none;
+    z-index: 9999;
+  }
+  #aboutModalClose {
+    color:#4da3ff;
+    font-weight:500;
+    font-size:16px;
+    margin-top:12px;
+    text-align:right;
+  }
+
+  /* BARRE INPUT BAS */
+  #inputBarOuter {
+    flex-shrink:0;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(20px);
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 16px);
+  }
+
+  #inputBarInner {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .input-row {
+    background: var(--input-bg);
+    border-radius: 999px;
+    display:flex;
+    align-items:center;
+    padding:10px 12px;
+    gap:10px;
+  }
+
+  #moreBtn {
+    flex-shrink:0;
+    width:36px;
+    height:36px;
+    border-radius:999px;
+    background: var(--accent);
+    color:#fff;
+    font-size:20px;
+    font-weight:500;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #attachMenu {
+    position:absolute;
+    bottom:72px; /* sera ajusté dynamiquement */
+    left:16px;
+    background:rgba(0,0,0,0.8);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px;
+    padding:12px 16px;
+    width:180px;
+    display:none;
+    flex-direction:column;
+    gap:12px;
+    color:#fff;
+    font-size:16px;
+    line-height:1.4;
+    box-shadow:0 30px 80px rgba(0,0,0,0.8);
+    z-index:9999;
+  }
+  .attach-item {
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .attach-icon {
+    font-size:18px;
+    width:22px;
+    text-align:center;
+  }
+  .attach-label {
+    flex:1;
+  }
+
+  #userInput {
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color: var(--input-text);
+    font-size:16px;
+    line-height:20px;
+    min-width:0;
+  }
+
+  #sendBtn {
+    flex-shrink:0;
+    border:none;
+    border-radius:999px;
+    background: var(--accent);
+    color: var(--send-text);
+    font-size:16px;
+    font-weight:600;
+    padding:10px 16px;
+  }
+
+  #statusLine {
+    text-align:center;
+    font-size:14px;
+    color: var(--status-text);
+    font-weight:500;
+  }
+
+</style>
 </head>
+<body class="night">
+<div id="app">
 
-<body>
+  <!-- HEADER -->
   <header>
-    <div class="menu-left">
-      <button onclick="alert('Connexion/Inscription à venir')">☰</button>
+    <div class="left-head">
+      <div class="burger-btn" id="burgerBtn">≡</div>
+      <div class="id-block">
+        <div class="id-name">Philomène I.A.</div>
+        <div class="id-role">Assistante personnelle</div>
+      </div>
     </div>
-    <div class="token-display">💎 Tokens: <span id="tokens">5000</span></div>
-    <div class="menu-right">
-      <button onclick="toggleSettings()">⋮</button>
+
+    <div class="right-head">
+      <div class="tokens-pill">
+        <span class="gem">💎</span>
+        <span id="tokenCount">Tokens: 5000</span>
+      </div>
+      <div class="menu-btn" id="menuBtn">⋮</div>
+    </div>
+
+    <!-- menu ⋮ -->
+    <div id="topMenu">
+      <div class="item" id="toggleSound">
+        <div class="icon">🎙️</div>
+        <div class="label">Son: <span id="soundState">ON</span></div>
+      </div>
+      <div class="item" id="toggleTheme">
+        <div class="icon">🌙</div>
+        <div class="label">Mode nuit</div>
+      </div>
+      <div class="item" id="showAbout">
+        <div class="icon">❓</div>
+        <div class="label">À propos</div>
+      </div>
     </div>
   </header>
 
-  <div id="chat-box">
-    <div class="bubble bot">
-      👋 Bonjour ! Je suis <b>Philomène I.A.</b>, votre assistante personnelle.<br>
-      Vous avez un problème ? J’ai la solution.<br>
-      Vous avez une question ? J’ai la réponse.<br>
-      Ensemble, on ira plus loin.
+  <!-- BULLE INTRO -->
+  <div id="introBubble">
+    👋 Bonjour ! Je suis <b>Philomène I.A.</b>, votre assistante personnelle.<br/>
+    Vous avez un problème ? J’ai la solution.<br/>
+    Vous avez une question ? J’ai la réponse.<br/>
+    Ensemble, on ira plus loin.
+  </div>
+
+  <!-- ZONE MESSAGES -->
+  <div id="messages">
+    <!-- exemple messages (tu peux les enlever) -->
+    <div class="msg-row me">
+      <div class="bubble">Bj la table de 6 svp</div>
+    </div>
+    <div class="msg-row">
+      <div class="bubble">Je t’écoute attentivement...</div>
     </div>
   </div>
 
-  <footer>
-    <button class="plus-btn" onclick="togglePlus()">＋</button>
-    <input type="text" id="user-input" placeholder="Écrivez votre message..." />
-    <button class="send-btn" onclick="sendMessage()">➤</button>
-  </footer>
-
-  <!-- Menus -->
-  <div id="plus-menu">
-    <button onclick="alert('📷 Prendre une photo (à venir)')">📷 Photo</button>
-    <button onclick="alert('📄 Envoyer un document (à venir)')">📄 Document</button>
-    <button onclick="alert('🎤 Micro activé (à venir)')">🎤 Micro</button>
+  <!-- BARRE INPUT BAS -->
+  <div id="inputBarOuter">
+    <div id="inputBarInner">
+      <div class="input-row">
+        <button id="moreBtn">+</button>
+        <input id="userInput" placeholder="Écris ton message..." />
+        <button id="sendBtn">Envoyer</button>
+      </div>
+      <div id="statusLine">
+        Prêt • <span id="statusTokens">5000</span> tokens restants
+      </div>
+    </div>
   </div>
 
-  <div id="settings-menu">
-    <button onclick="toggleTheme()">🌗 Mode Jour/Nuit</button>
-    <button onclick="alert('🔊 Son activé/désactivé (à venir)')">🔊 Son</button>
-    <button onclick="alert('💡 Philomène I.A. est votre assistante personnelle.\nElle vous aide, vous conseille et vous accompagne.\nEnsemble, on ira plus loin.')">❔ À propos</button>
+</div>
+
+<!-- MENU ATTACH (+) -->
+<div id="attachMenu">
+  <div class="attach-item">
+    <div class="attach-icon">📷</div>
+    <div class="attach-label">Envoyer une photo</div>
   </div>
+  <div class="attach-item">
+    <div class="attach-icon">📎</div>
+    <div class="attach-label">Envoyer un fichier</div>
+  </div>
+  <div class="attach-item">
+    <div class="attach-icon">🎙️</div>
+    <div class="attach-label">Dicter un message</div>
+  </div>
+</div>
 
-  <script>
-    const chatBox = document.getElementById('chat-box');
-    const input = document.getElementById('user-input');
-    const plusMenu = document.getElementById('plus-menu');
-    const settingsMenu = document.getElementById('settings-menu');
-    let darkMode = true;
+<!-- MODAL A PROPOS -->
+<div id="aboutModal">
+  💡 Philomène I.A. est votre assistante personnelle.<br/>
+  Elle vous aide, vous conseille et vous accompagne.<br/>
+  Ensemble, on ira plus loin.
+  <div id="aboutModalClose">Fermer</div>
+</div>
 
-    function togglePlus() {
-      plusMenu.style.display = plusMenu.style.display === 'flex' ? 'none' : 'flex';
-      settingsMenu.style.display = 'none';
+<script>
+(function() {
+  // refs
+  const bodyEl      = document.body;
+  const menuBtn     = document.getElementById('menuBtn');
+  const topMenu     = document.getElementById('topMenu');
+  const toggleSound = document.getElementById('toggleSound');
+  const soundState  = document.getElementById('soundState');
+  const toggleTheme = document.getElementById('toggleTheme');
+  const showAbout   = document.getElementById('showAbout');
+  const aboutModal  = document.getElementById('aboutModal');
+  const aboutClose  = document.getElementById('aboutModalClose');
+
+  const moreBtn     = document.getElementById('moreBtn');
+  const attachMenu  = document.getElementById('attachMenu');
+
+  const messages    = document.getElementById('messages');
+  const userInput   = document.getElementById('userInput');
+
+  // STATE
+  let soundOn = true;
+  let theme = 'night'; // 'night' ou 'light'
+  let menuOpen = false;
+  let attachOpen = false;
+
+  // toggle menu ⋮
+  menuBtn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    topMenu.style.display = menuOpen ? 'block' : 'none';
+  });
+
+  // toggle son
+  toggleSound.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundState.textContent = soundOn ? 'ON' : 'OFF';
+  });
+
+  // toggle thème
+  toggleTheme.addEventListener('click', () => {
+    if (theme === 'night') {
+      theme = 'light';
+      bodyEl.classList.add('light');
+    } else {
+      theme = 'night';
+      bodyEl.classList.remove('light');
     }
+    // refermer menu après clic
+    menuOpen = false;
+    topMenu.style.display = 'none';
+  });
 
-    function toggleSettings() {
-      settingsMenu.style.display = settingsMenu.style.display === 'flex' ? 'none' : 'flex';
-      plusMenu.style.display = 'none';
+  // affichage "À propos"
+  showAbout.addEventListener('click', () => {
+    aboutModal.style.display = 'block';
+    menuOpen = false;
+    topMenu.style.display = 'none';
+  });
+  aboutClose.addEventListener('click', () => {
+    aboutModal.style.display = 'none';
+  });
+
+  // bouton +
+  moreBtn.addEventListener('click', () => {
+    attachOpen = !attachOpen;
+    if (attachOpen) {
+      positionAttachMenu();
+      attachMenu.style.display = 'flex';
+    } else {
+      attachMenu.style.display = 'none';
     }
+  });
 
-    function toggleTheme() {
-      darkMode = !darkMode;
-      document.body.style.background = darkMode
-        ? 'linear-gradient(160deg, #1b0025, #2b0040)'
-        : 'linear-gradient(160deg, #f4f4f4, #dcdcdc)';
-      document.body.style.color = darkMode ? '#fff' : '#111';
-    }
-
-    function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
-      appendBubble(text, 'user');
-      input.value = '';
-
+  // quand on ouvre le clavier, on veut scroller en bas
+  if (userInput) {
+    userInput.addEventListener('focus', () => {
       setTimeout(() => {
-        appendBubble("🤖 Philomène réfléchit...", 'bot');
-        setTimeout(() => {
-          document.querySelectorAll('.bot').slice(-1);
-          appendBubble("Voici une réponse automatique (simulation).", 'bot');
-        }, 1000);
-      }, 500);
+        scrollMessagesToBottom();
+      }, 250);
+    });
+  }
+
+  function scrollMessagesToBottom() {
+    if (messages) {
+      messages.scrollTop = messages.scrollHeight;
+    }
+  }
+
+  // positionner le menu des pièces jointes juste au-dessus de la barre d'input
+  function positionAttachMenu() {
+    const barOuter = document.getElementById('inputBarOuter');
+    const rect = barOuter.getBoundingClientRect();
+    attachMenu.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+  }
+
+  // GESTION HAUTEUR iPHONE / CLAVIER
+  // On calcule la hauteur visible réelle et on l'applique à body & #app
+  function setAppHeight() {
+    const vh = window.visualViewport
+      ? window.visualViewport.height
+      : window.innerHeight;
+
+    document.documentElement.style.setProperty('--app-height', vh + 'px');
+
+    bodyEl.style.height = vh + 'px';
+    const app = document.getElementById('app');
+    if (app) {
+      app.style.height = vh + 'px';
     }
 
-    function appendBubble(text, type) {
-      const bubble = document.createElement('div');
-      bubble.className = `bubble ${type}`;
-      bubble.textContent = text;
-      chatBox.appendChild(bubble);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    // repositionne le menu + si ouvert
+    if (attachOpen) {
+      positionAttachMenu();
     }
-  </script>
+  }
+
+  // listeners pour les changements de viewport (clavier, rotation, etc.)
+  setAppHeight();
+  window.addEventListener('resize', () => {
+    setAppHeight();
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      setAppHeight();
+    });
+  }
+
+  // Fermer menus si on tape ailleurs
+  document.addEventListener('click', (e) => {
+    // menu ⋮
+    if (menuOpen && !topMenu.contains(e.target) && e.target !== menuBtn) {
+      menuOpen = false;
+      topMenu.style.display = 'none';
+    }
+    // menu +
+    if (attachOpen && !attachMenu.contains(e.target) && e.target !== moreBtn) {
+      attachOpen = false;
+      attachMenu.style.display = 'none';
+    }
+  }, true);
+
+  // empêche le body de scroller quand on scroll dans les messages
+  messages.addEventListener('touchmove', (e) => {
+    // autoriser le scroll normal à l'intérieur
+  }, {passive:true});
+
+})();
+</script>
+
 </body>
 </html>
