@@ -817,12 +817,14 @@
     Prêt • <span id="token-count">5000 tokens restants</span>
   </div>
 </div>
-
+<!-- Charge la config locale si dispo (clé API, etc.) -->
+<script src="config.js"></script>
 <!-- 3. Script IA -->
 <script>
 // ====== CONFIG ======
-const OPENAI_API_KEY = "TA_CLE_API_ICI"; // REMPLACE par ta clé perso
-const OPENAI_MODEL   = "gpt-4o-mini";    // ou celui que tu utilises
+const OPENAI_API_KEY = OPENAI_API_KEY || "";
+const OPENAI_MODEL = "gpt-4o-mini";
+
 
 // Historique local (mémoire de la conversation côté front)
 const conversation = [
@@ -957,7 +959,45 @@ async function askPhilomene(messageText) {
     console.error(err);
   }
 }
+// ====== Connexion à l'API OpenAI ======
+async function callOpenAI(message) {
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages: [
+          { role: "system", content: "Tu es Philomène I.A., une assistante personnelle élégante, intuitive et bienveillante." },
+          { role: "user", content: message }
+        ]
+      })
+    });
 
+    const data = await response.json();
+
+    if (data.choices && data.choices.length > 0) {
+      return data.choices[0].message.content.trim();
+    } else {
+      return "Désolée, je n’ai pas réussi à obtenir une réponse.";
+    }
+  } catch (error) {
+    console.error("Erreur :", error);
+    return "Une erreur est survenue en contactant l’IA.";
+  }
+}
+
+
+// ====== Fonction pour demander à Philomène ======
+async function askPhilomene(message) {
+  const thinkingNode = addPhiloThinking();
+  const answer = await callOpenAI(message);
+  thinkingNode.remove();
+  addPhiloMessage(answer);
+}  
 // ====== ENVOI MESSAGE ======
 async function handleSend() {
   const text = userInput.value.trim();
