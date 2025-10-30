@@ -723,5 +723,267 @@
       navigator.serviceWorker.register("./sw.js").catch(()=>{});
     }
   </script>
+  <!-- 1. Zone messages -->
+<div id="chat-container" style="flex:1; padding:16px; display:flex; flex-direction:column; gap:16px; overflow-y:auto;">
+  
+  <!-- Exemple: message de présentation de Philomène au chargement -->
+  <div class="bubble system" style="
+    align-self:flex-start;
+    background:#2b2b2b;
+    color:#fff;
+    border-radius:12px;
+    padding:16px;
+    max-width:90%;
+    box-shadow:0 30px 60px rgba(0,0,0,0.6);
+    font-size:18px;
+    line-height:1.4;
+    border:1px solid rgba(255,255,255,0.08);
+  ">
+    <div style="color:#ffd84f; font-weight:600; margin-bottom:8px;">
+      👋 Bonjour ! Je suis <span style="color:#ffd84f;font-weight:700;">Philomène I.A.</span>, votre assistante personnelle.
+    </div>
+    <div style="color:#fff;">
+      Si vous avez un problème, j’ai la solution.<br>
+      Vous avez une question, j’ai la réponse.<br>
+      Ensemble, on ira plus loin 🕊️
+    </div>
+  </div>
+
+</div>
+
+<!-- 2. Barre d'envoi -->
+<div style="
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#000;
+  border-top:1px solid rgba(255,255,255,0.07);
+  box-shadow:0 -20px 40px rgba(0,0,0,0.9);
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <button id="plus-btn" style="
+      background:#4f1dff;
+      border:none;
+      color:#fff;
+      width:48px;
+      height:48px;
+      border-radius:12px;
+      font-size:28px;
+      line-height:0;
+      box-shadow:0 20px 40px rgba(79,29,255,0.6);
+    ">+</button>
+
+    <input
+      id="user-input"
+      type="text"
+      placeholder="Écrivez votre message…"
+      style="
+        flex:1;
+        background:#111;
+        color:#fff;
+        border:1px solid #4f1dff;
+        border-radius:12px;
+        padding:14px 16px;
+        font-size:16px;
+        line-height:1.3;
+        outline:none;
+      " />
+
+    <button id="send-btn" style="
+      background:#4f1dff;
+      border:none;
+      color:#fff;
+      width:48px;
+      height:48px;
+      border-radius:12px;
+      font-size:18px;
+      font-weight:600;
+      line-height:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 20px 40px rgba(79,29,255,0.6);
+    ">
+      ➤
+    </button>
+  </div>
+
+  <div style="text-align:center; font-size:14px; color:#bdbdbd;">
+    Prêt • <span id="token-count">5000 tokens restants</span>
+  </div>
+</div>
+
+<!-- 3. Script IA -->
+<script>
+// ====== CONFIG ======
+const OPENAI_API_KEY = "TA_CLE_API_ICI"; // REMPLACE par ta clé perso
+const OPENAI_MODEL   = "gpt-4o-mini";    // ou celui que tu utilises
+
+// Historique local (mémoire de la conversation côté front)
+const conversation = [
+  {
+    role: "system",
+    content: "Tu es Philomène I.A., une assistante personnelle chaleureuse, claire, efficace, qui répond en français simple et utile. Tu aides concrètement, étape par étape."
+  },
+  {
+    role: "assistant",
+    content: "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. Si vous avez un problème, j’ai la solution. Vous avez une question, j’ai la réponse. Ensemble, on ira plus loin 🕊️"
+  }
+];
+
+// ====== SELECTEURS ======
+const chatContainer = document.getElementById("chat-container");
+const userInput     = document.getElementById("user-input");
+const sendBtn       = document.getElementById("send-btn");
+
+// ====== UI HELPERS ======
+function addUserBubble(text) {
+  const bubble = document.createElement("div");
+  bubble.style.alignSelf = "flex-end";
+  bubble.style.background = "#4f1dff";
+  bubble.style.color = "#fff";
+  bubble.style.borderRadius = "12px";
+  bubble.style.padding = "14px 16px";
+  bubble.style.maxWidth = "80%";
+  bubble.style.fontSize = "17px";
+  bubble.style.lineHeight = "1.4";
+  bubble.style.boxShadow = "0 30px 60px rgba(79,29,255,0.6)";
+  bubble.style.fontWeight = "500";
+  bubble.textContent = text;
+  chatContainer.appendChild(bubble);
+  scrollToBottom();
+}
+
+function addThinkingBubble() {
+  const wrap = document.createElement("div");
+  wrap.className = "thinking-wrapper";
+
+  wrap.style.alignSelf = "flex-start";
+  wrap.style.background = "#2b2b2b";
+  wrap.style.color = "#fff";
+  wrap.style.borderRadius = "12px";
+  wrap.style.padding = "14px 16px";
+  wrap.style.maxWidth = "90%";
+  wrap.style.fontSize = "17px";
+  wrap.style.lineHeight = "1.4";
+  wrap.style.boxShadow = "0 30px 60px rgba(0,0,0,0.6)";
+  wrap.style.border = "1px solid rgba(255,255,255,0.08)";
+  wrap.style.display = "inline-block";
+  wrap.textContent = "Philomène réfléchit à votre message…";
+
+  chatContainer.appendChild(wrap);
+  scrollToBottom();
+  return wrap;
+}
+
+function addAssistantBubble(text) {
+  const bubble = document.createElement("div");
+  bubble.style.alignSelf = "flex-start";
+  bubble.style.background = "#2b2b2b";
+  bubble.style.color = "#fff";
+  bubble.style.borderRadius = "12px";
+  bubble.style.padding = "14px 16px";
+  bubble.style.maxWidth = "90%";
+  bubble.style.fontSize = "17px";
+  bubble.style.lineHeight = "1.5";
+  bubble.style.boxShadow = "0 30px 60px rgba(0,0,0,0.6)";
+  bubble.style.border = "1px solid rgba(255,255,255,0.08)";
+  bubble.textContent = text;
+
+  chatContainer.appendChild(bubble);
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// ====== APPEL OPENAI ======
+async function askPhilomene(messageText) {
+  // 1. push le message user dans l'historique
+  conversation.push({
+    role: "user",
+    content: messageText
+  });
+
+  // 2. bulle "je réfléchis..."
+  const thinkingNode = addThinkingBubble();
+
+  try {
+    // 3. appel API OpenAI
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages: conversation.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        temperature: 0.7
+      })
+    });
+
+    const data = await response.json();
+
+    // sécurisation basique
+    if (!data || !data.choices || !data.choices[0]) {
+      throw new Error("Réponse vide ou inattendue.");
+    }
+
+    const answer = data.choices[0].message.content.trim();
+
+    // 4. remplace "je réfléchis..." par la vraie réponse
+    thinkingNode.remove();
+    addAssistantBubble(answer);
+
+    // 5. ajoute la réponse IA à l'historique
+    conversation.push({
+      role: "assistant",
+      content: answer
+    });
+
+  } catch (err) {
+    thinkingNode.remove();
+    addAssistantBubble("Désolé, j'ai eu un souci technique.");
+    console.error(err);
+  }
+}
+
+// ====== ENVOI MESSAGE ======
+async function handleSend() {
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  // bulle utilisateur
+  addUserBubble(text);
+
+  // vide le champ
+  userInput.value = "";
+
+  // demande à Philomène
+  askPhilomene(text);
+}
+
+// clic bouton envoyer
+sendBtn.addEventListener("click", handleSend);
+
+// touche Entrée
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleSend();
+  }
+});
+
+</script>
 </body>
 </html>
