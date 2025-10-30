@@ -1,124 +1,126 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="clerk-publishable-key"
-      content="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    />
-    <title>Philomène IA Messenger – GPT ✨</title>
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3884/3884851.png" />
-    <style>
-      body {
-        margin: 0;
-        font-family: system-ui, sans-serif;
-        background-color: #0a1224;
-        color: white;
-        text-align: center;
-      }
-      h1 {
-        font-size: 1.9em;
-        margin-top: 50px;
-      }
-      h2 {
-        font-size: 1em;
-        font-weight: 400;
-        color: #00d4aa;
-        letter-spacing: 0.08em;
-      }
-      .container {
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-      button {
-        background-color: #007bff;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 24px;
-        margin: 12px;
-        color: white;
-        font-size: 1em;
-        cursor: pointer;
-      }
-      button.secondary {
-        background-color: #333;
-      }
-      .card {
-        background-color: #111a32;
-        border-radius: 10px;
-        padding: 15px;
-        margin: 15px 0;
-        text-align: left;
-      }
-      .footer {
-        margin: 40px 0 20px;
-        color: #888;
-        font-size: 0.85em;
-      }
-    </style>
-    <script async crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest"></script>
-  </head>
-  <body>
-    <div class="container">
-      <h2>ASSISTANT PERSONNEL TOUT-EN-UN</h2>
-      <h1>Philomène IA Messenger – GPT ✨</h1>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Philomène IA Messenger – GPT ✨</title>
+
+  <style>
+    :root{
+      --bg:#0a1224;--panel:#0e2238;--text:#eaf2f8;--muted:#8fb3c9;
+      --btn:#0b69ff;--btn2:#263449;--card:#0f1b33;--accent:#00d4aa;
+    }
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",sans-serif}
+    .wrap{max-width:920px;margin:0 auto;padding:28px 16px}
+    h1{margin:8px 0 10px;font-size:32px;text-align:center}
+    .sub{color:var(--accent);text-align:center;letter-spacing:.08em;font-weight:600}
+    .hero{display:flex;flex-direction:column;align-items:center;gap:12px;margin:28px 0 16px}
+    .hero p{margin:0;text-align:center;max-width:680px;color:var(--muted);line-height:1.5}
+    .cta{display:flex;gap:12px;justify-content:center;margin:16px 0 8px;flex-wrap:wrap}
+    .cta button{cursor:pointer;border:0;border-radius:12px;padding:12px 20px;font-weight:600}
+    .primary{background:var(--btn);color:#fff}
+    .secondary{background:var(--btn2);color:#fff}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+    .card{background:var(--card);border:1px solid #18314f;border-radius:14px;padding:16px}
+    .card h3{margin:0 0 6px}
+    .howto{margin-top:8px}
+    .howto ol{margin:8px 0 0 18px}
+    .footer{margin:28px 0 6px;text-align:center;color:var(--muted);font-size:13px}
+    .top{display:flex;justify-content:center;align-items:center;gap:10px}
+    .mode{background:#1a2942;border:1px solid #203652;color:#cfe8ff;border-radius:10px;padding:6px 10px;font-size:14px}
+    @media (min-width:760px){
+      .grid{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
+
+  <!-- Clerk JS: clé publishable sur le SCRIPT (important) -->
+  <script
+    async
+    crossorigin="anonymous"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA">
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="mode">☀️ / 🌙</div>
+    </div>
+
+    <p class="sub">ASSISTANT PERSONNEL TOUT-EN-UN</p>
+    <h1>Philomène IA Messenger – GPT ✨</h1>
+
+    <div class="hero">
+      <img src="https://emoji.slack-edge.com/T024J5K3H/brain/cc3c7a43f8f9f9b1.png" alt="cerveau" width="70" height="70" />
       <p>
-        Devoirs, recettes, lettres, idées business, dépannage tech... même via
-        photo 🔧📸<br />
-        Posez votre question, je réponds, j’explique et je guide pas à pas.
-      </p>
-      <p>
-        Disponible en 🇫🇷 Français · 🇬🇧 English · 🇳🇱 Nederlands
+        Devoirs, recettes, lettres, idées business, dépannage tech… même via photo 🔧📸.<br/>
+        Pose ta question, je réponds, j’explique et je guide pas à pas. Disponible en 🇫🇷/🇬🇧/🇳🇱.
       </p>
 
-      <button id="signup">Créer un compte</button>
-      <button id="login" class="secondary">Se connecter</button>
+      <div class="cta">
+        <button id="signup" class="secondary">Créer un compte</button>
+        <button id="login"  class="primary">Se connecter</button>
+      </div>
 
-      <p>Accès sécurisé · <strong>5000 tokens offerts</strong> à l’inscription 🎁</p>
+      <p style="color:var(--muted);margin:6px 0 0">
+        Accès sécurisé · <b>5000 tokens offerts</b> à l’inscription 🎁
+      </p>
+    </div>
 
+    <div class="grid">
       <div class="card">
         <h3>🧠 Aide immédiate</h3>
-        <p>
-          Explications, résumés, corrections, emails, CV... Parfait pour les devoirs et le boulot.
-        </p>
+        <p>Explications, résumés, corrections, emails, CV… Parfait pour les devoirs et le boulot.</p>
       </div>
       <div class="card">
         <h3>🔍 Au quotidien</h3>
-        <p>
-          Recettes selon votre frigo, listes de courses, idées cadeaux et organisation perso.
-        </p>
+        <p>Recettes selon ton frigo, listes de courses, idées cadeaux, organisation perso.</p>
       </div>
       <div class="card">
         <h3>🔧 Dépannage par photo</h3>
-        <p>
-          Envoyez une photo d’une panne ou d’un message d’erreur. Je diagnostique & vous aide.
-        </p>
+        <p>Envoie une photo d’une panne ou d’un message d’erreur. Je diagnostique & je t’aide.</p>
       </div>
-
-      <div class="card">
-        <h3>📌 Comment ça marche</h3>
-        <ol>
-          <li>Créez un compte ou connectez-vous.</li>
-          <li>Ouvrez Messenger & choisissez FR / EN / NL.</li>
-          <li>Posez votre question… ou envoyez une photo.</li>
-          <li>Recevez une solution claire & étape par étape.</li>
-        </ol>
-      </div>
-
-      <p class="footer">© Philomène — IA au service des gens.</p>
     </div>
 
-    <script>
-      window.Clerk.load().then(() => {
-        document.getElementById("signup").addEventListener("click", () => {
-          window.Clerk.openSignUp();
-        });
-        document.getElementById("login").addEventListener("click", () => {
-          window.Clerk.openSignIn();
-        });
+    <div class="card howto">
+      <h3>📌 Comment ça marche</h3>
+      <ol>
+        <li>Crée un compte ou connecte-toi.</li>
+        <li>Ouvre Messenger & choisis FR / EN / NL.</li>
+        <li>Écris ta demande… ou envoie une photo.</li>
+        <li>Reçois une solution claire & étape par étape.</li>
+      </ol>
+    </div>
+
+    <p class="footer">© 2025 Philomène IA — Tous droits réservés</p>
+  </div>
+
+  <script>
+    // Attendre que Clerk soit prêt, puis connecter les boutons
+    (async () => {
+      // attendre que le script Clerk soit chargé
+      const waitClerk = () => new Promise((resolve) => {
+        const check = () => { if (window.Clerk) resolve(); else setTimeout(check, 50); };
+        check();
       });
-    </script>
-  </body>
+      await waitClerk();
+
+      try {
+        await window.Clerk.load();
+
+        document.getElementById('signup').addEventListener('click', () => {
+          window.Clerk.openSignUp();   // ouvre la modale d’inscription
+        });
+
+        document.getElementById('login').addEventListener('click', () => {
+          window.Clerk.openSignIn();   // ouvre la modale de connexion
+        });
+      } catch (e) {
+        console.error('Clerk init error:', e);
+        alert("Connexion indisponible pour le moment. Recharge la page dans 10 secondes.");
+      }
+    })();
+  </script>
+</body>
 </html>
