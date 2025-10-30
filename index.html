@@ -1,315 +1,299 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Philomène IA – Messenger • GPT</title>
+  <title>Philomène IA Messenger – GPT ✨</title>
   <style>
     :root {
-      --bg:#071826;
-      --panel:#0e2238;
-      --text:#f9fafb;
-      --sub:#9ca3af;
-      --accent:#3b82f6;
-      --badge:#14b8a6;
-      --card:#0e2238;
-      --border:rgba(255,255,255,0.08);
-      --shadow:0 30px 120px rgba(0,0,0,0.8);
-      --radius:14px;
-      --radiusSmall:10px;
-      --btnText:#fff;
-      --btnBg:#2563eb;
-      --btnBgAlt:#1f2937;
-      --btnBorder:rgba(255,255,255,0.12);
+      --bg:#0b1a24;
+      --panel:#112637;
+      --text:#ffffff;
+      --text-dim:#aeb9c7;
+      --accent:#1673ff;
+      --card-border:rgba(255,255,255,0.07);
+      --radius-xl:18px;
+      --radius-lg:14px;
+      --radius-md:10px;
+      --radius-sm:8px;
     }
 
-    [data-theme="light"] {
-      --bg:#f4f7fb;
-      --panel:#ffffff;
-      --text:#0f172a;
-      --sub:#475569;
-      --accent:#2563eb;
-      --badge:#0d9488;
-      --card:#ffffff;
-      --border:rgba(15,23,42,0.08);
-      --shadow:0 30px 120px rgba(0,0,0,0.08);
-      --radius:14px;
-      --radiusSmall:10px;
-      --btnText:#ffffff;
-      --btnBg:#2563eb;
-      --btnBgAlt:#1f2937;
-      --btnBorder:rgba(0,0,0,0.12);
+    *{
+      box-sizing:border-box;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
     }
-
-    body {
+    body{
       margin:0;
+      padding:0 16px 80px;
       background:var(--bg);
       color:var(--text);
-      font-family:-apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Roboto",system-ui,sans-serif;
       line-height:1.5;
-      -webkit-font-smoothing:antialiased;
-      padding:32px 16px 120px;
       display:flex;
       flex-direction:column;
       align-items:center;
     }
 
-    .page {
+    .page{
       width:100%;
       max-width:480px;
-      display:flex;
-      flex-direction:column;
-      gap:32px;
+      margin:32px auto 120px;
     }
 
-    .head-top {
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-    }
-
-    .theme-toggle {
-      background:var(--panel);
-      border:1px solid var(--border);
-      color:var(--text);
-      border-radius:var(--radiusSmall);
-      font-size:15px;
-      padding:8px 12px;
-      line-height:1.2;
-    }
-
-    h1.bigtitle {
-      font-size:28px;
-      font-weight:600;
-      color:var(--text);
-      line-height:1.25;
-      text-align:center;
-      margin:0;
-    }
-    .badge-topline {
-      text-align:center;
+    /* HERO */
+    .pretitle{
+      color:#36c1a3;
       font-size:13px;
       font-weight:500;
-      color:var(--badge);
       letter-spacing:.05em;
       text-transform:uppercase;
-    }
-
-    .pitch {
       text-align:center;
-      font-size:16px;
+      margin-bottom:12px;
+    }
+    h1.title{
+      margin:0 0 16px;
+      font-size:28px;
+      line-height:1.25;
+      font-weight:600;
+      text-align:center;
+      color:#fff;
+    }
+    .desc{
+      font-size:17px;
+      line-height:1.45;
+      text-align:center;
       color:var(--text);
-      font-weight:500;
-    }
-    .pitch2 {
-      text-align:center;
-      font-size:15px;
-      color:var(--sub);
       font-weight:400;
-      line-height:1.5;
-      margin-top:12px;
+      margin:0 auto 20px;
+      max-width:480px;
     }
 
-    .langs {
+    .langs{
+      text-align:center;
       color:var(--text);
       font-size:15px;
-      text-align:center;
-      font-weight:500;
-      margin-top:20px;
       line-height:1.4;
+      margin-bottom:24px;
+    }
+    .langs span.flag{
+      font-size:18px;
+      margin:0 4px;
     }
 
-    .btns-auth {
+    /* CTA buttons */
+    .cta-group{
       display:flex;
       flex-direction:column;
       gap:12px;
-      margin-top:24px;
+      margin:0 auto 16px;
+      width:100%;
+      max-width:420px;
     }
-    .btn-auth {
-      border-radius:var(--radius);
-      padding:16px;
+    .btn-main{
+      width:100%;
+      border-radius:var(--radius-lg);
+      border:none;
       font-size:17px;
       font-weight:600;
+      line-height:1.2;
+      padding:16px 20px;
+      color:#fff;
+      background:var(--accent);
       text-align:center;
-      border:1px solid var(--btnBorder);
-      box-shadow:var(--shadow);
       text-decoration:none;
       display:block;
     }
-    .primary {
-      background:var(--btnBg);
-      color:var(--btnText);
-    }
-    .ghost {
-      background:var(--btnBgAlt);
-      color:var(--text);
-    }
-
-    .bonusline {
-      margin-top:8px;
-      color:var(--text);
-      font-size:15px;
-      line-height:1.4;
+    .btn-ghost{
+      width:100%;
+      border-radius:var(--radius-lg);
+      border:1px solid var(--card-border);
+      background:#1a2534;
+      font-size:17px;
+      font-weight:600;
+      line-height:1.2;
+      padding:16px 20px;
+      color:#fff;
       text-align:center;
-      font-weight:500;
-    }
-    .gift {
-      color:#facc15;
-      font-size:16px;
+      text-decoration:none;
+      display:block;
     }
 
-    .cards-block {
+    .bonus{
+      font-size:15px;
+      text-align:center;
+      color:#fff;
+      margin:0 auto 28px;
+      max-width:420px;
+      line-height:1.4;
+    }
+    .bonus .gift{
+      font-size:18px;
+    }
+
+    /* CARDS SECTION */
+    .cards{
       display:flex;
       flex-direction:column;
       gap:16px;
+      margin:32px auto 32px;
+      max-width:480px;
     }
-    .card {
-      background:var(--card);
-      box-shadow:var(--shadow);
-      border-radius:var(--radius);
-      border:1px solid var(--border);
-      padding:16px 16px 20px;
-    }
-    .card-title {
-      font-size:18px;
-      font-weight:600;
-      color:var(--text);
-      margin-bottom:8px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .card-body {
-      font-size:15px;
-      font-weight:400;
-      color:var(--sub);
-      line-height:1.5;
-    }
-
-    .how-block {
+    .card{
       background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px 16px 16px;
+      border:1px solid var(--card-border);
+      border-radius:var(--radius-xl);
+      padding:20px 20px 16px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.6);
     }
-    .how-title {
-      font-size:20px;
-      font-weight:600;
-      color:var(--text);
-      margin-bottom:12px;
+    .card-title{
       display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .how-steps {
-      font-size:16px;
-      font-weight:400;
-      color:var(--text);
-      line-height:1.6;
-    }
-    .how-steps b {
+      align-items:flex-start;
+      gap:10px;
+      font-size:18px;
+      line-height:1.3;
       font-weight:600;
-      color:var(--text);
+      color:#fff;
+      margin:0 0 10px;
+    }
+    .card-title .emoji{
+      font-size:20px;
+      line-height:1;
+    }
+    .card-text{
+      font-size:15px;
+      color:var(--text-dim);
+      line-height:1.4;
+      margin:0;
     }
 
-    footer {
+    /* HOW IT WORKS */
+    .howwrap{
+      max-width:480px;
+      margin:40px auto 48px;
+      text-align:left;
+      color:#fff;
+    }
+    .howtitle{
+      font-size:24px;
+      line-height:1.25;
+      font-weight:600;
       text-align:center;
-      font-size:13px;
-      color:var(--sub);
-      margin-top:12px;
+      margin:0 0 20px;
+      color:#fff;
+    }
+    .howtitle .pin{
+      font-size:22px;
+    }
+    ol.how{
+      margin:0;
+      padding-left:20px;
+      font-size:17px;
+      line-height:1.45;
+      color:var(--text);
+    }
+    ol.how li{
+      margin-bottom:12px;
+    }
+    ol.how li:last-child{
+      margin-bottom:0;
+    }
+
+    /* FOOTER */
+    footer{
+      width:100%;
+      text-align:center;
+      color:var(--text-dim);
+      font-size:14px;
       line-height:1.4;
+      margin-top:40px;
+      margin-bottom:80px;
     }
   </style>
-  <script>
-    // petit switch dark / light local
-    function toggleTheme(){
-      const html=document.documentElement
-      const cur=html.getAttribute("data-theme")
-      html.setAttribute("data-theme", cur==="light"?"dark":"light")
-    }
-  </script>
 </head>
 <body>
+  <main class="page">
+    <!-- Hero / Header -->
+    <div class="pretitle">ASSISTANT PERSONNEL TOUT-EN-UN</div>
 
-  <div class="page">
+    <h1 class="title">Philomène IA Messenger – GPT ✨</h1>
 
-    <!-- top row: titre + bouton thème -->
-    <div class="head-top">
-      <div style="flex:1"></div>
-      <button class="theme-toggle" onclick="toggleTheme()">🌞 / 🌙</button>
+    <p class="desc">
+      Devoirs, recettes, lettres, idées business, dépannage technique…
+      même via photo 🛠️📸.<br />
+      Posez votre question. Je réponds, j’explique, je corrige,
+      je guide pas à pas.
+    </p>
+
+    <div class="langs">
+      Disponible en
+      <span class="flag">🇫🇷</span> Français ·
+      <span class="flag">🇬🇧</span> English ·
+      <span class="flag">🇳🇱</span> Nederlands
     </div>
 
-    <!-- intro -->
-    <div>
-      <div class="badge-topline">ASSISTANT PERSONNEL TOUT-EN-UN</div>
-      <h1 class="bigtitle">Philomène IA<br/>Messenger – GPT ✨</h1>
-
-      <div class="pitch">
-        Devoirs, recettes, lettres, idées business, dépannage tech… même via photo 🔧📸
-      </div>
-      <div class="pitch2">
-        Pose juste ta question. Je réponds, j’explique, je corrige, je guide pas à pas.
-      </div>
-
-      <div class="langs">
-        Disponible en 🇫🇷 Français • 🇬🇧 English • 🇳🇱 Nederlands
-      </div>
-
-      <div class="btns-auth">
-        <a class="btn-auth ghost" href="sign-up.html">Créer un compte</a>
-        <a class="btn-auth primary" href="sign-in.html">Se connecter</a>
-      </div>
-
-      <div class="bonusline">
-        Accès sécurisé • <b>5000 tokens offerts</b> à l’inscription <span class="gift">🎁</span>
-      </div>
+    <div class="cta-group">
+      <a class="btn-ghost" href="/sign-up">Créer un compte</a>
+      <a class="btn-main" href="/sign-in">Se connecter</a>
     </div>
 
-    <!-- cartes d’usage -->
-    <div class="cards-block">
-      <div class="card">
-        <div class="card-title">🧠 Aide immédiate</div>
-        <div class="card-body">
-          Explications, résumés, corrections, emails, CV… Parfait pour les devoirs et le boulot.
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🔍 Au quotidien</div>
-        <div class="card-body">
-          Recettes selon ton frigo, listes de courses, idées cadeaux, organisation perso.
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🔧 Dépannage par photo</div>
-        <div class="card-body">
-          Envoie une photo d’un câble, d’un message d’erreur ou d’une pièce cassée.
-          Je diagnostique et je t’aide étape par étape.
-        </div>
-      </div>
+    <div class="bonus">
+      Accès sécurisé · <strong>5000 tokens offerts</strong> à l’inscription
+      <span class="gift">🎁</span>
     </div>
 
-    <!-- comment ça marche -->
-    <div class="how-block">
-      <div class="how-title">
-        <span>📌 Comment ça marche</span>
-      </div>
-      <div class="how-steps">
-        1. Crée un compte ou connecte-toi.<br/>
-        2. Ouvre Messenger (FR / EN / NL).<br/>
-        3. Pose ta question… ou envoie une photo.<br/>
-        4. Reçois une réponse claire avec des étapes concrètes.
-      </div>
-    </div>
+    <!-- Feature cards -->
+    <section class="cards">
+      <article class="card">
+        <h2 class="card-title">
+          <span class="emoji">🧠</span>
+          <span>Aide immédiate</span>
+        </h2>
+        <p class="card-text">
+          Explications, résumés, corrections, emails, CV… Parfait pour les devoirs
+          et le boulot. Je t’écris les textes optimisés, je simplifie ce que tu
+          ne comprends pas.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2 class="card-title">
+          <span class="emoji">🔍</span>
+          <span>Au quotidien</span>
+        </h2>
+        <p class="card-text">
+          Recettes selon ton frigo, idées de repas, listes de courses, cadeaux,
+          organisation perso, messages à envoyer à quelqu’un… Je fais le brouillon
+          pour toi.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2 class="card-title">
+          <span class="emoji">🛠️</span>
+          <span>Dépannage par photo</span>
+        </h2>
+        <p class="card-text">
+          Envoie une photo d’une panne, d’un câble, d’un message d’erreur. Je te
+          dis ce que c’est, ce qui ne va pas, et je te guide étape par étape.
+        </p>
+      </article>
+    </section>
+
+    <!-- How it works -->
+    <section class="howwrap">
+      <h2 class="howtitle">Comment ça marche <span class="pin">📌</span></h2>
+      <ol class="how">
+        <li>Crée un compte ou connecte-toi.</li>
+        <li>Ouvre Messenger et choisis ta langue FR / EN / NL.</li>
+        <li>Pose ta question… ou envoie une photo.</li>
+        <li>Reçois une solution claire avec des étapes concrètes.</li>
+      </ol>
+    </section>
 
     <footer>
-      © Philomène IA — IA au service des gens.
+      © 2025 Philomène IA — IA au service des gens.
     </footer>
-
-  </div>
-
+  </main>
 </body>
 </html>
