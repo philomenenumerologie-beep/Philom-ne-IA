@@ -1,147 +1,158 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Philomène IA</title>
+
+  <!-- RENSEIGNE ta clé Clerk ici (publishable key) -->
+  <meta name="clerk-publishable-key" content="pk_live_XXXXXXXXXXXXXXXXXXXXXXXX" />
+
+  <title>Philomène IA — Messenger</title>
+
   <style>
-    :root {
-      --bg: #071826;
-      --panel: #0e2238;
-      --text: #eaf2f8;
-      --accent: #3fb0ff;
-      --btn-bg: #1b3c58;
-      --btn-hover: #3fb0ff;
+    :root{
+      --bg:#071826;--panel:#0e2238;--muted:#a8c3d9;--text:#eaf2f8;--accent:#3fb0ff;
+      --danger:#f15b5b;--chip:#133a5a;--chipText:#b7d7f0;--btn:#1b3c58;--shadow:rgba(0,0,0,.35)
     }
-
-    [data-theme="light"] {
-      --bg: #f4f7fb;
-      --panel: #ffffff;
-      --text: #1c2732;
-      --accent: #0067ff;
-      --btn-bg: #cce3ff;
-      --btn-hover: #0067ff;
+    [data-theme="light"]{
+      --bg:#f4f7fb;--panel:#ffffff;--muted:#516170;--text:#1c2732;--accent:#0067ff;
+      --danger:#bf2a2a;--chip:#eaf2ff;--chipText:#2b4b66;--btn:#eaf2ff;--shadow:rgba(0,0,0,.12)
     }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Inter", system-ui, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      transition: background 0.3s, color 0.3s;
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial
     }
-
-    h1 {
-      color: var(--accent);
-      font-size: 2rem;
-      margin: 0 0 1rem 0;
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 80px}
+    header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{font-size:28px}
+    h1{margin:0;font-size:34px;letter-spacing:.2px}
+    .mode{user-select:none;cursor:pointer;background:var(--panel);border-radius:12px;padding:8px 12px}
+    .hero{margin:38px 0 22px;text-align:center}
+    .brain{font-size:78px;display:block;margin:14px auto 10px}
+    .lead{max-width:820px;margin:0 auto 24px;color:var(--muted);font-size:18px}
+    .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      border:0;border-radius:14px;padding:14px 22px;font-weight:700;cursor:pointer;
+      background:var(--accent);color:#fff;box-shadow:0 8px 28px var(--shadow);min-width:220px
     }
-
-    p {
-      text-align: center;
-      max-width: 400px;
-      line-height: 1.5;
-      opacity: 0.9;
+    .btn.secondary{background:var(--btn);color:var(--text)}
+    .cards{margin:34px 0;display:grid;gap:16px}
+    @media(min-width:740px){.cards{grid-template-columns:repeat(3,1fr)}}
+    .card{
+      background:var(--panel);border:1px solid #0b314f;border-radius:16px;padding:18px 16px 14px;
+      box-shadow:0 8px 20px var(--shadow);min-height:120px
     }
-
-    .logo {
-      font-size: 3rem;
-      margin: 1rem 0;
-    }
-
-    .btn-container {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    button {
-      padding: 0.8rem 1.4rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: var(--btn-bg);
-      color: var(--text);
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: var(--btn-hover);
-      color: #fff;
-    }
-
-    footer {
-      position: absolute;
-      bottom: 1rem;
-      font-size: 0.8rem;
-      opacity: 0.7;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: var(--panel);
-      border-radius: 12px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-
-    #chat {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      height: 100%;
-    }
-
-    #chat iframe {
-      border: none;
-      width: 100%;
-      height: 100%;
-    }
+    .card h3{margin:0 0 8px}
+    .how{background:var(--panel);border:1px solid #0b314f;border-radius:18px;margin-top:26px;padding:18px}
+    .how h2{margin:4px 0 10px}
+    .how ol{margin:0 0 0 18px}
+    .lang{margin:16px auto 0;text-align:center;color:var(--muted)}
+    .foot{margin-top:32px;text-align:center;color:var(--muted)}
+    .chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{background:var(--chip);color:var(--chipText);padding:6px 10px;border-radius:999px;font-size:13px}
+    .tip{color:var(--muted);font-size:14px;margin-top:8px;text-align:center}
+    a.inline{color:var(--accent);text-decoration:none}
   </style>
 </head>
-
 <body>
-  <div class="theme-toggle" onclick="toggleTheme()">☀️ / 🌙</div>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">🧠</div>
+        <h1>Philomène IA</h1>
+      </div>
+      <div id="themeToggle" class="mode" aria-label="Changer le thème">🌞 / 🌙</div>
+    </header>
 
-  <div id="intro">
-    <h1>Philomène IA</h1>
-    <div class="logo">🧠</div>
-    <p>
-      <strong>Philomène IA</strong> est ton assistante intelligente personnelle.<br />
-      Pose-lui tes questions, discute avec elle et explore ses différentes spécialités — toujours à ton service.
-    </p>
+    <section class="hero">
+      <span class="brain">🧠</span>
+      <p class="lead">
+        <strong>Philomène IA</strong> est ton assistante intelligente personnelle.  
+        Pose-lui tes questions, discute avec elle, et explore ses différentes spécialités — toujours à ton service.
+      </p>
 
-    <div class="btn-container">
-      <button onclick="openMessenger()">Entrer</button>
-    </div>
+      <div class="chips">
+        <span class="chip">FR 🇫🇷</span>
+        <span class="chip">EN 🇬🇧</span>
+        <span class="chip">NL 🇳🇱</span>
+      </div>
+
+      <div class="cta">
+        <button id="signupBtn" class="btn secondary">Créer un compte</button>
+        <button id="signinBtn" class="btn">Se connecter</button>
+      </div>
+      <div class="tip">Accès sécurisé • <strong>5000 tokens offerts</strong> à l’inscription 🎁</div>
+    </section>
+
+    <section class="cards">
+      <article class="card">
+        <h3>🧠 Aide immédiate</h3>
+        <p>Explications, résumés, corrections, emails, CV… Parfait pour les devoirs et le boulot.</p>
+      </article>
+      <article class="card">
+        <h3>🔎 Au quotidien</h3>
+        <p>Recettes selon ton frigo, listes de courses, idées cadeaux et organisation perso.</p>
+      </article>
+      <article class="card">
+        <h3>🔧 Dépannage par photo</h3>
+        <p>Envoie une photo d’une panne ou d’un message d’erreur. Je diagnostique et je t’aide pas à pas.</p>
+      </article>
+    </section>
+
+    <section class="how">
+      <h2>Comment ça marche 📌</h2>
+      <ol>
+        <li>Crée un compte ou connecte-toi.</li>
+        <li>Ouvre Messenger & choisis FR / EN / NL.</li>
+        <li>Pose ta question… ou envoie une photo.</li>
+        <li>Reçois une solution claire, avec des étapes concrètes.</li>
+      </ol>
+    </section>
+
+    <p class="foot">© 2025 Philomène IA — Tous droits réservés</p>
   </div>
 
-  <div id="chat">
-    <iframe src="/messenger.html"></iframe>
-  </div>
-
-  <footer>© 2025 Philomène IA — Tous droits réservés</footer>
+  <!-- Clerk JS (client) -->
+  <script async crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest"></script>
 
   <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.getAttribute("data-theme");
-      html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
-    }
+    // --------- Réglages à adapter si besoin ----------
+    const MESSENGER_URL = "/messenger.html"; // ou "/messenger" selon ton fichier
+    // ------------------------------------------------
 
-    function openMessenger() {
-      document.getElementById("intro").style.display = "none";
-      document.getElementById("chat").style.display = "flex";
-    }
+    // Thème
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem("theme");
+    if(savedTheme){ root.setAttribute("data-theme", savedTheme); }
+    document.getElementById("themeToggle").addEventListener("click", ()=>{
+      const cur = root.getAttribute("data-theme")==="light" ? "dark" : "light";
+      root.setAttribute("data-theme", cur);
+      localStorage.setItem("theme", cur);
+    });
+
+    // Clerk init + redirections propres
+    const pk = document.querySelector('meta[name="clerk-publishable-key"]')?.content?.trim();
+    window.addEventListener("load", async () => {
+      if(!window.Clerk){ console.error("Clerk non chargé"); return; }
+      if(!pk){ console.error("Publishable key Clerk manquante"); return; }
+
+      await window.Clerk.load({ publishableKey: pk });
+
+      // Boutons
+      const goSignIn = () => window.Clerk.redirectToSignIn({
+        afterSignInUrl: MESSENGER_URL,
+        afterSignUpUrl: MESSENGER_URL
+      });
+      const goSignUp = () => window.Clerk.redirectToSignUp({
+        afterSignUpUrl: MESSENGER_URL,
+        afterSignInUrl: MESSENGER_URL
+      });
+
+      document.getElementById("signinBtn").addEventListener("click", goSignIn);
+      document.getElementById("signupBtn").addEventListener("click", goSignUp);
+    });
   </script>
 </body>
 </html>
