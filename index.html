@@ -723,33 +723,13 @@
       navigator.serviceWorker.register("./sw.js").catch(()=>{});
     }
   </script>
-  <!-- 1. Zone messages -->
-<div id="chat-container" style="flex:1; padding:16px; display:flex; flex-direction:column; gap:16px; overflow-y:auto;">
   
-  <!-- Exemple: message de présentation de Philomène au chargement -->
-  <div class="bubble system" style="
-    align-self:flex-start;
-    background:#2b2b2b;
-    color:#fff;
-    border-radius:12px;
-    padding:16px;
-    max-width:90%;
-    box-shadow:0 30px 60px rgba(0,0,0,0.6);
-    font-size:18px;
-    line-height:1.4;
-    border:1px solid rgba(255,255,255,0.08);
-  ">
-    <div style="color:#ffd84f; font-weight:600; margin-bottom:8px;">
-      👋 Bonjour ! Je suis <span style="color:#ffd84f;font-weight:700;">Philomène I.A.</span>, votre assistante personnelle.
-    </div>
-    <div style="color:#fff;">
-      Si vous avez un problème, j’ai la solution.<br>
-      Vous avez une question, j’ai la réponse.<br>
-      Ensemble, on ira plus loin 🕊️
-    </div>
-  </div>
-
+<!-- 1. Zone messages -->
+<div id="chat-container" style="flex:1; padding:16px; display:flex; flex-direction:column; gap:16px; overflow-y:auto;">
 </div>
+  
+  
+ 
 
 <!-- 2. Barre d'envoi -->
 <div style="
