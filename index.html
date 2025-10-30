@@ -1,126 +1,315 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Philomène IA Messenger – GPT ✨</title>
-
+  <title>Philomène IA – Messenger • GPT</title>
   <style>
-    :root{
-      --bg:#0a1224;--panel:#0e2238;--text:#eaf2f8;--muted:#8fb3c9;
-      --btn:#0b69ff;--btn2:#263449;--card:#0f1b33;--accent:#00d4aa;
+    :root {
+      --bg:#071826;
+      --panel:#0e2238;
+      --text:#f9fafb;
+      --sub:#9ca3af;
+      --accent:#3b82f6;
+      --badge:#14b8a6;
+      --card:#0e2238;
+      --border:rgba(255,255,255,0.08);
+      --shadow:0 30px 120px rgba(0,0,0,0.8);
+      --radius:14px;
+      --radiusSmall:10px;
+      --btnText:#fff;
+      --btnBg:#2563eb;
+      --btnBgAlt:#1f2937;
+      --btnBorder:rgba(255,255,255,0.12);
     }
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",sans-serif}
-    .wrap{max-width:920px;margin:0 auto;padding:28px 16px}
-    h1{margin:8px 0 10px;font-size:32px;text-align:center}
-    .sub{color:var(--accent);text-align:center;letter-spacing:.08em;font-weight:600}
-    .hero{display:flex;flex-direction:column;align-items:center;gap:12px;margin:28px 0 16px}
-    .hero p{margin:0;text-align:center;max-width:680px;color:var(--muted);line-height:1.5}
-    .cta{display:flex;gap:12px;justify-content:center;margin:16px 0 8px;flex-wrap:wrap}
-    .cta button{cursor:pointer;border:0;border-radius:12px;padding:12px 20px;font-weight:600}
-    .primary{background:var(--btn);color:#fff}
-    .secondary{background:var(--btn2);color:#fff}
-    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
-    .card{background:var(--card);border:1px solid #18314f;border-radius:14px;padding:16px}
-    .card h3{margin:0 0 6px}
-    .howto{margin-top:8px}
-    .howto ol{margin:8px 0 0 18px}
-    .footer{margin:28px 0 6px;text-align:center;color:var(--muted);font-size:13px}
-    .top{display:flex;justify-content:center;align-items:center;gap:10px}
-    .mode{background:#1a2942;border:1px solid #203652;color:#cfe8ff;border-radius:10px;padding:6px 10px;font-size:14px}
-    @media (min-width:760px){
-      .grid{grid-template-columns:repeat(3,1fr)}
+
+    [data-theme="light"] {
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --text:#0f172a;
+      --sub:#475569;
+      --accent:#2563eb;
+      --badge:#0d9488;
+      --card:#ffffff;
+      --border:rgba(15,23,42,0.08);
+      --shadow:0 30px 120px rgba(0,0,0,0.08);
+      --radius:14px;
+      --radiusSmall:10px;
+      --btnText:#ffffff;
+      --btnBg:#2563eb;
+      --btnBgAlt:#1f2937;
+      --btnBorder:rgba(0,0,0,0.12);
+    }
+
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+      padding:32px 16px 120px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    .page {
+      width:100%;
+      max-width:480px;
+      display:flex;
+      flex-direction:column;
+      gap:32px;
+    }
+
+    .head-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+
+    .theme-toggle {
+      background:var(--panel);
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:var(--radiusSmall);
+      font-size:15px;
+      padding:8px 12px;
+      line-height:1.2;
+    }
+
+    h1.bigtitle {
+      font-size:28px;
+      font-weight:600;
+      color:var(--text);
+      line-height:1.25;
+      text-align:center;
+      margin:0;
+    }
+    .badge-topline {
+      text-align:center;
+      font-size:13px;
+      font-weight:500;
+      color:var(--badge);
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .pitch {
+      text-align:center;
+      font-size:16px;
+      color:var(--text);
+      font-weight:500;
+    }
+    .pitch2 {
+      text-align:center;
+      font-size:15px;
+      color:var(--sub);
+      font-weight:400;
+      line-height:1.5;
+      margin-top:12px;
+    }
+
+    .langs {
+      color:var(--text);
+      font-size:15px;
+      text-align:center;
+      font-weight:500;
+      margin-top:20px;
+      line-height:1.4;
+    }
+
+    .btns-auth {
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:24px;
+    }
+    .btn-auth {
+      border-radius:var(--radius);
+      padding:16px;
+      font-size:17px;
+      font-weight:600;
+      text-align:center;
+      border:1px solid var(--btnBorder);
+      box-shadow:var(--shadow);
+      text-decoration:none;
+      display:block;
+    }
+    .primary {
+      background:var(--btnBg);
+      color:var(--btnText);
+    }
+    .ghost {
+      background:var(--btnBgAlt);
+      color:var(--text);
+    }
+
+    .bonusline {
+      margin-top:8px;
+      color:var(--text);
+      font-size:15px;
+      line-height:1.4;
+      text-align:center;
+      font-weight:500;
+    }
+    .gift {
+      color:#facc15;
+      font-size:16px;
+    }
+
+    .cards-block {
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .card {
+      background:var(--card);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      padding:16px 16px 20px;
+    }
+    .card-title {
+      font-size:18px;
+      font-weight:600;
+      color:var(--text);
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .card-body {
+      font-size:15px;
+      font-weight:400;
+      color:var(--sub);
+      line-height:1.5;
+    }
+
+    .how-block {
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px 16px 16px;
+    }
+    .how-title {
+      font-size:20px;
+      font-weight:600;
+      color:var(--text);
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .how-steps {
+      font-size:16px;
+      font-weight:400;
+      color:var(--text);
+      line-height:1.6;
+    }
+    .how-steps b {
+      font-weight:600;
+      color:var(--text);
+    }
+
+    footer {
+      text-align:center;
+      font-size:13px;
+      color:var(--sub);
+      margin-top:12px;
+      line-height:1.4;
     }
   </style>
-
-  <!-- Clerk JS: clé publishable sur le SCRIPT (important) -->
-  <script
-    async
-    crossorigin="anonymous"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA">
+  <script>
+    // petit switch dark / light local
+    function toggleTheme(){
+      const html=document.documentElement
+      const cur=html.getAttribute("data-theme")
+      html.setAttribute("data-theme", cur==="light"?"dark":"light")
+    }
   </script>
 </head>
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="mode">☀️ / 🌙</div>
+
+  <div class="page">
+
+    <!-- top row: titre + bouton thème -->
+    <div class="head-top">
+      <div style="flex:1"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">🌞 / 🌙</button>
     </div>
 
-    <p class="sub">ASSISTANT PERSONNEL TOUT-EN-UN</p>
-    <h1>Philomène IA Messenger – GPT ✨</h1>
+    <!-- intro -->
+    <div>
+      <div class="badge-topline">ASSISTANT PERSONNEL TOUT-EN-UN</div>
+      <h1 class="bigtitle">Philomène IA<br/>Messenger – GPT ✨</h1>
 
-    <div class="hero">
-      <img src="https://emoji.slack-edge.com/T024J5K3H/brain/cc3c7a43f8f9f9b1.png" alt="cerveau" width="70" height="70" />
-      <p>
-        Devoirs, recettes, lettres, idées business, dépannage tech… même via photo 🔧📸.<br/>
-        Pose ta question, je réponds, j’explique et je guide pas à pas. Disponible en 🇫🇷/🇬🇧/🇳🇱.
-      </p>
-
-      <div class="cta">
-        <button id="signup" class="secondary">Créer un compte</button>
-        <button id="login"  class="primary">Se connecter</button>
+      <div class="pitch">
+        Devoirs, recettes, lettres, idées business, dépannage tech… même via photo 🔧📸
+      </div>
+      <div class="pitch2">
+        Pose juste ta question. Je réponds, j’explique, je corrige, je guide pas à pas.
       </div>
 
-      <p style="color:var(--muted);margin:6px 0 0">
-        Accès sécurisé · <b>5000 tokens offerts</b> à l’inscription 🎁
-      </p>
+      <div class="langs">
+        Disponible en 🇫🇷 Français • 🇬🇧 English • 🇳🇱 Nederlands
+      </div>
+
+      <div class="btns-auth">
+        <a class="btn-auth ghost" href="sign-up.html">Créer un compte</a>
+        <a class="btn-auth primary" href="sign-in.html">Se connecter</a>
+      </div>
+
+      <div class="bonusline">
+        Accès sécurisé • <b>5000 tokens offerts</b> à l’inscription <span class="gift">🎁</span>
+      </div>
     </div>
 
-    <div class="grid">
+    <!-- cartes d’usage -->
+    <div class="cards-block">
       <div class="card">
-        <h3>🧠 Aide immédiate</h3>
-        <p>Explications, résumés, corrections, emails, CV… Parfait pour les devoirs et le boulot.</p>
+        <div class="card-title">🧠 Aide immédiate</div>
+        <div class="card-body">
+          Explications, résumés, corrections, emails, CV… Parfait pour les devoirs et le boulot.
+        </div>
       </div>
+
       <div class="card">
-        <h3>🔍 Au quotidien</h3>
-        <p>Recettes selon ton frigo, listes de courses, idées cadeaux, organisation perso.</p>
+        <div class="card-title">🔍 Au quotidien</div>
+        <div class="card-body">
+          Recettes selon ton frigo, listes de courses, idées cadeaux, organisation perso.
+        </div>
       </div>
+
       <div class="card">
-        <h3>🔧 Dépannage par photo</h3>
-        <p>Envoie une photo d’une panne ou d’un message d’erreur. Je diagnostique & je t’aide.</p>
+        <div class="card-title">🔧 Dépannage par photo</div>
+        <div class="card-body">
+          Envoie une photo d’un câble, d’un message d’erreur ou d’une pièce cassée.
+          Je diagnostique et je t’aide étape par étape.
+        </div>
       </div>
     </div>
 
-    <div class="card howto">
-      <h3>📌 Comment ça marche</h3>
-      <ol>
-        <li>Crée un compte ou connecte-toi.</li>
-        <li>Ouvre Messenger & choisis FR / EN / NL.</li>
-        <li>Écris ta demande… ou envoie une photo.</li>
-        <li>Reçois une solution claire & étape par étape.</li>
-      </ol>
+    <!-- comment ça marche -->
+    <div class="how-block">
+      <div class="how-title">
+        <span>📌 Comment ça marche</span>
+      </div>
+      <div class="how-steps">
+        1. Crée un compte ou connecte-toi.<br/>
+        2. Ouvre Messenger (FR / EN / NL).<br/>
+        3. Pose ta question… ou envoie une photo.<br/>
+        4. Reçois une réponse claire avec des étapes concrètes.
+      </div>
     </div>
 
-    <p class="footer">© 2025 Philomène IA — Tous droits réservés</p>
+    <footer>
+      © Philomène IA — IA au service des gens.
+    </footer>
+
   </div>
 
-  <script>
-    // Attendre que Clerk soit prêt, puis connecter les boutons
-    (async () => {
-      // attendre que le script Clerk soit chargé
-      const waitClerk = () => new Promise((resolve) => {
-        const check = () => { if (window.Clerk) resolve(); else setTimeout(check, 50); };
-        check();
-      });
-      await waitClerk();
-
-      try {
-        await window.Clerk.load();
-
-        document.getElementById('signup').addEventListener('click', () => {
-          window.Clerk.openSignUp();   // ouvre la modale d’inscription
-        });
-
-        document.getElementById('login').addEventListener('click', () => {
-          window.Clerk.openSignIn();   // ouvre la modale de connexion
-        });
-      } catch (e) {
-        console.error('Clerk init error:', e);
-        alert("Connexion indisponible pour le moment. Recharge la page dans 10 secondes.");
-      }
-    })();
-  </script>
 </body>
 </html>
