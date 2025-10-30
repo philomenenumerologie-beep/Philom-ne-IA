@@ -6,13 +6,13 @@
 
   <!-- CONFIG GLOBALE -->
   <meta name="api-base" content="https://api.philomeneia.com" />
-  <meta name="clerk-publishable-key" content="pk_test_XXXX_remplace_moi" />
+  <meta name="clerk-publishable-key" content="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA" />
 
   <title>Philomène IA</title>
   <style>
     :root {
-      --bg-app: #0d1f2e;           /* bleu nuit presque noir */
-      --bg-card: #142a3f;          /* panneau/bulle */
+      --bg-app: #0d1f2e;
+      --bg-card: #142a3f;
       --bg-header: #0d1f2e;
       --text-main: #ffffff;
       --text-dim: #9bb1c7;
@@ -41,7 +41,6 @@
       min-height: 100vh;
     }
 
-    /* HEADER FIXE */
     header {
       background: var(--bg-header);
       color: var(--text-main);
@@ -136,7 +135,6 @@
       font-weight: 600;
     }
 
-    /* PANEL INTRO */
     .intro-panel {
       background: var(--bg-card);
       border: 1px solid var(--border-soft);
@@ -184,7 +182,6 @@
       color: var(--text-dim);
     }
 
-    /* MAIN CHAT AREA */
     .chat-wrapper {
       flex: 1;
       display: flex;
@@ -195,7 +192,7 @@
     .messages-area {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 12px 120px; /* leave room for input bar */
+      padding: 16px 12px 120px;
     }
 
     .bubble {
@@ -230,7 +227,6 @@
       flex-direction: column;
     }
 
-    /* INPUT BAR FIXE EN BAS */
     .input-bar-outer {
       position: fixed;
       left: 0;
@@ -325,7 +321,6 @@
       margin-top: 6px;
     }
 
-    /* MODAL RÉGLAGES */
     .overlay {
       position: fixed;
       inset: 0;
@@ -399,7 +394,6 @@
       font-weight: 500;
     }
 
-    /* petits ajustements iPhone notch etc. */
     @media (min-width: 480px) {
       .messages-area {
         padding-left: 24px;
@@ -418,7 +412,6 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <div class="header-topline">
       <div class="user-block">
@@ -463,18 +456,15 @@
     </div>
   </header>
 
-  <!-- ZONE CHAT -->
   <main class="chat-wrapper">
 
     <section class="messages-area" id="messagesArea">
       <div class="messages-list" id="messagesList">
-        <!-- Les bulles apparaissent ici en JS -->
       </div>
     </section>
 
   </main>
 
-  <!-- BARRE D'ENVOI EN BAS -->
   <div class="input-bar-outer">
     <div class="input-row">
       <button class="btn-photo" id="btnPhoto" title="Envoyer une image">
@@ -501,7 +491,6 @@
     </div>
   </div>
 
-  <!-- OVERLAY RÉGLAGES -->
   <div class="overlay" id="settingsOverlay">
     <div class="settings-panel">
       <div class="settings-title">
@@ -525,8 +514,6 @@
           Créer un compte / Se connecter
         </button>
 
-        <!-- plus tard: bouton "Acheter plus de tokens" ira ici -->
-
         <button class="btn-close-settings" id="settingsCloseBtn">
           Fermer
         </button>
@@ -535,29 +522,19 @@
   </div>
 
   <script>
-    /************************************************************
-     * CONFIG
-     ************************************************************/
     const API_BASE = document.querySelector('meta[name="api-base"]').content || "";
     const CLERK_PK = document.querySelector('meta[name="clerk-publishable-key"]').content || "";
 
-    // état local
-    let userId = "anonymous";   // ou Clerk userId après login
+    let userId = "anonymous";
     let userEmail = null;
-    let tokensRemaining = 1000; // invité de départ
-    let isLoggedIn = false;     // passe à true après vérification email
-    // petite mémoire locale du chat
+    let tokensRemaining = 1000;
+    let isLoggedIn = false;
     const conversation = [];
 
-    /************************************************************
-     * HELPERS UI
-     ************************************************************/
-    const statusChip     = document.getElementById("statusChip");
     const statusText     = document.getElementById("statusText");
     const tokensChip     = document.getElementById("tokenCount");
     const userEmailLine  = document.getElementById("userEmailLine");
     const footerTokens   = document.getElementById("footerTokens");
-    const introPanel     = document.getElementById("introPanel");
 
     const btnSend        = document.getElementById("btnSend");
     const btnPhoto       = document.getElementById("btnPhoto");
@@ -594,16 +571,11 @@
       tokensChip.textContent = tokensRemaining;
       footerTokens.textContent = tokensRemaining;
 
-      // Réglages overlay mirroir
       const labelStatut = isLoggedIn
         ? `Connecté (${tokensRemaining} tokens)`
         : `Invité (${tokensRemaining} tokens)`;
       settingsStatusText.textContent = labelStatut;
       settingsTokensText.textContent = tokensRemaining + " tokens";
-
-      // si connecté, on garde l'intro visible mais on pourrait la masquer après la
-      // toute première fois. Si tu veux qu’elle disparaisse une fois connecté:
-      // if (isLoggedIn) introPanel.style.display = "none";
     }
 
     function pushBubble(role, text) {
@@ -616,19 +588,15 @@
         div.classList.add("user");
       } else if (role === "system") {
         div.classList.add("system");
-      } // assistant reste par défaut
+      }
 
       div.textContent = text;
       messagesList.appendChild(div);
 
-      // scroll en bas
       const msgArea = document.getElementById("messagesArea");
       msgArea.scrollTop = msgArea.scrollHeight;
     }
 
-    /************************************************************
-     * INIT CLERK (login magique email)
-     ************************************************************/
     let clerkLoaded = false;
     window.addEventListener("load", async () => {
       try {
@@ -637,7 +605,7 @@
             publishableKey: CLERK_PK
           });
           clerkLoaded = true;
-          // si Clerk a déjà une session
+
           const session = window.Clerk.session;
           if (session && session.user) {
             await handleClerkLoggedIn(session.user);
@@ -647,28 +615,22 @@
         console.log("Clerk init error:", e);
       }
 
-      // Au démarrage, on demande le solde au backend en mode invité
       refreshBalanceFromAPI();
       renderHeader();
       greetFirstTime();
     });
 
     async function handleClerkLoggedIn(user) {
-      // user contient l'email etc.
       isLoggedIn = true;
       userId = user.id || "user";
       userEmail = (user.primaryEmailAddress && user.primaryEmailAddress.emailAddress) || "";
 
-      // Appelle le backend pour dire "ce compte est vérifié"
-      // et obtenir le solde 5000 tokens
       try {
         const r = await fetch(API_BASE + "/api/balance?userId=" + encodeURIComponent(userId));
         const j = await r.json();
-        // soit il renvoie {free: xxxx}
         if (j && typeof j.free === "number") {
           tokensRemaining = j.free;
         } else {
-          // fallback si pas clair
           tokensRemaining = 5000;
         }
       } catch(e) {
@@ -676,13 +638,9 @@
       }
       renderHeader();
 
-      // message système "Bienvenue, compte activé ✅ ..."
       pushBubble("system", "Bienvenue, compte activé ✅ Tu as maintenant " + tokensRemaining + " tokens.");
     }
 
-    /************************************************************
-     * OUVERTURE / FERMETURE RÉGLAGES
-     ************************************************************/
     function openSettings() {
       settingsOverlay.classList.add("active");
     }
@@ -694,37 +652,25 @@
     settingsCloseBtn.addEventListener("click", closeSettings);
     settingsCloseX.addEventListener("click", closeSettings);
 
-    /************************************************************
-     * BOUTON AUTH (HEADER + PANEL)
-     ************************************************************/
     async function startAuthFlow() {
-      // objectif :
-      // 1. Si pas connecté: lancer la modale Clerk sign-in / sign-up
-      // 2. Quand Clerk dit ok -> handleClerkLoggedIn()
-
       if (!clerkLoaded || !window.Clerk) {
         console.log("Clerk pas prêt");
         return;
       }
-      // Ouvre le modal Clerk intégré
-      // On utilise signIn.open() / signUp.open() selon ce que propose Clerk-js v5
-      // Ici on fait simple: openSignIn() (si dispo), sinon openSignUp().
       try {
         if (window.Clerk.openSignIn) {
-          const res = await window.Clerk.openSignIn();
-          // Après fermeture, re-check session:
+          await window.Clerk.openSignIn();
           const session = window.Clerk.session;
           if (session && session.user) {
             await handleClerkLoggedIn(session.user);
           }
         } else if (window.Clerk.openSignUp) {
-          const res = await window.Clerk.openSignUp();
+          await window.Clerk.openSignUp();
           const session = window.Clerk.session;
           if (session && session.user) {
             await handleClerkLoggedIn(session.user);
           }
         } else {
-          console.log("Clerk modal pas dispo dans cette version. On tente direct session.user.");
           const session = window.Clerk.session;
           if (session && session.user) {
             await handleClerkLoggedIn(session.user);
@@ -738,19 +684,13 @@
     btnAuthHeader.addEventListener("click", startAuthFlow);
     settingsAuthBtn.addEventListener("click", startAuthFlow);
 
-    /************************************************************
-     * CHAT: ENVOI MESSAGE TEXTE
-     ************************************************************/
     async function sendMessage() {
       const msg = userInput.value.trim();
       if (!msg) return;
 
-      // Affiche la bulle user directe
       pushBubble("user", msg);
-
       userInput.value = "";
 
-      // Appel API /api/chat
       try {
         const body = {
           userId,
@@ -771,7 +711,6 @@
         const reply = j.reply || "Désolé, pas de réponse.";
         pushBubble("assistant", reply);
 
-        // mettre à jour tokens
         if (typeof j.remaining === "number") {
           tokensRemaining = j.remaining;
         }
@@ -791,37 +730,21 @@
       }
     });
 
-    /************************************************************
-     * WIZZ
-     ************************************************************/
     btnWizz.addEventListener("click", () => {
-      // On affiche juste une bulle système "💥 WIZZ envoyé"
       pushBubble("system", "💥 WIZZ envoyé");
-      // Option marrante: légère vibration si supporté
       if (window.navigator && window.navigator.vibrate) {
         window.navigator.vibrate(100);
       }
     });
 
-    /************************************************************
-     * BOUTON PHOTO
-     ************************************************************/
-    btnPhoto.addEventListener("click", async () => {
-      // Ici on pourrait ouvrir un input file invisible
-      // et ensuite envoyer l'image au backend comme avant (imageDataUrl)
-      // Pour l’instant juste message système de debug.
+    btnPhoto.addEventListener("click", () => {
       pushBubble("system", "📷 Envoi photo pas encore activé (bientôt).");
     });
 
-    /************************************************************
-     * VIDER CHAT
-     ************************************************************/
     async function clearChat() {
-      // reset local
       conversation.length = 0;
       messagesList.innerHTML = "";
 
-      // dire serveur de reset session si possible
       try {
         await fetch(API_BASE + "/api/clear", {
           method: "POST",
@@ -836,9 +759,6 @@
     }
     btnClearChat.addEventListener("click", clearChat);
 
-    /************************************************************
-     * RÉCUPÉRER LE SOLDE (balance) AU DÉMARRAGE
-     ************************************************************/
     async function refreshBalanceFromAPI() {
       try {
         const r = await fetch(API_BASE + "/api/balance?userId=" + encodeURIComponent(userId));
@@ -846,17 +766,11 @@
         if (j && typeof j.free === "number") {
           tokensRemaining = j.free;
         }
-      } catch(e) {
-        // si échec, on reste sur la valeur locale
-      }
+      } catch(e) {}
       renderHeader();
     }
 
-    /************************************************************
-     * MESSAGE D'ACCUEIL
-     ************************************************************/
     function greetFirstTime() {
-      // bulle système d’accueil uniquement si rien encore dans le chat
       if (conversation.length === 0) {
         if (isLoggedIn) {
           pushBubble(
@@ -872,7 +786,6 @@
         }
       }
     }
-
   </script>
 </body>
 </html>
