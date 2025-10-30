@@ -959,35 +959,26 @@ async function askPhilomene(messageText) {
     console.error(err);
   }
 }
-// ====== Connexion à l'API OpenAI ======
-async function callOpenAI(message) {
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: OPENAI_MODEL,
-        messages: [
-          { role: "system", content: "Tu es Philomène I.A., une assistante personnelle élégante, intuitive et bienveillante." },
-          { role: "user", content: message }
-        ]
-      })
-    });
+// ====== Connexion à l'API OpenAI ====== g"Une erreur est survenue en contactant l’IA.";
+  async function callOpenAI() {
+  const response = await fetch("/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      conversation: conversation
+    })
+  });
 
-    const data = await response.json();
+  const data = await response.json();
 
-    if (data.choices && data.choices.length > 0) {
-      return data.choices[0].message.content.trim();
-    } else {
-      return "Désolée, je n’ai pas réussi à obtenir une réponse.";
-    }
-  } catch (error) {
-    console.error("Erreur :", error);
-    return "Une erreur est survenue en contactant l’IA.";
+  if (data.error) {
+    console.error("Erreur serveur:", data.error);
+    return "Désolée, j'ai eu un problème technique.";
   }
+
+  return data.answer;
 }
 
 
