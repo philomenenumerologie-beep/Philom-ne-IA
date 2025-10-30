@@ -1,756 +1,727 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <title>Philomène I.A.</title>
+  <meta name="description" content="Philomène I.A., assistante personnelle intelligente. Si tu as un problème, elle a la solution. Ensemble on ira plus loin." />
+
+  <!-- Couleur barre du haut sur mobile -->
+  <meta name="theme-color" content="#000000" />
+
+  <!-- Manifest (PWA) -->
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <!-- Icône raccourci navigateur -->
+  <link rel="icon" href="icon-192.png" />
+
   <style>
     :root {
-      --bg-main:#0f0f10;
-      --bg-header:#1a1a1c;
-      --bg-bubble-user:#4a32ff;
-      --bg-bubble-ai:#2a2a2f;
-      --bg-intro:#2a2a2f;
-      --text-primary:#fff;
-      --text-secondary:#cfcfcf;
-      --accent:#ffd400;
-      --panel-bg:#1a1a1c;
-      --panel-border:rgba(255,255,255,0.15);
-      --shadow-soft:0 18px 40px rgba(0,0,0,0.6);
-    }
-    body.light {
-      --bg-main:#f7f7f7;
-      --bg-header:#ffffff;
-      --bg-bubble-user:#4a32ff;
-      --bg-bubble-ai:#2b2b2b;
-      --bg-intro:#2b2b2b;
-      --text-primary:#000;
-      --text-secondary:#444;
-      --accent:#ffcc00;
-      --panel-bg:#ffffff;
-      --panel-border:rgba(0,0,0,0.15);
-      --shadow-soft:0 18px 40px rgba(0,0,0,0.18);
-    }
+      --bg-page-light:#f5f5f5;
+      --bg-card-light:#2a2a2a;
+      --text-light:#111;
+      --text-invert-light:#fff;
+      --accent:#ffd84a;
 
-    *{
-      box-sizing:border-box;
-      -webkit-font-smoothing:antialiased;
+      --bg-page-dark:#121212;
+      --bg-card-dark:#2a2a2a;
+      --text-dark:#fff;
+      --input-bg-dark:#1a1a1a;
+      --border-dark:#3a3a3a;
+      --panel-bg-dark:#1a1a1a;
+      --panel-border-dark:#444;
+      --bubble-user-bg:#5a4bff;
+      --bubble-user-text:#fff;
     }
 
     body {
       margin:0;
       padding:0;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",Roboto,Helvetica,Arial,sans-serif;
-      background:var(--bg-main);
-      color:var(--text-primary);
+      font-family:-apple-system, BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing:antialiased;
+      background-color:var(--bg-page-dark);
+      color:var(--text-dark);
       display:flex;
       flex-direction:column;
       min-height:100dvh;
-      /* pour que la zone scrollable tienne */
+      position:relative;
     }
 
-    /* HEADER TOP BAR */
-    header {
-      position:sticky;
+    body.light {
+      background-color:var(--bg-page-light);
+      color:var(--text-light);
+    }
+
+    /* HEADER */
+    .topbar {
+      position:fixed;
       top:0;
+      left:0;
+      right:0;
       z-index:100;
-      background:var(--bg-header);
-      color:var(--text-primary);
+      background-color:#000;
+      color:#fff;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:14px 16px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.4);
+      padding:12px 16px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
+      background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.6));
     }
 
-    .left-head,
-    .center-head,
-    .right-head{
+    body.light .topbar {
+      background:#fff;
+      color:#000;
+      box-shadow:0 20px 40px rgba(0,0,0,0.15);
+      background-image:linear-gradient(to bottom,rgba(255,255,255,1),rgba(255,255,255,0.6));
+    }
+
+    .top-left,
+    .top-right {
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:16px;
+      min-width:70px;
     }
 
-    .left-head button,
-    .right-head button{
+    .burger-btn,
+    .kebab-btn {
       background:none;
       border:0;
-      color:var(--text-primary);
-      font-size:20px;
-      line-height:20px;
-      padding:10px;
-      border-radius:10px;
+      color:inherit;
+      font-size:24px;
+      line-height:1;
+      padding:8px;
+      border-radius:8px;
     }
 
-    .left-head button:active,
-    .right-head button:active{
-      background:rgba(255,255,255,0.08);
+    .burger-btn:active,
+    .kebab-btn:active{
+      background:rgba(255,255,255,0.1);
     }
-    body.light .left-head button:active,
-    body.light .right-head button:active{
+    body.light .burger-btn:active,
+    body.light .kebab-btn:active{
       background:rgba(0,0,0,0.07);
     }
 
-    .tokens-badge{
+    .tokens-box {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
+      line-height:1.2;
+      color:#ffd84a;
+      font-weight:600;
+    }
+
+    body.light .tokens-box {
+      color:#c7a600;
+    }
+
+    .tokens-box .line1 {
       display:flex;
       align-items:center;
       gap:8px;
-      color:var(--accent);
-      font-weight:600;
-    }
-    .tokens-badge .diamond{
-      font-size:18px;
-    }
-    .tokens-badge .amount{
-      font-size:16px;
     }
 
-    /* ZONE SCROLLABLE DU CHAT */
-    .chat-area{
-      flex:1 1 auto;
-      overflow-y:auto;
-      padding:16px;
-      padding-bottom:120px; /* laisse la place à la barre input */
+    .diamond {
+      font-size:20px;
+      line-height:1;
+    }
+
+    /* CONTENU CHAT */
+    .main {
+      flex:1;
       display:flex;
       flex-direction:column;
-      scroll-behavior:smooth;
+      padding:100px 16px 160px; /* espace topbar + bottom bar */
+      box-sizing:border-box;
+      max-width:700px;
+      width:100%;
+      margin:0 auto;
     }
 
-    /* BULLE INTRO PHILOMÈNE */
-    .intro-card{
-      max-width:640px;
-      background:var(--bg-intro);
+    .bubble {
+      display:inline-block;
+      max-width:90%;
       border-radius:12px;
-      border:1px solid var(--panel-border);
-      padding:16px 16px 20px;
-      box-shadow:var(--shadow-soft);
-      color:#fff;
-      line-height:1.4;
+      padding:16px;
       font-size:18px;
-      margin:0 auto 20px;
+      line-height:1.4;
+      box-shadow:0 18px 40px rgba(0,0,0,0.6);
+      margin-bottom:16px;
+      background:var(--bg-card-dark);
+      color:#fff;
     }
-    body.light .intro-card{
-      color:#fff; /* on garde la bulle sombre même en clair */
-      background:#2b2b2b;
-      border:1px solid rgba(255,255,255,0.15);
+    body.light .bubble {
+      background:var(--bg-card-light);
+      color:#fff;
+      box-shadow:0 18px 40px rgba(0,0,0,0.3);
     }
-    .intro-card .accent-line{
+
+    .bubble.welcome{
+      background:var(--bg-card-dark);
+      border:1px solid rgba(255,255,255,0.12);
+      box-shadow:0 30px 60px rgba(0,0,0,0.8);
+      font-size:20px;
+      line-height:1.4;
+      font-weight:500;
+      color:#fff;
+    }
+    body.light .bubble.welcome{
+      background:#2a2a2a;
+      border:1px solid rgba(255,255,255,0.2);
+      color:#fff;
+      box-shadow:0 30px 60px rgba(0,0,0,0.2);
+    }
+
+    .bubble.welcome .highlight{
       color:var(--accent);
       font-weight:600;
     }
-    .intro-card .hand{
-      font-size:20px;
+
+    .bubble.system{
+      background:#2a2a2a;
+      border:1px solid rgba(255,255,255,0.2);
+      font-size:16px;
+      color:#fff;
+      box-shadow:0 20px 40px rgba(0,0,0,0.8);
+    }
+    body.light .bubble.system{
+      background:#2a2a2a;
+      border:1px solid rgba(255,255,255,0.3);
+      color:#fff;
+      box-shadow:0 20px 40px rgba(0,0,0,0.4);
     }
 
-    /* MESSAGES DU CHAT */
-    .bubble-row{
-      width:100%;
+    .bubble.user{
+      background:var(--bubble-user-bg);
+      color:var(--bubble-user-text);
+      border-radius:12px;
+      align-self:flex-end;
+      max-width:70%;
+      box-shadow:0 20px 40px rgba(90,75,255,0.5);
+    }
+
+    /* ALIGNEMENT BULLES */
+    .row{
       display:flex;
+      width:100%;
       margin-bottom:12px;
     }
-    .bubble{
-      max-width:80%;
-      border-radius:12px;
-      padding:12px 16px;
-      line-height:1.4;
-      font-size:17px;
-      box-shadow:0 10px 24px rgba(0,0,0,0.5);
-      border:1px solid rgba(255,255,255,0.1);
+    .row.me{
+      justify-content:flex-end;
+    }
+    .row.philo{
+      justify-content:flex-start;
     }
 
-    /* IA */
-    .bubble.ai{
-      background:var(--bg-bubble-ai);
-      color:#fff;
-      border:1px solid rgba(255,255,255,0.12);
-    }
-    body.light .bubble.ai{
-      background:#2b2b2b;
-      color:#fff;
-      border:1px solid rgba(255,255,255,0.12);
-    }
-
-    /* USER */
-    .bubble.user{
-      margin-left:auto;
-      background:var(--bg-bubble-user);
-      color:#fff;
-      border:1px solid rgba(0,0,0,0.3);
-    }
-    body.light .bubble.user{
-      background:#4a32ff;
-      color:#fff;
-    }
-
-    .thinking{
-      opacity:0.8;
-      font-style:italic;
-      color:#fff;
-    }
-    body.light .thinking{
-      color:#fff;
-    }
-
-    /* BARRE D’ENVOI EN BAS */
-    .input-bar-wrapper{
+    /* BOTTOM INPUT BAR */
+    .input-area-wrap {
       position:fixed;
       left:0;
       right:0;
       bottom:0;
-      background:var(--bg-header);
-      box-shadow:0 -8px 20px rgba(0,0,0,0.8);
-      padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 12px);
-      z-index:90;
+      background:rgba(0,0,0,0.75);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,0.1);
+      box-shadow:0 -30px 60px rgba(0,0,0,0.9);
+      padding:16px;
+      z-index:80;
+      color:#fff;
+    }
+    body.light .input-area-wrap{
+      background:rgba(255,255,255,0.8);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(0,0,0,0.1);
+      color:#000;
+      box-shadow:0 -30px 60px rgba(0,0,0,0.15);
     }
 
-    .input-row{
-      max-width:640px;
-      margin:0 auto;
+    .input-top-row{
       display:flex;
-      align-items:flex-end;
-      gap:8px;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:8px;
+      position:relative;
     }
 
     .plus-btn{
-      width:40px;
-      height:40px;
-      border-radius:10px;
-      border:1px solid var(--panel-border);
-      background:#4a32ff;
+      background:#4a31ff;
       color:#fff;
       font-size:24px;
       font-weight:500;
-      line-height:40px;
-      text-align:center;
-      padding:0;
-    }
-    .plus-btn:active{opacity:0.8;}
-
-    .text-zone{
-      flex:1;
-      background:rgba(0,0,0,0.4);
-      border:1px solid var(--panel-border);
+      width:44px;
+      height:44px;
+      min-width:44px;
       border-radius:10px;
-      padding:12px 14px;
-      color:var(--text-primary);
-      font-size:16px;
-      line-height:1.4;
-    }
-    body.light .text-zone{
-      background:#fff;
-      border:1px solid rgba(0,0,0,0.2);
-      color:#000;
-    }
-    .text-zone:focus{
-      outline:none;
-      box-shadow:0 0 0 2px #4a32ff inset;
+      border:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 20px 40px rgba(74,49,255,0.6);
     }
 
-    .send-btn{
-      width:40px;
-      height:40px;
-      border-radius:10px;
-      border:1px solid var(--panel-border);
-      background:#4a32ff;
-      color:#fff;
-      font-size:20px;
-      font-weight:600;
-      line-height:40px;
-      text-align:center;
-      padding:0;
+    .plus-btn:active{
+      opacity:0.8;
     }
-    .send-btn:active{opacity:0.8;}
 
-    /* MENU "+" (Photo / Doc / Micro) */
     .plus-menu{
       position:absolute;
-      left:12px;
-      bottom:calc(env(safe-area-inset-bottom,0px) + 70px);
-      background:var(--panel-bg);
-      border:1px solid var(--panel-border);
-      border-radius:12px;
-      padding:12px 16px;
-      width:260px;
-      box-shadow:var(--shadow-soft);
+      left:0;
+      bottom:60px;
+      background:var(--panel-bg-dark);
+      border:1px solid var(--panel-border-dark);
+      border-radius:10px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.9);
       display:none;
-      z-index:200;
-      font-size:16px;
+      flex-direction:column;
+      min-width:260px;
       color:#fff;
+      overflow:hidden;
+      font-size:16px;
+    }
+    .plus-menu.show{
+      display:flex;
     }
     body.light .plus-menu{
-      color:#000;
+      background:#1a1a1a;
+      border:1px solid #444;
+      color:#fff;
+      box-shadow:0 30px 60px rgba(0,0,0,0.4);
     }
-    .plus-row{
+
+    .plus-item{
       display:flex;
       align-items:flex-start;
       gap:12px;
-      padding:10px 0;
-      border-bottom:1px solid var(--panel-border);
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      color:#fff;
     }
-    .plus-row:last-child{
-      border-bottom:0;
+    .plus-item:last-child{
+      border-bottom:none;
+    }
+    .plus-item:active{
+      background:rgba(255,255,255,0.08);
     }
     .plus-emoji{
       font-size:20px;
-      line-height:20px;
-      min-width:24px;
-      text-align:center;
+      line-height:1.2;
+      width:24px;
     }
-    .plus-label{
-      color:var(--text-primary);
+    .plus-text{
       font-size:16px;
-    }
-    body.light .plus-label{
-      color:#000;
-    }
-
-    /* MENU OPTIONS ("...") */
-    .options-menu{
-      position:absolute;
-      right:12px;
-      top:60px;
-      background:var(--panel-bg);
-      border:1px solid var(--panel-border);
-      border-radius:12px;
-      padding:12px 16px;
-      width:260px;
-      box-shadow:var(--shadow-soft);
-      display:none;
-      z-index:200;
+      line-height:1.3;
+      font-weight:500;
       color:#fff;
-      font-size:16px;
     }
-    body.light .options-menu{
+
+    .input-field-wrap{
+      flex:1;
+      background:var(--input-bg-dark);
+      border:2px solid var(--bubble-user-bg);
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      padding:10px 12px;
+      font-size:17px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.9);
+    }
+    body.light .input-field-wrap{
+      background:#fff;
+      color:#000;
+      border:2px solid #4a31ff;
+      box-shadow:0 20px 40px rgba(0,0,0,0.12);
+    }
+
+    .input-field{
+      border:none;
+      background:transparent;
+      color:#fff;
+      flex:1;
+      font-size:17px;
+      line-height:1.4;
+      outline:none;
+    }
+    body.light .input-field{
       color:#000;
     }
 
-    .opt-row{
+    .send-btn{
+      background:#4a31ff;
+      border:none;
+      color:#fff;
+      width:44px;
+      height:44px;
+      min-width:44px;
+      border-radius:10px;
+      font-size:20px;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 20px 40px rgba(74,49,255,0.6);
+    }
+    .send-btn:active{
+      opacity:0.8;
+    }
+
+    .token-line{
+      font-size:15px;
+      text-align:center;
+      color:#aaa;
+    }
+    body.light .token-line{
+      color:#444;
+    }
+
+    /* MENU 3 POINTS (header droite) */
+    .menu-panel{
+      position:fixed;
+      right:16px;
+      top:70px;
+      background:var(--panel-bg-dark);
+      border:1px solid var(--panel-border-dark);
+      color:#fff;
+      border-radius:10px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.9);
+      min-width:250px;
+      font-size:16px;
+      line-height:1.3;
+      display:none;
+      overflow:hidden;
+      z-index:200;
+    }
+    .menu-panel.show{
+      display:block;
+    }
+    body.light .menu-panel{
+      background:#1a1a1a;
+      border:1px solid #444;
+      color:#fff;
+      box-shadow:0 30px 60px rgba(0,0,0,0.4);
+    }
+    .menu-item{
       display:flex;
       align-items:flex-start;
       gap:12px;
-      padding:10px 0;
-      border-bottom:1px solid var(--panel-border);
-      color:var(--text-primary);
-    }
-    .opt-row:last-child{
-      border-bottom:0;
-    }
-    body.light .opt-row{
-      color:#000;
-    }
-    .opt-emoji{
-      font-size:20px;
-      line-height:20px;
-      min-width:24px;
-      text-align:center;
-    }
-    .opt-text{
-      flex:1;
-    }
-
-    /* DIALOG "À PROPOS" / "INSCRIPTION" */
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.6);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      z-index:300;
-    }
-    .overlay-card{
-      background:var(--panel-bg);
-      border:1px solid var(--panel-border);
-      border-radius:14px;
-      width:100%;
-      max-width:420px;
-      color:var(--text-primary);
-      box-shadow:var(--shadow-soft);
-      padding:20px;
-      font-size:17px;
-      line-height:1.4;
-    }
-    body.light .overlay-card{
-      color:#000;
-    }
-    .overlay-card h2{
-      margin:0 0 12px;
-      font-size:18px;
-      font-weight:600;
-      color:var(--text-primary);
-      line-height:1.3;
-    }
-    .overlay-card p{
-      margin:0 0 16px;
-      color:var(--text-primary);
-    }
-    .close-dialog-btn{
-      display:inline-block;
-      background:#4a32ff;
-      border:1px solid rgba(255,255,255,0.3);
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
       color:#fff;
-      border-radius:10px;
-      padding:10px 14px;
+    }
+    .menu-item:last-child{
+      border-bottom:none;
+    }
+    .menu-item:active{
+      background:rgba(255,255,255,0.08);
+    }
+    .menu-emoji{
+      width:24px;
+      font-size:20px;
+      line-height:1.2;
+    }
+    .menu-text{
       font-size:16px;
       font-weight:500;
-      text-align:center;
     }
-    .close-dialog-btn:active{opacity:0.8;}
 
-    /* petit texte d'état (prêt, tokens restants...) */
-    .status-line{
-      text-align:center;
-      font-size:14px;
-      margin-top:8px;
-      color:var(--text-secondary);
+    /* A PROPOS PANEL */
+    .about-panel{
+      position:fixed;
+      left:16px;
+      right:16px;
+      top:120px;
+      background:#2a2a2a;
+      color:#fff;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.2);
+      box-shadow:0 30px 60px rgba(0,0,0,0.9);
+      padding:16px;
+      font-size:17px;
+      line-height:1.4;
+      display:none;
+      z-index:250;
+    }
+    .about-panel.show{
+      display:block;
+    }
+    .about-close{
+      color:#4a7dff;
+      font-weight:500;
+      font-size:16px;
+      text-align:right;
+      margin-top:12px;
+    }
+    .about-close:active{
+      opacity:0.6;
+    }
+    body.light .about-panel{
+      background:#2a2a2a;
+      border:1px solid rgba(255,255,255,0.3);
+      color:#fff;
+      box-shadow:0 30px 60px rgba(0,0,0,0.4);
+    }
+    .about-title{
+      font-weight:600;
+      margin-bottom:8px;
+      font-size:18px;
+    }
+
+    /* HIDE SCROLLBARS ON MOBILE BODY */
+    body{
+      overscroll-behavior-y:none;
     }
   </style>
 </head>
 <body class="dark">
   <!-- HEADER -->
-  <header>
-    <div class="left-head">
-      <button id="burgerBtn" aria-label="Menu">
-        ☰
-      </button>
+  <header class="topbar">
+    <div class="top-left">
+      <button class="burger-btn" id="openAccountBtn">☰</button>
     </div>
 
-    <div class="center-head tokens-badge">
-      <span class="diamond">💎</span>
-      <span class="amount"><span id="tokenCount">5000</span> tokens</span>
+    <div class="tokens-box">
+      <div class="line1">
+        <span class="diamond">💎</span>
+        <span id="tokenCount">5000 tokens</span>
+      </div>
     </div>
 
-    <div class="right-head">
-      <button id="moreBtn" aria-label="Options">⋯</button>
+    <div class="top-right">
+      <button class="kebab-btn" id="menuBtn">⋯</button>
     </div>
   </header>
 
-  <!-- ZONE SCROLL -->
-  <main class="chat-area" id="chatArea">
-
-    <!-- Carte d'intro Philomène -->
-    <section class="intro-card" id="introCard">
-      <div class="accent-line"><span class="hand">👋</span> Bonjour ! Je suis <strong>Philomène I.A.</strong>, votre assistante personnelle.</div>
-      <div>Si vous avez un problème, j’ai la solution.</div>
-      <div>Vous avez une question, j’ai la réponse.</div>
-      <div>Ensemble, on ira plus loin <span class="hand">💫</span></div>
-    </section>
-
-    <!-- Exemple de bulle IA "en train de réfléchir" (cachée par défaut au début) -->
-    <div class="bubble-row ai-row thinking-row" style="display:none;">
-      <div class="bubble ai thinking" id="thinkingBubble">Philomène réfléchit à votre message…</div>
-    </div>
-
-    <!-- Les bulles de messages (IA + utilisateur) seront ajoutées ici dynamiquement -->
-  </main>
-
-  <!-- BARRE D'ENVOI -->
-  <div class="input-bar-wrapper">
-    <div class="input-row">
-      <button class="plus-btn" id="plusBtn">+</button>
-      <input
-        class="text-zone"
-        id="userInput"
-        placeholder="Écrivez votre message…"
-        autocomplete="off"
-      />
-      <button class="send-btn" id="sendBtn">➤</button>
-    </div>
-    <div class="status-line" id="statusLine">Prêt • <span id="statusTokens">5000 tokens restants</span></div>
-  </div>
-
-  <!-- MENU "+" -->
-  <div class="plus-menu" id="plusMenu">
-    <div class="plus-row">
-      <div class="plus-emoji">📸</div>
-      <div class="plus-label">Envoyer une photo</div>
-    </div>
-    <div class="plus-row">
-      <div class="plus-emoji">📄</div>
-      <div class="plus-label">Envoyer un document</div>
-    </div>
-    <div class="plus-row">
-      <div class="plus-emoji">🎙️</div>
-      <div class="plus-label">Utiliser le micro</div>
-    </div>
-  </div>
-
-  <!-- MENU OPTIONS "..." -->
-  <div class="options-menu" id="optionsMenu">
-    <div class="opt-row" id="toggleThemeRow">
-      <div class="opt-emoji">🌙</div>
-      <div class="opt-text">Mode jour/nuit</div>
-    </div>
-    <div class="opt-row" id="toggleSoundRow">
-      <div class="opt-emoji">📡</div>
-      <div class="opt-text">Son ON/OFF</div>
-    </div>
-    <div class="opt-row" id="aboutRow">
-      <div class="opt-emoji">❓</div>
-      <div class="opt-text">À propos</div>
-    </div>
-  </div>
-
-  <!-- OVERLAY DIALOG (À PROPOS / CONNEXION) -->
-  <div class="overlay" id="overlay">
-    <div class="overlay-card" id="overlayCard">
-      <h2 id="overlayTitle">À propos</h2>
-      <p id="overlayText">
-        Philomène I.A. est votre assistante personnelle.  
-        Elle vous aide, vous conseille et vous accompagne.  
-        Ensemble, on ira plus loin.
-      </p>
-      <div style="text-align:right;">
-        <button class="close-dialog-btn" id="closeOverlayBtn">Fermer</button>
+  <!-- MAIN CHAT AREA -->
+  <main class="main" id="chatArea">
+    <div class="row philo">
+      <div class="bubble welcome">
+        <span class="highlight">👋 Bonjour ! Je suis Philomène I.A.,</span> votre assistante personnelle.<br/>
+        Si vous avez un problème, j’ai la solution.<br/>
+        Vous avez une question, j’ai la réponse.<br/>
+        Ensemble, on ira plus loin 🐦
       </div>
     </div>
+
+    <div class="row me">
+      <div class="bubble user">Bj</div>
+    </div>
+
+    <div class="row philo">
+      <div class="bubble system" id="thinkingBubble">
+        Philomène réfléchit à votre message...
+      </div>
+    </div>
+  </main>
+
+  <!-- BOTTOM INPUT -->
+  <section class="input-area-wrap">
+    <div class="input-top-row">
+      <button class="plus-btn" id="plusBtn">＋</button>
+
+      <div class="input-field-wrap">
+        <input id="userInput" class="input-field" placeholder="Écrivez votre message..." autocomplete="off" />
+      </div>
+
+      <button class="send-btn" id="sendBtn">➤</button>
+
+      <!-- menu + -->
+      <div class="plus-menu" id="plusMenu">
+        <div class="plus-item">
+          <div class="plus-emoji">📸</div>
+          <div class="plus-text">Envoyer une photo</div>
+        </div>
+        <div class="plus-item">
+          <div class="plus-emoji">📄</div>
+          <div class="plus-text">Envoyer un document</div>
+        </div>
+        <div class="plus-item">
+          <div class="plus-emoji">🎙️</div>
+          <div class="plus-text">Utiliser le micro</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="token-line">
+      Prêt • <span id="tokenLineCount">5000 tokens restants</span>
+    </div>
+  </section>
+
+  <!-- MENU 3 POINTS -->
+  <div class="menu-panel" id="menuPanel">
+    <div class="menu-item" id="toggleTheme">
+      <div class="menu-emoji">🌙</div>
+      <div class="menu-text">Mode jour/nuit</div>
+    </div>
+    <div class="menu-item" id="toggleSound">
+      <div class="menu-emoji">📡</div>
+      <div class="menu-text">Son ON/OFF</div>
+    </div>
+    <div class="menu-item" id="openAbout">
+      <div class="menu-emoji">❓</div>
+      <div class="menu-text">À propos</div>
+    </div>
+  </div>
+
+  <!-- A PROPOS -->
+  <div class="about-panel" id="aboutPanel">
+    <div class="about-title">💡 Philomène I.A., c’est quoi ?</div>
+    <div>
+      Philomène I.A. est ton assistante personnelle intelligente.
+      Elle t’aide, te conseille et t’accompagne au quotidien.
+      Ensemble, on ira plus loin.
+    </div>
+    <div class="about-close" id="aboutClose">Fermer</div>
   </div>
 
   <script>
-    /***********************
-     * ETAT GLOBAL
-     ***********************/
+    /* Helpers */
+    const bodyEl = document.body;
+    const plusBtn = document.getElementById("plusBtn");
+    const plusMenu = document.getElementById("plusMenu");
+    const menuBtn = document.getElementById("menuBtn");
+    const menuPanel = document.getElementById("menuPanel");
+    const openAboutBtn = document.getElementById("openAbout");
+    const aboutPanel = document.getElementById("aboutPanel");
+    const aboutClose = document.getElementById("aboutClose");
+    const toggleThemeBtn = document.getElementById("toggleTheme");
+    const tokenCountEl = document.getElementById("tokenCount");
+    const tokenLineEl = document.getElementById("tokenLineCount");
+    const sendBtn = document.getElementById("sendBtn");
+    const userInput = document.getElementById("userInput");
+    const chatArea = document.getElementById("chatArea");
+    const thinkingBubble = document.getElementById("thinkingBubble");
+
     let soundOn = true;
-    let isLight = false;        // false = mode sombre par défaut
-    let tokensLeft = 5000;      // solde visible
-    let userId = null;          // si connecté via Clerk plus tard
-    let messageHistory = [];    // historique {role:"user"/"assistant", content:"..."}
+    let tokens = 5000;
 
-    // Raccourcis DOM
-    const chatArea        = document.getElementById("chatArea");
-    const userInput       = document.getElementById("userInput");
-    const sendBtn         = document.getElementById("sendBtn");
-    const plusBtn         = document.getElementById("plusBtn");
-    const plusMenu        = document.getElementById("plusMenu");
-    const moreBtn         = document.getElementById("moreBtn");
-    const optionsMenu     = document.getElementById("optionsMenu");
-    const toggleThemeRow  = document.getElementById("toggleThemeRow");
-    const toggleSoundRow  = document.getElementById("toggleSoundRow");
-    const aboutRow        = document.getElementById("aboutRow");
-    const overlay         = document.getElementById("overlay");
-    const closeOverlayBtn = document.getElementById("closeOverlayBtn");
-    const overlayTitle    = document.getElementById("overlayTitle");
-    const overlayText     = document.getElementById("overlayText");
-    const thinkingRow     = document.querySelector(".thinking-row");
-    const thinkingBubble  = document.getElementById("thinkingBubble");
-    const tokenCountEl    = document.getElementById("tokenCount");
-    const statusTokensEl  = document.getElementById("statusTokens");
-    const introCard       = document.getElementById("introCard");
+    function closeAllPopups() {
+      plusMenu.classList.remove("show");
+      menuPanel.classList.remove("show");
+      aboutPanel.classList.remove("show");
+    }
 
-    /***********************
-     * UI HELPERS
-     ***********************/
-    function scrollToBottom() {
+    // bouton +
+    plusBtn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const isOpen = plusMenu.classList.contains("show");
+      closeAllPopups();
+      if (!isOpen) {
+        plusMenu.classList.add("show");
+      }
+    });
+
+    // menu 3 points
+    menuBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const isOpen = menuPanel.classList.contains("show");
+      closeAllPopups();
+      if(!isOpen){
+        menuPanel.classList.add("show");
+      }
+    });
+
+    // a propos
+    openAboutBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      menuPanel.classList.remove("show");
+      aboutPanel.classList.add("show");
+    });
+    aboutClose.addEventListener("click",()=>{
+      aboutPanel.classList.remove("show");
+    });
+
+    // toggle theme
+    toggleThemeBtn.addEventListener("click",()=>{
+      bodyEl.classList.toggle("light");
+    });
+
+    // toggle son
+    document.getElementById("toggleSound").addEventListener("click",()=>{
+      soundOn = !soundOn;
+      // si tu veux plus tard: jouer un bip ou couper lecture
+    });
+
+    // Envoi message
+    function addUserMessage(txt){
+      const row = document.createElement("div");
+      row.className = "row me";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble user";
+      bubble.textContent = txt;
+
+      row.appendChild(bubble);
+      chatArea.appendChild(row);
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    function showPlusMenu(show) {
-      plusMenu.style.display = show ? "block" : "none";
-    }
-
-    function showOptionsMenu(show) {
-      optionsMenu.style.display = show ? "block" : "none";
-    }
-
-    function openOverlay(title, text) {
-      overlayTitle.textContent = title;
-      overlayText.textContent  = text;
-      overlay.style.display = "flex";
-    }
-
-    function closeOverlay() {
-      overlay.style.display = "none";
-    }
-
-    function updateTokensDisplay() {
-      tokenCountEl && (tokenCountEl.textContent = tokensLeft);
-      statusTokensEl && (statusTokensEl.textContent = tokensLeft + " tokens restants");
-    }
-
-    function appendBubble(role, text) {
-      // cache la carte d’intro dès qu’on parle
-      if (introCard) {
-        introCard.style.display = "none";
-      }
-
+    function addPhiloThinking(){
       const row = document.createElement("div");
-      row.className = "bubble-row " + (role === "user" ? "user-row" : "ai-row");
+      row.className = "row philo";
 
-      const b = document.createElement("div");
-      b.className = "bubble " + (role === "user" ? "user" : "ai");
-      b.textContent = text;
-      row.appendChild(b);
+      const bubble = document.createElement("div");
+      bubble.className = "bubble system";
+      bubble.textContent = "Philomène réfléchit à votre message...";
 
+      row.appendChild(bubble);
       chatArea.appendChild(row);
-      scrollToBottom();
+
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return bubble;
     }
 
-    function showThinking(show) {
-      thinkingRow.style.display = show ? "flex" : "none";
-      scrollToBottom();
-    }
-
-    function toggleTheme() {
-      isLight = !isLight;
-      if (isLight) {
-        document.body.classList.add("light");
-        document.body.classList.remove("dark");
-      } else {
-        document.body.classList.remove("light");
-        document.body.classList.add("dark");
-      }
-    }
-
-    function toggleSound() {
-      soundOn = !soundOn;
-      // ici tu pourras brancher un son pour les réponses si tu veux plus tard
-    }
-
-    /***********************
-     * ENVOI MESSAGE -> BACKEND
-     ***********************/
-    async function sendMessage() {
+    async function sendMessage(){
       const text = userInput.value.trim();
-      if (!text) return;
+      if(!text) return;
 
-      // décrémente grossièrement les tokens (ex: 20 / msg pour l’instant)
-      tokensLeft = Math.max(tokensLeft - 20, 0);
-      updateTokensDisplay();
+      // affiche message utilisateur
+      addUserMessage(text);
 
-      // bulle user
-      appendBubble("user", text);
-
-      // Historique local
-      messageHistory.push({ role:"user", content:text });
-
-      // Efface input
+      // vide champ
       userInput.value = "";
 
-      // thinking
-      showThinking(true);
+      // tokens --
+      tokens = Math.max(tokens-20,0);
+      tokenCountEl.textContent = tokens+" tokens";
+      tokenLineEl.textContent = tokens+" tokens restants";
 
-      try {
-        // requête vers ton backend Node/Express
-        // adapte l'URL si besoin
-        const resp = await fetch("https://api.philomeneia.com/api/chat", {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            userId: userId || "guest",
-            history: messageHistory,
-            message: text
-          })
-        });
+      // thinking bubble
+      const thinking = addPhiloThinking();
 
-        let data;
-        try {
-          data = await resp.json();
-        } catch(e) {
-          data = null;
-        }
-
-        let answer = "Désolé, pas de réponse.";
-        if (data && data.reply) {
-          answer = data.reply;
-        }
-
-        // ajoute bulle IA
-        appendBubble("assistant", answer);
-
-        // push aussi dans l’historique
-        messageHistory.push({ role:"assistant", content:answer });
-
-      } catch(err) {
-        appendBubble("assistant","Désolé, erreur serveur.");
-      } finally {
-        showThinking(false);
-      }
+      // ici on branchera l'API plus tard.
+      // simulation pour l’instant
+      setTimeout(()=>{
+        thinking.textContent = "Merci pour votre message : \""+text+"\"";
+      },1000);
     }
 
-    /***********************
-     * EVENTS
-     ***********************/
-    // Bouton envoyer
     sendBtn.addEventListener("click", sendMessage);
-
-    // ENTER envoie
-    userInput.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
+    userInput.addEventListener("keydown",(e)=>{
+      if(e.key==="Enter"){
         e.preventDefault();
         sendMessage();
       }
     });
 
-    // Bouton "+"
-    plusBtn.addEventListener("click", () => {
-      // toggle
-      const isOpen = plusMenu.style.display === "block";
-      showPlusMenu(!isOpen);
-      // ferme l'autre menu si ouvert
-      showOptionsMenu(false);
+    // fermer les popups si on clique dehors
+    document.addEventListener("click", ()=>{
+      closeAllPopups();
     });
 
-    // Si on clique ailleurs que le "+" et son menu, fermer le plusMenu
-    document.addEventListener("click", e => {
-      if (
-        e.target !== plusBtn &&
-        !plusMenu.contains(e.target) &&
-        e.target !== userInput &&
-        e.target !== sendBtn
-      ) {
-        showPlusMenu(false);
-      }
-    }, true);
+    // empêcher la fermeture quand on clique dans un popup
+    plusMenu.addEventListener("click", e=>e.stopPropagation());
+    menuPanel.addEventListener("click", e=>e.stopPropagation());
+    aboutPanel.addEventListener("click", e=>e.stopPropagation());
 
-    // Bouton "..."
-    moreBtn.addEventListener("click", () => {
-      const isOpen = optionsMenu.style.display === "block";
-      showOptionsMenu(!isOpen);
-      showPlusMenu(false);
-    });
-
-    // Cliquer dehors ferme optionsMenu aussi
-    document.addEventListener("click", e => {
-      if (
-        e.target !== moreBtn &&
-        !optionsMenu.contains(e.target) &&
-        e.target !== plusBtn &&
-        !plusMenu.contains(e.target)
-      ) {
-        showOptionsMenu(false);
-      }
-    }, true);
-
-    // Mode jour/nuit
-    toggleThemeRow.addEventListener("click", () => {
-      toggleTheme();
-      showOptionsMenu(false);
-    });
-
-    // Son on/off
-    toggleSoundRow.addEventListener("click", () => {
-      toggleSound();
-      showOptionsMenu(false);
-    });
-
-    // À propos
-    aboutRow.addEventListener("click", () => {
-      openOverlay(
-        "À propos",
-        "Philomène I.A. est votre assistante personnelle. Elle vous aide, vous conseille et vous accompagne. Ensemble, on ira plus loin."
-      );
-      showOptionsMenu(false);
-    });
-
-    closeOverlayBtn.addEventListener("click", () => {
-      closeOverlay();
-    });
-
-    // Init affichage tokens
-    updateTokensDisplay();
+    /* Service Worker registration PWA */
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    }
   </script>
 </body>
 </html>
