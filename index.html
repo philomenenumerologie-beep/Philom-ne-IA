@@ -267,7 +267,56 @@
     const sendBtn = document.getElementById("send-btn");
     const tokenTop = document.getElementById("token-count");
     const tokenBottom = document.getElementById("token-count-bottom");
+    // ====== ENVOI DU MESSAGE ======
+async function envoyerMessage(message) {
+  // Ajoute le message de l'utilisateur dans la conversation
+  conversation.push({ role: "user", content: message });
 
+  // Affiche un message de chargement
+  const bubble = document.createElement("div");
+  bubble.className = "bubble assistant";
+  bubble.textContent = "Philomène réfléchit à votre message...";
+  chatContainer.appendChild(bubble);
+  scrollToBottom();
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        conversation: conversation
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur serveur : " + response.status);
+    }
+
+    const data = await response.json();
+    const answer = data.answer || "Je n'ai pas pu obtenir de réponse.";
+
+    // Remplace la bulle de chargement par la vraie réponse
+    bubble.textContent = answer;
+
+    // Ajoute la réponse à la conversation
+    conversation.push({ role: "assistant", content: answer });
+    scrollToBottom();
+
+  } catch (error) {
+    bubble.textContent = "Désolée, j'ai eu un problème réseau.";
+    console.error("Erreur :", error);
+  }
+}
+
+// ====== ÉVÉNEMENT DU BOUTON ======
+sendBtn.addEventListener("click", () => {
+  const message = userInput.value.trim();
+  if (!message) return;
+  userInput.value = "";
+  envoyerMessage(message);
+});
     // ====== UI HELPERS ======
 
     function scrollToBottom() {
