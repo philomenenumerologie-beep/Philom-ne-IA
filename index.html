@@ -6,10 +6,13 @@
   <title>Philomène I.A.</title>
   <meta name="color-scheme" content="dark" />
 
-  <!-- Clerk (auth par email + code) -->
-  <script async crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+  <!-- CLERK (auth) -->
+  <!-- Remplace PUBLISHABLE_KEY_ICI par ta vraie clé Clerk publishableKey -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="PUBLISHABLE_KEY_ICI"
+    src="https://cdn.clerk.com/clerk.js">
   </script>
 
   <style>
@@ -17,14 +20,16 @@
       margin:0;
       background:#000;
       color:#fff;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,"Helvetica Neue",Arial,sans-serif;
       display:flex;
       flex-direction:column;
       min-height:100vh;
     }
 
-    /* HEADER */
+    /* ===== HEADER ===== */
+
     header {
+      position:relative;
       background:#000;
       color:#ffd84f;
       border-bottom:1px solid rgba(255,255,255,0.08);
@@ -37,11 +42,12 @@
     }
 
     .left-head,
-    .right-head{
+    .right-head {
       display:flex;
       align-items:center;
       gap:12px;
       color:#fff;
+      position:relative;
     }
 
     .burger {
@@ -58,30 +64,6 @@
       font-weight:500;
     }
 
-    /* bouton Connexion / Inscription */
-    .login-btn {
-      background:#1a0aff;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
-      color:#fff;
-      font-size:14px;
-      font-weight:600;
-      line-height:1.2;
-      padding:8px 10px;
-      min-width:110px;
-      text-align:center;
-    }
-
-    .login-email {
-      font-size:11px;
-      color:#aaa;
-      font-weight:400;
-      max-width:140px;
-      line-height:1.2;
-      word-break:break-word;
-    }
-
     .token-box {
       display:flex;
       flex-direction:column;
@@ -90,14 +72,13 @@
       line-height:1.2;
       color:#ffd84f;
       font-weight:600;
-      text-align:center;
     }
     .token-value {
       display:flex;
       align-items:center;
       gap:8px;
     }
-    .token-value span#token-count-top{
+    #token-count-top {
       color:#ffd84f;
       font-feature-settings:"tnum";
     }
@@ -107,7 +88,62 @@
       font-weight:400;
     }
 
-    /* CONTENU CHAT */
+    .more {
+      width:40px;
+      height:40px;
+      background:#111;
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:20px;
+      font-weight:500;
+      cursor:pointer;
+    }
+
+    /* Petit menu déroulant des 3 points */
+    #menu-dropdown {
+      position:absolute;
+      top:60px;
+      right:0;
+      background:#111;
+      border:1px solid rgba(255,255,255,0.15);
+      border-radius:12px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.8);
+      display:none;            /* caché par défaut */
+      flex-direction:column;
+      min-width:220px;
+      overflow:hidden;
+      z-index:1000;
+    }
+
+    .dropdown-item {
+      background:none;
+      border:none;
+      color:#fff;
+      text-align:left;
+      padding:14px 16px;
+      font-size:16px;
+      font-family:inherit;
+      width:100%;
+      display:block;
+    }
+    .dropdown-item:not(:last-child){
+      border-bottom:1px solid rgba(255,255,255,0.1);
+    }
+    .dropdown-item.pay-disabled {
+      color:#888;
+      cursor:not-allowed;
+    }
+    .dropdown-item.active-action {
+      cursor:pointer;
+      color:#fff;
+    }
+
+    /* ===== ZONE CHAT ===== */
+
     .chat-wrapper {
       flex:1;
       display:flex;
@@ -126,13 +162,13 @@
       font-size:18px;
       box-shadow:0 30px 60px rgba(0,0,0,0.6);
       border:1px solid rgba(255,255,255,0.08);
-      white-space:pre-wrap;
-      word-break:break-word;
+      white-space:pre-wrap;        /* gardera les sauts de ligne */
+      word-wrap:break-word;
     }
 
-    /* bulle assistante */
-    .bubble.system,
-    .bubble.assistant {
+    /* bulle assistante et message système */
+    .bubble.assistant,
+    .bubble.system {
       align-self:flex-start;
       background:#2b2b2b;
       color:#fff;
@@ -141,33 +177,45 @@
     /* bulle utilisateur */
     .bubble.user {
       align-self:flex-end;
-      background:#4c3bff;
       background:radial-gradient(circle at 100% 0%, rgba(130,110,255,.6) 0%, rgba(20,10,60,0) 60%), #4c3bff;
       color:#fff;
       font-weight:500;
       border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 40px rgba(100,60,255,0.6),0 30px 60px rgba(0,0,0,0.8);
+      box-shadow:
+        0 0 40px rgba(100,60,255,0.6),
+        0 30px 60px rgba(0,0,0,0.8);
     }
 
-    /* barre d'envoi */
+    .bubble.thinking-bubble {
+      font-size:16px;
+      color:#ddd;
+      background:#2b2b2b;
+    }
+
+    /* ===== BARRE D'ENVOI ===== */
+
     .input-zone-wrapper {
       background:#000;
       border-top:1px solid rgba(255,255,255,0.08);
       padding:16px;
     }
+
     .input-row {
       display:flex;
       align-items:stretch;
       gap:12px;
       background:radial-gradient(circle at 0% 0%, rgba(130,110,255,.3) 0%, rgba(0,0,0,0) 60%);
     }
+
     .plus-btn {
       min-width:52px;
       min-height:52px;
       background:#1a0aff;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
+      box-shadow:
+        0 0 30px rgba(120,80,255,0.8),
+        0 30px 60px rgba(0,0,0,0.8);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -176,6 +224,7 @@
       line-height:0;
       font-weight:500;
     }
+
     .text-input {
       flex:1;
       background:#0f0f1a;
@@ -187,13 +236,16 @@
       font-family:inherit;
       outline:none;
     }
+
     .send-btn {
       min-width:52px;
       min-height:52px;
       background:#1a0aff;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
+      box-shadow:
+        0 0 30px rgba(120,80,255,0.8),
+        0 30px 60px rgba(0,0,0,0.8);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -201,6 +253,7 @@
       font-size:24px;
       line-height:0;
       font-weight:500;
+      cursor:pointer;
     }
 
     .status-line {
@@ -214,23 +267,15 @@
       font-weight:600;
       color:#fff;
     }
-    .status-line #token-count-bottom {
+    #token-count-bottom {
       color:#fff;
       font-feature-settings:"tnum";
-    }
-
-    /* petit loader style "Philomène réfléchit..." */
-    .thinking-bubble {
-      font-size:16px;
-      color:#ddd;
-      background:#2b2b2b;
     }
   </style>
 </head>
 
 <body>
-
-  <!-- HEADER -->
+  <!-- ===== HEADER ===== -->
   <header>
     <div class="left-head">
       <div class="burger">☰</div>
@@ -246,17 +291,25 @@
     </div>
 
     <div class="right-head">
-      <div style="display:flex; flex-direction:column; align-items:flex-end;">
-        <div id="login-btn" class="login-btn">Connexion</div>
-        <div id="login-email" class="login-email"></div>
+      <div class="more">⋯</div>
+
+      <!-- Menu déroulant -->
+      <div id="menu-dropdown">
+        <button id="login-btn" class="dropdown-item active-action">
+          Connexion / Inscription
+        </button>
+
+        <button class="dropdown-item pay-disabled">
+          💳 Paiement (bientôt)
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- ZONE MESSAGES -->
+  <!-- ===== ZONE MESSAGES ===== -->
   <div id="chat-container" class="chat-wrapper"></div>
 
-  <!-- BARRE D'ENVOI -->
+  <!-- ===== BARRE ENVOI ===== -->
   <div class="input-zone-wrapper">
     <div class="input-row">
       <div class="plus-btn">+</div>
@@ -278,16 +331,21 @@
     </div>
   </div>
 
-  <!-- SCRIPT LOGIQUE -->
+  <!-- ===== SCRIPT LOGIQUE ===== -->
   <script>
-    // =========================
+    // ========================
     // CONFIG
-    // =========================
-    const API_URL = "https://philo-backend-su29.onrender.com/ask";
-    let tokenCount = 5000;
-    let currentUserEmail = null;
+    // ========================
 
-    // conversation envoyée au backend
+    // Backend Render (POST /ask)
+    const API_URL = "https://philo-backend-su29.onrender.com/ask";
+
+    // compteur tokens simulé
+    let tokenCount = 5000;
+
+    // Conversation gardée en mémoire locale pendant la session
+    // 1) "system" = personnalité
+    // 2) premier "assistant" = message de bienvenue
     const conversation = [
       {
         role: "system",
@@ -297,33 +355,35 @@
       {
         role: "assistant",
         content:
-`👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.
-Si vous avez un problème, j’ai la solution.
-Vous avez une question, j’ai la réponse.
-Ensemble, on ira plus loin 🕊`
+          "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.\n" +
+          "Si vous avez un problème, j’ai la solution.\n" +
+          "Vous avez une question, j’ai la réponse.\n" +
+          "Ensemble, on ira plus loin 🕊"
       }
     ];
 
-    // =========================
-    // SELECTEURS
-    // =========================
+    // ========================
+    // SÉLECTEURS DOM
+    // ========================
     const chatContainer = document.getElementById("chat-container");
     const userInput     = document.getElementById("user-input");
     const sendBtn       = document.getElementById("send-btn");
     const tokenTop      = document.getElementById("token-count-top");
     const tokenBottom   = document.getElementById("token-count-bottom");
 
+    const moreBtn       = document.querySelector(".more");
+    const menuDropdown  = document.getElementById("menu-dropdown");
     const loginBtn      = document.getElementById("login-btn");
-    const loginEmailBox = document.getElementById("login-email");
 
-    // =========================
+    // ========================
     // UI HELPERS
-    // =========================
+    // ========================
     function scrollToBottom() {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     function addBubble(text, who) {
+      // who: "assistant" | "user" | "system" | "thinking"
       const div = document.createElement("div");
       div.classList.add("bubble");
 
@@ -348,86 +408,44 @@ Ensemble, on ira plus loin 🕊`
       tokenBottom.textContent = tokenCount;
     }
 
-    // affiche le message de bienvenue au chargement
     function initConversationUI() {
+      // on n'affiche QUE le message de bienvenue "assistant" (conversation[1])
       const welcomeMsg = conversation[1].content;
       addBubble(welcomeMsg, "assistant");
+
       updateTokenDisplay();
       scrollToBottom();
     }
 
-    // =========================
-    // CLERK LOGIN / SIGNUP
-    // =========================
-    async function setupClerkAuth() {
-      await Clerk.load();
-
-      if (Clerk.user) {
-        // déjà connecté
-        currentUserEmail = Clerk.user.primaryEmailAddress?.emailAddress || "";
-        loginBtn.textContent = "Déconnexion";
-        loginEmailBox.textContent = currentUserEmail;
-        tokenCount = 5000; // ici tu pourras mettre le vrai solde par user si tu veux
-        updateTokenDisplay();
-
-        loginBtn.onclick = async () => {
-          await Clerk.signOut();
-          currentUserEmail = null;
-          loginBtn.textContent = "Connexion";
-          loginEmailBox.textContent = "";
-          tokenCount = 1000; // mode invité après déconnexion
-          updateTokenDisplay();
-        };
-      } else {
-        // pas connecté
-        currentUserEmail = null;
-        loginBtn.textContent = "Connexion";
-        loginEmailBox.textContent = "";
-
-        loginBtn.onclick = async () => {
-          // ouvre la pop-up Clerk
-          Clerk.openSignIn({
-            afterSignInUrl: window.location.href,
-            afterSignUpUrl: window.location.href
-          });
-        };
-
-        // bonus: si tu veux aussi un bouton inscription séparé:
-        // Clerk.openSignUp()
-      }
-    }
-
-    // =========================
-    // ENVOI MESSAGE A L'API
-    // =========================
+    // ========================
+    // BACKEND CALL
+    // ========================
     async function askPhilomene() {
       const text = userInput.value.trim();
       if (!text) return;
 
-      // bulle user
+      // bulle utilisateur
       addBubble(text, "user");
 
-      // push dans la mémoire locale
+      // on push le user message dans la mémoire
       conversation.push({
         role: "user",
         content: text
       });
 
-      // reset champ
       userInput.value = "";
 
-      // bulle attente
+      // bulle "je réfléchis..."
       const thinkingBubble = addBubble(
         "Philomène réfléchit à votre message...",
         "thinking"
       );
 
       try {
-        // on envoie la conversation au backend
         const resp = await fetch(API_URL, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":"application/json"
           },
           body: JSON.stringify({
             conversation: conversation
@@ -440,29 +458,32 @@ Ensemble, on ira plus loin 🕊`
 
         const data = await resp.json();
 
-        // remplace la bulle d'attente par la vraie réponse
+        // on remplace le loader par la vraie réponse
         thinkingBubble.remove();
         addBubble(data.answer || "…", "assistant");
 
-        // on push la réponse dans la mémoire locale
+        // on push la réponse de l'assistante
         conversation.push({
-          role: "assistant",
+          role:"assistant",
           content: data.answer || ""
         });
 
-        // tokens -20 à chaque échange pour l'instant
+        // on simule la conso tokens
         tokenCount = Math.max(0, tokenCount - 20);
         updateTokenDisplay();
 
       } catch (err) {
-        thinkingBubble.textContent = "Désolée, j'ai eu un problème réseau.";
+        // en cas d'erreur
+        thinkingBubble.textContent =
+          "Désolée, j'ai eu un problème réseau.";
       }
     }
 
-    // clic bouton envoyer
+    // ========================
+    // EVENTS CHAT
+    // ========================
     sendBtn.addEventListener("click", askPhilomene);
 
-    // touche Entrée
     userInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -470,12 +491,51 @@ Ensemble, on ira plus loin 🕊`
       }
     });
 
-    // =========================
-    // AU CHARGEMENT
-    // =========================
-    window.addEventListener("load", async () => {
-      initConversationUI();
-      await setupClerkAuth();
+    // ========================
+    // MENU "⋯"
+    // ========================
+    moreBtn.addEventListener("click", () => {
+      if (menuDropdown.style.display === "flex") {
+        menuDropdown.style.display = "none";
+      } else {
+        menuDropdown.style.display = "flex";
+      }
+    });
+
+    // clique dehors => fermer menu
+    document.addEventListener("click", (e) => {
+      if (!menuDropdown.contains(e.target) && !moreBtn.contains(e.target)) {
+        menuDropdown.style.display = "none";
+      }
+    });
+
+    // Connexion / Inscription
+    loginBtn.addEventListener("click", async () => {
+      menuDropdown.style.display = "none";
+
+      // On tente d'ouvrir le modal Clerk si présent
+      // (Clerk ajoute window.Clerk global)
+      if (window.Clerk && window.Clerk.openSignIn) {
+        window.Clerk.openSignIn({
+          afterSignInUrl: window.location.href,
+          afterSignUpUrl: window.location.href
+        });
+      } else {
+        alert("Connexion indisponible pour le moment.");
+      }
+    });
+
+    // ========================
+    // INIT PAGE
+    // ========================
+    initConversationUI();
+
+    // Quand Clerk est prêt, on peut éventuellement check l'état user
+    // (optionnel pour l'instant)
+    window.addEventListener("load", () => {
+      if (window.Clerk && window.Clerk.load) {
+        window.Clerk.load().catch(()=>{});
+      }
     });
   </script>
 </body>
