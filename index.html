@@ -6,12 +6,12 @@
   <title>Philomène I.A.</title>
   <meta name="color-scheme" content="dark" />
 
-  <!-- Clerk Auth -->
+  <!-- Clerk front SDK -->
   <script
     async
     crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+    src="https://cdn.clerk.dev/clerk.js">
   </script>
 
   <style>
@@ -19,29 +19,27 @@
       margin:0;
       background:#000;
       color:#fff;
-      font-family:-apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,"Helvetica Neue",Arial,sans-serif;
       display:flex;
       flex-direction:column;
       min-height:100vh;
     }
 
-    /* HEADER */
     header {
       background:#000;
       color:#ffd84f;
       border-bottom:1px solid rgba(255,255,255,0.08);
       padding:16px;
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
       font-size:16px;
       font-weight:500;
       position:relative;
-      z-index:10;
     }
 
     .left-head,
-    .right-head {
+    .right-head{
       display:flex;
       align-items:center;
       gap:12px;
@@ -50,11 +48,11 @@
 
     .burger,
     .more {
-      width:40px;
-      height:40px;
+      width:44px;
+      height:44px;
       background:#111;
       border:1px solid rgba(255,255,255,0.1);
-      border-radius:8px;
+      border-radius:10px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -71,73 +69,97 @@
       line-height:1.2;
       color:#ffd84f;
       font-weight:600;
-      text-align:center;
     }
-
     .token-value {
       display:flex;
       align-items:center;
       gap:8px;
+      font-size:18px;
     }
-
-    .token-value span#token-count-top {
+    .token-diamond {
+      font-size:20px;
+    }
+    #token-count-top {
       color:#ffd84f;
       font-feature-settings:"tnum";
     }
-
-    .token-value .label-tok {
-      color:#fff;
-      font-weight:500;
-    }
-
     .token-label {
-      font-size:12px;
+      font-size:13px;
       color:#888;
       font-weight:400;
     }
 
-    /* MENU DÉROULANT (3 points) */
+    /* menu déroulant des 3 points */
     .menu-panel {
       position:absolute;
       top:60px;
       right:16px;
-      background:#0f0f1a;
+      width:260px;
+      background:rgba(20,20,30,0.95);
       border:1px solid rgba(255,255,255,0.15);
       border-radius:12px;
-      box-shadow:0 30px 60px rgba(0,0,0,0.8);
-      padding:12px;
-      width:200px;
+      box-shadow:0 40px 120px rgba(0,0,0,0.9);
+      padding:16px;
       display:none;
       flex-direction:column;
-      z-index:9999;
-    }
-
-    .menu-btn {
-      width:100%;
-      background:#1a1a2a;
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius:8px;
+      gap:16px;
       color:#fff;
-      font-size:15px;
-      text-align:left;
-      padding:12px;
-      margin-bottom:8px;
+      z-index:1000;
     }
-
-    .menu-btn:last-child {
-      margin-bottom:0;
+    .menu-section {
+      background:rgba(40,40,60,0.4);
+      border-radius:10px;
+      padding:12px 16px;
+      border:1px solid rgba(255,255,255,0.1);
     }
-
-    .menu-btn small {
-      display:block;
-      font-size:12px;
-      color:#888;
-      font-weight:400;
-      margin-top:4px;
+    .menu-title {
+      font-size:16px;
+      font-weight:600;
+      margin-bottom:4px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      color:#fff;
+    }
+    .menu-desc {
+      font-size:14px;
+      color:#aaa;
       line-height:1.3;
     }
+    .menu-link {
+      color:#fff;
+      text-decoration:none;
+      display:block;
+    }
 
-    /* ZONE MESSAGES */
+    /* popin connexion disabled / erreurs etc */
+    .overlay-msg {
+      position:fixed;
+      left:0;right:0;
+      bottom:0;
+      padding:16px;
+      display:none;
+      z-index:2000;
+    }
+    .overlay-card {
+      background:#2b2b2b;
+      color:#fff;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.15);
+      box-shadow:0 30px 60px rgba(0,0,0,0.8);
+      padding:20px;
+      font-size:17px;
+      line-height:1.4;
+    }
+    .overlay-close {
+      color:#4d7dff;
+      font-weight:500;
+      margin-top:12px;
+      text-align:right;
+      font-size:16px;
+    }
+
+    /* zone chat */
     .chat-wrapper {
       flex:1;
       display:flex;
@@ -156,51 +178,43 @@
       font-size:18px;
       box-shadow:0 30px 60px rgba(0,0,0,0.6);
       border:1px solid rgba(255,255,255,0.08);
-      white-space:pre-wrap;
-      word-wrap:break-word;
+      word-break:break-word;
+      white-space:pre-line;
     }
 
-    /* bulle assistante */
-    .bubble.assistant {
+    .assistant {
       align-self:flex-start;
       background:#2b2b2b;
       color:#fff;
     }
-
-    /* bulle utilisateur */
-    .bubble.user {
+    .user {
       align-self:flex-end;
-      background:#4c3bff;
       background:radial-gradient(circle at 100% 0%, rgba(130,110,255,.6) 0%, rgba(20,10,60,0) 60%), #4c3bff;
       color:#fff;
       font-weight:500;
       border:1px solid rgba(255,255,255,0.15);
       box-shadow:0 0 40px rgba(100,60,255,0.6),0 30px 60px rgba(0,0,0,0.8);
     }
-
-    /* bulle "en train d'écrire" */
-    .bubble.thinking {
+    .thinking {
       font-size:16px;
       color:#ddd;
       background:#2b2b2b;
-      font-style:italic;
     }
 
-    /* BARRE D'ENVOI */
+    /* input zone */
     .input-zone-wrapper {
       background:#000;
       border-top:1px solid rgba(255,255,255,0.08);
       padding:16px;
     }
-
     .input-row {
       display:flex;
       align-items:stretch;
       gap:12px;
       background:radial-gradient(circle at 0% 0%, rgba(130,110,255,.3) 0%, rgba(0,0,0,0) 60%);
     }
-
-    .plus-btn {
+    .plus-btn,
+    .send-btn {
       min-width:52px;
       min-height:52px;
       background:#1a0aff;
@@ -215,7 +229,9 @@
       line-height:0;
       font-weight:500;
     }
-
+    .send-btn {
+      font-size:24px;
+    }
     .text-input {
       flex:1;
       background:#0f0f1a;
@@ -227,23 +243,6 @@
       font-family:inherit;
       outline:none;
     }
-
-    .send-btn {
-      min-width:52px;
-      min-height:52px;
-      background:#1a0aff;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      font-size:24px;
-      line-height:0;
-      font-weight:500;
-    }
-
     .status-line {
       text-align:center;
       margin-top:12px;
@@ -251,13 +250,11 @@
       color:#999;
       font-weight:400;
     }
-
     .status-line strong {
       font-weight:600;
       color:#fff;
     }
-
-    .status-line #token-count-bottom {
+    #token-count-bottom {
       color:#fff;
       font-feature-settings:"tnum";
     }
@@ -265,50 +262,55 @@
 </head>
 
 <body>
-
   <!-- HEADER -->
   <header>
     <div class="left-head">
-      <div class="burger" id="burgerBtn">☰</div>
-    </div>
-
-    <div class="token-box">
-      <div class="token-value">
-        <div style="font-size:20px;">💎</div>
-        <span id="token-count-top">5000</span>
-        <span class="label-tok">tokens</span>
+      <div class="burger">☰</div>
+      <div class="token-box">
+        <div class="token-value">
+          <div class="token-diamond">💎</div>
+          <span id="token-count-top">5000</span>
+          <span>tokens</span>
+        </div>
+        <div class="token-label">Philomène I.A.</div>
       </div>
-      <div class="token-label">Philomène I.A.</div>
     </div>
 
     <div class="right-head">
-      <div class="more" id="moreBtn">⋯</div>
-      <!-- menu déroulant -->
-      <div class="menu-panel" id="menuPanel">
-        <button class="menu-btn" id="loginBtn">
-          Connexion / Inscription
-          <small>Créer un compte ou se connecter</small>
-        </button>
+      <div id="menu-btn" class="more">⋯</div>
+    </div>
 
-        <button class="menu-btn" disabled>
+    <!-- menu caché par défaut -->
+    <div id="menu-panel" class="menu-panel">
+      <div class="menu-section" id="menu-auth-block">
+        <div class="menu-title">
+          <span id="auth-title">Connexion / Inscription</span>
+        </div>
+        <div class="menu-desc" id="auth-desc">Créer un compte ou se connecter</div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-title">
           Paiement (bientôt)
-          <small>Recharger ses tokens par PayPal</small>
-        </button>
+        </div>
+        <div class="menu-desc">
+          Recharger ses tokens par PayPal
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- CHAT -->
+  <!-- ZONE MESSAGES -->
   <div id="chat-container" class="chat-wrapper"></div>
 
-  <!-- INPUT BAR -->
+  <!-- BARRE ENVOI -->
   <div class="input-zone-wrapper">
     <div class="input-row">
-      <div class="plus-btn" id="plusBtn">+</div>
+      <div class="plus-btn">+</div>
       <input
         id="user-input"
         class="text-input"
-        placeholder="Écrivez votre message…"
+        placeholder="Écrivez votre message..."
       />
       <div id="send-btn" class="send-btn">➤</div>
     </div>
@@ -323,25 +325,29 @@
     </div>
   </div>
 
+  <!-- POPUP D'ALERTE -->
+  <div id="overlay" class="overlay-msg">
+    <div class="overlay-card">
+      <div id="overlay-text">Connexion indisponible pour le moment.</div>
+      <div id="overlay-close" class="overlay-close">Fermer</div>
+    </div>
+  </div>
+
+  <!-- LOGIQUE FRONT -->
   <script>
-    // =========================
+    // ========================
     // CONFIG
-    // =========================
-
-    // Backend Render
-    const API_URL = "https://philo-backend-su29.onrender.com/ask";
-
-    // Tokens de départ
+    // ========================
+    const API_BASE = "https://philo-backend-su29.onrender.com"; // backend Render Node
     let tokenCount = 5000;
 
-    // Conversation qu'on envoie au backend
-    // On inclut le message d’intro une seule fois
-    const conversation = [
+    // conversation locale en mémoire du front
+    // on met le system + message de bienvenue au premier chargement
+    let conversation = [
       {
         role: "system",
         content:
-          "Tu es Philomène I.A., une assistante personnelle en français, ton calme, humain, utile. " +
-          "Tu peux aider pour les devoirs, la vie quotidienne, les mails, les démarches, et tu expliques clairement."
+          "Tu es Philomène I.A., une assistante personnelle en français, avec un ton humain, calme et rassurant."
       },
       {
         role: "assistant",
@@ -353,22 +359,28 @@
       }
     ];
 
-    // =========================
-    // DOM
-    // =========================
-    const chatContainer   = document.getElementById("chat-container");
-    const userInput       = document.getElementById("user-input");
-    const sendBtn         = document.getElementById("send-btn");
-    const tokenTop        = document.getElementById("token-count-top");
-    const tokenBottom     = document.getElementById("token-count-bottom");
+    // ========================
+    // ELEMENTS DOM
+    // ========================
+    const chatContainer = document.getElementById("chat-container");
+    const userInput     = document.getElementById("user-input");
+    const sendBtn       = document.getElementById("send-btn");
+    const tokenTop      = document.getElementById("token-count-top");
+    const tokenBottom   = document.getElementById("token-count-bottom");
 
-    const moreBtn         = document.getElementById("moreBtn");
-    const menuPanel       = document.getElementById("menuPanel");
-    const loginBtn        = document.getElementById("loginBtn");
+    const menuBtn       = document.getElementById("menu-btn");
+    const menuPanel     = document.getElementById("menu-panel");
 
-    // =========================
+    const overlayEl     = document.getElementById("overlay");
+    const overlayText   = document.getElementById("overlay-text");
+    const overlayClose  = document.getElementById("overlay-close");
+
+    const authTitleEl   = document.getElementById("auth-title");
+    const authDescEl    = document.getElementById("auth-desc");
+
+    // ========================
     // UI HELPERS
-    // =========================
+    // ========================
     function scrollToBottom() {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -379,8 +391,6 @@
 
       if (who === "user") {
         div.classList.add("user");
-      } else if (who === "assistant") {
-        div.classList.add("assistant");
       } else if (who === "thinking") {
         div.classList.add("assistant","thinking");
       } else {
@@ -398,120 +408,189 @@
       tokenBottom.textContent = tokenCount;
     }
 
-    function initConversationUI() {
-      // Montrer UNIQUEMENT le message d'accueil assistant,
-      // pas le message system
-      const welcome = conversation[1].content;
-      addBubble(welcome, "assistant");
+    function showOverlay(msg) {
+      overlayText.textContent = msg;
+      overlayEl.style.display = "block";
+    }
+    function hideOverlay() {
+      overlayEl.style.display = "none";
+    }
+
+    overlayClose.addEventListener("click", hideOverlay);
+
+    // ========================
+    // CLERK AUTH
+    // ========================
+    let currentUserId = null; // on va stocker ici l'id Clerk une fois connecté
+
+    // Cette fonction demande à Clerk s'il y a un user connecté
+    async function syncAuthFromClerk() {
+      // window.Clerk est injecté par le script Clerk
+      if (!window.Clerk) return;
+
+      await window.Clerk.load(); // charge Clerk
+      const user = window.Clerk.user; // null si pas connecté
+
+      if (user) {
+        currentUserId = user.id;
+        authTitleEl.textContent = "Connecté ✅";
+        authDescEl.textContent  = "ID: " + currentUserId;
+      } else {
+        currentUserId = null;
+        authTitleEl.textContent = "Connexion / Inscription";
+        authDescEl.textContent  = "Créer un compte ou se connecter";
+      }
+    }
+
+    // Ouvrir modal Clerk
+    async function openClerkSignIn() {
+      if (!window.Clerk) {
+        showOverlay("Connexion indisponible pour le moment.");
+        return;
+      }
+      await window.Clerk.load();
+
+      // si déjà connecté => rien
+      if (window.Clerk.user) {
+        showOverlay("Vous êtes déjà connecté.");
+        return;
+      }
+
+      // ouvre la modale Clerk intégrée
+      window.Clerk.openSignIn();
+    }
+
+    // menu: cliquer sur la zone auth
+    document.getElementById("menu-auth-block").addEventListener("click", () => {
+      openClerkSignIn();
+    });
+
+    // bouton … pour afficher / cacher le menu
+    menuBtn.addEventListener("click", () => {
+      menuPanel.style.display = (menuPanel.style.display === "flex") ? "none" : "flex";
+    });
+
+    // ========================
+    // HISTORIQUE POUR USER CONNECTÉ
+    // ========================
+    async function loadConversationForUser() {
+      // si pas connecté -> on garde juste la conversation de base
+      if (!currentUserId) {
+        renderInitialIfEmpty();
+        updateTokenDisplay();
+        return;
+      }
+
+      // si connecté -> demander l'historique au backend
+      try {
+        const resp = await fetch(`${API_BASE}/history?userId=${encodeURIComponent(currentUserId)}`);
+        if (!resp.ok) throw new Error("history status " + resp.status);
+        const data = await resp.json();
+
+        // data.messages devrait être un array [{role, content}, ...]
+        if (Array.isArray(data.messages) && data.messages.length > 0) {
+          conversation = data.messages.slice(); // on remplace la conv locale
+          chatContainer.innerHTML = "";
+          for (const msg of conversation) {
+            if (msg.role === "user") {
+              addBubble(msg.content, "user");
+            } else {
+              addBubble(msg.content, "assistant");
+            }
+          }
+        } else {
+          renderInitialIfEmpty();
+        }
+      } catch (err) {
+        console.error("loadConversationForUser error:", err);
+        renderInitialIfEmpty();
+      }
+
       updateTokenDisplay();
     }
 
-    // =========================
-    // CHAT LOGIC
-    // =========================
+    function renderInitialIfEmpty() {
+      // efface tout
+      chatContainer.innerHTML = "";
+      // affiche le message de bienvenue (assistant)
+      addBubble(conversation[1].content, "assistant");
+    }
+
+    // ========================
+    // ENVOI MESSAGE
+    // ========================
     async function askPhilomene() {
       const text = userInput.value.trim();
       if (!text) return;
 
-      // bulle user
+      // affiche user
       addBubble(text, "user");
 
-      // push vers la convo
-      conversation.push({
-        role: "user",
-        content: text
-      });
+      // push côté front
+      conversation.push({ role:"user", content:text });
 
-      // clear input
+      // clear champ
       userInput.value = "";
 
-      // bulle "je réfléchis..."
-      const thinkingBubble = addBubble("…", "thinking");
+      // bulle thinking
+      const thinkingBubble = addBubble(
+        "Philomène réfléchit à votre message...",
+        "thinking"
+      );
 
       try {
-        const resp = await fetch(API_URL, {
+        const resp = await fetch(`${API_BASE}/ask`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type":"application/json" },
           body: JSON.stringify({
-            conversation: conversation
+            userId: currentUserId,        // null si pas co
+            conversation: conversation    // tout l'historique local
           })
         });
 
-        if (!resp.ok) {
-          throw new Error("HTTP " + resp.status);
-        }
-
+        if (!resp.ok) throw new Error("resp not ok " + resp.status);
         const data = await resp.json();
 
-        // remplacer la bulle thinking par vraie réponse
+        const answer = data.answer || "…";
+
+        // remplace thinking par vraie réponse
         thinkingBubble.remove();
-        const answer = data.answer || "Désolée, pas de réponse.";
-        addBubble(answer, "assistant");
+        addBubble(answer,"assistant");
 
-        // enregistrer réponse dans l'historique
-        conversation.push({
-          role: "assistant",
-          content: answer
-        });
+        // stocke réponse dans conv locale
+        conversation.push({ role:"assistant", content:answer });
 
-        // décrémenter tokens local (fake pour l’instant)
+        // décrémente tokens côté front (fake pour l'instant)
         tokenCount = Math.max(0, tokenCount - 20);
         updateTokenDisplay();
 
       } catch (err) {
-        thinkingBubble.textContent = "Oups. Problème serveur.";
+        console.error("askPhilomene error:", err);
+        thinkingBubble.textContent = "Désolée, j'ai eu un problème réseau.";
+        thinkingBubble.classList.remove("thinking");
       }
     }
 
     sendBtn.addEventListener("click", askPhilomene);
-    userInput.addEventListener("keydown", (e) => {
+    userInput.addEventListener("keydown", e => {
       if (e.key === "Enter") {
         e.preventDefault();
         askPhilomene();
       }
     });
 
-    // =========================
-    // MENU 3 POINTS
-    // =========================
-    let menuOpen = false;
-    moreBtn.addEventListener("click", () => {
-      menuOpen = !menuOpen;
-      menuPanel.style.display = menuOpen ? "flex" : "none";
-    });
+    // ========================
+    // BOOT
+    // ========================
+    async function boot() {
+      await syncAuthFromClerk();
+      await loadConversationForUser();
+    }
 
-    // clic "Connexion / Inscription"
-    loginBtn.addEventListener("click", async () => {
-      try {
-        await Clerk.load();
-        if (Clerk.user) {
-          // déjà connecté → on propose déconnexion
-          const out = confirm("Vous êtes connecté. Vous voulez vous déconnecter ?");
-          if (out) {
-            await Clerk.signOut();
-            alert("Déconnecté.");
-          }
-        } else {
-          // pas connecté → ouvrir modal Clerk
-          Clerk.openSignIn();
-        }
-      } catch (e) {
-        alert("Auth indisponible.");
-      }
+    // lancer après petit délai pour être sûr que Clerk a chargé
+    window.addEventListener("load", () => {
+      setTimeout(boot, 300);
     });
-
-    // fermer le menu si on clique ailleurs
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest(".more") && !e.target.closest("#menuPanel")) {
-        menuOpen = false;
-        menuPanel.style.display = "none";
-      }
-    });
-
-    // =========================
-    // START
-    // =========================
-    initConversationUI();
   </script>
 </body>
 </html>
