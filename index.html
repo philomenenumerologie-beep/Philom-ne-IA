@@ -6,12 +6,18 @@
   <title>Philomène I.A.</title>
   <meta name="color-scheme" content="dark" />
 
+  <!-- Clerk Auth -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+  </script>
+
   <style>
     body {
       margin:0;
       background:#000;
       color:#fff;
-      font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
       display:flex;
       flex-direction:column;
       min-height:100vh;
@@ -29,7 +35,6 @@
       font-size:16px;
       font-weight:500;
       position:relative;
-      z-index:30;
     }
     .left-head,
     .right-head{
@@ -38,7 +43,8 @@
       gap:12px;
       color:#fff;
     }
-    .burger{
+    .burger,
+    .more {
       width:40px;
       height:40px;
       background:#111;
@@ -50,20 +56,6 @@
       color:#fff;
       font-size:20px;
       font-weight:500;
-    }
-    .more{
-      width:40px;
-      height:40px;
-      background:#111;
-      border:1px solid rgba(255,255,255,0.1);
-      border-radius:8px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      font-size:20px;
-      font-weight:500;
-      position:relative;
     }
 
     .token-box {
@@ -74,6 +66,7 @@
       line-height:1.2;
       color:#ffd84f;
       font-weight:600;
+      text-align:center;
     }
     .token-value {
       display:flex;
@@ -90,44 +83,42 @@
       font-weight:400;
     }
 
-    /* MENU DEROULANT (⋯) */
-    .menu-panel{
+    /* MENU FLOTTANT (⋯) */
+    .menu-panel {
       position:absolute;
-      top:52px;
-      right:0;
-      background:#1a1a1a;
-      border:1px solid rgba(255,255,255,0.15);
-      border-radius:10px;
-      min-width:260px;
-      box-shadow:0 30px 60px rgba(0,0,0,0.8);
-      padding:12px 0;
-      display:none; /* caché par défaut */
-      z-index:999;
+      top:60px;
+      right:16px;
+      background:#0b0b0f;
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:12px;
+      min-width:200px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.8),0 0 40px rgba(120,80,255,0.4);
+      padding:8px 0;
+      display:none;
+      z-index:9999;
     }
-    .menu-item{
-      padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,0.07);
+    .menu-item {
+      width:100%;
+      background:transparent;
+      border:0;
+      text-align:left;
       color:#fff;
-      font-size:16px;
-      line-height:1.4;
+      font-size:15px;
+      padding:12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
     }
-    .menu-item:last-child{
-      border-bottom:none;
+    .menu-item + .menu-item {
+      border-top:1px solid rgba(255,255,255,0.07);
     }
-    .menu-title{
-      font-weight:600;
-      color:#fff;
+    .menu-item span.hint {
+      font-size:12px;
+      color:#888;
+      font-weight:400;
     }
-    .menu-desc{
-      font-size:14px;
-      color:#9a9a9a;
-      margin-top:4px;
-    }
-    .menu-item.disabled .menu-title{
-      color:#777;
-    }
-    .menu-item.disabled .menu-desc{
-      color:#555;
+    .menu-item.danger {
+      color:#ff4f4f;
     }
 
     /* CONTENU CHAT */
@@ -150,16 +141,15 @@
       box-shadow:0 30px 60px rgba(0,0,0,0.6);
       border:1px solid rgba(255,255,255,0.08);
       white-space:pre-wrap;
+      word-break:break-word;
     }
 
-    /* bulle assistante */
     .bubble.assistant {
       align-self:flex-start;
       background:#2b2b2b;
       color:#fff;
     }
 
-    /* bulle utilisateur */
     .bubble.user {
       align-self:flex-end;
       background:#4c3bff;
@@ -170,15 +160,13 @@
       box-shadow:0 0 40px rgba(100,60,255,0.6),0 30px 60px rgba(0,0,0,0.8);
     }
 
-    /* bulle thinking */
     .bubble.thinking {
-      align-self:flex-start;
       background:#2b2b2b;
       color:#ccc;
       font-style:italic;
     }
 
-    /* BARRE INPUT */
+    /* BARRE D'ENVOI */
     .input-zone-wrapper {
       background:#000;
       border-top:1px solid rgba(255,255,255,0.08);
@@ -190,6 +178,7 @@
       gap:12px;
       background:radial-gradient(circle at 0% 0%, rgba(130,110,255,.3) 0%, rgba(0,0,0,0) 60%);
     }
+
     .plus-btn {
       min-width:52px;
       min-height:52px;
@@ -202,7 +191,6 @@
       justify-content:center;
       color:#fff;
       font-size:28px;
-      line-height:0;
       font-weight:500;
     }
     .text-input {
@@ -228,7 +216,6 @@
       justify-content:center;
       color:#fff;
       font-size:24px;
-      line-height:0;
       font-weight:500;
     }
 
@@ -247,50 +234,14 @@
       color:#fff;
       font-feature-settings:"tnum";
     }
-
-    /* TOAST ERREUR */
-    .toast {
-      position:fixed;
-      left:50%;
-      bottom:24px;
-      transform:translateX(-50%);
-      background:#1f1f1f;
-      color:#fff;
-      border:1px solid rgba(255,255,255,0.2);
-      border-radius:12px;
-      padding:16px;
-      font-size:17px;
-      line-height:1.4;
-      box-shadow:0 30px 60px rgba(0,0,0,0.8);
-      max-width:90%;
-      z-index:1000;
-      display:none;
-    }
-    .toast-row-close{
-      text-align:right;
-      margin-top:12px;
-      color:#4d8dff;
-      font-weight:500;
-    }
   </style>
-
-  <!-- Clerk Frontend SDK (obligatoire pour que la pop apparaisse) -->
-  <!-- <<< Clerk script avec ta clé publique -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
-  </script>
-
 </head>
 
 <body>
-
   <!-- HEADER -->
   <header>
     <div class="left-head">
-      <div class="burger">☰</div>
+      <div class="burger" id="openMainMenu">☰</div>
     </div>
 
     <div class="token-box">
@@ -303,18 +254,19 @@
     </div>
 
     <div class="right-head">
-      <div class="more" id="more-btn">⋯
-        <div class="menu-panel" id="menu-panel">
-          <div class="menu-item" id="menu-login">
-            <div class="menu-title">Connexion / Inscription</div>
-            <div class="menu-desc">Créer un compte ou se connecter</div>
-          </div>
-          <div class="menu-item disabled" id="menu-pay">
-            <div class="menu-title">Paiement (bientôt)</div>
-            <div class="menu-desc">Recharger ses tokens par PayPal</div>
-          </div>
-        </div>
-      </div>
+      <div class="more" id="moreBtn">⋯</div>
+    </div>
+
+    <!-- menu déroulant (⋯) -->
+    <div id="menuPanel" class="menu-panel">
+      <button class="menu-item" id="connectBtn">
+        <span>Connexion / Inscription</span>
+        <span class="hint">sécurisé</span>
+      </button>
+      <button class="menu-item danger" id="logoutBtn" style="display:none;">
+        <span>Se déconnecter</span>
+        <span class="hint">fermer la session</span>
+      </button>
     </div>
   </header>
 
@@ -324,7 +276,7 @@
   <!-- BARRE D'ENVOI -->
   <div class="input-zone-wrapper">
     <div class="input-row">
-      <div class="plus-btn">+</div>
+      <div class="plus-btn" id="plusBtn">+</div>
       <input
         id="user-input"
         class="text-input"
@@ -343,32 +295,23 @@
     </div>
   </div>
 
-  <!-- Toast erreur -->
-  <div class="toast" id="toast">
-    <div id="toast-msg">Erreur réseau.</div>
-    <div class="toast-row-close" id="toast-close">Fermer</div>
-  </div>
-
+  <!-- SCRIPT LOGIQUE -->
   <script>
-    // ========================
-    // CONFIG / ÉTAT GLOBAL
-    // ========================
-
-    // Backend IA
+    // =========================
+    // CONFIG
+    // =========================
     const API_URL = "https://philo-backend-su29.onrender.com/ask";
-
-    // compteur tokens simulé
     let tokenCount = 5000;
+    let currentUserEmail = null; // si connecté on met l'email, sinon null
 
-    // conversation mémoire locale EN COURS DE SESSION
+    // conversation stockée en mémoire locale
     const conversation = [
       {
-        role:"system",
-        content:
-          "Tu es Philomène I.A., une assistante personnelle en français, avec un ton humain, calme et rassurant."
+        role: "system",
+        content: "Tu es Philomène I.A., une assistante personnelle en français, avec un ton humain, calme et rassurant."
       },
       {
-        role:"assistant",
+        role: "assistant",
         content:
           "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.\n" +
           "Si vous avez un problème, j’ai la solution.\n" +
@@ -377,39 +320,36 @@
       }
     ];
 
-    // ========================
-    // SELECTEURS
-    // ========================
-    const chatContainer  = document.getElementById("chat-container");
-    const userInput      = document.getElementById("user-input");
-    const sendBtn        = document.getElementById("send-btn");
-    const tokenTop       = document.getElementById("token-count-top");
-    const tokenBottom    = document.getElementById("token-count-bottom");
+    // =========================
+    // SÉLECTEURS
+    // =========================
+    const chatContainer   = document.getElementById("chat-container");
+    const userInput       = document.getElementById("user-input");
+    const sendBtn         = document.getElementById("send-btn");
+    const tokenTop        = document.getElementById("token-count-top");
+    const tokenBottom     = document.getElementById("token-count-bottom");
+    const moreBtn         = document.getElementById("moreBtn");
+    const menuPanel       = document.getElementById("menuPanel");
+    const connectBtn      = document.getElementById("connectBtn");
+    const logoutBtn       = document.getElementById("logoutBtn");
 
-    const moreBtn        = document.getElementById("more-btn");
-    const menuPanel      = document.getElementById("menu-panel");
-    const menuLogin      = document.getElementById("menu-login");
-
-    const toastEl        = document.getElementById("toast");
-    const toastMsgEl     = document.getElementById("toast-msg");
-    const toastCloseEl   = document.getElementById("toast-close");
-
-    // ========================
+    // =========================
     // UI HELPERS
-    // ========================
-
-    function scrollToBottom(){
+    // =========================
+    function scrollToBottom() {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    function addBubble(text, who){
+    function addBubble(text, who) {
       const div = document.createElement("div");
       div.classList.add("bubble");
 
       if (who === "user") {
         div.classList.add("user");
+      } else if (who === "assistant") {
+        div.classList.add("assistant");
       } else if (who === "thinking") {
-        div.classList.add("thinking");
+        div.classList.add("assistant","thinking");
       } else {
         div.classList.add("assistant");
       }
@@ -420,148 +360,154 @@
       return div;
     }
 
-    function updateTokenDisplay(){
+    function updateTokensUI() {
       tokenTop.textContent    = tokenCount;
       tokenBottom.textContent = tokenCount;
     }
 
-    function showToast(msg){
-      toastMsgEl.textContent = msg;
-      toastEl.style.display = "block";
+    function initWelcomeMessage() {
+      // on affiche le message d'accueil une seule fois au début
+      const welcome = conversation[1].content;
+      addBubble(welcome, "assistant");
+      updateTokensUI();
     }
 
-    function hideToast(){
-      toastEl.style.display = "none";
+    // =========================
+    // CLERK (AUTH)
+    // =========================
+    async function initClerkStuff() {
+      await Clerk.load();
+
+      if (Clerk.user) {
+        // connecté
+        currentUserEmail = Clerk.user.primaryEmailAddress?.emailAddress || "compte";
+        connectBtn.style.display = "none";        // cacher "Connexion / Inscription"
+        logoutBtn.style.display  = "flex";        // montrer "Se déconnecter"
+      } else {
+        // pas connecté
+        currentUserEmail = null;
+        connectBtn.style.display = "flex";
+        logoutBtn.style.display  = "none";
+      }
     }
 
-    // Affiche message d'accueil assistant
-    function initConversationUI(){
-      const welcomeMsg = conversation[1].content;
-      addBubble(welcomeMsg,"assistant");
-      updateTokenDisplay();
-      scrollToBottom();
-    }
+    // ouvrir les popups Clerk
+    connectBtn.addEventListener("click", () => {
+      Clerk.openSignIn();
+      menuPanel.style.display = "none";
+    });
 
-    // ========================
-    // CHAT LOGIQUE
-    // ========================
+    // déconnexion Clerk
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await Clerk.signOut();
+      } catch(e) {
+        console.error("Erreur signOut:", e);
+      }
+      currentUserEmail = null;
+      connectBtn.style.display = "flex";
+      logoutBtn.style.display  = "none";
+      menuPanel.style.display  = "none";
+    });
 
-    async function askPhilomene(){
+    // =========================
+    // MENU ⋯
+    // =========================
+    moreBtn.addEventListener("click", () => {
+      if (menuPanel.style.display === "block") {
+        menuPanel.style.display = "none";
+      } else {
+        menuPanel.style.display = "block";
+      }
+    });
+
+    // si on clique ailleurs on ferme le menu
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".more") && !e.target.closest("#menuPanel")) {
+        menuPanel.style.display = "none";
+      }
+    });
+
+    // =========================
+    // ENVOI MESSAGE
+    // =========================
+    async function askPhilomene() {
       const text = userInput.value.trim();
       if (!text) return;
 
-      // bulle user
-      addBubble(text,"user");
+      // bulle utilisateur
+      addBubble(text, "user");
 
-      // push local
-      conversation.push({ role:"user", content:text });
+      // push dans conversation locale
+      conversation.push({
+        role: "user",
+        content: text
+      });
 
+      // vider le champ
       userInput.value = "";
 
-      // bulle thinking
-      const thinking = addBubble("Philomène réfléchit à votre message...","thinking");
+      // bulle attente
+      const thinkingBubble = addBubble("Philomène réfléchit à votre message…", "thinking");
 
       try {
-        const resp = await fetch(API_URL,{
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body:JSON.stringify({ conversation })
+        // appel backend
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conversation: conversation
+          })
         });
 
-        if(!resp.ok){
-          throw new Error("Réponse réseau pas OK: "+resp.status);
+        if (!resp.ok) {
+          throw new Error("HTTP " + resp.status);
         }
 
         const data = await resp.json();
 
-        thinking.remove();
-        addBubble(data.answer || "…","assistant");
+        // remplacer la bulle 'thinking' par la vraie réponse
+        thinkingBubble.remove();
+        addBubble(data.answer || "…", "assistant");
 
+        // sauvegarder la réponse aussi dans conversation
         conversation.push({
-          role:"assistant",
-          content:data.answer || ""
+          role: "assistant",
+          content: data.answer || ""
         });
 
+        // décrémenter les tokens simulés
         tokenCount = Math.max(0, tokenCount - 20);
-        updateTokenDisplay();
+        updateTokensUI();
 
-      } catch(err){
-        // échec réseau = toast + remplacement thinking
-        thinking.textContent = "Désolée, j'ai eu un problème réseau.";
-        showToast("Connexion indisponible pour le moment.");
+      } catch (err) {
+        thinkingBubble.textContent = "Désolée, j’ai eu un souci réseau.";
       }
     }
 
     sendBtn.addEventListener("click", askPhilomene);
-    userInput.addEventListener("keydown",(e)=>{
-      if(e.key==="Enter"){
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
         e.preventDefault();
         askPhilomene();
       }
     });
 
-    toastCloseEl.addEventListener("click", hideToast);
+    // =========================
+    // LANCEMENT
+    // =========================
+    initWelcomeMessage();
 
-    // ========================
-    // MENU ⋯ (OUVRIR / FERMER)
-    // ========================
-    let menuOpen = false;
-    moreBtn.addEventListener("click",(e)=>{
-      e.stopPropagation();
-      menuOpen = !menuOpen;
-      menuPanel.style.display = menuOpen ? "block" : "none";
-    });
-
-    document.addEventListener("click",()=>{
-      if(menuOpen){
-        menuOpen = false;
-        menuPanel.style.display="none";
-      }
-    });
-
-    // ========================
-    // CLERK LOGIN
-    // ========================
-    // On attend que Clerk soit chargé dans la page, puis on branche le clic.
-    // Quand l'utilisateur tape "Connexion / Inscription", on ouvre la modale Clerk.
-
-    function openClerkSignIn(){
-      // Si Clerk n'est pas encore prêt, on montre l'alerte style "pas prêt"
-      if(!window.Clerk || !window.Clerk.openSignIn){
-        showToast("Connexion indisponible pour le moment.");
-        return;
-      }
-      window.Clerk.openSignIn(); // <<< ouvre la pop Clerk
-    }
-
-    menuLogin.addEventListener("click",(e)=>{
-      e.stopPropagation();
-      openClerkSignIn();
-      menuOpen = false;
-      menuPanel.style.display="none";
-    });
-
-    // IMPORTANT:
-    // on initialise Clerk après que le script remote a chargé.
-    // publishableKey = ta clé publique
-    window.addEventListener("load", async () => {
-      if (window.Clerk) {
+    // très important : on attend Clerk pour mettre à jour le menu (connecté/pas connecté)
+    document.addEventListener("readystatechange", async () => {
+      if (document.readyState === "complete") {
         try {
-          await window.Clerk.load({
-            publishableKey: "pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-          });
-        } catch(e){
-          // si Clerk n'arrive pas à se charger (ex: domaine pas autorisé),
-          // le bouton va retomber sur le toast "indisponible"
-          console.warn("Clerk init error:", e);
+          await initClerkStuff();
+        } catch(e) {
+          console.error("Clerk init error:", e);
         }
       }
     });
-
-    // ========================
-    // START
-    // ========================
-    initConversationUI();
   </script>
 </body>
 </html>
