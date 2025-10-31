@@ -300,190 +300,228 @@
 
   <!-- ===== APP LOGIC ===== -->
   <script>
-    // ========= CONFIG =========
-    const API_URL = "https://philo-backend-su29.onrender.com/ask";
-    const STARTING_TOKENS = 5000;
+  // ========= CONFIG =========
+  const API_URL = "https://philo-backend-su29.onrender.com/ask";
+  const STARTING_TOKENS = 5000;
 
-    // état runtime
-    let currentUserId = "guest";
-    let isSignedIn = false;
-    let tokenBalance = STARTING_TOKENS;
+  // état runtime
+  let currentUserId = "guest";
+  let isSignedIn = false;
+  let tokenBalance = STARTING_TOKENS;
+  let clerkReady = false; // on saura quand Clerk est prêt
 
-    // mémoire conversation (envoyée à l'API)
-    const conversation = [
-      {
-        role: "assistant",
-        content:
-          "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. " +
-          "Si vous avez un problème, j’ai la solution. Vous avez une question, " +
-          "j’ai la réponse. Ensemble, on ira plus loin 🕊"
-      }
-    ];
-
-    // DOM refs
-    const chatArea     = document.getElementById("chat-area");
-    const inputField   = document.getElementById("message-input");
-    const sendBtn      = document.getElementById("send-btn");
-    const plusBtn      = document.getElementById("plus-btn");
-
-    const tokenHeader  = document.getElementById("token-count-header");
-    const tokenFooter  = document.getElementById("token-count-footer");
-
-    const authBtn      = document.getElementById("auth-btn");
-    const authIcon     = document.getElementById("auth-icon");
-    const authTextMain = document.getElementById("auth-text-main");
-    const authTextSub  = document.getElementById("auth-text-sub");
-
-    // ===== affichage messages =====
-    function appendMessage(role, text) {
-      const div = document.createElement("div");
-      div.className = "bubble " + (role === "user" ? "user" : "assistant");
-      div.textContent = text;
-      chatArea.appendChild(div);
-      chatArea.scrollTop = chatArea.scrollHeight;
+  // mémoire conversation
+  const conversation = [
+    {
+      role: "assistant",
+      content:
+        "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. " +
+        "Si vous avez un problème, j’ai la solution. Vous avez une question, " +
+        "j’ai la réponse. Ensemble, on ira plus loin 🕊"
     }
+  ];
 
-    // ===== tokens display =====
-    function refreshTokenDisplay() {
-      tokenHeader.textContent = tokenBalance;
-      tokenFooter.textContent = tokenBalance;
-    }
+  // DOM refs
+  const chatArea     = document.getElementById("chat-area");
+  const inputField   = document.getElementById("message-input");
+  const sendBtn      = document.getElementById("send-btn");
+  const plusBtn      = document.getElementById("plus-btn");
+
+  const tokenHeader  = document.getElementById("token-count-header");
+  const tokenFooter  = document.getElementById("token-count-footer");
+
+  const authBtn      = document.getElementById("auth-btn");
+  const authIcon     = document.getElementById("auth-icon");
+  const authTextMain = document.getElementById("auth-text-main");
+  const authTextSub  = document.getElementById("auth-text-sub");
+
+  // ===== affichage messages =====
+  function appendMessage(role, text) {
+    const div = document.createElement("div");
+    div.className = "bubble " + (role === "user" ? "user" : "assistant");
+    div.textContent = text;
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  // ===== tokens display =====
+  function refreshTokenDisplay() {
+    tokenHeader.textContent = tokenBalance;
+    tokenFooter.textContent = tokenBalance;
+  }
+  refreshTokenDisplay();
+
+  // ===== coût tokens simple =====
+  function spendTokensForMessage(_msgText) {
+    const cost = 20;
+    tokenBalance = Math.max(0, tokenBalance - cost);
     refreshTokenDisplay();
+  }
 
-    // ===== coût tokens simple =====
-    function spendTokensForMessage(_msgText) {
-      const cost = 20;
-      tokenBalance = Math.max(0, tokenBalance - cost);
-      refreshTokenDisplay();
-    }
+  // ===== envoi message =====
+  async function sendMessage() {
+    const text = inputField.value.trim();
+    if (!text) return;
 
-    // ===== envoi message =====
-    async function sendMessage() {
-      const text = inputField.value.trim();
-      if (!text) return;
+    appendMessage("user", text);
 
-      appendMessage("user", text);
+    conversation.push({
+      role: "user",
+      content: text
+    });
 
-      conversation.push({
-        role: "user",
-        content: text
+    spendTokensForMessage(text);
+
+    inputField.value = "";
+
+    try {
+      const resp = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversation
+        })
       });
 
-      spendTokensForMessage(text);
+      const data = await resp.json();
 
-      inputField.value = "";
-
-      try {
-        const resp = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversation
-          })
-        });
-
-        const data = await resp.json();
-
-        if (!data || !data.answer) {
-          appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
-          return;
-        }
-
-        const answer = data.answer.trim();
-        appendMessage("assistant", answer);
-
-        conversation.push({
-          role: "assistant",
-          content: answer
-        });
-      } catch (err) {
+      if (!data || !data.answer) {
         appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
-      }
-    }
-
-    sendBtn.addEventListener("click", sendMessage);
-    inputField.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter") {
-        ev.preventDefault();
-        sendMessage();
-      }
-    });
-
-    plusBtn.addEventListener("click", () => {
-      appendMessage("assistant", "Fonction + bientôt dispo 💎");
-    });
-
-    // ===== Auth Clerk =====
-    async function initClerk() {
-      if (!window.Clerk) {
-        console.warn("Clerk pas encore chargé.");
         return;
       }
+
+      const answer = data.answer.trim();
+      appendMessage("assistant", answer);
+
+      conversation.push({
+        role: "assistant",
+        content: answer
+      });
+    } catch (err) {
+      appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+    }
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  inputField.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      sendMessage();
+    }
+  });
+
+  plusBtn.addEventListener("click", () => {
+    appendMessage("assistant", "Fonction + bientôt dispo 💎");
+  });
+
+  // =========================
+  // Auth Clerk
+  // =========================
+
+  // attend que window.Clerk existe ET soit load()
+  async function waitForClerk(timeoutMs = 5000) {
+    const start = Date.now();
+    while (!window.Clerk) {
+      if (Date.now() - start > timeoutMs) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    if (!window.Clerk) {
+      console.error("Clerk pas dispo après attente.");
+      return false;
+    }
+    // si on n'a jamais fait load()
+    if (!clerkReady) {
       try {
         await window.Clerk.load();
-
-        const user = window.Clerk.user;
-        const session = window.Clerk.session;
-
-        if (user && session) {
-          isSignedIn = true;
-          currentUserId = user.id || "guest";
-        } else {
-          isSignedIn = false;
-          currentUserId = "guest";
-        }
-        refreshAuthButtonUI();
+        clerkReady = true;
       } catch (e) {
-        console.error("Erreur initClerk:", e);
+        console.error("Erreur Clerk.load():", e);
+        return false;
       }
     }
+    return true;
+  }
 
-    function refreshAuthButtonUI() {
-      if (isSignedIn) {
-        // MODE CONNECTÉ
-        authBtn.classList.add("logout-mode");
-        authIcon.textContent     = "🚪";
-        authTextMain.textContent = "Se déconnecter";
-        authTextSub.textContent  = "Compte: " + currentUserId;
-      } else {
-        // MODE NON CONNECTÉ
-        authBtn.classList.remove("logout-mode");
-        authIcon.textContent     = "🔐";
-        authTextMain.textContent = "Connexion / Inscription";
-        authTextSub.textContent  = "Sécurisé";
-      }
+  async function initClerkState() {
+    // essaye d'initialiser Clerk et mettre à jour l'état utilisateur
+    const ok = await waitForClerk();
+    if (!ok) {
+      return;
     }
 
-    // click sur le bouton compte
-    authBtn.addEventListener("click", async () => {
-      if (!window.Clerk) return;
+    const user = window.Clerk.user;
+    const session = window.Clerk.session;
 
-      if (!isSignedIn) {
-        // pas connecté -> ouvrir le popup de login/signup
+    if (user && session) {
+      isSignedIn = true;
+      currentUserId = user.id || "guest";
+    } else {
+      isSignedIn = false;
+      currentUserId = "guest";
+    }
+    refreshAuthButtonUI();
+  }
+
+  function refreshAuthButtonUI() {
+    if (isSignedIn) {
+      // MODE CONNECTÉ
+      authBtn.classList.add("logout-mode");
+      authIcon.textContent     = "🚪";
+      authTextMain.textContent = "Se déconnecter";
+      authTextSub.textContent  = "Compte: " + currentUserId;
+    } else {
+      // MODE NON CONNECTÉ
+      authBtn.classList.remove("logout-mode");
+      authIcon.textContent     = "🔐";
+      authTextMain.textContent = "Connexion / Inscription";
+      authTextSub.textContent  = "Sécurisé";
+    }
+  }
+
+  authBtn.addEventListener("click", async () => {
+    // chaque clic, on s'assure que Clerk est prêt
+    const ok = await waitForClerk();
+    if (!ok) {
+      alert("Connexion momentanément indisponible. Réessaie dans une seconde.");
+      return;
+    }
+
+    // refresh l'état utilisateur avant d'agir
+    await initClerkState();
+
+    if (!isSignedIn) {
+      // pas connecté -> ouvrir Clerk
+      try {
         await window.Clerk.openSignIn({
           afterSignIn: async () => {
-            await initClerk();
+            await initClerkState();
           },
           afterSignUp: async () => {
-            await initClerk();
+            await initClerkState();
           }
         });
-      } else {
-        // connecté -> déconnexion
-        try {
-          await window.Clerk.signOut();
-        } catch (e) {
-          console.error("signOut Clerk:", e);
-        }
-        isSignedIn = false;
-        currentUserId = "guest";
-        refreshAuthButtonUI();
+      } catch(e) {
+        console.error("openSignIn Clerk:", e);
+        alert("Impossible d'ouvrir la connexion.");
       }
-    });
+    } else {
+      // connecté -> déconnexion
+      try {
+        await window.Clerk.signOut();
+      } catch (e) {
+        console.error("signOut Clerk:", e);
+        alert("Impossible de se déconnecter.");
+      }
+      isSignedIn = false;
+      currentUserId = "guest";
+      refreshAuthButtonUI();
+    }
+  });
 
-    window.addEventListener("load", () => {
-      initClerk();
-    });
-  </script>
+  // au chargement de la page, on essaie déjà de peupler l'état
+  window.addEventListener("load", () => {
+    initClerkState();
+  });
+</script>
 </body>
 </html>
