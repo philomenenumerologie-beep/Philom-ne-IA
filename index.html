@@ -335,291 +335,267 @@
 
   <!-- LOGIQUE APP -->
   <script>
-    // =========================
-    // CONFIG
-    // =========================
-    const API_URL = "https://philo-backend-su29.onrender.com/ask";
-    const CLERK_PUBLISHABLE_KEY = "pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA";
+  // ===============================
+  // CONFIG
+  // ===============================
 
-    // l'utilisateur courant: "guest" par défaut
-    let currentUserId = "guest";
+  const API_URL = "https://philo-backend-su29.onrender.com/ask";
 
-    // état par utilisateur:
-    // { tokens: number, conversation:[{role,content}, ...] }
-    function loadUserState(userId) {
-      const raw = localStorage.getItem("philo_state_" + userId);
-      if (!raw) {
-        return {
-          tokens: 5000,
-          conversation: [
-            {
-              role: "system",
-              content:
-                "Tu es Philomène I.A., une assistante personnelle en français, avec un ton humain, calme et rassurant."
-            },
-            {
-              role: "assistant",
-              content:
-                "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.\n" +
-                "Si vous avez un problème, j’ai la solution.\n" +
-                "Vous avez une question, j’ai la réponse.\n" +
-                "Ensemble, on ira plus loin 🕊"
-            }
-          ]
-        };
-      }
-      try {
-        return JSON.parse(raw);
-      } catch {
-        return {
-          tokens: 5000,
-          conversation: []
-        };
-      }
+  // ta clé publique Clerk (celle qui commence par pk_test_...)
+  const CLERK_PUBLISHABLE_KEY = "pk_test_ZW5vdWdoLXRyZWVvcmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA";
+
+  // Etat utilisateur courant
+  let currentUserId = "guest"; // par défaut pas connecté
+  let isSignedIn = false;
+
+  // mémoire locale de la conversation (pour l'affichage + envoyer au backend)
+  const conversation = [
+    {
+      role: "assistant",
+      content:
+        "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.\n" +
+        "Si vous avez un problème, j’ai la solution.\n" +
+        "Vous avez une question, j’ai la réponse.\n" +
+        "Ensemble, on ira plus loin 🕊"
+    }
+  ];
+
+  // ===============================
+  // SÉLECTEURS DOM
+  // ===============================
+
+  const chatContainer   = document.getElementById("chat-container");
+  const userInput       = document.getElementById("user-input");
+  const sendBtn         = document.getElementById("send-btn");
+
+  const menuBtn         = document.getElementById("menu-btn");        // le bouton "…"
+  const menuPanel       = document.getElementById("menu-panel");      // le petit menu déroulant
+  const loginBtn        = document.getElementById("login-btn");       // ligne "Connexion / Inscription"
+  const logoutBtn       = document.getElementById("logout-btn");      // ligne "Se déconnecter"
+
+  const tokenTop        = document.getElementById("token-count-top");     // compteur haut
+  const tokenBottom     = document.getElementById("token-count-bottom");  // compteur bas
+
+  // compteur de tokens local pour l'affichage
+  let tokenCount = 5000;
+
+  // ===============================
+  // FONCTIONS UI
+  // ===============================
+
+  function scrollToBottom() {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function addBubble(text, who) {
+    const div = document.createElement("div");
+    div.classList.add("bubble");
+
+    if (who === "user") {
+      div.classList.add("user");
+    } else if (who === "assistant") {
+      div.classList.add("assistant");
+    } else if (who === "thinking") {
+      div.classList.add("assistant","thinking-bubble");
+    } else {
+      div.classList.add("assistant");
     }
 
-    function saveUserState(userId, state) {
-      localStorage.setItem("philo_state_" + userId, JSON.stringify(state));
+    div.textContent = text || "";
+    chatContainer.appendChild(div);
+    scrollToBottom();
+    return div;
+  }
+
+  function updateTokenDisplay() {
+    tokenTop.textContent    = tokenCount;
+    tokenBottom.textContent = tokenCount;
+  }
+
+  // ===============================
+  // CLERK (auth)
+  // ===============================
+  // On charge Clerk dans la page (si pas déjà dans ton <head>, ajoute ceci dans <head>):
+  // <script
+  //   async
+  //   crossorigin="anonymous"
+  //   data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVvcmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+  //   src="https://cdn.clerk.dev/clerk.js">
+  // </script>
+  //
+  // Important: ce script doit être VRAIMENT dans le HTML final, sinon rien ne s'ouvre.
+
+  async function initClerk() {
+    // Clerk injecte window.Clerk
+    if (!window.Clerk) {
+      console.warn("Clerk pas chargé.");
+      return;
     }
 
-    // état RAM pour celui qui est connecté maintenant
-    let userState = loadUserState(currentUserId);
+    try {
+      await window.Clerk.load();
 
-    // =========================
-    // DOM
-    // =========================
-    const chatContainer   = document.getElementById("chat-container");
-    const userInput       = document.getElementById("user-input");
-    const sendBtn         = document.getElementById("send-btn");
-    const tokenTop        = document.getElementById("token-count-top");
-    const tokenBottom     = document.getElementById("token-count-bottom");
+      const user = window.Clerk.user;
+      const session = window.Clerk.session;
 
-    const moreBtn         = document.getElementById("more-btn");
-    const menuPanel       = document.getElementById("menu-panel");
-    const menuConnectBtn  = document.getElementById("menu-connect-btn");
-    const menuLogoutBtn   = document.getElementById("menu-logout-btn");
-    const menuHelpBtn     = document.getElementById("menu-help-btn");
-
-    // =========================
-    // UI HELPERS
-    // =========================
-    function scrollToBottom() {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    function addBubble(text, who) {
-      const div = document.createElement("div");
-      div.classList.add("bubble");
-      if (who === "user") {
-        div.classList.add("user");
-      } else if (who === "assistant" || who === "system") {
-        div.classList.add("assistant");
-      } else if (who === "thinking") {
-        div.classList.add("thinking-bubble","assistant");
-      } else {
-        div.classList.add("assistant");
-      }
-      div.textContent = text || "";
-      chatContainer.appendChild(div);
-      scrollToBottom();
-      return div;
-    }
-
-    function refreshTokensUI() {
-      tokenTop.textContent    = userState.tokens;
-      tokenBottom.textContent = userState.tokens;
-    }
-
-    function redrawConversationUI() {
-      chatContainer.innerHTML = "";
-      // on réinjecte toute la conv (sauf le role:system, qu'on n'affiche pas à l'écran)
-      for (const msg of userState.conversation) {
-        if (msg.role === "assistant") {
-          addBubble(msg.content, "assistant");
-        } else if (msg.role === "user") {
-          addBubble(msg.content, "user");
-        }
-      }
-      refreshTokensUI();
-    }
-
-    // =========================
-    // ENVOI MESSAGE
-    // =========================
-    async function askPhilomene() {
-      const text = userInput.value.trim();
-      if (!text) return;
-
-      // affiche côté UI
-      addBubble(text, "user");
-
-      // stocke dans la conv
-      userState.conversation.push({
-        role: "user",
-        content: text
-      });
-
-      // vide l'input
-      userInput.value = "";
-
-      // bulle "réflexion"
-      const thinkingBubble = addBubble("Philomène réfléchit à votre message...", "thinking");
-
-      try {
-        // appel backend
-        const resp = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            conversation: userState.conversation
-          })
-        });
-
-        if (!resp.ok) {
-          throw new Error("Erreur réseau " + resp.status);
-        }
-
-        const data = await resp.json();
-
-        // remplace la bulle thinking
-        thinkingBubble.remove();
-        addBubble(data.answer || "…", "assistant");
-
-        // pousse la réponse dans l'historique
-        userState.conversation.push({
-          role: "assistant",
-          content: data.answer || ""
-        });
-
-        // décrémente les tokens
-        userState.tokens = Math.max(0, userState.tokens - 20);
-
-        // UI + sauvegarde
-        refreshTokensUI();
-        saveUserState(currentUserId, userState);
-
-      } catch (err) {
-        thinkingBubble.textContent = "Désolée, j'ai eu un problème réseau.";
-      }
-    }
-
-    sendBtn.addEventListener("click", askPhilomene);
-    userInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        askPhilomene();
-      }
-    });
-
-    // =========================
-    // CLERK AUTH
-    // =========================
-    let clerkLoaded = false;
-    let clerkClient = null;
-
-    async function initClerk() {
-      if (clerkLoaded) return;
-      try {
-        clerkClient = new window.Clerk(CLERK_PUBLISHABLE_KEY);
-        await clerkClient.load();
-        clerkLoaded = true;
-
-        // si user déjà loggé --> on prend son id
-        if (clerkClient.user && clerkClient.session) {
-          currentUserId = clerkClient.user.id || "guest";
-        } else {
-          currentUserId = "guest";
-        }
-
-        userState = loadUserState(currentUserId);
-        applyAuthStateToMenu();
-        redrawConversationUI();
-      } catch(e) {
-        // si Clerk plante, on retombe en invité sans casser le site
-        console.warn("Clerk init fail:", e);
-        currentUserId = "guest";
-        userState = loadUserState(currentUserId);
-        applyAuthStateToMenu();
-        redrawConversationUI();
-      }
-    }
-
-    async function openSignIn() {
-      await initClerk();
-      if (!clerkClient) return;
-      clerkClient.openSignIn({
-        afterSignIn: async () => {
-          // connecté
-          if (clerkClient.user && clerkClient.user.id) {
-            currentUserId = clerkClient.user.id;
-          } else {
-            currentUserId = "guest";
-          }
-          userState = loadUserState(currentUserId);
-          applyAuthStateToMenu();
-          redrawConversationUI();
-        }
-      });
-    }
-
-    async function doLogout() {
-      if (clerkClient) {
-        await clerkClient.signOut();
-      }
-      currentUserId = "guest";
-      userState = loadUserState(currentUserId);
-      applyAuthStateToMenu();
-      redrawConversationUI();
-    }
-
-    // =========================
-    // MENU ⋯
-    // =========================
-    let menuOpen = false;
-    function toggleMenu() {
-      menuOpen = !menuOpen;
-      menuPanel.style.display = menuOpen ? "block" : "none";
-    }
-
-    function applyAuthStateToMenu() {
-      if (clerkClient && clerkClient.user && clerkClient.session) {
+      if (user && session) {
         // connecté
-        menuConnectBtn.style.display = "none";
-        menuLogoutBtn.style.display  = "block";
+        isSignedIn = true;
+        currentUserId = user.id || "guest";
       } else {
-        // invité
-        menuConnectBtn.style.display = "block";
-        menuLogoutBtn.style.display  = "none";
+        // pas connecté
+        isSignedIn = false;
+        currentUserId = "guest";
       }
+
+      refreshMenuUI();
+    } catch (e) {
+      console.error("Erreur initClerk:", e);
     }
+  }
 
-    moreBtn.addEventListener("click", () => {
-      toggleMenu();
+  function refreshMenuUI() {
+    if (isSignedIn) {
+      // cacher "Se connecter", montrer "Se déconnecter"
+      loginBtn.style.display  = "none";
+      logoutBtn.style.display = "block";
+    } else {
+      loginBtn.style.display  = "block";
+      logoutBtn.style.display = "none";
+    }
+  }
+
+  // quand on tape sur "Connexion / Inscription"
+  loginBtn.addEventListener("click", async () => {
+    // ouvre le popup Clerk
+    if (!window.Clerk) return;
+
+    await window.Clerk.openSignIn({
+      // après succès
+      afterSignIn: async () => {
+        await initClerk(); // on recharge l'état
+        menuPanel.style.display = "none";
+      },
+      // après création de compte
+      afterSignUp: async () => {
+        await initClerk();
+        menuPanel.style.display = "none";
+      }
+    });
+  });
+
+  // quand on tape sur "Se déconnecter"
+  logoutBtn.addEventListener("click", async () => {
+    if (!window.Clerk) return;
+
+    try {
+      await window.Clerk.signOut();
+      isSignedIn = false;
+      currentUserId = "guest";
+      refreshMenuUI();
+      menuPanel.style.display = "none";
+    } catch (err) {
+      console.error("Erreur signOut:", err);
+    }
+  });
+
+  // ouvrir / fermer le petit menu "…"
+  menuBtn.addEventListener("click", () => {
+    if (menuPanel.style.display === "block") {
+      menuPanel.style.display = "none";
+    } else {
+      menuPanel.style.display = "block";
+    }
+  });
+
+  // ===============================
+  // ENVOI MESSAGE À PHILOMÈNE
+  // ===============================
+
+  async function askPhilomene() {
+    const text = userInput.value.trim();
+    if (!text) return;
+
+    // bulle utilisateur (violet)
+    addBubble(text, "user");
+
+    // push aussi dans la conversation locale AVANT d'appeler le serveur
+    conversation.push({
+      role: "user",
+      content: text
     });
 
-    menuConnectBtn.addEventListener("click", async () => {
-      toggleMenu();
-      openSignIn();
-    });
+    // clear champ
+    userInput.value = "";
 
-    menuLogoutBtn.addEventListener("click", async () => {
-      toggleMenu();
-      doLogout();
-    });
+    // bulle "elle réfléchit..."
+    const thinkingBubble = addBubble("Philomène réfléchit à votre message...", "thinking");
 
-    // aide (pas encore branché à un écran spécial)
-    menuHelpBtn.addEventListener("click", () => {
-      toggleMenu();
-      alert("Support bientôt disponible 💬");
-    });
+    try {
+      // requête backend
+      const resp = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          // j'envoie tout l'historique pour que le modèle garde le contexte
+          conversation: conversation,
+          // j'envoie aussi l'ID utilisateur pour qu'on puisse plus tard faire mémoire par compte
+          userId: currentUserId
+        })
+      });
 
-    // =========================
-    // LANCEMENT
-    // =========================
-    // On essaie de charger Clerk pour voir si l'utilisateur est déjà loggé.
-    initClerk();
-  </script>
-</body>
-</html>
+      if (!resp.ok) {
+        throw new Error("Réponse réseau pas OK: " + resp.status);
+      }
+
+      const data = await resp.json();
+
+      // remplace la bulle thinking par la vraie réponse
+      thinkingBubble.remove();
+      addBubble(data.answer || "…", "assistant");
+
+      // push la réponse dans la conv locale
+      conversation.push({
+        role: "assistant",
+        content: data.answer || ""
+      });
+
+      // décrémente les tokens simulés
+      tokenCount = Math.max(0, tokenCount - 20);
+      updateTokenDisplay();
+
+    } catch (err) {
+      console.error("Erreur fetch /ask:", err);
+
+      thinkingBubble.textContent =
+        "Désolée, j'ai eu un problème réseau.";
+    }
+  }
+
+  // bouton envoyer
+  sendBtn.addEventListener("click", askPhilomene);
+
+  // touche Entrée
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      askPhilomene();
+    }
+  });
+
+  // ===============================
+  // INIT AU CHARGEMENT
+  // ===============================
+
+  // on affiche déjà le message d'accueil (le premier élément de conversation)
+  function initUI() {
+    addBubble(conversation[0].content, "assistant");
+    updateTokenDisplay();
+    scrollToBottom();
+  }
+
+  initUI();
+  initClerk();
+</script>
