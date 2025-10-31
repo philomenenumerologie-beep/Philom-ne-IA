@@ -6,6 +6,12 @@
   <title>Philomène I.A.</title>
   <meta name="color-scheme" content="dark" />
 
+  <!-- Clerk (auth par email + code) -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+  </script>
+
   <style>
     body {
       margin:0;
@@ -29,6 +35,7 @@
       font-size:16px;
       font-weight:500;
     }
+
     .left-head,
     .right-head{
       display:flex;
@@ -36,8 +43,8 @@
       gap:12px;
       color:#fff;
     }
-    .burger,
-    .more {
+
+    .burger {
       width:40px;
       height:40px;
       background:#111;
@@ -51,6 +58,30 @@
       font-weight:500;
     }
 
+    /* bouton Connexion / Inscription */
+    .login-btn {
+      background:#1a0aff;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.15);
+      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
+      color:#fff;
+      font-size:14px;
+      font-weight:600;
+      line-height:1.2;
+      padding:8px 10px;
+      min-width:110px;
+      text-align:center;
+    }
+
+    .login-email {
+      font-size:11px;
+      color:#aaa;
+      font-weight:400;
+      max-width:140px;
+      line-height:1.2;
+      word-break:break-word;
+    }
+
     .token-box {
       display:flex;
       flex-direction:column;
@@ -59,6 +90,7 @@
       line-height:1.2;
       color:#ffd84f;
       font-weight:600;
+      text-align:center;
     }
     .token-value {
       display:flex;
@@ -94,6 +126,8 @@
       font-size:18px;
       box-shadow:0 30px 60px rgba(0,0,0,0.6);
       border:1px solid rgba(255,255,255,0.08);
+      white-space:pre-wrap;
+      word-break:break-word;
     }
 
     /* bulle assistante */
@@ -212,7 +246,10 @@
     </div>
 
     <div class="right-head">
-      <div class="more">⋯</div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end;">
+        <div id="login-btn" class="login-btn">Connexion</div>
+        <div id="login-email" class="login-email"></div>
+      </div>
     </div>
   </header>
 
@@ -243,17 +280,14 @@
 
   <!-- SCRIPT LOGIQUE -->
   <script>
-    // ========== CONFIG ==========
-    // URL de l'API backend Render (POST /ask)
+    // =========================
+    // CONFIG
+    // =========================
     const API_URL = "https://philo-backend-su29.onrender.com/ask";
-
-    // compteur de tokens simulé
     let tokenCount = 5000;
+    let currentUserEmail = null;
 
-    // Conversation partagée FRONT -> BACK
-    // On initialise avec:
-    //   - un message "system" (personnalité de Philomène)
-    //   - un message "assistant" (son message de bienvenue)
+    // conversation envoyée au backend
     const conversation = [
       {
         role: "system",
@@ -263,28 +297,33 @@
       {
         role: "assistant",
         content:
-          "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.\n" +
-          "Si vous avez un problème, j’ai la solution.\n" +
-          "Vous avez une question, j’ai la réponse.\n" +
-          "Ensemble, on ira plus loin 🕊"
+`👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.
+Si vous avez un problème, j’ai la solution.
+Vous avez une question, j’ai la réponse.
+Ensemble, on ira plus loin 🕊`
       }
     ];
 
-    // ========== SÉLECTEURS DOM ==========
+    // =========================
+    // SELECTEURS
+    // =========================
     const chatContainer = document.getElementById("chat-container");
     const userInput     = document.getElementById("user-input");
     const sendBtn       = document.getElementById("send-btn");
     const tokenTop      = document.getElementById("token-count-top");
     const tokenBottom   = document.getElementById("token-count-bottom");
 
-    // ========== FONCTIONS UI ==========
+    const loginBtn      = document.getElementById("login-btn");
+    const loginEmailBox = document.getElementById("login-email");
 
+    // =========================
+    // UI HELPERS
+    // =========================
     function scrollToBottom() {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     function addBubble(text, who) {
-      // who = "assistant" | "user" | "system" | "thinking"
       const div = document.createElement("div");
       div.classList.add("bubble");
 
@@ -298,11 +337,10 @@
         div.classList.add("assistant");
       }
 
-      // sécurité basique pour éviter undefined
       div.textContent = text || "";
       chatContainer.appendChild(div);
       scrollToBottom();
-      return div; // on renvoie la bulle (utile pour loader)
+      return div;
     }
 
     function updateTokenDisplay() {
@@ -310,41 +348,82 @@
       tokenBottom.textContent = tokenCount;
     }
 
-    // Au chargement: on affiche déjà les deux premiers messages (bienvenue)
+    // affiche le message de bienvenue au chargement
     function initConversationUI() {
-      // message assistant d'accueil
       const welcomeMsg = conversation[1].content;
       addBubble(welcomeMsg, "assistant");
-
       updateTokenDisplay();
       scrollToBottom();
     }
 
-    // ========== APPEL API ==========
+    // =========================
+    // CLERK LOGIN / SIGNUP
+    // =========================
+    async function setupClerkAuth() {
+      await Clerk.load();
+
+      if (Clerk.user) {
+        // déjà connecté
+        currentUserEmail = Clerk.user.primaryEmailAddress?.emailAddress || "";
+        loginBtn.textContent = "Déconnexion";
+        loginEmailBox.textContent = currentUserEmail;
+        tokenCount = 5000; // ici tu pourras mettre le vrai solde par user si tu veux
+        updateTokenDisplay();
+
+        loginBtn.onclick = async () => {
+          await Clerk.signOut();
+          currentUserEmail = null;
+          loginBtn.textContent = "Connexion";
+          loginEmailBox.textContent = "";
+          tokenCount = 1000; // mode invité après déconnexion
+          updateTokenDisplay();
+        };
+      } else {
+        // pas connecté
+        currentUserEmail = null;
+        loginBtn.textContent = "Connexion";
+        loginEmailBox.textContent = "";
+
+        loginBtn.onclick = async () => {
+          // ouvre la pop-up Clerk
+          Clerk.openSignIn({
+            afterSignInUrl: window.location.href,
+            afterSignUpUrl: window.location.href
+          });
+        };
+
+        // bonus: si tu veux aussi un bouton inscription séparé:
+        // Clerk.openSignUp()
+      }
+    }
+
+    // =========================
+    // ENVOI MESSAGE A L'API
+    // =========================
     async function askPhilomene() {
       const text = userInput.value.trim();
       if (!text) return;
 
-      // 1. on affiche le message USER (violet)
+      // bulle user
       addBubble(text, "user");
 
-      // 2. on push dans la conversation côté JS
+      // push dans la mémoire locale
       conversation.push({
         role: "user",
         content: text
       });
 
-      // 3. reset champ
+      // reset champ
       userInput.value = "";
 
-      // 4. bulle "Philomène réfléchit..."
+      // bulle attente
       const thinkingBubble = addBubble(
         "Philomène réfléchit à votre message...",
         "thinking"
       );
 
       try {
-        // 5. on appelle le backend
+        // on envoie la conversation au backend
         const resp = await fetch(API_URL, {
           method: "POST",
           headers: {
@@ -360,26 +439,23 @@
         }
 
         const data = await resp.json();
-        // data.answer doit être le texte de Philomène renvoyé par le serveur
 
-        // 6. on enlève la bulle 'thinking' et on met la vraie réponse
+        // remplace la bulle d'attente par la vraie réponse
         thinkingBubble.remove();
         addBubble(data.answer || "…", "assistant");
 
-        // 7. on pousse la réponse dans notre conversation locale
+        // on push la réponse dans la mémoire locale
         conversation.push({
           role: "assistant",
           content: data.answer || ""
         });
 
-        // 8. on décrémente un peu les tokens simulés
+        // tokens -20 à chaque échange pour l'instant
         tokenCount = Math.max(0, tokenCount - 20);
         updateTokenDisplay();
 
       } catch (err) {
-        // si erreur => on remplace la bulle 'thinking' par l'erreur
-        thinkingBubble.textContent =
-          "Désolée, j'ai eu un problème réseau.";
+        thinkingBubble.textContent = "Désolée, j'ai eu un problème réseau.";
       }
     }
 
@@ -394,8 +470,13 @@
       }
     });
 
-    // init à l'ouverture
-    initConversationUI();
+    // =========================
+    // AU CHARGEMENT
+    // =========================
+    window.addEventListener("load", async () => {
+      initConversationUI();
+      await setupClerkAuth();
+    });
   </script>
 </body>
 </html>
