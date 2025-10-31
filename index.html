@@ -6,48 +6,43 @@
   <title>Philomène I.A.</title>
   <meta name="color-scheme" content="dark" />
 
-  <style>
-    :root {
-      --bg:#000;
-      --panel:#0a0a12;
-      --line:rgba(255,255,255,0.08);
-      --accent:#4c3bff;
-      --accent-glow:rgba(120,80,255,0.8);
-      --soft:#2b2b2b;
-      --text-main:#fff;
-      --text-dim:#999;
-      --token:#ffd84f;
-    }
+  <!-- Clerk client pour l'auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
 
+  <style>
     body {
       margin:0;
-      background:var(--bg);
-      color:var(--text-main);
+      background:#000;
+      color:#fff;
       font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,"Helvetica Neue",Arial,sans-serif;
       display:flex;
       flex-direction:column;
       min-height:100vh;
     }
 
-    /* HEADER */
+    /* HEADER BAR */
     header {
-      background:var(--bg);
-      border-bottom:1px solid var(--line);
+      position:relative;
+      background:#000;
+      color:#ffd84f;
+      border-bottom:1px solid rgba(255,255,255,0.08);
       padding:16px;
       display:flex;
       align-items:center;
       justify-content:space-between;
+      font-size:16px;
+      font-weight:500;
     }
 
     .left-head,
-    .right-head {
+    .right-head{
       display:flex;
       align-items:center;
       gap:12px;
       color:#fff;
     }
 
-    .icon-btn {
+    .burger {
       width:40px;
       height:40px;
       background:#111;
@@ -61,74 +56,97 @@
       font-weight:500;
     }
 
+    .more {
+      width:40px;
+      height:40px;
+      background:#111;
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:20px;
+      font-weight:500;
+      cursor:pointer;
+    }
+
     .token-box {
       display:flex;
       flex-direction:column;
       align-items:center;
       font-size:14px;
       line-height:1.2;
-      color:var(--token);
+      color:#ffd84f;
       font-weight:600;
-      text-align:center;
     }
+
     .token-value {
       display:flex;
       align-items:center;
-      gap:6px;
-      font-size:15px;
-    }
-    .token-value span#token-count {
-      color:var(--token);
-      font-feature-settings:"tnum";
-      font-size:16px;
-      font-weight:600;
-    }
-    .token-label {
-      font-size:12px;
-      font-weight:400;
-      color:var(--text-dim);
+      gap:8px;
     }
 
-    /* MENU (⋯) DÉROULANT */
-    .menu-box {
-      position:relative;
+    .token-value span#token-count-top{
+      color:#ffd84f;
+      font-feature-settings:"tnum";
     }
-    .dropdown {
+
+    .token-label {
+      font-size:12px;
+      color:#888;
+      font-weight:400;
+    }
+
+    /* MENU FLOTTANT MORE (⋯) */
+    #menu-panel {
       position:absolute;
-      top:48px;
-      right:0;
-      background:#0f0f1a;
-      border:1px solid var(--line);
-      border-radius:10px;
+      right:16px;
+      top:70px;
+      min-width:230px;
+      background:#111;
+      border:1px solid rgba(255,255,255,0.2);
       box-shadow:0 30px 60px rgba(0,0,0,0.8);
-      min-width:180px;
+      border-radius:8px;
+      color:#fff;
+      font-size:16px;
       padding:8px 0;
       display:none;
       z-index:9999;
     }
-    .dropdown-btn {
-      width:100%;
-      background:transparent;
-      border:0;
-      text-align:left;
+
+    #menu-panel .item {
       padding:12px 16px;
-      font-size:15px;
-      color:#fff;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      line-height:1.3;
+      font-weight:500;
+      cursor:pointer;
       display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .dropdown-btn:active {
-      background:rgba(255,255,255,0.07);
-    }
-    .dropdown-separator {
-      height:1px;
-      background:var(--line);
-      margin:6px 0;
+      flex-direction:column;
     }
 
-    /* CHAT AREA */
-    .chat-area {
+    #menu-panel .item:last-child {
+      border-bottom:none;
+    }
+
+    #menu-connect-btn {
+      color:#fff;
+    }
+    #menu-logout-btn {
+      color:#ff4d4d;
+      display:none;
+    }
+    #menu-help-btn {
+      color:#9dd0ff;
+    }
+    #menu-panel small {
+      font-size:13px;
+      font-weight:400;
+      color:#888;
+    }
+
+    /* ZONE MESSAGES */
+    .chat-wrapper {
       flex:1;
       display:flex;
       flex-direction:column;
@@ -143,52 +161,57 @@
       border-radius:12px;
       padding:16px;
       line-height:1.4;
-      font-size:17px;
+      font-size:18px;
       box-shadow:0 30px 60px rgba(0,0,0,0.6);
       border:1px solid rgba(255,255,255,0.08);
       white-space:pre-wrap;
-      word-break:break-word;
     }
 
+    /* bulle assistante / system */
     .assistant {
       align-self:flex-start;
-      background:var(--soft);
-      color:var(--text-main);
+      background:#2b2b2b;
+      color:#fff;
     }
 
+    /* bulle utilisateur */
     .user {
       align-self:flex-end;
-      background:radial-gradient(circle at 100% 0%, rgba(130,110,255,.6) 0%, rgba(20,10,60,0) 60%), var(--accent);
+      background:#4c3bff;
+      background:radial-gradient(circle at 100% 0%, rgba(130,110,255,.6) 0%, rgba(20,10,60,0) 60%), #4c3bff;
       color:#fff;
       font-weight:500;
       border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px var(--accent-glow),0 30px 60px rgba(0,0,0,0.8);
+      box-shadow:0 0 40px rgba(100,60,255,0.6),0 30px 60px rgba(0,0,0,0.8);
     }
 
-    .thinking {
-      font-size:15px;
+    .thinking-bubble {
+      font-size:16px;
       color:#ddd;
-      background:var(--soft);
+      background:#2b2b2b;
     }
 
-    /* BARRE BAS */
-    .bottom-zone {
-      background:var(--bg);
-      border-top:1px solid var(--line);
+    /* BARRE D'ENVOI */
+    .input-zone-wrapper {
+      background:#000;
+      border-top:1px solid rgba(255,255,255,0.08);
       padding:16px;
     }
+
     .input-row {
       display:flex;
       align-items:stretch;
       gap:12px;
+      background:radial-gradient(circle at 0% 0%, rgba(130,110,255,.3) 0%, rgba(0,0,0,0) 60%);
     }
+
     .plus-btn {
       min-width:52px;
       min-height:52px;
-      background:var(--accent);
+      background:#1a0aff;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px var(--accent-glow),0 30px 60px rgba(0,0,0,0.8);
+      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -197,75 +220,52 @@
       line-height:0;
       font-weight:500;
     }
-    .message-input {
+
+    .text-input {
       flex:1;
       background:#0f0f1a;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.25);
-      font-size:16px;
+      font-size:18px;
       color:#fff;
       padding:16px;
       font-family:inherit;
       outline:none;
     }
+
     .send-btn {
       min-width:52px;
       min-height:52px;
-      background:var(--accent);
+      background:#1a0aff;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 0 30px var(--accent-glow),0 30px 60px rgba(0,0,0,0.8);
+      box-shadow:0 0 30px rgba(120,80,255,0.8),0 30px 60px rgba(0,0,0,0.8);
       display:flex;
       align-items:center;
       justify-content:center;
       color:#fff;
-      font-size:20px;
+      font-size:24px;
       line-height:0;
       font-weight:500;
+      cursor:pointer;
     }
+
     .status-line {
       text-align:center;
       margin-top:12px;
-      font-size:14px;
-      color:var(--text-dim);
+      font-size:15px;
+      color:#999;
       font-weight:400;
     }
+
     .status-line strong {
       font-weight:600;
-      color:var(--text-main);
+      color:#fff;
     }
 
-    /* PETIT POPUP "+" (photo, doc, micro) */
-    .plus-wrapper {
-      position:relative;
-    }
-    .plus-menu {
-      position:absolute;
-      bottom:60px;
-      left:0;
-      background:#0f0f1a;
-      border:1px solid var(--line);
-      border-radius:10px;
-      box-shadow:0 30px 60px rgba(0,0,0,0.8);
-      min-width:200px;
-      padding:8px 0;
-      display:none;
-      z-index:9999;
-    }
-    .plus-item {
-      width:100%;
-      background:transparent;
-      border:0;
-      text-align:left;
-      padding:12px 16px;
-      font-size:15px;
+    .status-line #token-count-bottom {
       color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .plus-item:active {
-      background:rgba(255,255,255,0.07);
+      font-feature-settings:"tnum";
     }
   </style>
 </head>
@@ -275,113 +275,136 @@
   <!-- HEADER -->
   <header>
     <div class="left-head">
-      <div class="icon-btn" id="menu-open">☰</div>
+      <div class="burger">☰</div>
     </div>
 
     <div class="token-box">
       <div class="token-value">
-        <div style="font-size:18px;">💎</div>
-        <span id="token-count">0</span>
-        <span style="color:#fff;font-size:14px;">tokens</span>
+        <div style="font-size:20px;">💎</div>
+        <span id="token-count-top">5000</span>
+        <span>tokens</span>
       </div>
       <div class="token-label">Philomène I.A.</div>
     </div>
 
-    <div class="right-head menu-box">
-      <div class="icon-btn" id="more-btn">⋯</div>
+    <div class="right-head">
+      <div class="more" id="more-btn">⋯</div>
+    </div>
 
-      <div class="dropdown" id="dropdown-menu">
-        <button class="dropdown-btn" id="login-btn">
-          <span>Se connecter</span>
-          <span style="opacity:.6;">🔐</span>
-        </button>
-
-        <button class="dropdown-btn" id="logout-btn" style="display:none;">
-          <span>Se déconnecter</span>
-          <span style="opacity:.6;">🚪</span>
-        </button>
-
-        <div class="dropdown-separator"></div>
-
-        <button class="dropdown-btn" id="faq-btn">
-          <span>Aide / Comment je t'aide ?</span>
-          <span style="opacity:.6;">❓</span>
-        </button>
+    <!-- MENU FLOTTANT -->
+    <div id="menu-panel">
+      <div class="item" id="menu-connect-btn">
+        <span>Se connecter 🔐</span>
+        <small>Créer un compte ou se connecter</small>
+      </div>
+      <div class="item" id="menu-logout-btn" style="display:none;">
+        <span>Se déconnecter</span>
+        <small>Fermer la session</small>
+      </div>
+      <div class="item" id="menu-help-btn">
+        <span>Aide / Comment je t'aide ❓</span>
+        <small>Support, utilisation, tokens</small>
       </div>
     </div>
   </header>
 
   <!-- CHAT -->
-  <div id="chat-area" class="chat-area"></div>
+  <div id="chat-container" class="chat-wrapper"></div>
 
-  <!-- BARRE BAS -->
-  <div class="bottom-zone">
+  <!-- BARRE ENVOI -->
+  <div class="input-zone-wrapper">
     <div class="input-row">
-      <div class="plus-wrapper">
-        <div class="plus-btn" id="plus-toggle">+</div>
-
-        <div class="plus-menu" id="plus-menu">
-          <button class="plus-item">
-            <span>Envoyer une photo</span><span>📷</span>
-          </button>
-          <button class="plus-item">
-            <span>Envoyer un document</span><span>📎</span>
-          </button>
-          <button class="plus-item">
-            <span>Dicter au micro</span><span>🎙</span>
-          </button>
-        </div>
-      </div>
-
+      <div class="plus-btn">+</div>
       <input
-        id="msg-input"
-        class="message-input"
+        id="user-input"
+        class="text-input"
         placeholder="Écrivez votre message..."
       />
       <div id="send-btn" class="send-btn">➤</div>
     </div>
 
     <div class="status-line">
-      <span id="status-text">Prêt</span> •
-      <strong><span id="tokens-bottom">0</span> tokens restants</strong>
+      Prêt •
+      <strong>
+        <span id="token-count-bottom">5000</span>
+        tokens
+      </strong>
+      restants
     </div>
   </div>
 
+  <!-- LOGIQUE APP -->
   <script>
-    // =============================
+    // =========================
     // CONFIG
-    // =============================
-    const BACKEND_URL = "https://philo-backend-su29.onrender.com";
+    // =========================
+    const API_URL = "https://philo-backend-su29.onrender.com/ask";
+    const CLERK_PUBLISHABLE_KEY = "pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
-    // On va stocker ici l'utilisateur courant.
-    // Si connecté via Clerk on aura un vrai userId genre "user_abc123"
-    // Pour l'instant on simule: on garde en mémoire dans le navigateur.
-    let currentUserId = localStorage.getItem("philo_userId") || "";
+    // l'utilisateur courant: "guest" par défaut
+    let currentUserId = "guest";
 
-    // Historique local pour l'affichage
-    let conversation = [];
-    let tokensLeft = 0;
+    // état par utilisateur:
+    // { tokens: number, conversation:[{role,content}, ...] }
+    function loadUserState(userId) {
+      const raw = localStorage.getItem("philo_state_" + userId);
+      if (!raw) {
+        return {
+          tokens: 5000,
+          conversation: [
+            {
+              role: "system",
+              content:
+                "Tu es Philomène I.A., une assistante personnelle en français, avec un ton humain, calme et rassurant."
+            },
+            {
+              role: "assistant",
+              content:
+                "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.\n" +
+                "Si vous avez un problème, j’ai la solution.\n" +
+                "Vous avez une question, j’ai la réponse.\n" +
+                "Ensemble, on ira plus loin 🕊"
+            }
+          ]
+        };
+      }
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return {
+          tokens: 5000,
+          conversation: []
+        };
+      }
+    }
 
-    // =============================
-    // HELPERS UI
-    // =============================
-    const chatArea      = document.getElementById("chat-area");
-    const msgInput      = document.getElementById("msg-input");
-    const sendBtn       = document.getElementById("send-btn");
-    const tokenTopEl    = document.getElementById("token-count");
-    const tokenBottomEl = document.getElementById("tokens-bottom");
-    const statusTextEl  = document.getElementById("status-text");
+    function saveUserState(userId, state) {
+      localStorage.setItem("philo_state_" + userId, JSON.stringify(state));
+    }
 
-    const moreBtn       = document.getElementById("more-btn");
-    const dropdownMenu  = document.getElementById("dropdown-menu");
-    const loginBtn      = document.getElementById("login-btn");
-    const logoutBtn     = document.getElementById("logout-btn");
+    // état RAM pour celui qui est connecté maintenant
+    let userState = loadUserState(currentUserId);
 
-    const plusToggle    = document.getElementById("plus-toggle");
-    const plusMenu      = document.getElementById("plus-menu");
+    // =========================
+    // DOM
+    // =========================
+    const chatContainer   = document.getElementById("chat-container");
+    const userInput       = document.getElementById("user-input");
+    const sendBtn         = document.getElementById("send-btn");
+    const tokenTop        = document.getElementById("token-count-top");
+    const tokenBottom     = document.getElementById("token-count-bottom");
 
+    const moreBtn         = document.getElementById("more-btn");
+    const menuPanel       = document.getElementById("menu-panel");
+    const menuConnectBtn  = document.getElementById("menu-connect-btn");
+    const menuLogoutBtn   = document.getElementById("menu-logout-btn");
+    const menuHelpBtn     = document.getElementById("menu-help-btn");
+
+    // =========================
+    // UI HELPERS
+    // =========================
     function scrollToBottom() {
-      chatArea.scrollTop = chatArea.scrollHeight;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     function addBubble(text, who) {
@@ -389,191 +412,214 @@
       div.classList.add("bubble");
       if (who === "user") {
         div.classList.add("user");
-      } else if (who === "assistant") {
+      } else if (who === "assistant" || who === "system") {
         div.classList.add("assistant");
       } else if (who === "thinking") {
-        div.classList.add("assistant","thinking");
+        div.classList.add("thinking-bubble","assistant");
       } else {
         div.classList.add("assistant");
       }
       div.textContent = text || "";
-      chatArea.appendChild(div);
+      chatContainer.appendChild(div);
       scrollToBottom();
       return div;
     }
 
-    function renderConversation() {
-      chatArea.innerHTML = "";
-      for (const msg of conversation) {
-        if (msg.role === "system") {
-          // on ne montre pas le system
-          continue;
-        }
+    function refreshTokensUI() {
+      tokenTop.textContent    = userState.tokens;
+      tokenBottom.textContent = userState.tokens;
+    }
+
+    function redrawConversationUI() {
+      chatContainer.innerHTML = "";
+      // on réinjecte toute la conv (sauf le role:system, qu'on n'affiche pas à l'écran)
+      for (const msg of userState.conversation) {
         if (msg.role === "assistant") {
           addBubble(msg.content, "assistant");
         } else if (msg.role === "user") {
           addBubble(msg.content, "user");
         }
       }
+      refreshTokensUI();
     }
 
-    function updateTokenDisplay() {
-      tokenTopEl.textContent    = tokensLeft;
-      tokenBottomEl.textContent = tokensLeft;
-    }
-
-    function setStatus(txt) {
-      statusTextEl.textContent = txt;
-    }
-
-    // =============================
-    // MENU ⋯
-    // =============================
-    let menuOpen = false;
-    moreBtn.addEventListener("click", () => {
-      menuOpen = !menuOpen;
-      dropdownMenu.style.display = menuOpen ? "block" : "none";
-
-      // maj boutons login/logout selon si on est connecté
-      if (currentUserId) {
-        loginBtn.style.display  = "none";
-        logoutBtn.style.display = "flex";
-      } else {
-        loginBtn.style.display  = "flex";
-        logoutBtn.style.display = "none";
-      }
-    });
-
-    // bouton +
-    let plusOpen = false;
-    plusToggle.addEventListener("click", () => {
-      plusOpen = !plusOpen;
-      plusMenu.style.display = plusOpen ? "block" : "none";
-    });
-
-    // =============================
-    // "Connexion" (fake Clerk pour l’instant)
-    // =============================
-    loginBtn.addEventListener("click", () => {
-      // ici on ferait Clerk.openSignIn() normalement
-      // pour le moment: on simule un ID fixe
-      currentUserId = "user_demo";
-      localStorage.setItem("philo_userId", currentUserId);
-      dropdownMenu.style.display = "none";
-      menuOpen = false;
-      loadUserState();
-    });
-
-    logoutBtn.addEventListener("click", () => {
-      // On dit juste au backend "ok", mais surtout on nettoie côté front
-      fetch(BACKEND_URL + "/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: currentUserId })
-      }).catch(()=>{});
-
-      currentUserId = "";
-      localStorage.removeItem("philo_userId");
-      dropdownMenu.style.display = "none";
-      menuOpen = false;
-      loadUserState(); // recharge en mode invité
-    });
-
-    // =============================
-    // CHARGER /me
-    // =============================
-    async function loadUserState() {
-      setStatus("Chargement…");
-
-      try {
-        const resp = await fetch(BACKEND_URL + "/me", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: currentUserId })
-        });
-
-        const data = await resp.json();
-
-        // tokens
-        tokensLeft = data.tokens || 0;
-        updateTokenDisplay();
-
-        // historique pour l'affichage
-        conversation = data.history || [];
-        renderConversation();
-
-        setStatus("Prêt");
-      } catch (e) {
-        console.error(e);
-        setStatus("Erreur de connexion serveur");
-      }
-    }
-
-    // =============================
-    // ENVOI MESSAGE -> /ask
-    // =============================
-    async function sendMessage() {
-      const text = msgInput.value.trim();
+    // =========================
+    // ENVOI MESSAGE
+    // =========================
+    async function askPhilomene() {
+      const text = userInput.value.trim();
       if (!text) return;
 
-      // Ajoute ma bulle violette direct
-      addBubble(text,"user");
-      msgInput.value = "";
+      // affiche côté UI
+      addBubble(text, "user");
 
-      // Bulle "réflexion"
-      const thinkingDiv = addBubble("Philomène réfléchit…", "thinking");
+      // stocke dans la conv
+      userState.conversation.push({
+        role: "user",
+        content: text
+      });
 
-      setStatus("Réponse en cours…");
+      // vide l'input
+      userInput.value = "";
+
+      // bulle "réflexion"
+      const thinkingBubble = addBubble("Philomène réfléchit à votre message...", "thinking");
 
       try {
-        const resp = await fetch(BACKEND_URL + "/ask", {
+        // appel backend
+        const resp = await fetch(API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
-            userId: currentUserId,
-            text: text
+            conversation: userState.conversation
           })
         });
 
+        if (!resp.ok) {
+          throw new Error("Erreur réseau " + resp.status);
+        }
+
         const data = await resp.json();
 
-        thinkingDiv.remove();
+        // remplace la bulle thinking
+        thinkingBubble.remove();
+        addBubble(data.answer || "…", "assistant");
 
-        if (data.error) {
-          addBubble(data.error, "assistant");
-          setStatus("Erreur");
-          return;
-        }
+        // pousse la réponse dans l'historique
+        userState.conversation.push({
+          role: "assistant",
+          content: data.answer || ""
+        });
 
-        // réponse IA
-        addBubble(data.answer, "assistant");
+        // décrémente les tokens
+        userState.tokens = Math.max(0, userState.tokens - 20);
 
-        // mets à jour les tokens restants venant du serveur
-        if (typeof data.tokens === "number") {
-          tokensLeft = data.tokens;
-          updateTokenDisplay();
-        }
+        // UI + sauvegarde
+        refreshTokensUI();
+        saveUserState(currentUserId, userState);
 
-        setStatus("Prêt");
       } catch (err) {
-        console.error(err);
-        thinkingDiv.textContent = "J'ai eu un souci réseau 😔";
-        setStatus("Erreur réseau");
+        thinkingBubble.textContent = "Désolée, j'ai eu un problème réseau.";
       }
     }
 
-    sendBtn.addEventListener("click", sendMessage);
-    msgInput.addEventListener("keydown", (e) => {
+    sendBtn.addEventListener("click", askPhilomene);
+    userInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        sendMessage();
+        askPhilomene();
       }
     });
 
-    // =============================
-    // AU LANCEMENT
-    // =============================
-    loadUserState();
+    // =========================
+    // CLERK AUTH
+    // =========================
+    let clerkLoaded = false;
+    let clerkClient = null;
+
+    async function initClerk() {
+      if (clerkLoaded) return;
+      try {
+        clerkClient = new window.Clerk(CLERK_PUBLISHABLE_KEY);
+        await clerkClient.load();
+        clerkLoaded = true;
+
+        // si user déjà loggé --> on prend son id
+        if (clerkClient.user && clerkClient.session) {
+          currentUserId = clerkClient.user.id || "guest";
+        } else {
+          currentUserId = "guest";
+        }
+
+        userState = loadUserState(currentUserId);
+        applyAuthStateToMenu();
+        redrawConversationUI();
+      } catch(e) {
+        // si Clerk plante, on retombe en invité sans casser le site
+        console.warn("Clerk init fail:", e);
+        currentUserId = "guest";
+        userState = loadUserState(currentUserId);
+        applyAuthStateToMenu();
+        redrawConversationUI();
+      }
+    }
+
+    async function openSignIn() {
+      await initClerk();
+      if (!clerkClient) return;
+      clerkClient.openSignIn({
+        afterSignIn: async () => {
+          // connecté
+          if (clerkClient.user && clerkClient.user.id) {
+            currentUserId = clerkClient.user.id;
+          } else {
+            currentUserId = "guest";
+          }
+          userState = loadUserState(currentUserId);
+          applyAuthStateToMenu();
+          redrawConversationUI();
+        }
+      });
+    }
+
+    async function doLogout() {
+      if (clerkClient) {
+        await clerkClient.signOut();
+      }
+      currentUserId = "guest";
+      userState = loadUserState(currentUserId);
+      applyAuthStateToMenu();
+      redrawConversationUI();
+    }
+
+    // =========================
+    // MENU ⋯
+    // =========================
+    let menuOpen = false;
+    function toggleMenu() {
+      menuOpen = !menuOpen;
+      menuPanel.style.display = menuOpen ? "block" : "none";
+    }
+
+    function applyAuthStateToMenu() {
+      if (clerkClient && clerkClient.user && clerkClient.session) {
+        // connecté
+        menuConnectBtn.style.display = "none";
+        menuLogoutBtn.style.display  = "block";
+      } else {
+        // invité
+        menuConnectBtn.style.display = "block";
+        menuLogoutBtn.style.display  = "none";
+      }
+    }
+
+    moreBtn.addEventListener("click", () => {
+      toggleMenu();
+    });
+
+    menuConnectBtn.addEventListener("click", async () => {
+      toggleMenu();
+      openSignIn();
+    });
+
+    menuLogoutBtn.addEventListener("click", async () => {
+      toggleMenu();
+      doLogout();
+    });
+
+    // aide (pas encore branché à un écran spécial)
+    menuHelpBtn.addEventListener("click", () => {
+      toggleMenu();
+      alert("Support bientôt disponible 💬");
+    });
+
+    // =========================
+    // LANCEMENT
+    // =========================
+    // On essaie de charger Clerk pour voir si l'utilisateur est déjà loggé.
+    initClerk();
   </script>
 </body>
 </html>
