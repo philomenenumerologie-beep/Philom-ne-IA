@@ -26,7 +26,7 @@
       background-size: 120% 120%;
     }
 
-    /* ===== HEADER ===== */
+    /* ========== HEADER ========= */
     .topbar {
       background-color: #000;
       color: #fff;
@@ -64,11 +64,7 @@
     .tokens-box {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      font-size: 14px;
       line-height: 1.2;
-      color: #ffd44b;
-      font-weight: 600;
     }
 
     .tokens-topline {
@@ -79,66 +75,62 @@
       font-weight: 600;
       color: #ffd44b;
     }
+
     .tokens-diamond {
       font-size: 20px;
       color: #4ccfff;
     }
+
     .tokens-amount {
       color: #ffd44b;
     }
+
     .assistant-name {
       color: #888;
       font-size: 13px;
-      margin-top: 2px;
+      font-weight: 500;
     }
 
-    /* ===== BOUTON COMPTE (connexion / déconnexion) ===== */
+    /* Bouton Connexion / Inscription */
     #auth-btn {
-      min-width: auto;
+      background-color: rgba(20,20,20,0.9);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 8px;
-      background-color: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #fff;
-      font-size: 15px;
-      line-height: 1.2;
-      font-weight: 500;
       padding: 10px 12px;
+      min-height: 44px;
       display: flex;
       flex-direction: column;
-      text-align: right;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
-    }
-    #auth-line-main {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    #auth-icon {
-      font-size: 16px;
-    }
-    #auth-text-main {
+      justify-content: center;
+      text-align: left;
+      color: #fff;
       font-size: 15px;
       font-weight: 500;
+      line-height: 1.2;
+    }
+
+    #auth-mainline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
       color: #fff;
     }
-    #auth-text-sub {
+
+    #auth-mainline .lock {
+      font-size: 18px;
+      color: #d4b26a;
+    }
+
+    #auth-subline {
       font-size: 12px;
-      color: #888;
+      color: #8f8f8f;
       font-weight: 400;
     }
 
-    /* si connecté on met le sous-texte en accent rouge pour "déconnexion" */
-    .logout-mode #auth-text-main {
-      color: #ff4d4d;
-      font-weight: 600;
-    }
-    .logout-mode #auth-icon {
-      color: #ff4d4d;
-    }
+    /* Quand connecté on change le texte via JS */
 
-    /* ===== CHAT AREA ===== */
+    /* ========== CHAT ZONE ========= */
     .chat-area {
       flex: 1;
       padding: 16px;
@@ -161,6 +153,7 @@
 
     .bubble.assistant {
       align-self: flex-start;
+      border-radius: 12px;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.15);
     }
@@ -173,7 +166,7 @@
       font-weight: 500;
     }
 
-    /* ===== INPUT BAR ===== */
+    /* ========== INPUT BAR ========= */
     .input-bar-wrapper {
       padding: 16px;
       border-top: 1px solid rgba(255,255,255,0.07);
@@ -215,6 +208,7 @@
       font-family: inherit;
       outline: none;
     }
+
     #message-input::placeholder {
       color: #888;
     }
@@ -228,17 +222,11 @@
       flex-wrap: wrap;
       line-height: 1.4;
     }
-
-    .status-right { font-weight: 600; color: #fff; }
-    .status-right .tokens-number {
-      color: #fff;
-    }
   </style>
 </head>
 
 <body>
-
-  <!-- ===== TOP BAR ===== -->
+  <!-- ========== TOP BAR ========== -->
   <header class="topbar">
     <div class="left-group">
       <div class="burger-btn">☰</div>
@@ -246,25 +234,27 @@
       <div class="tokens-box">
         <div class="tokens-topline">
           <div class="tokens-diamond">💎</div>
-          <div><span id="token-count-header" class="tokens-amount">5000</span>&nbsp;tokens</div>
+          <div>
+            <span id="token-count-header" class="tokens-amount">1000</span>
+            tokens
+          </div>
         </div>
         <div class="assistant-name">Philomène I.A.</div>
       </div>
     </div>
 
     <div class="right-group">
-      <!-- Bouton compte -->
       <button id="auth-btn">
-        <div id="auth-line-main">
-          <span id="auth-icon">🔐</span>
-          <span id="auth-text-main">Connexion / Inscription</span>
+        <div id="auth-mainline">
+          <span class="lock">🔐</span>
+          <span id="auth-label">Connexion / Inscription</span>
         </div>
-        <div id="auth-text-sub">Sécurisé</div>
+        <div id="auth-subline">Sécurisé</div>
       </button>
     </div>
   </header>
 
-  <!-- ===== CHAT AREA ===== -->
+  <!-- ========== CHAT AREA ========== -->
   <main class="chat-area" id="chat-area">
     <div class="bubble assistant" id="welcome">
       👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.<br>
@@ -272,9 +262,10 @@
       Vous avez une question, j’ai la réponse.<br>
       Ensemble, on ira plus loin 🕊
     </div>
+    <!-- Les autres messages seront ajoutés ici -->
   </main>
 
-  <!-- ===== INPUT BAR ===== -->
+  <!-- ========== INPUT BAR ========== -->
   <footer class="input-bar-wrapper">
     <div class="input-row">
       <button class="plus-btn" id="plus-btn">+</button>
@@ -284,249 +275,331 @@
 
     <div class="status-row">
       <div class="status-left">
-        Prêt · <span id="token-count-footer">5000</span> tokens restants
+        Prêt · <span id="token-count-footer">1000</span> tokens restants
       </div>
-      <div class="status-right" style="display:none"></div>
+      <div class="status-right" id="status-right" style="color:#fff;font-weight:600;"></div>
     </div>
   </footer>
 
-  <!-- ===== Clerk SDK ===== -->
+  <!-- ========== Clerk SDK (auth) ========== -->
+  <!-- IMPORTANT : on fournit la clé publique + Clerk va reconnaître philomeneia.com 
+       car tu l'as ajouté comme "satellite domain" -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVvcmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.clerk.dev/clerk.js">
+  </script>
+
+  <!-- ========== APP LOGIC ========== -->
   <script>
-  // =========================
-  // CONFIG
-  // =========================
-  const API_URL = "https://philo-backend-su29.onrender.com/ask";
-  const STARTING_TOKENS = 5000;
+    // ====================================
+    // CONFIG
+    // ====================================
+    const API_URL = "https://philo-backend-su29.onrender.com/ask"; // ⚠ backend Render
+    const GUEST_TOKENS_START = 1000;   // 1000 gratuits dès l'arrivée, invité
+    const SIGNUP_BONUS = 3000;         // bonus ajouté la 1ère fois qu'il crée un compte
+    const TOKEN_COST_PER_MSG = 20;     // coût fixe démo
 
-  // état runtime
-  let currentUserId = "guest";
-  let currentUserEmail = null;
-  let isSignedIn = false;
-  let tokenBalance = STARTING_TOKENS;
-  let clerkReady = false;
+    // ====================================
+    // ÉTAT RUNTIME
+    // ====================================
+    let currentUserId = "guest";
+    let currentUserEmail = null;
+    let isSignedIn = false;
+    let tokenBalance = GUEST_TOKENS_START;
+    let clerkReady = false;
 
-  // mémoire conversation (envoyée au backend)
-  const conversation = [
-    {
-      role: "assistant",
-      content:
-        "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. Si vous avez un problème, j’ai la solution. Vous avez une question, j’ai la réponse. Ensemble, on ira plus loin 🕊"
-    }
-  ];
-
-  // DOM refs
-  const chatArea       = document.getElementById("chat-area");
-  const inputField     = document.getElementById("message-input");
-  const sendBtn        = document.getElementById("send-btn");
-  const plusBtn        = document.getElementById("plus-btn");
-  const tokenHeader    = document.getElementById("token-count-header");
-  const tokenFooter    = document.getElementById("token-count-footer");
-
-  // ATTENTION: dans ton HTML actuel, on a un bouton connexion en haut maintenant.
-  // Je vais supposer qu'il a l'id "connect-btn" (on va le créer juste après).
-  // Et un bouton logout avec id "logout-btn" si tu l'ajoutes plus tard.
-  const connectBtn     = document.getElementById("connect-btn");
-  const logoutBtn      = document.getElementById("logout-btn");
-
-  // =========================
-  // UI helpers
-  // =========================
-  function appendMessage(role, text) {
-    const div = document.createElement("div");
-    div.className = "bubble " + (role === "user" ? "user" : "assistant");
-    div.textContent = text;
-    chatArea.appendChild(div);
-    chatArea.scrollTop = chatArea.scrollHeight;
-  }
-
-  function refreshTokenDisplay() {
-    tokenHeader.textContent = tokenBalance;
-    tokenFooter.textContent = tokenBalance;
-  }
-  refreshTokenDisplay();
-
-  function spendTokensForMessage() {
-    const cost = 20;
-    tokenBalance = Math.max(0, tokenBalance - cost);
-    refreshTokenDisplay();
-  }
-
-  // met à jour le bouton du haut selon l'état
-  function refreshAuthUI() {
-    if (!connectBtn) return;
-
-    if (isSignedIn) {
-      // connecté
-      connectBtn.innerText = (currentUserEmail || "Mon compte") + " 🔐";
-      if (logoutBtn) logoutBtn.style.display = "inline-block";
-    } else {
-      // invité
-      connectBtn.innerText = "Connexion / Inscription 🔐\nSécurisé";
-      if (logoutBtn) logoutBtn.style.display = "none";
-    }
-  }
-
-  // =========================
-  // Clerk auth
-  // =========================
-  async function initClerk() {
-    // attendre que Clerk soit injecté
-    if (!window.Clerk) {
-      console.warn("Clerk pas chargé encore");
-      return;
-    }
-
-    try {
-      // load initialise Clerk, obligatoire avant d'utiliser openSignIn etc.
-      await window.Clerk.load();
-
-      clerkReady = true;
-
-      const user = window.Clerk.user;
-      const session = window.Clerk.session;
-
-      if (user && session) {
-        isSignedIn = true;
-        currentUserId = user.id || "guest";
-        currentUserEmail = (user.primaryEmailAddress && user.primaryEmailAddress.emailAddress) || null;
-      } else {
-        isSignedIn = false;
-        currentUserId = "guest";
-        currentUserEmail = null;
+    // historique envoyé au backend OpenAI
+    const conversation = [
+      {
+        role: "assistant",
+        content:
+          "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. Si vous avez un problème, j’ai la solution. Vous avez une question, j’ai la réponse. Ensemble, on ira plus loin 🕊"
       }
+    ];
 
-      refreshAuthUI();
-    } catch (err) {
-      console.error("Erreur initClerk:", err);
+    // ====================================
+    // RÉFÉRENCES DOM
+    // ====================================
+    const chatArea = document.getElementById("chat-area");
+    const inputField = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+    const plusBtn = document.getElementById("plus-btn");
+
+    const tokenHeader = document.getElementById("token-count-header");
+    const tokenFooter = document.getElementById("token-count-footer");
+
+    const authBtn = document.getElementById("auth-btn");
+    const authLabel = document.getElementById("auth-label");
+    const authSubline = document.getElementById("auth-subline");
+
+    // ====================================
+    // LOCAL STORAGE HELPERS
+    // ====================================
+    function storageKeyForUser(id) {
+      return "philomene_tokens_" + id;
     }
-  }
 
-  // ouvre la popup Clerk (login/signup)
-  async function openSignInFlow() {
-    if (!clerkReady) {
-      alert("Connexion momentanément indisponible. Réessaie dans une seconde.");
-      return;
+    function loadTokensFor(id) {
+      const raw = localStorage.getItem(storageKeyForUser(id));
+      if (!raw) return null;
+      const num = parseInt(raw, 10);
+      return Number.isNaN(num) ? null : num;
     }
 
-    if (!window.Clerk) {
-      alert("Clerk n'est pas prêt.");
-      return;
+    function saveTokensFor(id, amount) {
+      localStorage.setItem(storageKeyForUser(id), String(amount));
     }
 
-    try {
-      await window.Clerk.openSignIn({
-        afterSignIn: async () => {
-          await initClerk();
-        },
-        afterSignUp: async () => {
-          await initClerk();
+    // ====================================
+    // TOKENS: init état
+    // ====================================
+    function initGuestTokens() {
+      // si le visiteur invité a déjà un solde stocké, on le reprend
+      const saved = loadTokensFor("guest");
+      if (saved !== null) {
+        tokenBalance = saved;
+      } else {
+        tokenBalance = GUEST_TOKENS_START;
+        saveTokensFor("guest", tokenBalance);
+      }
+    }
+
+    function grantSignupBonus(userIdFromClerk) {
+      // Quand l'utilisateur vient de créer un compte pour la première fois:
+      // 1. On regarde si on a déjà un solde pour ce user
+      // 2. Sinon on prend les tokens guest + on ajoute le bonus
+      const already = loadTokensFor(userIdFromClerk);
+
+      if (already !== null) {
+        tokenBalance = already;
+      } else {
+        const guestTokensBefore = loadTokensFor("guest") ?? GUEST_TOKENS_START;
+        tokenBalance = guestTokensBefore + SIGNUP_BONUS;
+        saveTokensFor(userIdFromClerk, tokenBalance);
+      }
+    }
+
+    function loadExistingUserTokens(userIdFromClerk) {
+      // Pour un utilisateur qui se reconnecte
+      const already = loadTokensFor(userIdFromClerk);
+      if (already !== null) {
+        tokenBalance = already;
+      } else {
+        // user existe, mais pas de tokens sauvés (cas chelou). On lui file guest + bonus.
+        const guestTokensBefore = loadTokensFor("guest") ?? GUEST_TOKENS_START;
+        tokenBalance = guestTokensBefore + SIGNUP_BONUS;
+        saveTokensFor(userIdFromClerk, tokenBalance);
+      }
+    }
+
+    // ====================================
+    // UI HELPERS
+    // ====================================
+    function refreshTokenDisplay() {
+      tokenHeader.textContent = tokenBalance;
+      tokenFooter.textContent = tokenBalance;
+    }
+
+    function appendMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = "bubble " + (role === "user" ? "user" : "assistant");
+      div.textContent = text;
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // change le texte du bouton auth selon l'état
+    function renderAuthButton() {
+      if (isSignedIn) {
+        authLabel.textContent = "Se déconnecter";
+        authSubline.textContent = currentUserEmail || "Connecté";
+      } else {
+        authLabel.textContent = "Connexion / Inscription";
+        authSubline.textContent = "Sécurisé";
+      }
+    }
+
+    // ====================================
+    // ENVOI MESSAGE À L'IA
+    // ====================================
+    function spendTokensForMessage() {
+      tokenBalance = Math.max(0, tokenBalance - TOKEN_COST_PER_MSG);
+      // sauvegarder pour l'utilisateur courant
+      saveTokensFor(currentUserId, tokenBalance);
+      refreshTokenDisplay();
+    }
+
+    async function sendMessage() {
+      const text = inputField.value.trim();
+      if (!text) return;
+
+      appendMessage("user", text);
+
+      conversation.push({
+        role: "user",
+        content: text
+      });
+
+      spendTokensForMessage();
+      inputField.value = "";
+
+      try {
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            conversation
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!data || !data.answer) {
+          appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+          return;
         }
-      });
-    } catch (err) {
-      console.error("openSignIn error:", err);
-    }
-  }
 
-  // déconnexion
-  async function doLogout() {
-    if (!clerkReady || !window.Clerk) return;
-    try {
-      await window.Clerk.signOut();
-    } catch (err) {
-      console.error("signOut error:", err);
-    }
-    isSignedIn = false;
-    currentUserId = "guest";
-    currentUserEmail = null;
-    refreshAuthUI();
-  }
+        const answer = data.answer.trim();
+        appendMessage("assistant", answer);
 
-  // brancher les boutons auth
-  if (connectBtn) {
-    connectBtn.addEventListener("click", () => {
-      if (!isSignedIn) {
-        // pas connecté → ouvrir login
-        openSignInFlow();
-      } else {
-        // déjà connecté → plus tard on pourra ouvrir "mon compte"
-        // pour l'instant rien
-        console.log("Déjà connecté:", currentUserEmail || currentUserId);
+        conversation.push({
+          role: "assistant",
+          content: answer
+        });
+      } catch (err) {
+        appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    inputField.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        sendMessage();
       }
     });
-  }
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      doLogout();
-    });
-  }
 
-  // =========================
-  // Envoi message IA
-  // =========================
-  async function sendMessage() {
-    const text = inputField.value.trim();
-    if (!text) return;
-
-    appendMessage("user", text);
-
-    conversation.push({
-      role: "user",
-      content: text
+    plusBtn.addEventListener("click", () => {
+      appendMessage("assistant", "Fonction + bientôt dispo 💎");
     });
 
-    spendTokensForMessage();
-    inputField.value = "";
-
-    try {
-      const resp = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          conversation
-        })
-      });
-
-      const data = await resp.json();
-
-      if (!data || !data.answer) {
-        appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+    // ====================================
+    // CLERK AUTH LOGIC
+    // ====================================
+    async function initClerk() {
+      // Attendre que Clerk soit injecté par le script <script ... clerk.js>
+      if (!window.Clerk) {
+        console.warn("Clerk pas encore dispo.");
         return;
       }
 
-      const answer = data.answer.trim();
-      appendMessage("assistant", answer);
+      try {
+        await window.Clerk.load();
+        clerkReady = true;
 
-      conversation.push({
-        role: "assistant",
-        content: answer
-      });
-    } catch (err) {
-      appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+        const user = window.Clerk.user;
+        const session = window.Clerk.session;
+
+        if (user && session) {
+          // connecté
+          isSignedIn = true;
+          currentUserId = user.id || "unknown";
+          currentUserEmail = user.primaryEmailAddress
+            ? user.primaryEmailAddress.emailAddress
+            : null;
+
+          // Charger/attribuer les tokens du compte
+          loadExistingUserTokens(currentUserId);
+        } else {
+          // pas connecté
+          isSignedIn = false;
+          currentUserId = "guest";
+          currentUserEmail = null;
+
+          // init ou recharge tokens invité
+          initGuestTokens();
+        }
+
+        refreshTokenDisplay();
+        renderAuthButton();
+      } catch (err) {
+        console.error("Erreur initClerk:", err);
+      }
     }
-  }
 
-  sendBtn.addEventListener("click", sendMessage);
-  inputField.addEventListener("keydown", (ev) => {
-    if (ev.key === "Enter") {
-      ev.preventDefault();
-      sendMessage();
-    }
-  });
+    // Handler du bouton auth
+    authBtn.addEventListener("click", async () => {
+      // Si Clerk pas prêt => petit message
+      if (!clerkReady || !window.Clerk) {
+        alert("Connexion momentanément indisponible. Réessaie dans une seconde.");
+        return;
+      }
 
-  // bouton +
-  plusBtn.addEventListener("click", () => {
-    appendMessage("assistant", "Fonction + bientôt dispo 💎");
-  });
+      // Si déjà connecté -> se déconnecter
+      if (isSignedIn) {
+        try {
+          // sauvegarder les tokens actuels pour ce user
+          saveTokensFor(currentUserId, tokenBalance);
 
-  // =========================
-  // Au chargement de la page
-  // =========================
-  window.addEventListener("load", () => {
-    initClerk(); // on initialise Clerk au démarrage
-    refreshAuthUI(); // affiche le bon texte dans le bouton
-  });
-</script>
+          await window.Clerk.signOut();
+
+          // repasse en invité
+          isSignedIn = false;
+          currentUserId = "guest";
+          currentUserEmail = null;
+
+          initGuestTokens();
+          refreshTokenDisplay();
+          renderAuthButton();
+        } catch (e) {
+          console.error("Erreur signOut:", e);
+        }
+        return;
+      }
+
+      // Sinon pas connecté -> ouvrir la modale Clerk
+      // afterSignIn = utilisateur se connecte (compte existant)
+      // afterSignUp = nouvel utilisateur qui vient d'être créé
+      try {
+        await window.Clerk.openSignIn({
+          afterSignIn: async () => {
+            // Recharger Clerk
+            await initClerk();
+            // l'utilisateur existe déjà ou vient de se connecter
+            // loadExistingUserTokens() est déjà fait dans initClerk()
+          },
+          afterSignUp: async () => {
+            // Recharger Clerk pour connaître user.id
+            await initClerk();
+            // On applique le bonus d'inscription (+3000)
+            if (isSignedIn && currentUserId !== "guest") {
+              grantSignupBonus(currentUserId);
+              refreshTokenDisplay();
+              renderAuthButton();
+            }
+          }
+        });
+      } catch (err) {
+        console.error("Erreur openSignIn:", err);
+      }
+    });
+
+    // ====================================
+    // LANCEMENT
+    // ====================================
+    window.addEventListener("load", async () => {
+      // avant Clerk, on initialise l'invité pour l'affichage rapide
+      initGuestTokens();
+      refreshTokenDisplay();
+      renderAuthButton();
+
+      // puis on essaie de charger Clerk (si dispo ça va écraser l'état invité)
+      initClerk();
+    });
+  </script>
 </body>
 </html>
