@@ -6,7 +6,6 @@
   <title>Philomène I.A.</title>
 
   <style>
-    /* ====== RESET SIMPLE ====== */
     * {
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
@@ -27,7 +26,7 @@
       background-size: 120% 120%;
     }
 
-    /* ====== HEADER TOP STRIP ====== */
+    /* ===== HEADER ===== */
     .topbar {
       background-color: #000;
       color: #fff;
@@ -49,9 +48,7 @@
       gap: 12px;
     }
 
-    /* burger menu (pas encore branché mais visuel OK) */
-    .burger-btn,
-    .more-btn {
+    .burger-btn {
       width: 44px;
       height: 44px;
       border-radius: 8px;
@@ -64,16 +61,16 @@
       color: #fff;
     }
 
-    /* compteur tokens */
     .tokens-box {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       font-size: 14px;
       line-height: 1.2;
       color: #ffd44b;
       font-weight: 600;
     }
+
     .tokens-topline {
       display: flex;
       align-items: center;
@@ -89,59 +86,59 @@
     .tokens-amount {
       color: #ffd44b;
     }
-    .tokens-label {
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-    }
     .assistant-name {
       color: #888;
       font-size: 13px;
       margin-top: 2px;
     }
 
-    /* ===== MENU FLOTTANT (⋯) ===== */
-    #menu-panel {
-      position: absolute;
-      top: 58px;
-      right: 12px;
-      background-color: #111;
-      border: 1px solid #333;
+    /* ===== BOUTON COMPTE (connexion / déconnexion) ===== */
+    #auth-btn {
+      min-width: auto;
       border-radius: 8px;
-      padding: 10px 12px;
-      width: 200px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-      display: none;
-      z-index: 9999;
-    }
-
-    #menu-panel button {
-      width: 100%;
-      background: none;
-      border: none;
+      background-color: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
       color: #fff;
-      text-align: left;
       font-size: 15px;
-      padding: 10px 0;
-      font-family: inherit;
-      display: block;
+      line-height: 1.2;
+      font-weight: 500;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
     }
-
-    #menu-panel button + button {
-      border-top: 1px solid rgba(255,255,255,0.08);
+    #auth-line-main {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      white-space: nowrap;
     }
-
-    #login-btn {
+    #auth-icon {
+      font-size: 16px;
+    }
+    #auth-text-main {
+      font-size: 15px;
+      font-weight: 500;
       color: #fff;
-      font-weight: 500;
     }
-    #logout-btn {
-      color: #ff4d4d;
-      font-weight: 500;
-      display: none; /* caché si pas connecté */
+    #auth-text-sub {
+      font-size: 12px;
+      color: #888;
+      font-weight: 400;
     }
 
-    /* ===== ZONE MESSAGES ===== */
+    /* si connecté on met le sous-texte en accent rouge pour "déconnexion" */
+    .logout-mode #auth-text-main {
+      color: #ff4d4d;
+      font-weight: 600;
+    }
+    .logout-mode #auth-icon {
+      color: #ff4d4d;
+    }
+
+    /* ===== CHAT AREA ===== */
     .chat-area {
       flex: 1;
       padding: 16px;
@@ -164,7 +161,6 @@
 
     .bubble.assistant {
       align-self: flex-start;
-      border-radius: 12px;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.15);
     }
@@ -177,7 +173,7 @@
       font-weight: 500;
     }
 
-    /* ===== BARRE INPUT ===== */
+    /* ===== INPUT BAR ===== */
     .input-bar-wrapper {
       padding: 16px;
       border-top: 1px solid rgba(255,255,255,0.07);
@@ -233,9 +229,7 @@
       line-height: 1.4;
     }
 
-    .status-left {}
     .status-right { font-weight: 600; color: #fff; }
-
     .status-right .tokens-number {
       color: #fff;
     }
@@ -259,26 +253,25 @@
     </div>
 
     <div class="right-group">
-      <div id="menu-trigger" class="more-btn">⋯</div>
-    </div>
-
-    <!-- MENU FLOTTANT -->
-    <div id="menu-panel">
-      <button id="login-btn">🔐 Connexion / Inscription</button>
-      <button id="logout-btn">🚪 Se déconnecter</button>
+      <!-- Bouton compte -->
+      <button id="auth-btn">
+        <div id="auth-line-main">
+          <span id="auth-icon">🔐</span>
+          <span id="auth-text-main">Connexion / Inscription</span>
+        </div>
+        <div id="auth-text-sub">Sécurisé</div>
+      </button>
     </div>
   </header>
 
-  <!-- ===== ZONE MESSAGES ===== -->
+  <!-- ===== CHAT AREA ===== -->
   <main class="chat-area" id="chat-area">
-    <!-- Message d'accueil assistant -->
     <div class="bubble assistant" id="welcome">
       👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle.<br>
       Si vous avez un problème, j’ai la solution.<br>
       Vous avez une question, j’ai la réponse.<br>
       Ensemble, on ira plus loin 🕊
     </div>
-    <!-- Les autres messages vont être ajoutés en JS -->
   </main>
 
   <!-- ===== INPUT BAR ===== -->
@@ -293,14 +286,11 @@
       <div class="status-left">
         Prêt · <span id="token-count-footer">5000</span> tokens restants
       </div>
-      <div class="status-right" style="display:none">
-        <!-- zone si tu veux ajouter un état style "En train d'écrire..." -->
-      </div>
+      <div class="status-right" style="display:none"></div>
     </div>
   </footer>
 
-
-  <!-- ===== Clerk SDK (auth) ===== -->
+  <!-- ===== Clerk SDK ===== -->
   <script
     async
     crossorigin="anonymous"
@@ -308,47 +298,43 @@
     src="https://cdn.clerk.dev/clerk.js">
   </script>
 
-
-  <!-- ===== LOGIQUE APP ===== -->
+  <!-- ===== APP LOGIC ===== -->
   <script>
-    // =========================
-    // CONFIG
-    // =========================
+    // ========= CONFIG =========
     const API_URL = "https://philo-backend-su29.onrender.com/ask";
     const STARTING_TOKENS = 5000;
 
-    // état local
+    // état runtime
     let currentUserId = "guest";
     let isSignedIn = false;
     let tokenBalance = STARTING_TOKENS;
 
-    // mémoire locale de la conversation pour gpt
-    // tableau d'objets: { role:"user"|"assistant", content:"..." }
+    // mémoire conversation (envoyée à l'API)
     const conversation = [
       {
         role: "assistant",
-        content: "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. Si vous avez un problème, j’ai la solution. Vous avez une question, j’ai la réponse. Ensemble, on ira plus loin 🕊"
+        content:
+          "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. " +
+          "Si vous avez un problème, j’ai la solution. Vous avez une question, " +
+          "j’ai la réponse. Ensemble, on ira plus loin 🕊"
       }
     ];
 
-    // éléments du DOM
-    const chatArea = document.getElementById("chat-area");
-    const inputField = document.getElementById("message-input");
-    const sendBtn = document.getElementById("send-btn");
-    const plusBtn = document.getElementById("plus-btn");
+    // DOM refs
+    const chatArea     = document.getElementById("chat-area");
+    const inputField   = document.getElementById("message-input");
+    const sendBtn      = document.getElementById("send-btn");
+    const plusBtn      = document.getElementById("plus-btn");
 
-    const tokenHeader = document.getElementById("token-count-header");
-    const tokenFooter = document.getElementById("token-count-footer");
+    const tokenHeader  = document.getElementById("token-count-header");
+    const tokenFooter  = document.getElementById("token-count-footer");
 
-    // menu
-    const menuTrigger = document.getElementById("menu-trigger");
-    const menuPanel   = document.getElementById("menu-panel");
-    const loginBtn    = document.getElementById("login-btn");
-    const logoutBtn   = document.getElementById("logout-btn");
+    const authBtn      = document.getElementById("auth-btn");
+    const authIcon     = document.getElementById("auth-icon");
+    const authTextMain = document.getElementById("auth-text-main");
+    const authTextSub  = document.getElementById("auth-text-sub");
 
-    // =========================
-    // Rendu message
-    // =========================
+    // ===== affichage messages =====
     function appendMessage(role, text) {
       const div = document.createElement("div");
       div.className = "bubble " + (role === "user" ? "user" : "assistant");
@@ -357,54 +343,40 @@
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    // =========================
-    // Tokens : afficher synchrone
-    // =========================
+    // ===== tokens display =====
     function refreshTokenDisplay() {
       tokenHeader.textContent = tokenBalance;
       tokenFooter.textContent = tokenBalance;
     }
     refreshTokenDisplay();
 
-    // =========================
-    // Simu coût tokens par message
-    // (ici: +20 tokens dépensés à chaque question,
-    // tu pourras changer la formule)
-    // =========================
-    function spendTokensForMessage(msgText) {
-      const cost = 20; // TODO: vrai calcul plus tard
+    // ===== coût tokens simple =====
+    function spendTokensForMessage(_msgText) {
+      const cost = 20;
       tokenBalance = Math.max(0, tokenBalance - cost);
       refreshTokenDisplay();
     }
 
-    // =========================
-    // Envoi message utilisateur -> backend
-    // =========================
+    // ===== envoi message =====
     async function sendMessage() {
       const text = inputField.value.trim();
       if (!text) return;
 
-      // afficher le message utilisateur
       appendMessage("user", text);
 
-      // ajouter à l'historique
       conversation.push({
         role: "user",
         content: text
       });
 
-      // consommer des tokens localement
       spendTokensForMessage(text);
 
-      // vider champ
       inputField.value = "";
 
       try {
         const resp = await fetch(API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             conversation
           })
@@ -417,16 +389,13 @@
           return;
         }
 
-        // réponse IA
         const answer = data.answer.trim();
         appendMessage("assistant", answer);
 
-        // stocker dans la mémoire locale
         conversation.push({
           role: "assistant",
           content: answer
         });
-
       } catch (err) {
         appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
       }
@@ -440,30 +409,14 @@
       }
     });
 
-    // =========================
-    // Menu ⋯ show/hide
-    // =========================
-    let menuOpen = false;
-    menuTrigger.addEventListener("click", () => {
-      menuOpen = !menuOpen;
-      menuPanel.style.display = menuOpen ? "block" : "none";
+    plusBtn.addEventListener("click", () => {
+      appendMessage("assistant", "Fonction + bientôt dispo 💎");
     });
 
-    // Fermer le menu si on clique ailleurs
-    document.addEventListener("click", (e) => {
-      if (!menuPanel.contains(e.target) && !menuTrigger.contains(e.target)) {
-        menuPanel.style.display = "none";
-        menuOpen = false;
-      }
-    });
-
-    // =========================
-    // Auth Clerk
-    // =========================
+    // ===== Auth Clerk =====
     async function initClerk() {
-      // attendre que Clerk injecte window.Clerk
       if (!window.Clerk) {
-        console.warn("Clerk pas encore chargé");
+        console.warn("Clerk pas encore chargé.");
         return;
       }
       try {
@@ -479,66 +432,58 @@
           isSignedIn = false;
           currentUserId = "guest";
         }
-        refreshMenuUI();
+        refreshAuthButtonUI();
       } catch (e) {
         console.error("Erreur initClerk:", e);
       }
     }
 
-    function refreshMenuUI() {
+    function refreshAuthButtonUI() {
       if (isSignedIn) {
-        loginBtn.style.display  = "none";
-        logoutBtn.style.display = "block";
+        // MODE CONNECTÉ
+        authBtn.classList.add("logout-mode");
+        authIcon.textContent     = "🚪";
+        authTextMain.textContent = "Se déconnecter";
+        authTextSub.textContent  = "Compte: " + currentUserId;
       } else {
-        loginBtn.style.display  = "block";
-        logoutBtn.style.display = "none";
+        // MODE NON CONNECTÉ
+        authBtn.classList.remove("logout-mode");
+        authIcon.textContent     = "🔐";
+        authTextMain.textContent = "Connexion / Inscription";
+        authTextSub.textContent  = "Sécurisé";
       }
     }
 
-    // quand on tape "Connexion / Inscription"
-    loginBtn.addEventListener("click", async () => {
+    // click sur le bouton compte
+    authBtn.addEventListener("click", async () => {
       if (!window.Clerk) return;
-      await window.Clerk.openSignIn({
-        afterSignIn: async () => {
-          await initClerk();
-          menuPanel.style.display = "none";
-          menuOpen = false;
-        },
-        afterSignUp: async () => {
-          await initClerk();
-          menuPanel.style.display = "none";
-          menuOpen = false;
+
+      if (!isSignedIn) {
+        // pas connecté -> ouvrir le popup de login/signup
+        await window.Clerk.openSignIn({
+          afterSignIn: async () => {
+            await initClerk();
+          },
+          afterSignUp: async () => {
+            await initClerk();
+          }
+        });
+      } else {
+        // connecté -> déconnexion
+        try {
+          await window.Clerk.signOut();
+        } catch (e) {
+          console.error("signOut Clerk:", e);
         }
-      });
-    });
-
-    // quand on tape "Se déconnecter"
-    logoutBtn.addEventListener("click", async () => {
-      if (!window.Clerk) return;
-      try {
-        await window.Clerk.signOut();
-      } catch(e) {
-        console.error("signOut Clerk:", e);
+        isSignedIn = false;
+        currentUserId = "guest";
+        refreshAuthButtonUI();
       }
-      isSignedIn = false;
-      currentUserId = "guest";
-      refreshMenuUI();
-      menuPanel.style.display = "none";
-      menuOpen = false;
     });
 
-    // lancer Clerk au chargement
     window.addEventListener("load", () => {
       initClerk();
     });
-
-    // =========================
-    // Bouton +
-    // =========================
-    plusBtn.addEventListener("click", () => {
-      appendMessage("assistant", "Fonction + bientôt dispo 💎");
-    });
-
   </script>
 </body>
 </html>
