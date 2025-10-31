@@ -4,20 +4,29 @@ import fetch from "node-fetch";
 import cors from "cors";
 
 const app = express();
-app.use(cors());
+
+// CORS: autoriser le front officiel à appeler l'API
+app.use(cors({
+  origin: [
+    "https://philomeneia.com",
+    "https://www.philomeneia.com"
+  ],
+  methods: ["POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+// lire le JSON envoyé par le front
 app.use(express.json());
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = "gpt-4o-mini";
 
-// route qui reçoit la question du user et répond avec le texte de Philomène
+// route qui reçoit la conversation complète et renvoie la réponse IA
 app.post("/ask", async (req, res) => {
   try {
-    // ce que le front nous envoie
     const { conversation } = req.body;
-    // conversation doit être un tableau [{role:"user"/"assistant"/"system", content:"..."}]
+    // conversation attendu: [{ role: "system"|"user"|"assistant", content: "..." }, ...]
 
-    // on forward vers OpenAI
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -36,20 +45,21 @@ app.post("/ask", async (req, res) => {
 
     const data = await response.json();
 
-    // sécurité basique
     if (!data || !data.choices || !data.choices[0]) {
+      console.error("Réponse OpenAI inattendue:", data);
       return res.status(500).json({ error: "Réponse invalide d'OpenAI." });
     }
 
     const answer = data.choices[0].message.content;
     res.json({ answer });
+
   } catch (err) {
     console.error("Erreur /ask:", err);
     res.status(500).json({ error: "Une erreur est survenue côté serveur." });
   }
 });
 
-// Render doit savoir sur quel port écouter
+// port Render
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Philomène API en ligne sur le port " + PORT);
