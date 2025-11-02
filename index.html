@@ -222,6 +222,195 @@
       flex-wrap: wrap;
       line-height: 1.4;
     }
+    /* ===== USER MENU OVERLAY ===== */
+.user-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 16px;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", "Roboto", sans-serif;
+}
+
+.user-menu-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.user-menu-panel {
+  background: radial-gradient(circle at 20% 20%, rgba(60,0,90,0.6) 0%, rgba(10,10,20,0.9) 60%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  width: 320px;
+  max-width: calc(100% - 32px);
+  color: #fff;
+  padding: 16px 16px 12px;
+  transform: translateY(-8px) scale(0.97);
+  opacity: 0;
+  transition: all 0.18s ease;
+}
+
+.user-menu-overlay.active .user-menu-panel {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Header du menu */
+.user-menu-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.menu-app-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  line-height: 1.3;
+}
+
+.menu-status {
+  font-size: 12px;
+  font-weight: 400;
+  color: #9f9fff;
+  display: block;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.user-menu-close {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+/* Liste */
+.user-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.user-menu-item:active {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.user-menu-item .icon {
+  font-size: 18px;
+  line-height: 1;
+  min-width: 20px;
+  text-align: center;
+}
+
+.item-texts {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.item-sub {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 400;
+  color: #b7b7ff;
+  opacity: 0.9;
+}
+
+/* Pied de menu */
+.user-menu-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #9f9fff;
+}
+
+.user-menu-footer .footer-line1 {
+  color: #cfcfff;
+  font-weight: 500;
+}
+
+.user-menu-footer .footer-line2 {
+  margin-top: 4px;
+  color: #9f9fff;
+  font-weight: 400;
+}
+
+/* Bouton burger */
+#mainMenuButton {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Thème clair */
+body.light-mode .user-menu-panel {
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.9) 0%, rgba(240,240,255,0.95) 60%);
+  border: 1px solid rgba(0,0,0,0.08);
+  color: #000;
+}
+
+body.light-mode .menu-status {
+  color: #6666cc;
+}
+
+body.light-mode .user-menu-item {
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.07);
+}
+
+body.light-mode .item-title {
+  color: #000;
+}
+
+body.light-mode .item-sub {
+  color: #444;
+}
+
+body.light-mode .user-menu-footer {
+  color: #444;
+  border-top-color: rgba(0,0,0,0.07);
+}
+
+body.light-mode .user-menu-footer .footer-line1 {
+  color: #000;
+}
   </style>
 </head>
 
