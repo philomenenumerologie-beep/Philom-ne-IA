@@ -165,6 +165,25 @@
       font-weight: 500;
     }
 
+    /* Bulle image utilisateur */
+    .bubble.user.image-bubble {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bubble.user.image-bubble img {
+      max-width: 260px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .file-name {
+      font-size: 14px;
+      color: #ccc;
+      font-weight: 400;
+    }
+
     /* Bulle "en train d'écrire" */
     .typing-bubble {
       align-self: flex-start;
@@ -630,7 +649,10 @@
     // ====================================
     // CONFIG
     // ====================================
-    const API_URL = "https://philo-backend-su29.onrender.com/ask"; // backend Render
+    const API_URL = "https://philo-backend-su29.onrender.com/ask"; // backend texte
+    // NOTE: quand tu ajouteras l'image, tu feras un autre endpoint genre /analyze-image
+    // const IMAGE_API_URL = "https://philo-backend-su29.onrender.com/analyze-image";
+
     const GUEST_TOKENS_START = 1000;
     const SIGNUP_BONUS = 3000;
     const TOKEN_COST_PER_MSG = 20;
@@ -644,7 +666,7 @@
     let tokenBalance = GUEST_TOKENS_START;
     let clerkReady = false;
 
-    // historique envoyé au backend OpenAI
+    // historique envoyé au backend OpenAI (on garde pour compatibilité avec /ask)
     const conversation = [
       {
         role: "assistant",
@@ -663,12 +685,10 @@
     const plusBtn       = document.getElementById("plus-btn");
     const plusMenu      = document.getElementById("plus-menu");
 
-    // nouveaux: boutons du menu +
     const photoBtn      = document.getElementById("photo-btn");
     const fileBtn       = document.getElementById("file-btn");
     const micBtn        = document.getElementById("mic-btn");
 
-    // nouveaux: inputs pour upload
     const cameraInput   = document.getElementById("camera-input");
     const fileInput     = document.getElementById("file-input");
 
@@ -685,6 +705,18 @@
     const closeMenuBtn  = document.getElementById("close-menu-btn");
 
     const statusRight   = document.getElementById("status-right");
+
+    // ====================================
+    // SCROLL HELPERS
+    // ====================================
+    function scrollToBottom() {
+      requestAnimationFrame(() => {
+        chatArea.scrollTop = chatArea.scrollHeight;
+        setTimeout(() => {
+          chatArea.scrollTop = chatArea.scrollHeight;
+        }, 60);
+      });
+    }
 
     // ====================================
     // LOCAL STORAGE HELPERS
@@ -754,39 +786,35 @@
       div.className = "bubble " + (role === "user" ? "user" : "assistant");
       div.textContent = text;
       chatArea.appendChild(div);
-      chatArea.scrollTop = chatArea.scrollHeight;
+      scrollToBottom();
     }
 
-    // Afficher une image envoyée par l'utilisateur
     function appendImageMessage(file) {
       const url = URL.createObjectURL(file);
 
       const div = document.createElement("div");
-      div.className = "bubble user";
-      div.style.display = "flex";
-      div.style.flexDirection = "column";
-      div.style.gap = "8px";
+      div.className = "bubble user image-bubble";
 
       const img = document.createElement("img");
       img.src = url;
-      img.style.maxWidth = "200px";
-      img.style.borderRadius = "8px";
-      img.style.border = "1px solid rgba(255,255,255,0.15)";
 
       const name = document.createElement("div");
+      name.className = "file-name";
       name.textContent = file.name || "Photo";
-      name.style.fontSize = "14px";
-      name.style.color = "#ccc";
-      name.style.fontWeight = "400";
 
       div.appendChild(img);
       div.appendChild(name);
 
       chatArea.appendChild(div);
-      chatArea.scrollTop = chatArea.scrollHeight;
+
+      // si image met un peu de temps à se poser -> rescroll après le load
+      img.onload = () => {
+        scrollToBottom();
+      };
+
+      scrollToBottom();
     }
 
-    // Afficher un fichier non-image
     function appendFileMessage(file) {
       const div = document.createElement("div");
       div.className = "bubble user";
@@ -799,25 +827,7 @@
       `;
 
       chatArea.appendChild(div);
-      chatArea.scrollTop = chatArea.scrollHeight;
-    }
-
-    // Placeholder upload backend
-    async function uploadFileToBackend(file) {
-      // TODO : brancher ton vrai endpoint upload ici quand il sera prêt.
-      // Exemple :
-      /*
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const resp = await fetch("https://TON_BACKEND/upload", {
-        method: "POST",
-        body: formData
-      });
-      const data = await resp.json();
-      return data;
-      */
-      return { ok: true };
+      scrollToBottom();
     }
 
     // typing indicator bubble (3 points violets)
@@ -838,7 +848,7 @@
 
       wrap.appendChild(dots);
       chatArea.appendChild(wrap);
-      chatArea.scrollTop = chatArea.scrollHeight;
+      scrollToBottom();
     }
 
     function hideTypingIndicator() {
@@ -882,7 +892,6 @@
       spendTokensForMessage();
       inputField.value = "";
 
-      // afficher indicateur "..."
       showTypingIndicator();
 
       try {
@@ -892,7 +901,9 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            conversation
+            conversation,
+            userId: currentUserId,
+            tokens: tokenBalance
           })
         });
 
@@ -945,9 +956,11 @@
       if (!file) return;
 
       appendImageMessage(file);
-      await uploadFileToBackend(file);
 
-      appendMessage("assistant", "📷 J'ai bien reçu ta photo. Je peux l'analyser si tu veux.");
+      appendMessage(
+        "assistant",
+        "📷 J'ai bien reçu ta photo. Je peux l'analyser si tu veux."
+      );
     });
 
     // Bouton Document 📄
@@ -966,9 +979,10 @@
         appendFileMessage(file);
       }
 
-      await uploadFileToBackend(file);
-
-      appendMessage("assistant", "📄 Fichier bien reçu. Je peux le lire ou le résumer pour toi.");
+      appendMessage(
+        "assistant",
+        "📄 Fichier bien reçu. Tu veux que je le lise ou que je le résume pour toi ?"
+      );
     });
 
     // Bouton Micro 🎤
@@ -985,7 +999,6 @@
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
-      // feedback visuel dans la barre du bas
       statusRight.textContent = "🎤 J'écoute...";
       statusRight.style.color = "#fff";
 
@@ -1008,8 +1021,7 @@
       };
 
       recognition.onend = () => {
-        // fin d'écoute.
-        // si tu veux envoyer auto : sendMessage();
+        // fin de l'écoute
       };
 
       recognition.start();
@@ -1026,7 +1038,6 @@
       menuOverlay.classList.remove("show");
     });
 
-    // cliquer en dehors de la carte -> fermer
     menuOverlay.addEventListener("click", (e) => {
       if (e.target === menuOverlay) {
         menuOverlay.classList.remove("show");
@@ -1072,7 +1083,7 @@
       }
     }
 
-    // Clic sur le bouton d'auth
+    // bouton d'auth
     authBtn.addEventListener("click", async () => {
       if (!clerkReady || !window.Clerk) {
         alert("Connexion momentanément indisponible. Réessaie dans une seconde.");
@@ -1124,6 +1135,7 @@
       refreshTokenDisplay();
       renderAuthButton();
       initClerk();
+      scrollToBottom();
     });
   </script>
 </body>
