@@ -532,9 +532,25 @@
     <div class="input-row">
       <div class="plus-wrapper">
         <div class="plus-menu" id="plus-menu">
-          <div class="plus-action" title="Photo">📷</div>
-          <div class="plus-action" title="Document">📄</div>
-          <div class="plus-action" title="Micro">🎤</div>
+          <div class="plus-action" id="photo-btn" title="Photo">📷</div>
+          <div class="plus-action" id="file-btn" title="Document">📄</div>
+          <div class="plus-action" id="mic-btn" title="Micro">🎤</div>
+
+          <!-- Inputs cachés -->
+          <input
+            type="file"
+            id="camera-input"
+            accept="image/*"
+            capture="environment"
+            style="display:none"
+          />
+
+          <input
+            type="file"
+            id="file-input"
+            accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg,.heic,.webp,.gif"
+            style="display:none"
+          />
         </div>
         <button class="plus-btn" id="plus-btn">+</button>
       </div>
@@ -592,9 +608,6 @@
             <div class="menu-sub" id="theme-state">Actuellement : sombre</div>
           </div>
         </li>
-
-        <!-- Plus de "Connexion / Inscription" ici 
-             parce qu'on l'a déjà en haut dans le header -->
       </ul>
 
       <div class="user-menu-footer">
@@ -646,8 +659,18 @@
     const chatArea      = document.getElementById("chat-area");
     const inputField    = document.getElementById("message-input");
     const sendBtn       = document.getElementById("send-btn");
+
     const plusBtn       = document.getElementById("plus-btn");
     const plusMenu      = document.getElementById("plus-menu");
+
+    // nouveaux: boutons du menu +
+    const photoBtn      = document.getElementById("photo-btn");
+    const fileBtn       = document.getElementById("file-btn");
+    const micBtn        = document.getElementById("mic-btn");
+
+    // nouveaux: inputs pour upload
+    const cameraInput   = document.getElementById("camera-input");
+    const fileInput     = document.getElementById("file-input");
 
     const tokenHeader   = document.getElementById("token-count-header");
     const tokenFooter   = document.getElementById("token-count-footer");
@@ -660,6 +683,8 @@
     const burgerBtn     = document.getElementById("burger-btn");
     const menuOverlay   = document.getElementById("user-menu-overlay");
     const closeMenuBtn  = document.getElementById("close-menu-btn");
+
+    const statusRight   = document.getElementById("status-right");
 
     // ====================================
     // LOCAL STORAGE HELPERS
@@ -732,9 +757,71 @@
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
+    // Afficher une image envoyée par l'utilisateur
+    function appendImageMessage(file) {
+      const url = URL.createObjectURL(file);
+
+      const div = document.createElement("div");
+      div.className = "bubble user";
+      div.style.display = "flex";
+      div.style.flexDirection = "column";
+      div.style.gap = "8px";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.style.maxWidth = "200px";
+      img.style.borderRadius = "8px";
+      img.style.border = "1px solid rgba(255,255,255,0.15)";
+
+      const name = document.createElement("div");
+      name.textContent = file.name || "Photo";
+      name.style.fontSize = "14px";
+      name.style.color = "#ccc";
+      name.style.fontWeight = "400";
+
+      div.appendChild(img);
+      div.appendChild(name);
+
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // Afficher un fichier non-image
+    function appendFileMessage(file) {
+      const div = document.createElement("div");
+      div.className = "bubble user";
+
+      div.innerHTML = `
+        📄 ${file.name || "Fichier"}<br>
+        <span style="color:#aaa;font-size:14px;font-weight:400;">
+          (envoyé à Philomène)
+        </span>
+      `;
+
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // Placeholder upload backend
+    async function uploadFileToBackend(file) {
+      // TODO : brancher ton vrai endpoint upload ici quand il sera prêt.
+      // Exemple :
+      /*
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const resp = await fetch("https://TON_BACKEND/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await resp.json();
+      return data;
+      */
+      return { ok: true };
+    }
+
     // typing indicator bubble (3 points violets)
     function showTypingIndicator() {
-      // éviter doublon
       if (document.getElementById("typing-indicator")) return;
 
       const wrap = document.createElement("div");
@@ -779,7 +866,7 @@
     }
 
     // ====================================
-    // ENVOI MESSAGE
+    // ENVOI MESSAGE TEXTE
     // ====================================
     async function sendMessage() {
       const text = inputField.value.trim();
@@ -841,9 +928,91 @@
       }
     });
 
-    // bouton +
+    // ====================================
+    // MENU +  (Photo / Fichier / Micro)
+    // ====================================
     plusBtn.addEventListener("click", () => {
       plusMenu.classList.toggle("open");
+    });
+
+    // Bouton Photo 📷
+    photoBtn.addEventListener("click", () => {
+      cameraInput.click();
+    });
+
+    cameraInput.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      appendImageMessage(file);
+      await uploadFileToBackend(file);
+
+      appendMessage("assistant", "📷 J'ai bien reçu ta photo. Je peux l'analyser si tu veux.");
+    });
+
+    // Bouton Document 📄
+    fileBtn.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const isImage = file.type && file.type.startsWith("image/");
+      if (isImage) {
+        appendImageMessage(file);
+      } else {
+        appendFileMessage(file);
+      }
+
+      await uploadFileToBackend(file);
+
+      appendMessage("assistant", "📄 Fichier bien reçu. Je peux le lire ou le résumer pour toi.");
+    });
+
+    // Bouton Micro 🎤
+    micBtn.addEventListener("click", () => {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("La dictée vocale n'est pas supportée sur ce navigateur.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "fr-FR";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      // feedback visuel dans la barre du bas
+      statusRight.textContent = "🎤 J'écoute...";
+      statusRight.style.color = "#fff";
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        inputField.value = transcript;
+        statusRight.textContent = "Dictée terminée ✅";
+        statusRight.style.color = "#4ccfff";
+        setTimeout(() => {
+          statusRight.textContent = "";
+        }, 2000);
+      };
+
+      recognition.onerror = () => {
+        statusRight.textContent = "Micro refusé ou erreur.";
+        statusRight.style.color = "#ffd44b";
+        setTimeout(() => {
+          statusRight.textContent = "";
+        }, 2500);
+      };
+
+      recognition.onend = () => {
+        // fin d'écoute.
+        // si tu veux envoyer auto : sendMessage();
+      };
+
+      recognition.start();
     });
 
     // ====================================
@@ -857,7 +1026,7 @@
       menuOverlay.classList.remove("show");
     });
 
-    // Si on tape en dehors de la carte -> fermer
+    // cliquer en dehors de la carte -> fermer
     menuOverlay.addEventListener("click", (e) => {
       if (e.target === menuOverlay) {
         menuOverlay.classList.remove("show");
