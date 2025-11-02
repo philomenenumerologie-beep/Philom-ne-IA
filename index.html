@@ -1,11 +1,126 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="theme-dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Philomène I.A.</title>
 
   <style>
+    /* =========================
+       THEME VARIABLES (dark/light)
+       ========================= */
+    :root {
+      --bg-page: #000;
+      --bg-grad-start: rgba(128,0,255,0.25);
+      --bg-grad-end: rgba(0,0,0,0);
+
+      --text-primary: #fff;
+      --text-secondary: #888;
+      --text-dim: #aaa;
+
+      --bubble-user-bg1: rgba(86,64,255,0.9);
+      --bubble-user-bg2: rgba(12,0,64,1);
+      --bubble-user-border: rgba(120,80,255,0.6);
+
+      --bubble-assistant-bg: rgba(255,255,255,0.07);
+      --bubble-assistant-border: rgba(255,255,255,0.15);
+
+      --bubble-default-bg: #1f1f1f;
+      --bubble-default-border: rgba(255,255,255,0.08);
+
+      --header-bg: #000;
+      --header-border: rgba(255,255,255,0.07);
+
+      --auth-bg: rgba(20,20,20,0.9);
+      --auth-border: rgba(255,255,255,0.2);
+
+      --input-bg: rgba(20,20,30,0.8);
+      --input-border: rgba(255,255,255,0.15);
+      --input-placeholder: #888;
+
+      --footer-bg: rgba(0,0,0,0.6);
+      --footer-border: rgba(255,255,255,0.07);
+
+      --mini-menu-bg: rgba(10,10,20,0.8);
+      --mini-menu-border: rgba(255,255,255,0.15);
+
+      --overlay-bg-grad1: rgba(40,0,60,0.8);
+      --overlay-bg-grad2: rgba(10,0,20,0.9);
+      --overlay-border: rgba(255,255,255,0.15);
+
+      --overlay-text-main: #fff;
+      --overlay-text-secondary: #bbb;
+      --overlay-row-border: rgba(255,255,255,0.07);
+      --overlay-divider: rgba(255,255,255,0.1);
+
+      --token-color: #ffd44b;
+      --token-diamond: #4ccfff;
+      --lock-color: #d4b26a;
+
+      --accent-bg1: rgba(86,64,255,1);
+      --accent-bg2: rgba(12,0,64,1);
+      --accent-border: rgba(120,80,255,0.7);
+      --accent-glow: rgba(120,80,255,0.6);
+
+      --typing-bg: rgba(20,0,60,0.6);
+      --typing-border: rgba(140,80,255,0.6);
+      --typing-glow: rgba(120,80,255,0.4);
+
+      --file-name-color: #ccc;
+    }
+
+    /* LIGHT THEME OVERRIDES */
+    .theme-light {
+      --bg-page: #fafafa;
+      --bg-grad-start: rgba(150,120,255,0.12);
+      --bg-grad-end: rgba(255,255,255,0);
+
+      --text-primary: #111;
+      --text-secondary: #444;
+      --text-dim: #666;
+
+      --bubble-user-bg1: rgba(86,64,255,0.9);
+      --bubble-user-bg2: rgba(12,0,64,1);
+      --bubble-user-border: rgba(120,80,255,0.6);
+
+      --bubble-assistant-bg: rgba(0,0,0,0.06);
+      --bubble-assistant-border: rgba(0,0,0,0.15);
+
+      --bubble-default-bg: #fff;
+      --bubble-default-border: rgba(0,0,0,0.08);
+
+      --header-bg: #fff;
+      --header-border: rgba(0,0,0,0.07);
+
+      --auth-bg: rgba(255,255,255,0.9);
+      --auth-border: rgba(0,0,0,0.2);
+
+      --input-bg: rgba(255,255,255,0.9);
+      --input-border: rgba(0,0,0,0.2);
+      --input-placeholder: #666;
+
+      --footer-bg: rgba(255,255,255,0.8);
+      --footer-border: rgba(0,0,0,0.07);
+
+      --mini-menu-bg: rgba(255,255,255,0.9);
+      --mini-menu-border: rgba(0,0,0,0.15);
+
+      --overlay-bg-grad1: rgba(255,255,255,0.95);
+      --overlay-bg-grad2: rgba(245,245,255,0.95);
+      --overlay-border: rgba(0,0,0,0.15);
+
+      --overlay-text-main: #000;
+      --overlay-text-secondary: #444;
+      --overlay-row-border: rgba(0,0,0,0.07);
+      --overlay-divider: rgba(0,0,0,0.1);
+
+      --typing-bg: rgba(230,225,255,0.8);
+      --typing-border: rgba(120,80,255,0.4);
+      --typing-glow: rgba(120,80,255,0.2);
+
+      --file-name-color: #444;
+    }
+
     * {
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
@@ -14,24 +129,28 @@
     }
 
     body {
-      background-color: #000;
-      color: #fff;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
       font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
       line-height: 1.45;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background-image: radial-gradient(circle at 30% 30%, rgba(128,0,255,0.25) 0%, rgba(0,0,0,0) 60%);
+      background-image: radial-gradient(
+        circle at 30% 30%,
+        var(--bg-grad-start) 0%,
+        var(--bg-grad-end) 60%
+      );
       background-repeat: no-repeat;
       background-size: 120% 120%;
     }
 
     /* ========== HEADER / TOP BAR ========== */
     .topbar {
-      background-color: #000;
-      color: #fff;
+      background-color: var(--header-bg);
+      color: var(--text-primary);
       padding: 12px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid var(--header-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -54,11 +173,15 @@
       border-radius: 8px;
       background-color: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text-primary);
+      font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      color: #fff;
+    }
+    .theme-light .burger-btn {
+      background-color: rgba(0,0,0,0.05);
+      border-color: rgba(0,0,0,0.12);
     }
 
     .tokens-box {
@@ -73,28 +196,27 @@
       gap: 6px;
       font-size: 18px;
       font-weight: 600;
-      color: #ffd44b;
+      color: var(--token-color);
     }
 
     .tokens-diamond {
       font-size: 20px;
-      color: #4ccfff;
+      color: var(--token-diamond);
     }
 
     .tokens-amount {
-      color: #ffd44b;
+      color: var(--token-color);
     }
 
     .assistant-name {
-      color: #888;
+      color: var(--text-secondary);
       font-size: 13px;
       font-weight: 500;
     }
 
-    /* Bouton Connexion / Inscription dans le header */
     #auth-btn {
-      background-color: rgba(20,20,20,0.9);
-      border: 1px solid rgba(255,255,255,0.2);
+      background-color: var(--auth-bg);
+      border: 1px solid var(--auth-border);
       border-radius: 8px;
       padding: 10px 12px;
       min-height: 44px;
@@ -102,7 +224,7 @@
       flex-direction: column;
       justify-content: center;
       text-align: left;
-      color: #fff;
+      color: var(--text-primary);
       font-size: 15px;
       font-weight: 500;
       line-height: 1.2;
@@ -114,17 +236,17 @@
       gap: 8px;
       font-size: 16px;
       font-weight: 600;
-      color: #fff;
+      color: var(--text-primary);
     }
 
     #auth-mainline .lock {
       font-size: 18px;
-      color: #d4b26a;
+      color: var(--lock-color);
     }
 
     #auth-subline {
       font-size: 12px;
-      color: #8f8f8f;
+      color: var(--text-secondary);
       font-weight: 400;
     }
 
@@ -136,14 +258,18 @@
       flex-direction: column;
       gap: 16px;
       overflow-y: auto;
+      /* CETTE LIGNE EST LA CLÉ POUR TON BUG :
+         on laisse de la marge pour que le dernier message
+         ne soit pas caché derrière la barre du bas collée en sticky */
+      padding-bottom: 140px;
     }
 
     .bubble {
-      background-color: #1f1f1f;
-      border: 1px solid rgba(255,255,255,0.08);
+      background-color: var(--bubble-default-bg);
+      border: 1px solid var(--bubble-default-border);
       border-radius: 12px;
       padding: 16px;
-      color: #fff;
+      color: var(--text-primary);
       max-width: 90%;
       font-size: 18px;
       line-height: 1.45;
@@ -153,19 +279,23 @@
 
     .bubble.assistant {
       align-self: flex-start;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: var(--bubble-assistant-bg);
+      border: 1px solid var(--bubble-assistant-border);
+      color: var(--text-primary);
     }
 
     .bubble.user {
       align-self: flex-end;
-      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,0.9) 0%, rgba(12,0,64,1) 60%);
-      border: 1px solid rgba(120,80,255,0.6);
+      background: radial-gradient(
+        circle at 50% 0%,
+        var(--bubble-user-bg1) 0%,
+        var(--bubble-user-bg2) 60%
+      );
+      border: 1px solid var(--bubble-user-border);
       color: #fff;
       font-weight: 500;
     }
 
-    /* Bulle image utilisateur */
     .bubble.user.image-bubble {
       display: flex;
       flex-direction: column;
@@ -177,19 +307,22 @@
       border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.15);
     }
+    .theme-light .bubble.user.image-bubble img {
+      border: 1px solid rgba(0,0,0,0.2);
+    }
 
     .file-name {
       font-size: 14px;
-      color: #ccc;
+      color: var(--file-name-color);
       font-weight: 400;
     }
 
     /* Bulle "en train d'écrire" */
     .typing-bubble {
       align-self: flex-start;
-      background: rgba(20,0,60,0.6);
-      border: 1px solid rgba(140,80,255,0.6);
-      box-shadow: 0 0 16px rgba(120,80,255,0.4);
+      background: var(--typing-bg);
+      border: 1px solid var(--typing-border);
+      box-shadow: 0 0 16px var(--typing-glow);
       border-radius: 12px;
       padding: 16px;
       display: inline-flex;
@@ -213,15 +346,9 @@
       opacity: 0.2;
     }
 
-    .typing-dot:nth-child(1) {
-      animation-delay: 0s;
-    }
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+    .typing-dot:nth-child(1) { animation-delay: 0s;   }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes blink {
       0%   { opacity: 0.2; transform: scale(1.0); }
@@ -233,11 +360,13 @@
     /* ========== INPUT BAR ========== */
     .input-bar-wrapper {
       padding: 16px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      background-color: rgba(0,0,0,0.6);
+      border-top: 1px solid var(--footer-border);
+      background-color: var(--footer-bg);
       position: sticky;
       bottom: 0;
       z-index: 900;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .input-row {
@@ -259,28 +388,27 @@
       max-width: 64px;
       height: 64px;
       border-radius: 12px;
-      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,1) 0%, rgba(12,0,64,1) 60%);
-      border: 1px solid rgba(120,80,255,0.7);
+      background: radial-gradient(circle at 50% 0%, var(--accent-bg1) 0%, var(--accent-bg2) 60%);
+      border: 1px solid var(--accent-border);
       color: #fff;
       font-size: 32px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px rgba(120,80,255,0.6);
+      box-shadow: 0 0 20px var(--accent-glow);
       line-height: 0;
     }
 
-    /* mini-bar qui sort au-dessus du plus */
     .plus-menu {
       position: absolute;
       bottom: 72px;
       left: 0;
       right: 0;
-      background: rgba(10,10,20,0.8);
+      background: var(--mini-menu-bg);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid var(--mini-menu-border);
       border-radius: 12px;
       padding: 12px;
       display: flex;
@@ -305,23 +433,23 @@
       width: 44px;
       height: 44px;
       border-radius: 10px;
-      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,1) 0%, rgba(12,0,64,1) 60%);
-      border: 1px solid rgba(120,80,255,0.7);
+      background: radial-gradient(circle at 50% 0%, var(--accent-bg1) 0%, var(--accent-bg2) 60%);
+      border: 1px solid var(--accent-border);
       color: #fff;
       font-size: 22px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 16px rgba(120,80,255,0.5);
+      box-shadow: 0 0 16px var(--accent-glow);
     }
 
     #message-input {
       flex: 1;
-      background-color: rgba(20,20,30,0.8);
-      border: 1px solid rgba(255,255,255,0.15);
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
       border-radius: 12px;
-      color: #fff;
+      color: var(--text-primary);
       font-size: 18px;
       padding: 16px;
       font-family: inherit;
@@ -329,7 +457,7 @@
     }
 
     #message-input::placeholder {
-      color: #888;
+      color: var(--input-placeholder);
     }
 
     .send-btn {
@@ -337,20 +465,20 @@
       max-width: 64px;
       height: 64px;
       border-radius: 12px;
-      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,1) 0%, rgba(12,0,64,1) 60%);
-      border: 1px solid rgba(120,80,255,0.7);
+      background: radial-gradient(circle at 50% 0%, var(--accent-bg1) 0%, var(--accent-bg2) 60%);
+      border: 1px solid var(--accent-border);
       color: #fff;
       font-size: 28px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px rgba(120,80,255,0.6);
+      box-shadow: 0 0 20px var(--accent-glow);
       line-height: 0;
     }
 
     .status-row {
-      color: #aaa;
+      color: var(--text-dim);
       font-size: 15px;
       margin-top: 10px;
       display: flex;
@@ -384,11 +512,11 @@
     .user-menu-card {
       width: 100%;
       max-width: 460px;
-      background: radial-gradient(circle at 50% 0%, rgba(40,0,60,0.8) 0%, rgba(10,0,20,0.9) 70%);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: radial-gradient(circle at 50% 0%, var(--overlay-bg-grad1) 0%, var(--overlay-bg-grad2) 70%);
+      border: 1px solid var(--overlay-border);
       border-radius: 12px;
       box-shadow: 0 30px 120px rgba(0,0,0,0.8);
-      color: #fff;
+      color: var(--overlay-text-main);
       padding: 20px;
     }
 
@@ -397,7 +525,7 @@
       flex-direction: column;
       gap: 6px;
       margin-bottom: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid var(--overlay-divider);
       padding-bottom: 16px;
     }
 
@@ -419,13 +547,18 @@
       align-items: center;
       justify-content: center;
       border: 1px solid rgba(255,255,255,0.2);
-      color: #fff;
+      color: var(--text-primary);
+    }
+    .theme-light .close-menu-btn {
+      background: rgba(0,0,0,0.05);
+      border-color: rgba(0,0,0,0.2);
+      color: #000;
     }
 
     .user-menu-balance {
       font-size: 18px;
       font-weight: 600;
-      color: #ffd44b;
+      color: var(--token-color);
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
@@ -434,31 +567,52 @@
     }
 
     .user-menu-balance .diamond {
-      color: #4ccfff;
+      color: var(--token-diamond);
       font-size: 20px;
     }
 
     .user-menu-sub {
       font-size: 14px;
-      color: #bbb;
+      color: var(--overlay-text-secondary);
       line-height: 1.4;
+    }
+
+    .faq-block {
+      padding: 12px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--overlay-row-border);
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--overlay-text-main);
+    }
+    .theme-light .faq-block {
+      background: rgba(255,255,255,0.6);
+      color: #000;
     }
 
     .user-menu-list {
       list-style: none;
-      margin: 0;
+      margin: 16px 0 0 0;
       padding: 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid var(--overlay-divider);
+      border-bottom: 1px solid var(--overlay-divider);
     }
 
     .user-menu-item {
       padding: 16px 0;
-      border-top: 1px solid rgba(255,255,255,0.07);
+      border-top: 1px solid var(--overlay-row-border);
       display: flex;
       flex-direction: row;
       align-items: flex-start;
       gap: 12px;
-      color: #fff;
+      color: var(--overlay-text-main);
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .user-menu-item:first-child {
+      border-top: none;
     }
 
     .menu-icon {
@@ -478,25 +632,25 @@
 
     .menu-title {
       font-weight: 600;
-      color: #fff;
+      color: var(--overlay-text-main);
     }
 
     .menu-sub {
       font-size: 14px;
-      color: #9d9d9d;
+      color: var(--overlay-text-secondary);
       line-height: 1.4;
     }
 
     .user-menu-footer {
       font-size: 14px;
-      color: #bbb;
+      color: var(--overlay-text-secondary);
       line-height: 1.5;
       margin-top: 16px;
     }
 
     .footer-line1 {
       font-weight: 500;
-      color: #fff;
+      color: var(--overlay-text-main);
       margin-bottom: 4px;
     }
   </style>
@@ -582,7 +736,7 @@
       <div class="status-left">
         Prêt · <span id="token-count-footer">1000</span> tokens restants
       </div>
-      <div class="status-right" id="status-right" style="color:#fff;font-weight:600;"></div>
+      <div class="status-right" id="status-right" style="font-weight:600;"></div>
     </div>
   </footer>
 
@@ -601,17 +755,20 @@
           Philomène I.A.<br>
           En ligne 24h/24 · Réponses privées
         </div>
+
+        <!-- FAQ directement visible -->
+        <div class="faq-block" id="faq-block">
+          Comment ça marche ?<br><br>
+          • Tu poses une question, j’y réponds tout de suite ✔<br>
+          • Chaque message consomme un peu de tokens 💎<br>
+          • Tu peux m’envoyer des photos et des documents 📷📄<br>
+          • En t’inscrivant gratuitement : bonus +3000 tokens 🎁<br><br>
+          Tu veux plus de puissance ? Recharge juste des tokens,
+          pas d’abonnement obligatoire.
+        </div>
       </div>
 
       <ul class="user-menu-list">
-        <li class="user-menu-item">
-          <div class="menu-icon">❓</div>
-          <div class="menu-texts">
-            <div class="menu-title">Aide / FAQ</div>
-            <div class="menu-sub">Comprendre comment ça marche</div>
-          </div>
-        </li>
-
         <li class="user-menu-item">
           <div class="menu-icon">💎</div>
           <div class="menu-texts">
@@ -620,7 +777,7 @@
           </div>
         </li>
 
-        <li class="user-menu-item">
+        <li class="user-menu-item" id="theme-toggle-btn">
           <div class="menu-icon">🌙</div>
           <div class="menu-texts">
             <div class="menu-title">Mode clair / sombre</div>
@@ -649,8 +806,8 @@
     // ====================================
     // CONFIG
     // ====================================
-    const API_URL = "https://philo-backend-su29.onrender.com/ask"; // backend texte
-    // (plus tard on aura IMAGE_API_URL pour l'analyse vision)
+    const API_URL = "https://philo-backend-su29.onrender.com/ask";
+    // + prochainement : IMAGE_API_URL = ".../analyze-image"
 
     const GUEST_TOKENS_START = 1000;
     const SIGNUP_BONUS = 3000;
@@ -665,7 +822,7 @@
     let tokenBalance = GUEST_TOKENS_START;
     let clerkReady = false;
 
-    // historique envoyé au backend (on le garde pour compat /ask)
+    // historique envoyé au backend pour /ask
     const conversation = [
       {
         role: "assistant",
@@ -705,33 +862,60 @@
 
     const statusRight   = document.getElementById("status-right");
 
-    // ====================================
-    // SCROLL HELPERS (ultra fiable iPhone)
-    // ====================================
-    function scrollToBottom() {
-      // cible le dernier message réel (la dernière bulle ou le typing indicator)
-      const children = chatArea.children;
-      if (!children.length) return;
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const themeState     = document.getElementById("theme-state");
+    const htmlRoot       = document.documentElement;
 
-      const lastEl = children[children.length - 1];
-
-      // On veut que le bas du dernier message soit visible au-dessus de la barre d'input.
-      // On calcule où scroller dans la zone scrollable (chatArea).
-      function doScroll() {
-        const bottomPos =
-          lastEl.offsetTop + lastEl.offsetHeight - chatArea.clientHeight + 80;
-        // 80px = marge de confort pour ne pas être caché par la barre du bas
-        chatArea.scrollTop = bottomPos < 0 ? 0 : bottomPos;
+    // ====================================
+    // THEME (jour/nuit)
+    // ====================================
+    function applyTheme(themeName) {
+      if (themeName === "light") {
+        htmlRoot.classList.remove("theme-dark");
+        htmlRoot.classList.add("theme-light");
+        themeState.textContent = "Actuellement : clair";
+      } else {
+        htmlRoot.classList.remove("theme-light");
+        htmlRoot.classList.add("theme-dark");
+        themeState.textContent = "Actuellement : sombre";
       }
+      localStorage.setItem("philo_theme", themeName);
+    }
 
-      // premier essai tout de suite
-      doScroll();
+    function toggleTheme() {
+      const nowIsLight = htmlRoot.classList.contains("theme-light");
+      applyTheme(nowIsLight ? "dark" : "light");
+    }
 
-      // puis re-essai au prochain rafraîchissement visuel
+    themeToggleBtn.addEventListener("click", toggleTheme);
+
+    // au chargement : on restaure le choix
+    (function initThemeFromStorage() {
+      const saved = localStorage.getItem("philo_theme");
+      if (saved === "light") {
+        applyTheme("light");
+      } else {
+        applyTheme("dark");
+      }
+    })();
+
+    // ====================================
+    // SCROLL HELPERS
+    // ====================================
+    // Ce qui te bloquait :
+    // - ton footer est sticky, donc il recouvre le bas
+    // - Safari iPhone ne déclenchait pas le scroll assez tard
+    //
+    // FIX:
+    // 1) on a mis padding-bottom:140px sur .chat-area
+    //    -> donc le dernier message peut "monter" au-dessus du footer.
+    // 2) scrollToBottom() ici descend DANS la div chatArea jusqu'en bas.
+    function scrollToBottom() {
       requestAnimationFrame(() => {
-        doScroll();
-        // et une dernière sécurité après un mini délai (utile quand image se redimensionne)
-        setTimeout(doScroll, 80);
+        chatArea.scrollTop = chatArea.scrollHeight;
+        setTimeout(() => {
+          chatArea.scrollTop = chatArea.scrollHeight;
+        }, 60);
       });
     }
 
@@ -824,7 +1008,6 @@
 
       chatArea.appendChild(div);
 
-      // si l'image se redimensionne après chargement → rescroll
       img.onload = () => {
         scrollToBottom();
       };
@@ -838,7 +1021,7 @@
 
       div.innerHTML = `
         📄 ${file.name || "Fichier"}<br>
-        <span style="color:#aaa;font-size:14px;font-weight:400;">
+        <span style="color:var(--text-dim);font-size:14px;font-weight:400;">
           (envoyé à Philomène)
         </span>
       `;
@@ -847,7 +1030,6 @@
       scrollToBottom();
     }
 
-    // typing indicator bubble (3 points violets)
     function showTypingIndicator() {
       if (document.getElementById("typing-indicator")) return;
 
@@ -964,7 +1146,6 @@
       scrollToBottom();
     });
 
-    // Bouton Photo 📷
     photoBtn.addEventListener("click", () => {
       cameraInput.click();
     });
@@ -981,7 +1162,6 @@
       );
     });
 
-    // Bouton Document 📄
     fileBtn.addEventListener("click", () => {
       fileInput.click();
     });
@@ -1003,7 +1183,6 @@
       );
     });
 
-    // Bouton Micro 🎤
     micBtn.addEventListener("click", () => {
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1018,13 +1197,13 @@
       recognition.maxAlternatives = 1;
 
       statusRight.textContent = "🎤 J'écoute...";
-      statusRight.style.color = "#fff";
+      statusRight.style.color = "var(--text-primary)";
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         inputField.value = transcript;
         statusRight.textContent = "Dictée terminée ✅";
-        statusRight.style.color = "#4ccfff";
+        statusRight.style.color = "var(--token-diamond)";
         setTimeout(() => {
           statusRight.textContent = "";
         }, 2000);
@@ -1032,7 +1211,7 @@
 
       recognition.onerror = () => {
         statusRight.textContent = "Micro refusé ou erreur.";
-        statusRight.style.color = "#ffd44b";
+        statusRight.style.color = "var(--token-color)";
         setTimeout(() => {
           statusRight.textContent = "";
         }, 2500);
