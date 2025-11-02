@@ -128,8 +128,6 @@
       font-weight: 400;
     }
 
-    /* Quand connecté on change le texte via JS */
-
     /* ========== CHAT ZONE ========= */
     .chat-area {
       flex: 1;
@@ -222,195 +220,143 @@
       flex-wrap: wrap;
       line-height: 1.4;
     }
-    /* ===== USER MENU OVERLAY ===== */
-.user-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: none;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 16px;
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.18s ease;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", "Roboto", sans-serif;
-}
 
-.user-menu-overlay.active {
-  display: flex;
-  opacity: 1;
-}
+    /* ========== USER MENU OVERLAY (burger) ========= */
+    .user-menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;          /* caché par défaut */
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 16px;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
+    }
 
-.user-menu-panel {
-  background: radial-gradient(circle at 20% 20%, rgba(60,0,90,0.6) 0%, rgba(10,10,20,0.9) 60%);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.8);
-  width: 320px;
-  max-width: calc(100% - 32px);
-  color: #fff;
-  padding: 16px 16px 12px;
-  transform: translateY(-8px) scale(0.97);
-  opacity: 0;
-  transition: all 0.18s ease;
-}
+    .user-menu-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
 
-.user-menu-overlay.active .user-menu-panel {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-}
+    .user-menu-panel {
+      width: 90%;
+      max-width: 360px;
+      background: radial-gradient(circle at 20% 0%, rgba(40,0,60,0.9) 0%, rgba(0,0,0,0.95) 70%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      color: #fff;
+      padding: 20px 16px;
+      box-shadow: 0 30px 120px rgba(128,0,255,0.6);
+    }
 
-/* Header du menu */
-.user-menu-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
+    .menu-header-line1 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
 
-.menu-app-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  display: block;
-  line-height: 1.3;
-}
+    .menu-header-line1 .tokens-badge {
+      color: #ffd44b;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px;
+      font-size: 16px;
+      font-weight: 600;
+    }
 
-.menu-status {
-  font-size: 12px;
-  font-weight: 400;
-  color: #9f9fff;
-  display: block;
-  line-height: 1.2;
-  margin-top: 2px;
-}
+    .menu-header-line2 {
+      font-size: 13px;
+      color: #aaa;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
 
-.user-menu-close {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #fff;
-  font-size: 14px;
-  line-height: 1;
-  border-radius: 8px;
-  padding: 6px 8px;
-  cursor: pointer;
-}
+    .user-menu-close-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
 
-/* Liste */
-.user-menu-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+    #menu-close-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1;
+      padding: 8px 10px;
+    }
 
-.user-menu-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 10px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
+    .user-menu-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 
-.user-menu-item:active {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.15);
-}
+    .user-menu-item {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
 
-.user-menu-item .icon {
-  font-size: 18px;
-  line-height: 1;
-  min-width: 20px;
-  text-align: center;
-}
+    .user-menu-item:last-child {
+      border-bottom: 0;
+    }
 
-.item-texts {
-  flex: 1;
-  min-width: 0;
-}
+    .user-menu-item .icon {
+      font-size: 18px;
+      min-width: 20px;
+    }
 
-.item-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: #fff;
-  line-height: 1.3;
-}
+    .item-texts {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.35;
+      font-size: 15px;
+    }
 
-.item-sub {
-  margin-top: 2px;
-  font-size: 12px;
-  line-height: 1.3;
-  font-weight: 400;
-  color: #b7b7ff;
-  opacity: 0.9;
-}
+    .item-title {
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+    }
 
-/* Pied de menu */
-.user-menu-footer {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  font-size: 11.5px;
-  line-height: 1.4;
-  color: #9f9fff;
-}
+    .item-sub {
+      font-size: 13px;
+      color: #999;
+    }
 
-.user-menu-footer .footer-line1 {
-  color: #cfcfff;
-  font-weight: 500;
-}
+    .user-menu-footer {
+      margin-top: 16px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #bbb;
+    }
 
-.user-menu-footer .footer-line2 {
-  margin-top: 4px;
-  color: #9f9fff;
-  font-weight: 400;
-}
+    .footer-line1 {
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 4px;
+    }
 
-/* Bouton burger */
-#mainMenuButton {
-  cursor: pointer;
-  user-select: none;
-}
-
-/* Thème clair */
-body.light-mode .user-menu-panel {
-  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.9) 0%, rgba(240,240,255,0.95) 60%);
-  border: 1px solid rgba(0,0,0,0.08);
-  color: #000;
-}
-
-body.light-mode .menu-status {
-  color: #6666cc;
-}
-
-body.light-mode .user-menu-item {
-  background: rgba(0,0,0,0.03);
-  border: 1px solid rgba(0,0,0,0.07);
-}
-
-body.light-mode .item-title {
-  color: #000;
-}
-
-body.light-mode .item-sub {
-  color: #444;
-}
-
-body.light-mode .user-menu-footer {
-  color: #444;
-  border-top-color: rgba(0,0,0,0.07);
-}
-
-body.light-mode .user-menu-footer .footer-line1 {
-  color: #000;
-}
+    .footer-line2 {
+      color: #bbb;
+    }
   </style>
 </head>
 
@@ -418,7 +364,7 @@ body.light-mode .user-menu-footer .footer-line1 {
   <!-- ========== TOP BAR ========== -->
   <header class="topbar">
     <div class="left-group">
-      <div class="burger-btn" id="mainMenuButton">☰</div>
+      <div class="burger-btn" id="burger-btn">☰</div>
 
       <div class="tokens-box">
         <div class="tokens-topline">
@@ -442,71 +388,87 @@ body.light-mode .user-menu-footer .footer-line1 {
       </button>
     </div>
   </header>
-  <!-- ================= USER MENU OVERLAY ================= -->
-<div id="userMenuOverlay" class="user-menu-overlay">
-  <div class="user-menu-panel">
-    <div class="user-menu-header">
-      <div class="user-menu-title">
-        <span class="menu-app-name">Philomène I.A.</span>
-        <span class="menu-status">en ligne • 24h/24</span>
+
+  <!-- ========== OVERLAY MENU (burger) ========== -->
+  <div class="user-menu-overlay" id="user-menu">
+    <div class="user-menu-panel" role="dialog" aria-modal="true">
+      <div class="user-menu-close-row">
+        <button id="menu-close-btn">✕</button>
       </div>
-      <button class="user-menu-close" id="closeUserMenu">✕</button>
-    </div>
 
-    <ul class="user-menu-list">
-      <li class="user-menu-item">
-        <span class="icon">❓</span>
-        <div class="item-texts">
-          <div class="item-title">Aide / FAQ</div>
-          <div class="item-sub">Comprendre comment ça marche</div>
+      <div class="menu-header-line1">
+        <div class="tokens-badge">
+          <span>💎</span>
+          <span id="menu-token-count">1000</span>
+          <span>tokens</span>
         </div>
-      </li>
-
-      <li class="user-menu-item">
-        <span class="icon">💎</span>
-        <div class="item-texts">
-          <div class="item-title">Acheter des tokens</div>
-          <div class="item-sub">Recharge immédiate, sans abonnement</div>
+        <div style="font-size:13px; font-weight:500; color:#999;">
+          Philomène I.A.
         </div>
-      </li>
+      </div>
 
-      <li class="user-menu-item" id="toggleThemeItem">
-        <span class="icon">🌓</span>
-        <div class="item-texts">
-          <div class="item-title">Mode clair / sombre</div>
-          <div class="item-sub" id="themeStateText">Actuellement : sombre</div>
+      <div class="menu-header-line2">
+        En ligne 24h/24 · Réponses privées
+      </div>
+
+      <ul class="user-menu-list">
+        <li class="user-menu-item">
+          <span class="icon">❓</span>
+          <div class="item-texts">
+            <div class="item-title">Aide / FAQ</div>
+            <div class="item-sub">Comprendre comment ça marche</div>
+          </div>
+        </li>
+
+        <li class="user-menu-item">
+          <span class="icon">💎</span>
+          <div class="item-texts">
+            <div class="item-title">Acheter des tokens</div>
+            <div class="item-sub">Recharge immédiate, sans abonnement</div>
+          </div>
+        </li>
+
+        <li class="user-menu-item" id="theme-toggle-row">
+          <span class="icon">🌙</span>
+          <div class="item-texts">
+            <div class="item-title">Mode clair / sombre</div>
+            <div class="item-sub" id="theme-status">Actuellement : sombre</div>
+          </div>
+        </li>
+
+        <li class="user-menu-item" id="auth-menu-row">
+          <span class="icon">🔐</span>
+          <div class="item-texts">
+            <div class="item-title" id="auth-menu-title">Connexion / Inscription</div>
+            <div class="item-sub" id="auth-menu-sub">
+              Accès privé +3000 tokens bonus
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="user-menu-footer">
+        <div class="footer-line1">Propulsé par GPT-4 Turbo gratuitement</div>
+        <div class="footer-line2">
+          Passe en GPT-5 sans abonnement mensuel
         </div>
-      </li>
-
-      <li class="user-menu-item">
-        <span class="icon">🔐</span>
-        <div class="item-texts">
-          <div class="item-title">Connexion / Inscription</div>
-          <div class="item-sub">Accès privé +3000 tokens bonus</div>
-        </div>
-      </li>
-    </ul>
-
-    <div class="user-menu-footer">
-      <div class="footer-line1">Propulsé par GPT-4 Turbo gratuitement</div>
-      <div class="footer-line2">Passe en GPT-5 sans abonnement mensuel 💼</div>
+      </div>
     </div>
   </div>
-</div>
-<!-- ================= END USER MENU OVERLAY ================= -->
+
   <!-- ========== CHAT AREA ========== -->
   <main class="chat-area" id="chat-area">
-  <div class="bubble assistant" id="welcome">
-  👋 Bonjour. Je suis Philomène I.A, ton assistante personnelle.<br><br>
-  Je réponds tout de suite à tes questions avec GPT-4 Turbo (inclus gratuitement).<br><br>
-  🎁 Nouveau :<br>
-  • 1000 tokens offerts dès la première connexion<br>
-  • +3000 tokens bonus après ton inscription validée<br>
-  • Réponses privées, 24h/24<br><br>
-  Tu veux encore plus de puissance ?<br>
-  Tu pourras passer sur GPT-5 (le modèle le plus avancé) sans abonnement mensuel, juste en rechargeant des tokens.<br><br>
-  Pose ta première question. On commence quand tu veux. 💬
-</div>
+    <div class="bubble assistant" id="welcome">
+      👋 Bonjour. Je suis Philomène I.A, ton assistante personnelle.<br><br>
+      Je réponds tout de suite à tes questions avec GPT-4 Turbo (inclus gratuitement).<br><br>
+      🎁 Nouveau :<br>
+      • 1000 tokens offerts dès ta première connexion<br>
+      • +3000 tokens bonus après ton inscription validée<br>
+      • Réponses privées, 24h/24<br><br>
+      Tu veux encore plus de puissance ?<br>
+      Tu pourras passer sur GPT-5 (le modèle le plus avancé) sans abonnement mensuel, juste en rechargeant des tokens.<br><br>
+      Pose ta première question. On commence quand tu veux. 💬
+    </div>
     <!-- Les autres messages seront ajoutés ici -->
   </main>
 
@@ -527,8 +489,7 @@ body.light-mode .user-menu-footer .footer-line1 {
   </footer>
 
   <!-- ========== Clerk SDK (auth) ========== -->
-  <!-- IMPORTANT : on fournit la clé publique + Clerk va reconnaître philomeneia.com 
-       car tu l'as ajouté comme "satellite domain" -->
+  <!-- IMPORTANT : tu as déjà configuré Clerk avec ton domaine -->
   <script
     async
     crossorigin="anonymous"
@@ -541,7 +502,7 @@ body.light-mode .user-menu-footer .footer-line1 {
     // ====================================
     // CONFIG
     // ====================================
-    const API_URL = "https://philo-backend-su29.onrender.com/ask"; // ⚠ backend Render
+    const API_URL = "https://philo-backend-su29.onrender.com/ask"; // backend Render
     const GUEST_TOKENS_START = 1000;   // 1000 gratuits dès l'arrivée, invité
     const SIGNUP_BONUS = 3000;         // bonus ajouté la 1ère fois qu'il crée un compte
     const TOKEN_COST_PER_MSG = 20;     // coût fixe démo
@@ -560,7 +521,7 @@ body.light-mode .user-menu-footer .footer-line1 {
       {
         role: "assistant",
         content:
-          "👋 Bonjour ! Je suis Philomène I.A., votre assistante personnelle. Si vous avez un problème, j’ai la solution. Vous avez une question, j’ai la réponse. Ensemble, on ira plus loin 🕊"
+          "👋 Bonjour. Je suis Philomène I.A, ton assistante personnelle. Je réponds tout de suite à tes questions avec GPT-4 Turbo (inclus gratuitement)."
       }
     ];
 
@@ -574,10 +535,22 @@ body.light-mode .user-menu-footer .footer-line1 {
 
     const tokenHeader = document.getElementById("token-count-header");
     const tokenFooter = document.getElementById("token-count-footer");
+    const menuTokenCount = document.getElementById("menu-token-count");
 
     const authBtn = document.getElementById("auth-btn");
     const authLabel = document.getElementById("auth-label");
     const authSubline = document.getElementById("auth-subline");
+
+    const burgerBtn = document.getElementById("burger-btn");
+    const userMenu = document.getElementById("user-menu");
+    const menuCloseBtn = document.getElementById("menu-close-btn");
+
+    const authMenuRow = document.getElementById("auth-menu-row");
+    const authMenuTitle = document.getElementById("auth-menu-title");
+    const authMenuSub = document.getElementById("auth-menu-sub");
+
+    const themeToggleRow = document.getElementById("theme-toggle-row");
+    const themeStatus = document.getElementById("theme-status");
 
     // ====================================
     // LOCAL STORAGE HELPERS
@@ -601,7 +574,6 @@ body.light-mode .user-menu-footer .footer-line1 {
     // TOKENS: init état
     // ====================================
     function initGuestTokens() {
-      // si le visiteur invité a déjà un solde stocké, on le reprend
       const saved = loadTokensFor("guest");
       if (saved !== null) {
         tokenBalance = saved;
@@ -612,9 +584,7 @@ body.light-mode .user-menu-footer .footer-line1 {
     }
 
     function grantSignupBonus(userIdFromClerk) {
-      // Quand l'utilisateur vient de créer un compte pour la première fois:
-      // 1. On regarde si on a déjà un solde pour ce user
-      // 2. Sinon on prend les tokens guest + on ajoute le bonus
+      // nouveau compte -> guestTokens + bonus
       const already = loadTokensFor(userIdFromClerk);
 
       if (already !== null) {
@@ -627,12 +597,11 @@ body.light-mode .user-menu-footer .footer-line1 {
     }
 
     function loadExistingUserTokens(userIdFromClerk) {
-      // Pour un utilisateur qui se reconnecte
+      // utilisateur connu
       const already = loadTokensFor(userIdFromClerk);
       if (already !== null) {
         tokenBalance = already;
       } else {
-        // user existe, mais pas de tokens sauvés (cas chelou). On lui file guest + bonus.
         const guestTokensBefore = loadTokensFor("guest") ?? GUEST_TOKENS_START;
         tokenBalance = guestTokensBefore + SIGNUP_BONUS;
         saveTokensFor(userIdFromClerk, tokenBalance);
@@ -645,6 +614,7 @@ body.light-mode .user-menu-footer .footer-line1 {
     function refreshTokenDisplay() {
       tokenHeader.textContent = tokenBalance;
       tokenFooter.textContent = tokenBalance;
+      menuTokenCount.textContent = tokenBalance;
     }
 
     function appendMessage(role, text) {
@@ -655,14 +625,19 @@ body.light-mode .user-menu-footer .footer-line1 {
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    // change le texte du bouton auth selon l'état
     function renderAuthButton() {
       if (isSignedIn) {
         authLabel.textContent = "Se déconnecter";
         authSubline.textContent = currentUserEmail || "Connecté";
+
+        authMenuTitle.textContent = "Se déconnecter";
+        authMenuSub.textContent = currentUserEmail || "Connecté";
       } else {
         authLabel.textContent = "Connexion / Inscription";
         authSubline.textContent = "Sécurisé";
+
+        authMenuTitle.textContent = "Connexion / Inscription";
+        authMenuSub.textContent = "Accès privé +3000 tokens bonus";
       }
     }
 
@@ -671,7 +646,6 @@ body.light-mode .user-menu-footer .footer-line1 {
     // ====================================
     function spendTokensForMessage() {
       tokenBalance = Math.max(0, tokenBalance - TOKEN_COST_PER_MSG);
-      // sauvegarder pour l'utilisateur courant
       saveTokensFor(currentUserId, tokenBalance);
       refreshTokenDisplay();
     }
@@ -736,7 +710,6 @@ body.light-mode .user-menu-footer .footer-line1 {
     // CLERK AUTH LOGIC
     // ====================================
     async function initClerk() {
-      // Attendre que Clerk soit injecté par le script <script ... clerk.js>
       if (!window.Clerk) {
         console.warn("Clerk pas encore dispo.");
         return;
@@ -757,15 +730,13 @@ body.light-mode .user-menu-footer .footer-line1 {
             ? user.primaryEmailAddress.emailAddress
             : null;
 
-          // Charger/attribuer les tokens du compte
           loadExistingUserTokens(currentUserId);
         } else {
-          // pas connecté
+          // invité
           isSignedIn = false;
           currentUserId = "guest";
           currentUserEmail = null;
 
-          // init ou recharge tokens invité
           initGuestTokens();
         }
 
@@ -776,23 +747,22 @@ body.light-mode .user-menu-footer .footer-line1 {
       }
     }
 
-    // Handler du bouton auth
-    authBtn.addEventListener("click", async () => {
-      // Si Clerk pas prêt => petit message
+    async function doAuthFlow() {
+      // Si Clerk pas prêt
       if (!clerkReady || !window.Clerk) {
         alert("Connexion momentanément indisponible. Réessaie dans une seconde.");
         return;
       }
 
-      // Si déjà connecté -> se déconnecter
+      // déjà connecté -> déconnexion
       if (isSignedIn) {
         try {
-          // sauvegarder les tokens actuels pour ce user
+          // sauvegarder tokens actuels
           saveTokensFor(currentUserId, tokenBalance);
 
           await window.Clerk.signOut();
 
-          // repasse en invité
+          // repasse invité
           isSignedIn = false;
           currentUserId = "guest";
           currentUserEmail = null;
@@ -806,21 +776,16 @@ body.light-mode .user-menu-footer .footer-line1 {
         return;
       }
 
-      // Sinon pas connecté -> ouvrir la modale Clerk
-      // afterSignIn = utilisateur se connecte (compte existant)
-      // afterSignUp = nouvel utilisateur qui vient d'être créé
+      // pas connecté -> ouvrir modale Clerk
       try {
         await window.Clerk.openSignIn({
           afterSignIn: async () => {
-            // Recharger Clerk
             await initClerk();
-            // l'utilisateur existe déjà ou vient de se connecter
-            // loadExistingUserTokens() est déjà fait dans initClerk()
+            // tokens déjà gérés dans initClerk()
           },
           afterSignUp: async () => {
-            // Recharger Clerk pour connaître user.id
             await initClerk();
-            // On applique le bonus d'inscription (+3000)
+            // Bonus d'inscription
             if (isSignedIn && currentUserId !== "guest") {
               grantSignupBonus(currentUserId);
               refreshTokenDisplay();
@@ -831,76 +796,65 @@ body.light-mode .user-menu-footer .footer-line1 {
       } catch (err) {
         console.error("Erreur openSignIn:", err);
       }
+    }
+
+    authBtn.addEventListener("click", doAuthFlow);
+    authMenuRow.addEventListener("click", () => {
+      // Fermeture du menu avant d'ouvrir Clerk
+      closeMenu();
+      doAuthFlow();
+    });
+
+    // ====================================
+    // MENU BURGER (overlay)
+    // ====================================
+    function openMenu() {
+      userMenu.classList.add("active");
+    }
+
+    function closeMenu() {
+      userMenu.classList.remove("active");
+    }
+
+    burgerBtn.addEventListener("click", () => {
+      // Maj visuelle des tokens dans le menu
+      refreshTokenDisplay();
+      openMenu();
+    });
+
+    menuCloseBtn.addEventListener("click", closeMenu);
+
+    // Fermer si on clique en dehors du panneau
+    userMenu.addEventListener("click", (ev) => {
+      if (ev.target === userMenu) {
+        closeMenu();
+      }
+    });
+
+    // ====================================
+    // THEME TOGGLE (sombre / clair)
+    // (pour l'instant juste un message visuel local)
+    // ====================================
+    let darkMode = true;
+    themeToggleRow.addEventListener("click", () => {
+      darkMode = !darkMode;
+      themeStatus.textContent = "Actuellement : " + (darkMode ? "sombre" : "clair");
+      // Note: on pourrait plus tard ajouter/remover une classe "light-mode" sur <body>
+      // et ajuster les couleurs en CSS.
     });
 
     // ====================================
     // LANCEMENT
     // ====================================
     window.addEventListener("load", async () => {
-      // avant Clerk, on initialise l'invité pour l'affichage rapide
+      // état invité rapide
       initGuestTokens();
       refreshTokenDisplay();
       renderAuthButton();
 
-      // puis on essaie de charger Clerk (si dispo ça va écraser l'état invité)
+      // charger Clerk si dispo
       initClerk();
     });
-  <script>
-  const mainMenuButton = document.getElementById('mainMenuButton');
-  const userMenuOverlay = document.getElementById('userMenuOverlay');
-  const closeUserMenu = document.getElementById('closeUserMenu');
-  const themeToggleItem = document.getElementById('toggleThemeItem');
-  const themeStateText = document.getElementById('themeStateText');
-
-  function openUserMenu() {
-    if (!userMenuOverlay) return;
-    userMenuOverlay.classList.add('active');
-  }
-
-  function closeMenu() {
-    if (!userMenuOverlay) return;
-    userMenuOverlay.classList.remove('active');
-  }
-
-  if (mainMenuButton) {
-    mainMenuButton.addEventListener('click', () => {
-      if (userMenuOverlay.classList.contains('active')) {
-        closeMenu();
-      } else {
-        openUserMenu();
-      }
-    });
-  }
-
-  if (closeUserMenu) {
-    closeUserMenu.addEventListener('click', closeMenu);
-  }
-
-  if (userMenuOverlay) {
-    userMenuOverlay.addEventListener('click', (e) => {
-      if (e.target === userMenuOverlay) closeMenu();
-    });
-  }
-
-  function isLightMode() {
-    return document.body.classList.contains('light-mode');
-  }
-
-  function updateThemeText() {
-    if (!themeStateText) return;
-    themeStateText.textContent = "Actuellement : " + (isLightMode() ? "clair" : "sombre");
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    updateThemeText();
-  }
-
-  if (themeToggleItem) {
-    themeToggleItem.addEventListener('click', toggleTheme);
-  }
-
-  updateThemeText();
-</script>
+  </script>
 </body>
 </html>
