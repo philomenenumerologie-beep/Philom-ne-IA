@@ -229,7 +229,7 @@
   <!-- ========== TOP BAR ========== -->
   <header class="topbar">
     <div class="left-group">
-      <div class="burger-btn">☰</div>
+      <div class="burger-btn" id="mainMenuButton">☰</div>
 
       <div class="tokens-box">
         <div class="tokens-topline">
@@ -253,7 +253,58 @@
       </button>
     </div>
   </header>
+  <!-- ================= USER MENU OVERLAY ================= -->
+<div id="userMenuOverlay" class="user-menu-overlay">
+  <div class="user-menu-panel">
+    <div class="user-menu-header">
+      <div class="user-menu-title">
+        <span class="menu-app-name">Philomène I.A.</span>
+        <span class="menu-status">en ligne • 24h/24</span>
+      </div>
+      <button class="user-menu-close" id="closeUserMenu">✕</button>
+    </div>
 
+    <ul class="user-menu-list">
+      <li class="user-menu-item">
+        <span class="icon">❓</span>
+        <div class="item-texts">
+          <div class="item-title">Aide / FAQ</div>
+          <div class="item-sub">Comprendre comment ça marche</div>
+        </div>
+      </li>
+
+      <li class="user-menu-item">
+        <span class="icon">💎</span>
+        <div class="item-texts">
+          <div class="item-title">Acheter des tokens</div>
+          <div class="item-sub">Recharge immédiate, sans abonnement</div>
+        </div>
+      </li>
+
+      <li class="user-menu-item" id="toggleThemeItem">
+        <span class="icon">🌓</span>
+        <div class="item-texts">
+          <div class="item-title">Mode clair / sombre</div>
+          <div class="item-sub" id="themeStateText">Actuellement : sombre</div>
+        </div>
+      </li>
+
+      <li class="user-menu-item">
+        <span class="icon">🔐</span>
+        <div class="item-texts">
+          <div class="item-title">Connexion / Inscription</div>
+          <div class="item-sub">Accès privé +3000 tokens bonus</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="user-menu-footer">
+      <div class="footer-line1">Propulsé par GPT-4 Turbo gratuitement</div>
+      <div class="footer-line2">Passe en GPT-5 sans abonnement mensuel 💼</div>
+    </div>
+  </div>
+</div>
+<!-- ================= END USER MENU OVERLAY ================= -->
   <!-- ========== CHAT AREA ========== -->
   <main class="chat-area" id="chat-area">
   <div class="bubble assistant" id="welcome">
@@ -605,6 +656,62 @@
       // puis on essaie de charger Clerk (si dispo ça va écraser l'état invité)
       initClerk();
     });
-  </script>
+  <script>
+  const mainMenuButton = document.getElementById('mainMenuButton');
+  const userMenuOverlay = document.getElementById('userMenuOverlay');
+  const closeUserMenu = document.getElementById('closeUserMenu');
+  const themeToggleItem = document.getElementById('toggleThemeItem');
+  const themeStateText = document.getElementById('themeStateText');
+
+  function openUserMenu() {
+    if (!userMenuOverlay) return;
+    userMenuOverlay.classList.add('active');
+  }
+
+  function closeMenu() {
+    if (!userMenuOverlay) return;
+    userMenuOverlay.classList.remove('active');
+  }
+
+  if (mainMenuButton) {
+    mainMenuButton.addEventListener('click', () => {
+      if (userMenuOverlay.classList.contains('active')) {
+        closeMenu();
+      } else {
+        openUserMenu();
+      }
+    });
+  }
+
+  if (closeUserMenu) {
+    closeUserMenu.addEventListener('click', closeMenu);
+  }
+
+  if (userMenuOverlay) {
+    userMenuOverlay.addEventListener('click', (e) => {
+      if (e.target === userMenuOverlay) closeMenu();
+    });
+  }
+
+  function isLightMode() {
+    return document.body.classList.contains('light-mode');
+  }
+
+  function updateThemeText() {
+    if (!themeStateText) return;
+    themeStateText.textContent = "Actuellement : " + (isLightMode() ? "clair" : "sombre");
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    updateThemeText();
+  }
+
+  if (themeToggleItem) {
+    themeToggleItem.addEventListener('click', toggleTheme);
+  }
+
+  updateThemeText();
+</script>
 </body>
 </html>
