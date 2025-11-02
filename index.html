@@ -650,8 +650,7 @@
     // CONFIG
     // ====================================
     const API_URL = "https://philo-backend-su29.onrender.com/ask"; // backend texte
-    // NOTE: quand tu ajouteras l'image, tu feras un autre endpoint genre /analyze-image
-    // const IMAGE_API_URL = "https://philo-backend-su29.onrender.com/analyze-image";
+    // (plus tard on aura IMAGE_API_URL pour l'analyse vision)
 
     const GUEST_TOKENS_START = 1000;
     const SIGNUP_BONUS = 3000;
@@ -666,7 +665,7 @@
     let tokenBalance = GUEST_TOKENS_START;
     let clerkReady = false;
 
-    // historique envoyé au backend OpenAI (on garde pour compatibilité avec /ask)
+    // historique envoyé au backend (on le garde pour compat /ask)
     const conversation = [
       {
         role: "assistant",
@@ -707,14 +706,32 @@
     const statusRight   = document.getElementById("status-right");
 
     // ====================================
-    // SCROLL HELPERS
+    // SCROLL HELPERS (ultra fiable iPhone)
     // ====================================
     function scrollToBottom() {
+      // cible le dernier message réel (la dernière bulle ou le typing indicator)
+      const children = chatArea.children;
+      if (!children.length) return;
+
+      const lastEl = children[children.length - 1];
+
+      // On veut que le bas du dernier message soit visible au-dessus de la barre d'input.
+      // On calcule où scroller dans la zone scrollable (chatArea).
+      function doScroll() {
+        const bottomPos =
+          lastEl.offsetTop + lastEl.offsetHeight - chatArea.clientHeight + 80;
+        // 80px = marge de confort pour ne pas être caché par la barre du bas
+        chatArea.scrollTop = bottomPos < 0 ? 0 : bottomPos;
+      }
+
+      // premier essai tout de suite
+      doScroll();
+
+      // puis re-essai au prochain rafraîchissement visuel
       requestAnimationFrame(() => {
-        chatArea.scrollTop = chatArea.scrollHeight;
-        setTimeout(() => {
-          chatArea.scrollTop = chatArea.scrollHeight;
-        }, 60);
+        doScroll();
+        // et une dernière sécurité après un mini délai (utile quand image se redimensionne)
+        setTimeout(doScroll, 80);
       });
     }
 
@@ -807,7 +824,7 @@
 
       chatArea.appendChild(div);
 
-      // si image met un peu de temps à se poser -> rescroll après le load
+      // si l'image se redimensionne après chargement → rescroll
       img.onload = () => {
         scrollToBottom();
       };
@@ -944,6 +961,7 @@
     // ====================================
     plusBtn.addEventListener("click", () => {
       plusMenu.classList.toggle("open");
+      scrollToBottom();
     });
 
     // Bouton Photo 📷
@@ -1020,10 +1038,7 @@
         }, 2500);
       };
 
-      recognition.onend = () => {
-        // fin de l'écoute
-      };
-
+      recognition.onend = () => {};
       recognition.start();
     });
 
