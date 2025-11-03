@@ -2,260 +2,95 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Philomène I.A.</title>
-
-  <style>
-  :root{
-    --bg:#0c0c10; --panel:#13131b; --panel-2:#191922;
-    --text:#e8e4ff; --muted:#9b96b8; --stroke:#2a2a38; --accent:#6b45ff;
-  }
-  *{ box-sizing:border-box; }
-  html,body{ height:100%; }
-  body{
-    margin:0; background:var(--bg); color:var(--text);
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  }
-
-  /* Topbar */
-  .topbar{
-    position:sticky; top:0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:10px 14px; background:var(--bg); border-bottom:1px solid var(--stroke);
-  }
-  .brand{ display:flex; align-items:center; gap:10px; }
-  .title{ font-weight:800; font-size:1.25rem; }
-  .pill{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:8px 12px; border-radius:12px;
-    background:var(--panel-2); color:var(--text); border:1px solid var(--stroke);
-  }
-  .pill.login{ font-weight:600; }
-  .counter{ font-variant-numeric: tabular-nums; }
-  .top-actions{ display:flex; align-items:center; gap:10px; }
-
-  /* Burger panel */
-  .menu{
-    position:absolute; top:56px; right:14px; z-index:60;
-    background:var(--panel); border:1px solid var(--stroke); border-radius:12px;
-    box-shadow:0 12px 28px rgba(0,0,0,.45); padding:8px; width:240px;
-  }
-  .menu.hidden{ display:none; }
-  .menu-item{
-    width:100%; text-align:left; background:transparent; color:var(--text);
-    border:0; border-radius:10px; padding:10px 12px; cursor:pointer;
-  }
-  .menu-item:hover{ background:var(--panel-2); }
-
-  /* Chat */
-  .chat{ padding:16px 14px 120px; max-width:820px; margin:0 auto; }
-  .msg{
-    background:var(--panel); border:1px solid var(--stroke);
-    padding:12px 14px; border-radius:14px; margin:8px 0; line-height:1.45;
-  }
-  .msg.bot{ color:var(--text); }
-
-  /* Composer */
-  .composer{ position:sticky; bottom:0; background:linear-gradient(180deg, rgba(12,12,16,0), var(--bg) 20%); }
-  .composer-inner{
-    position:relative;
-    display:flex; align-items:center; gap:10px;
-    max-width:820px; margin:0 auto; padding:12px 14px 8px;
-  }
-  .plus{
-    width:44px; height:44px; border-radius:12px; border:1px solid var(--stroke);
-    background:var(--panel-2); color:var(--text); font-size:22px; line-height:1;
-  }
-  .attach-stack{
-    position:absolute; bottom:58px; left:14px;
-    display:flex; flex-direction:column; gap:8px;
-    background:var(--panel); border:1px solid var(--stroke); border-radius:12px;
-    padding:8px; box-shadow:0 12px 28px rgba(0,0,0,.45);
-  }
-  .attach-stack.hidden{ display:none; }
-  .attach-item{
-    white-space:nowrap; padding:8px 10px; border-radius:10px; border:1px solid var(--stroke);
-    background:var(--panel-2); color:var(--text);
-  }
-  .input{
-    flex:1; height:44px; border-radius:12px; border:1px solid var(--stroke);
-    background:#111119; color:var(--text); padding:0 12px;
-  }
-  .send{
-    width:56px; height:44px; border-radius:12px; border:1px solid var(--stroke);
-    background:#3b2cff; color:#fff; font-weight:700;
-  }
-  .powered{
-    text-align:center; color:var(--muted); font-size:.9rem; padding:0 0 10px;
-  }
-
-  /* Modal FAQ */
-  .modal{ position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.55); z-index:70; }
-  .modal.hidden{ display:none; }
-  .modal-card{
-    width:min(92%,720px); background:var(--panel); border:1px solid var(--stroke);
-    border-radius:16px; padding:12px 14px;
-  }
-  .modal-head{ display:flex; align-items:center; justify-content:space-between; }
-  .modal-body{ color:var(--text); line-height:1.5; }
-  .close{
-    background:var(--panel-2); color:var(--text); border:1px solid var(--stroke);
-    border-radius:10px; padding:6px 10px; cursor:pointer;
-  }
-
-  /* Mobile tweaks */
-  @media (max-width: 420px){
-    .title{ font-size:1.05rem; }
-    .pill{ padding:7px 10px; }
-    .counter{ padding:7px 10px; }
-    .chat{ padding-bottom:130px; }
-  }
-  .hidden{ display:none; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
-<body>
-  <!-- TOP BAR -->
-  <header class="topbar">
+<body class="theme-dark">
+  <!-- HEADER -->
+  <header class="app-header">
     <div class="brand">
       <span class="heart">🤍</span>
-      <span class="title">Philomène I.A.</span>
+      <div class="title">
+        <span>Philomène</span><span>I.A.</span>
+      </div>
     </div>
 
-    <div class="top-actions">
-      <button id="themeBtn" class="pill" aria-label="Mode Jour/Nuit">🌙</button>
-      <div class="counter pill">💎 <span id="tokenCounter">1 000 000</span></div>
-      <a href="https://accounts.philomeneia.com/" class="pill login">Connexion / Inscription</a>
-      <button id="menuBtn" class="pill">☰</button>
+    <div class="header-actions">
+      <button id="themeToggle" class="pill" aria-label="Mode jour/nuit">🌙</button>
+
+      <div class="pill balance">
+        💎 <span id="tokenBalance">1000000</span>
+      </div>
+
+      <a id="accountBtn" class="pill account" href="https://accounts.philomeneia.com" rel="noopener">
+        Connexion / Inscription
+      </a>
+
+      <button id="burgerBtn" class="pill burger" aria-label="Menu">≡</button>
+      <nav id="burgerMenu" class="dropdown" hidden>
+        <button id="openFaq" class="drop-item">❓ FAQ</button>
+        <button id="newChat" class="drop-item">🔄 Nouvelle discussion</button>
+      </nav>
     </div>
   </header>
 
-  <!-- MENU BURGER -->
-  <nav id="menuPanel" class="menu hidden">
-    <button class="menu-item" id="openFaq">❓ FAQ</button>
-    <button class="menu-item" id="newChat">🔄 Nouvelle discussion</button>
-  </nav>
-
-  <!-- CHAT -->
-  <main id="chat" class="chat">
+  <!-- MESSAGES -->
+  <main id="chat" role="main" aria-live="polite">
     <div class="msg bot">
-      Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.
+      Bonjour 👋 Je suis Philomène I.A., propulsée par <strong>GPT-5 Thinking</strong>.
     </div>
   </main>
 
   <!-- COMPOSER -->
-  <footer class="composer">
-    <div class="composer-inner">
-      <button id="plusBtn" class="plus">+</button>
+  <footer class="composer safe-area-bottom">
+    <div class="attach-zone">
+      <button id="plusBtn" class="plus" aria-expanded="false" aria-controls="attachPanel">＋</button>
 
-      <div id="attachStack" class="attach-stack hidden">
-        <button id="attachMic" class="attach-item">🎤 Micro</button>
-        <button id="attachCam" class="attach-item">📷 Appareil photo</button>
-        <button id="attachDoc" class="attach-item">📄 Document</button>
+      <!-- panneau vertical qui monte -->
+      <div id="attachPanel" class="attach-panel" hidden>
+        <button class="attach-btn" id="micBtn">🎤 Micro</button>
+        <button class="attach-btn" id="camBtn">📷 Appareil photo</button>
+        <button class="attach-btn" id="docBtn">📄 Document</button>
       </div>
-
-      <input id="userInput" class="input" placeholder="Écrivez votre message…" />
-      <button id="sendBtn" class="send">➤</button>
     </div>
 
-    <div class="powered">⚙️ Propulsé par <b>GPT-5 Thinking</b></div>
+    <input id="messageInput" class="input" placeholder="Écrivez votre message…" autocomplete="off" />
+
+    <button id="sendBtn" class="send" aria-label="Envoyer">➤</button>
   </footer>
 
-  <!-- MODALE FAQ -->
-  <div id="faqModal" class="modal hidden">
+  <div class="powered">⚙️ Propulsé par <strong>GPT-5 Thinking</strong></div>
+
+  <!-- MODAL FAQ -->
+  <dialog id="faqModal" class="modal">
     <div class="modal-card">
       <div class="modal-head">
-        <h2>💬 Foire aux questions</h2>
-        <button id="faqClose" class="close">✕</button>
+        <h3>💬 Foire aux questions</h3>
+        <button id="faqClose" class="close">×</button>
       </div>
       <div class="modal-body">
-        <p><b>Quelle IA utilise Philomène ?</b><br>
-           Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée.</p>
+        <h4>Quelle IA utilise Philomène ?</h4>
+        <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
 
-        <p><b>Comment fonctionnent les tokens ?</b><br>
-           Chaque message consomme quelques tokens selon la longueur.
-           Le diamant 💎 affiche votre solde.</p>
+        <h4>Comment fonctionnent les tokens ?</h4>
+        <p>Chaque message consomme quelques tokens (selon la longueur). Le 💎 affiche votre solde.</p>
 
-        <p><b>Packs disponibles</b><br>
-           💎 1 000 000 → 5 €<br>
-           💎 2 000 000 → 10 €<br>
-           💎 4 000 000 → 20 €<br>
-           🎁 Premier achat : <b>+50 % offerts</b>.</p>
+        <h4>Packs disponibles</h4>
+        <ul class="packs">
+          <li>💎 1 000 000 tokens → 5 €</li>
+          <li>💎 2 000 000 tokens → 10 €</li>
+          <li>💎 4 000 000 tokens → 20 €</li>
+        </ul>
+        <p>🎁 Premier achat : <strong>+50 % offerts</strong> (1,5 M – 3 M – 6 M).</p>
 
-        <p><b>Abonnement ?</b><br>
-           Aucun. Vous payez uniquement ce que vous consommez.</p>
+        <h4>Abonnement ?</h4>
+        <p>Aucun abonnement. Vous payez uniquement ce que vous consommez.</p>
       </div>
     </div>
-  </div>
+  </dialog>
 
-  <script>
-  const API_URL = "https://api.philomeneia.com/ask";
-  const $ = s => document.querySelector(s);
-  let tokenBalance = 1000000;
-  let conversation = [{ role:"system", content:"Tu es Philomène I.A., claire et utile." }];
-  const chat = $("#chat"), input=$("#userInput");
-
-  const setTokenCounter = n=>{
-    $("#tokenCounter").textContent = new Intl.NumberFormat("fr-FR").format(Number(n||0));
-  };
-  setTokenCounter(tokenBalance);
-
-  $("#menuBtn").onclick = e=>{
-    e.stopPropagation(); $("#menuPanel").classList.toggle("hidden");
-  };
-  document.onclick = e=>{
-    const m=$("#menuPanel"), b=$("#menuBtn");
-    if (m && !m.contains(e.target) && e.target!==b) m.classList.add("hidden");
-  };
-  $("#openFaq").onclick = ()=>{$("#menuPanel").classList.add("hidden");$("#faqModal").classList.remove("hidden");};
-  $("#faqClose").onclick = ()=>$("#faqModal").classList.add("hidden");
-  $("#newChat").onclick = ()=>{
-    conversation=[{ role:"system", content:"Tu es Philomène I.A., claire et utile." }];
-    chat.innerHTML='<div class="msg bot">Nouvelle discussion. Pose ta question 🙂</div>';
-  };
-
-  const plus=$("#plusBtn"), stack=$("#attachStack");
-  plus.onclick = e=>{
-    e.stopPropagation();
-    const open = stack.classList.toggle("hidden");
-    plus.textContent=open?"+":"−";
-  };
-  document.addEventListener("click",e=>{
-    if(stack && !stack.contains(e.target)&&e.target!==plus){stack.classList.add("hidden");plus.textContent="+";}
-  });
-  $("#attachMic").onclick=()=>alert("Micro à venir");
-  $("#attachCam").onclick=()=>alert("Caméra à venir");
-  $("#attachDoc").onclick=()=>alert("Document à venir");
-
-  $("#sendBtn").onclick = sendMessage;
-  input.onkeydown = e=>{if(e.key==="Enter")sendMessage();};
-
-  function appendMsg(role,text){
-    const d=document.createElement("div");
-    d.className=`msg ${role==="assistant"?"bot":"user"}`;
-    d.innerHTML=text.replace(/\n/g,"<br>");
-    chat.appendChild(d);
-    chat.scrollTop=chat.scrollHeight;
-  }
-
-  async function sendMessage(){
-    const text=input.value.trim(); if(!text)return;
-    appendMsg("user",text); input.value="";
-    conversation.push({role:"user",content:text});
-    try{
-      const r=await fetch(API_URL,{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({conversation,userId:"guest",tokens:tokenBalance})
-      });
-      if(!r.ok)throw new Error();
-      const d=await r.json();
-      const ans=d.answer||"Désolé, pas de réponse.";
-      appendMsg("assistant",ans);
-      tokenBalance=d.tokensLeft??Math.max(0,tokenBalance-20-Math.ceil(ans.length/20));
-      setTokenCounter(tokenBalance);
-      conversation.push({role:"assistant",content:ans});
-    }catch(e){appendMsg("assistant","⚠️ Erreur réseau. Réessaie.");}
-  }
-  </script>
+  <!-- ⚙️ Appel du script -->
+  <script src="script.js"></script>
 </body>
 </html>
