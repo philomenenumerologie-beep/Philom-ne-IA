@@ -1,192 +1,47 @@
-/* 🌙 STYLE GLOBAL */
-body {
-  font-family: "Segoe UI", sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #0b0b0b;
-  color: #f5f5f5;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  transition: background 0.3s, color 0.3s;
+/* Base */
+*{box-sizing:border-box}
+:root{
+  --violet:#6a00ff;
+  --violet-soft:#b085ff;
+  --bg-dark:#0b0b0b;
+  --panel:#141414;
+  --text:#f5f5f5;
 }
+body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Inter,Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+body.dark{background:var(--bg-dark);color:var(--text);}
 
-/* ☀️ MODE CLAIR */
-body.light-mode {
-  background-color: #f2f2f2;
-  color: #111;
-}
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#111;border-bottom:1px solid #222;position:sticky;top:0;z-index:10}
+.brand{font-weight:700}
+.actions{display:flex;gap:10px;align-items:center}
+.actions button{border:1px solid #333;background:#1b1b1b;color:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}
+.tokens{color:var(--violet-soft);font-weight:700}
 
-/* 🔝 HEADER */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  background: #111;
-  border-bottom: 2px solid #6a00ff;
-}
-header .logo {
-  font-weight: bold;
-  font-size: 18px;
-}
-.top-buttons {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.top-buttons button {
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: #fff;
-  transition: transform 0.2s;
-}
-.top-buttons button:hover {
-  transform: scale(1.2);
-}
+/* Menu */
+.menu{position:absolute;right:12px;top:56px;background:#1b1b1b;border:1px solid #2a2a2a;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:12}
+.menu.hidden{display:none}
+.menu ul{list-style:none;margin:6px;padding:6px}
+.menu li{padding:10px 12px;border-radius:8px;color:#fff;cursor:pointer}
+.menu li:hover{background:var(--violet);}
 
-/* 💎 TOKEN DISPLAY */
-#tokenDisplay {
-  font-weight: bold;
-  color: #b085ff;
-  font-size: 17px;
-}
+/* Chat */
+.chat{flex:1;display:flex;flex-direction:column;padding:14px;gap:12px}
+.chat-box{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:12px 14px;border-radius:12px;line-height:1.4}
+.msg.user{align-self:flex-end;background:var(--violet);color:#fff}
+.msg.bot{align-self:flex-start;background:#1f1f1f;border:1px solid rgba(255,255,255,.08);color:#fff}
+.typing{align-self:flex-start;background:rgba(20,0,60,.5);border:1px solid rgba(140,80,255,.6)}
+.input-bar{display:flex;gap:8px;align-items:center;background:#111;border-top:1px solid #222;padding:10px}
+#userInput{flex:1;border:1px solid #333;border-radius:10px;background:#161616;color:#fff;padding:12px 14px;outline:none}
+.ibtns{display:flex;gap:8px}
+.ibtns button{border:1px solid #333;background:#1b1b1b;color:#fff;border-radius:10px;padding:10px 12px;cursor:pointer}
 
-/* 🍔 MENU BURGER */
-nav {
-  position: absolute;
-  right: 10px;
-  top: 60px;
-  background: #1b1b1b;
-  border: 1px solid #6a00ff;
-  border-radius: 6px;
-  z-index: 100;
-}
-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 5px;
-}
-nav ul li {
-  padding: 8px 15px;
-  cursor: pointer;
-  border-radius: 5px;
-  color: #fff;
-}
-nav ul li:hover {
-  background: #6a00ff;
-}
-.hidden {
-  display: none;
-}
+/* FAQ modal */
+.faq-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999}
+.faq-modal.open{display:flex}
+.faq-dialog{position:relative;width:min(680px,92vw);max-height:85vh;overflow:auto;background:#0f0a18;border:2px solid var(--violet);border-radius:16px;color:#fff;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.faq-close{position:absolute;right:12px;top:8px;background:transparent;border:0;color:#fff;font-size:26px;cursor:pointer}
+.packs{margin:6px 0 12px 18px}
 
-/* 💬 CHAT */
-#chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 15px;
-  overflow-y: auto;
-}
-#chat-box {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 15px;
-}
-.message {
-  padding: 10px 15px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  max-width: 80%;
-  line-height: 1.4;
-}
-.message.user {
-  background: #6a00ff;
-  align-self: flex-end;
-  color: #fff;
-}
-.message.bot {
-  background: #222;
-  align-self: flex-start;
-  color: #fff;
-}
-
-/* 📝 INPUT */
-#input-area {
-  display: flex;
-  align-items: center;
-  background: #111;
-  padding: 8px;
-  border-top: 2px solid #6a00ff;
-}
-#user-input {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #fff;
-  font-size: 16px;
-}
-#input-buttons {
-  display: flex;
-  gap: 8px;
-}
-#input-buttons button {
-  background: none;
-  border: none;
-  font-size: 22px;
-  color: #b085ff;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-#input-buttons button:hover {
-  transform: scale(1.2);
-}
-
-/* ❓ FAQ POPUP */
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-}
-.popup-content {
-  background: #1b1b1b;
-  color: #fff;
-  padding: 25px;
-  border-radius: 10px;
-  width: 85%;
-  max-width: 600px;
-  border: 2px solid #6a00ff;
-  box-shadow: 0 0 10px #6a00ff;
-  overflow-y: auto;
-  max-height: 80vh;
-}
-.popup-content h2 {
-  color: #b085ff;
-}
-.popup .close {
-  float: right;
-  cursor: pointer;
-  font-size: 25px;
-}
-
-/* ⚙️ FOOTER */
-footer {
-  text-align: center;
-  padding: 8px;
-  font-size: 14px;
-  background: #111;
-  border-top: 1px solid #6a00ff;
-  color: #b085ff;
-}
+/* Footer */
+.footer{text-align:center;padding:10px;color:var(--violet-soft);background:#111;border-top:1px solid #222}
