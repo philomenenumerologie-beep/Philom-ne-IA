@@ -1,352 +1,122 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Philomène I.A.</title>
-  <style>
-    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin:0; padding:0; }
-    :root{
-      --bg:#0b0b10; --bg2:#11111a; --card:#181826; --muted:#9aa0a6; --text:#eaeaf1;
-      --vio1:#7a5cff; --vio2:#3b29a7; --ring:rgba(122,92,255,.5);
-    }
-    html,body{ height:100%; }
-    body{
-      background: radial-gradient(1200px 800px at 20% -10%, rgba(122,92,255,.12), transparent 60%) , var(--bg);
-      color:var(--text);
-      font-family: -apple-system,BlinkMacSystemFont,"Inter",Roboto,Segoe UI,system-ui,sans-serif;
-      display:flex; flex-direction:column; min-height:100vh;
-    }
-
-    /* ===== TOPBAR ===== */
-    .topbar{
-      position:sticky; top:0; z-index:20;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 16px; background:rgba(11,11,16,.9);
-      backdrop-filter:saturate(140%) blur(8px);
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:20px; }
-    .badge-moon{ width:44px;height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-      background:#191a26; border:1px solid rgba(255,255,255,.09);}
-    .counter{
-      display:flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:12px; background:#191a26; border:1px solid rgba(255,255,255,.09);
-      font-weight:700; font-size:18px;
-    }
-    .counter .d{ font-size:20px; }
-    #auth-btn{
-      display:flex; flex-direction:column; gap:4px; padding:10px 12px; min-height:44px;
-      border-radius:12px; color:#fff; background:#191a26; border:1px solid rgba(255,255,255,.12);
-    }
-    #auth-mainline{ display:flex; gap:8px; align-items:center; font-weight:700; }
-    #auth-subline{ color:var(--muted); font-size:12px; }
-
-    /* ===== CHAT ===== */
-    .chat-area{ flex:1; padding:16px; display:flex; flex-direction:column; gap:14px; overflow-y:auto; }
-    .bubble{ max-width:92%; padding:14px 16px; border-radius:14px; line-height:1.45; font-size:16px; word-wrap:break-word; white-space:pre-wrap; }
-    .assistant{ background:#1a1a25; border:1px solid rgba(255,255,255,.08);}
-    .user{
-      background: radial-gradient(60% 140% at 50% -20%, var(--vio1), var(--vio2));
-      border:1px solid rgba(122,92,255,.5); box-shadow:0 0 18px rgba(122,92,255,.25);
-      align-self:flex-end; font-weight:600;
-    }
-    .typing{ align-self:flex-start; display:inline-flex; gap:6px; padding:12px 14px; border-radius:12px;
-      background:#151525; border:1px solid rgba(122,92,255,.5); box-shadow:0 0 16px rgba(122,92,255,.25); }
-    .dot{ width:7px; height:7px; border-radius:50%; background:linear-gradient(#b9a6ff,#5b3dff); opacity:.25; animation:blink 1s infinite; }
-    .dot:nth-child(2){ animation-delay:.2s } .dot:nth-child(3){ animation-delay:.4s }
-    @keyframes blink{ 0%{opacity:.25; transform:scale(1)} 30%{opacity:1; transform:scale(1.25)} 60%{opacity:.25; transform:scale(1)} 100%{opacity:.25}}
-
-    /* ===== INPUT BAR ===== */
-    .input-wrap{
-      position:sticky; bottom:0; z-index:15; padding:14px 16px; background:rgba(11,11,16,.9);
-      border-top:1px solid rgba(255,255,255,.06); backdrop-filter:saturate(140%) blur(8px);
-    }
-    .row{ display:flex; gap:10px; align-items:center; }
-    .btn-plus,.btn-send{
-      width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(60% 140% at 50% -20%, var(--vio1), var(--vio2));
-      border:1px solid var(--ring); box-shadow:0 0 18px rgba(122,92,255,.25); color:#fff; font-size:26px; font-weight:700;
-    }
-    #message-input{
-      flex:1; height:56px; border-radius:14px; border:1px solid rgba(255,255,255,.12);
-      background:#12121c; color:#fff; padding:0 14px; font-size:16px; outline:none;
-    }
-    #message-input::placeholder{ color:#8b8f98; }
-
-    /* mini-menu au-dessus du + (vertical) */
-    .plus-wrapper{ position:relative; }
-    .plus-menu{
-      position:absolute; bottom:64px; left:0; right:0; display:flex; flex-direction:column; gap:10px;
-      background:#12121c; border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:10px;
-      transform:translateY(10px); opacity:0; pointer-events:none; transition:all .18s ease; box-shadow:0 16px 40px rgba(0,0,0,.5);
-    }
-    .plus-menu.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
-    .plus-item{ height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-      background:#191a26; border:1px solid rgba(255,255,255,.12); font-size:20px; }
-
-    .status{ margin-top:8px; color:var(--muted); font-size:13px; display:flex; justify-content:space-between; }
-
-    /* ===== TOAST ===== */
-    .toast{
-      position:fixed; left:50%; bottom:92px; transform:translateX(-50%) translateY(20px);
-      background:#1a1a25; border:1px solid rgba(255,255,255,.12); color:#fff; padding:10px 14px; border-radius:10px;
-      opacity:0; pointer-events:none; transition:all .25s ease; z-index:9999; font-size:14px;
-    }
-    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-    @media (min-width:700px){ .chat-area{ padding:20px; } }
-  </style>
-
-  <!-- Clerk JS (robuste). Mets ta clé publ. ci-dessous -->
-  <script
-    async
-    crossorigin="anonymous"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-    data-clerk-publishable-key="PK_TA_CLE_PUBLIABLE_ICI"
-    onload="window.__clerkLoaded = true">
-  </script>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Clerk -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="TODO_REPLACE_WITH_YOUR_CLERK_PUBLISHABLE_KEY"
+    src="https://cdn.clerk.dev/clerk.js"></script>
 </head>
-<body>
-
-  <!-- ===== TOPBAR ===== -->
+<body class="dark">
+  <!-- TOP BAR -->
   <header class="topbar">
-    <div class="brand">
-      <div style="font-size:22px">🤍</div>
-      <div style="display:flex;flex-direction:column;line-height:1.1">
-        <div>Philomène <span style="opacity:.85">I.A.</span></div>
+    <div class="left">
+      <button id="burger" class="btn ghost">☰</button>
+      <div class="brand">
+        <span class="logo">🤍</span>
+        <span class="name">Philomène I.A.</span>
       </div>
-      <div class="badge-moon">🌙</div>
-      <div class="counter"><span class="d">💎</span><span id="token-header">1000</span></div>
     </div>
-
-    <button id="auth-btn" type="button">
-      <div id="auth-mainline"><span>🔐</span><span id="auth-label">Connexion / Inscription</span></div>
-      <div id="auth-subline">Sécurisé</div>
-    </button>
+    <div class="center">
+      <div class="pill">
+        <span class="moon">🌙</span>
+      </div>
+      <div class="pill">
+        <span class="diamond">💎</span>
+        <span id="tokens-top">0</span>
+      </div>
+      <button id="authBtn" class="btn solid">
+        <div class="big">🔐 Connexion / Inscription</div>
+        <div class="sub" id="authSub">Sécurisé</div>
+      </button>
+      <button id="themeBtn" class="btn ghost">🌓</button>
+    </div>
+    <div class="right">
+      <button id="menuBtn" class="btn ghost">≡</button>
+    </div>
   </header>
 
-  <!-- ===== CHAT ===== -->
-  <main id="chat" class="chat-area">
-    <div class="bubble assistant">
+  <!-- SIDE MENU -->
+  <aside id="sideMenu" class="side hidden">
+    <div class="side-head">
+      <div class="title">Menu</div>
+      <button id="closeSide" class="btn ghost">✕</button>
+    </div>
+    <ul class="list">
+      <li><button id="openFAQ" class="row">❓ Aide / FAQ</button></li>
+      <li><button id="openJournal" class="row">📰 Journal (AFA)</button></li>
+      <li><button id="buyTokens" class="row">💳 Acheter des tokens (PayBall)</button></li>
+      <li><button id="signOut" class="row">🚪 Déconnexion</button></li>
+    </ul>
+  </aside>
+
+  <!-- JOURNAL PANEL -->
+  <aside id="journal" class="drawer hidden">
+    <div class="drawer-head">
+      <div class="title">Journal – Flux</div>
+      <button id="closeJournal" class="btn ghost">✕</button>
+    </div>
+    <div class="drawer-body">
+      <p>🧠 Mémo (local) : vos derniers sujets sont listés ici.</p>
+      <ul id="memoList" class="memo"></ul>
+    </div>
+  </aside>
+
+  <!-- PAYBALL MODAL (mock prêt à brancher) -->
+  <div id="payball" class="modal hidden">
+    <div class="card">
+      <div class="card-head">
+        <div class="title">Acheter des tokens</div>
+        <button id="closePay" class="btn ghost">✕</button>
+      </div>
+      <div class="grid">
+        <button class="pack" data-pack="5">💎 70 000 — 5 €</button>
+        <button class="pack" data-pack="10">💎 150 000 — 10 €</button>
+        <button class="pack" data-pack="20">💎 320 000 — 20 €</button>
+      </div>
+      <p class="promo">🎁 1er achat = x2 tokens</p>
+      <p class="hint">TODO: brancher Stripe/PayPal ici (webhook + crédit).</p>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <main id="chat" class="chat">
+    <div class="bubble a">
       Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.<br><br>
       🎁 Nouveaux : 1000 tokens offerts + bonus à l’inscription. Pose ta première question !
     </div>
   </main>
 
-  <!-- ===== INPUT BAR ===== -->
-  <footer class="input-wrap">
-    <div class="row">
-      <div class="plus-wrapper">
-        <div id="plus-menu" class="plus-menu">
-          <div class="plus-item" title="Micro">🎤</div>
-          <div class="plus-item" title="Appareil photo">📷</div>
-          <div class="plus-item" title="Document">📄</div>
+  <!-- INPUT BAR -->
+  <footer class="input">
+    <div class="input-row">
+      <div class="plus-wrap">
+        <div id="plusMenu" class="plus-menu">
+          <button class="tool" id="toolMic" title="Micro">🎤</button>
+          <button class="tool" id="toolPhoto" title="Appareil photo">📷</button>
+          <button class="tool" id="toolDoc" title="Document">📄</button>
+          <button class="tool" id="toolJournal" title="Journal">📰</button>
+          <button class="tool" id="toolPay" title="PayBall">💳</button>
         </div>
-        <button id="plus" class="btn-plus" type="button">+</button>
+        <button id="plusBtn" class="btn plus">+</button>
       </div>
 
-      <input id="message-input" type="text" placeholder="Écrivez votre message..." />
-      <button id="send" class="btn-send" type="button">➤</button>
+      <input id="msg" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
+      <button id="send" class="btn send">➤</button>
     </div>
     <div class="status">
-      <div>Prêt • <span id="token-footer">1000</span> tokens restants</div>
-      <div id="status-right"></div>
+      <span>Prêt • <b id="tokens-bottom">0</b> tokens restants</span>
+      <span id="net" class="net"></span>
     </div>
   </footer>
 
-  <div id="toast" class="toast"></div>
+  <!-- HIDDEN INPUTS -->
+  <input id="filePicker" type="file" accept=".pdf,.txt,.md,.doc,.docx,image/*" hidden />
+  <audio id="recorder" hidden></audio>
 
-  <script>
-    /* =========================
-       CONFIG
-    ========================== */
-    const API_URL = "https://TON-BACKEND/ask"; // ← remplace par ton backend
-    const COST_PER_MSG = 20;
-    const GUEST_START = 1000;
-    const SIGNUP_BONUS = 3000;
-
-    /* =========================
-       ÉTAT
-    ========================== */
-    let isSignedIn = false;
-    let currentUserId = "guest";
-    let currentUserEmail = null;
-    let tokenBalance = GUEST_START;
-
-    const convo = [{ role:"assistant", content:"Bonjour !"}];
-
-    /* =========================
-       DOM
-    ========================== */
-    const chat = document.getElementById('chat');
-    const inp = document.getElementById('message-input');
-    const sendBtn = document.getElementById('send');
-    const plusBtn = document.getElementById('plus');
-    const plusMenu = document.getElementById('plus-menu');
-    const authBtn = document.getElementById('auth-btn');
-    const authLabel = document.getElementById('auth-label');
-    const authSub = document.getElementById('auth-subline');
-    const tokenHeader = document.getElementById('token-header');
-    const tokenFooter = document.getElementById('token-footer');
-    const statusRight = document.getElementById('status-right');
-    const toast = document.getElementById('toast');
-
-    /* =========================
-       UTIL
-    ========================== */
-    const keyFor = id => `philomene_tokens_${id}`;
-    const loadTokens = id => {
-      const v = localStorage.getItem(keyFor(id));
-      const n = v ? parseInt(v,10) : NaN;
-      return Number.isNaN(n) ? null : n;
-    };
-    const saveTokens = (id, amt) => localStorage.setItem(keyFor(id), String(amt));
-
-    function setTokensDisplay(){
-      tokenHeader.textContent = tokenBalance;
-      tokenFooter.textContent = tokenBalance;
-    }
-    function toastMsg(msg, ms=1600){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'), ms);
-    }
-    function append(role,text){
-      const div = document.createElement('div');
-      div.className = `bubble ${role==='user'?'user':'assistant'}`;
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-    function typingOn(){
-      if (document.getElementById('typing')) return;
-      const box = document.createElement('div'); box.className='typing'; box.id='typing';
-      box.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-      chat.appendChild(box); chat.scrollTop = chat.scrollHeight;
-    }
-    function typingOff(){
-      const el = document.getElementById('typing'); if(el) el.remove();
-    }
-
-    /* =========================
-       TOKENS
-    ========================== */
-    function initGuest(){
-      const saved = loadTokens('guest');
-      tokenBalance = saved ?? GUEST_START;
-      saveTokens('guest', tokenBalance);
-      setTokensDisplay();
-    }
-    function awardSignupBonus(uid){
-      const existing = loadTokens(uid);
-      if (existing !== null) tokenBalance = existing;
-      else {
-        const guest = loadTokens('guest') ?? GUEST_START;
-        tokenBalance = guest + SIGNUP_BONUS;
-        saveTokens(uid, tokenBalance);
-      }
-      setTokensDisplay();
-    }
-    function spend(){
-      tokenBalance = Math.max(0, tokenBalance - COST_PER_MSG);
-      saveTokens(currentUserId, tokenBalance);
-      setTokensDisplay();
-    }
-
-    /* =========================
-       ENVOI
-    ========================== */
-    async function send(){
-      const text = inp.value.trim(); if(!text) return;
-      append('user', text); convo.push({role:'user',content:text});
-      inp.value=''; spend(); typingOn();
-      try{
-        const r = await fetch(API_URL, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ conversation: convo })
-        });
-        const data = await r.json().catch(()=>null);
-        typingOff();
-        const answer = data?.answer?.trim() || "Désolée, j'ai eu un souci réseau.";
-        append('assistant', answer); convo.push({role:'assistant',content:answer});
-      }catch(e){
-        typingOff(); append('assistant', "Désolée, j'ai eu un souci réseau.");
-      }
-    }
-    sendBtn.addEventListener('click', send);
-    inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); }});
-
-    /* menu + */
-    plusBtn.addEventListener('click', ()=> plusMenu.classList.toggle('open'));
-    document.addEventListener('click', (e)=>{
-      if(!plusMenu.contains(e.target) && e.target!==plusBtn) plusMenu.classList.remove('open');
-    });
-
-    /* =========================
-       CLERK
-    ========================== */
-    async function waitClerk(ms=6000){
-      const t0 = Date.now();
-      while(!(window.__clerkLoaded && window.Clerk) && Date.now()-t0 < ms){
-        await new Promise(r=>setTimeout(r,120));
-      }
-      return !!(window.__clerkLoaded && window.Clerk);
-    }
-    async function initClerk(){
-      const ok = await waitClerk();
-      if(!ok){
-        // mode invité silencieux
-        isSignedIn = false; currentUserId='guest'; currentUserEmail=null;
-        initGuest(); authLabel.textContent="Connexion / Inscription"; authSub.textContent="Sécurisé";
-        return;
-      }
-      try{
-        await window.Clerk.load();
-        const u = window.Clerk.user;
-        const s = window.Clerk.session;
-        if(u && s){
-          isSignedIn = true;
-          currentUserId = u.id || 'user';
-          currentUserEmail = u.primaryEmailAddress?.emailAddress || null;
-          const have = loadTokens(currentUserId);
-          if(have===null){ awardSignupBonus(currentUserId); } else { tokenBalance = have; setTokensDisplay(); }
-          authLabel.textContent="Se déconnecter"; authSub.textContent(currentUserEmail || "Connecté");
-        }else{
-          isSignedIn=false; currentUserId='guest'; currentUserEmail=null;
-          initGuest(); authLabel.textContent="Connexion / Inscription"; authSub.textContent="Sécurisé";
-        }
-      }catch(e){
-        console.warn('initClerk error', e);
-        isSignedIn=false; currentUserId='guest'; initGuest();
-        authLabel.textContent="Connexion / Inscription"; authSub.textContent="Sécurisé";
-      }
-    }
-    authBtn.addEventListener('click', async ()=>{
-      if(!window.Clerk){ await initClerk(); }
-      if(!window.Clerk){ toastMsg("Connexion en cours… réessaie dans 1 seconde."); return; }
-      try{
-        if(isSignedIn){
-          saveTokens(currentUserId, tokenBalance);
-          await window.Clerk.signOut();
-          isSignedIn=false; currentUserId='guest'; currentUserEmail=null;
-          initGuest(); authLabel.textContent="Connexion / Inscription"; authSub.textContent="Sécurisé";
-          toastMsg("Déconnecté.");
-        }else{
-          await window.Clerk.openSignIn({
-            afterSignIn: async ()=>{ await initClerk(); toastMsg("Connecté ✔"); },
-            afterSignUp: async ()=>{ await initClerk(); if(currentUserId!=='guest'){ awardSignupBonus(currentUserId); toastMsg("+3000 tokens offerts !"); } }
-          });
-        }
-      }catch(e){ console.warn(e); toastMsg("Connexion momentanément indisponible."); }
-    });
-
-    /* =========================
-       BOOT
-    ========================== */
-    window.addEventListener('load', ()=>{
-      initGuest(); setTokensDisplay(); initClerk();
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
