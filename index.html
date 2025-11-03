@@ -1,122 +1,80 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Clerk -->
-  <script async crossorigin="anonymous"
-    data-clerk-publishable-key="TODO_REPLACE_WITH_YOUR_CLERK_PUBLISHABLE_KEY"
-    src="https://cdn.clerk.dev/clerk.js"></script>
 </head>
-<body class="dark">
-  <!-- TOP BAR -->
+<body class="dark-mode">
+  <!-- HEADER -->
   <header class="topbar">
-    <div class="left">
-      <button id="burger" class="btn ghost">☰</button>
-      <div class="brand">
-        <span class="logo">🤍</span>
-        <span class="name">Philomène I.A.</span>
+    <div class="logo">🤍 Philomène I.A.</div>
+    <div class="top-buttons">
+      <button id="toggle-mode" title="Jour / Nuit">🌗</button>
+      <div id="tokenDisplay" title="Solde tokens">
+        💎 <span id="tokenCount">1 000 000</span>
       </div>
-    </div>
-    <div class="center">
-      <div class="pill">
-        <span class="moon">🌙</span>
-      </div>
-      <div class="pill">
-        <span class="diamond">💎</span>
-        <span id="tokens-top">0</span>
-      </div>
-      <button id="authBtn" class="btn solid">
-        <div class="big">🔐 Connexion / Inscription</div>
-        <div class="sub" id="authSub">Sécurisé</div>
-      </button>
-      <button id="themeBtn" class="btn ghost">🌓</button>
-    </div>
-    <div class="right">
-      <button id="menuBtn" class="btn ghost">≡</button>
+      <button id="menuButton" title="Menu">☰</button>
     </div>
   </header>
 
-  <!-- SIDE MENU -->
-  <aside id="sideMenu" class="side hidden">
-    <div class="side-head">
-      <div class="title">Menu</div>
-      <button id="closeSide" class="btn ghost">✕</button>
-    </div>
-    <ul class="list">
-      <li><button id="openFAQ" class="row">❓ Aide / FAQ</button></li>
-      <li><button id="openJournal" class="row">📰 Journal (AFA)</button></li>
-      <li><button id="buyTokens" class="row">💳 Acheter des tokens (PayBall)</button></li>
-      <li><button id="signOut" class="row">🚪 Déconnexion</button></li>
+  <!-- MENU BURGER -->
+  <nav id="menu" class="hidden">
+    <ul>
+      <li id="openFAQ">❓ FAQ</li>
+      <li id="resetChat">🔄 Nouvelle discussion</li>
     </ul>
-  </aside>
-
-  <!-- JOURNAL PANEL -->
-  <aside id="journal" class="drawer hidden">
-    <div class="drawer-head">
-      <div class="title">Journal – Flux</div>
-      <button id="closeJournal" class="btn ghost">✕</button>
-    </div>
-    <div class="drawer-body">
-      <p>🧠 Mémo (local) : vos derniers sujets sont listés ici.</p>
-      <ul id="memoList" class="memo"></ul>
-    </div>
-  </aside>
-
-  <!-- PAYBALL MODAL (mock prêt à brancher) -->
-  <div id="payball" class="modal hidden">
-    <div class="card">
-      <div class="card-head">
-        <div class="title">Acheter des tokens</div>
-        <button id="closePay" class="btn ghost">✕</button>
-      </div>
-      <div class="grid">
-        <button class="pack" data-pack="5">💎 70 000 — 5 €</button>
-        <button class="pack" data-pack="10">💎 150 000 — 10 €</button>
-        <button class="pack" data-pack="20">💎 320 000 — 20 €</button>
-      </div>
-      <p class="promo">🎁 1er achat = x2 tokens</p>
-      <p class="hint">TODO: brancher Stripe/PayPal ici (webhook + crédit).</p>
-    </div>
-  </div>
+  </nav>
 
   <!-- CHAT -->
-  <main id="chat" class="chat">
-    <div class="bubble a">
-      Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.<br><br>
-      🎁 Nouveaux : 1000 tokens offerts + bonus à l’inscription. Pose ta première question !
+  <main id="chat-container">
+    <div id="chat-box"></div>
+
+    <div id="input-area">
+      <input id="user-input" type="text" placeholder="Écrivez votre message..." autocomplete="off" />
+      <div id="input-buttons">
+        <button id="micButton" title="Dicter">🎤</button>
+        <button id="photoButton" title="Envoyer une photo">📷</button>
+        <button id="docButton" title="Envoyer un document">📄</button>
+        <button id="sendButton" title="Envoyer">➤</button>
+      </div>
     </div>
   </main>
 
-  <!-- INPUT BAR -->
-  <footer class="input">
-    <div class="input-row">
-      <div class="plus-wrap">
-        <div id="plusMenu" class="plus-menu">
-          <button class="tool" id="toolMic" title="Micro">🎤</button>
-          <button class="tool" id="toolPhoto" title="Appareil photo">📷</button>
-          <button class="tool" id="toolDoc" title="Document">📄</button>
-          <button class="tool" id="toolJournal" title="Journal">📰</button>
-          <button class="tool" id="toolPay" title="PayBall">💳</button>
-        </div>
-        <button id="plusBtn" class="btn plus">+</button>
-      </div>
+  <!-- FAQ POP-UP (fermée par défaut) -->
+  <div id="faqPopup" class="popup hidden" aria-hidden="true">
+    <div class="popup-content" role="dialog" aria-modal="true" aria-labelledby="faqTitle">
+      <button id="closeFAQ" class="close" aria-label="Fermer">✕</button>
+      <h2 id="faqTitle">💬 Foire aux questions</h2>
 
-      <input id="msg" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
-      <button id="send" class="btn send">➤</button>
+      <p><strong>Quelle IA utilise Philomène ?</strong><br>
+      Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée.</p>
+
+      <p><strong>Comment fonctionnent les tokens ?</strong><br>
+      Chaque question + réponse consomment des tokens selon leur longueur.
+      Le diamant 💎 affiche votre solde.</p>
+
+      <p><strong>Packs disponibles</strong><br>
+      💎 1 000 000 tokens → 5 €<br>
+      💎 2 000 000 tokens → 10 €<br>
+      💎 4 000 000 tokens → 20 €<br>
+      🎁 <b>Premier achat : +50 % offerts</b> (1,5 M · 3 M · 6 M)</p>
+
+      <p><strong>Abonnement ?</strong><br>
+      Non. <b>Toute la puissance de GPT-5, sans abonnement.</b>
+      Vous payez uniquement ce que vous consommez.</p>
+
+      <p><strong>Confidentialité</strong><br>
+      Vos échanges restent privés.</p>
     </div>
-    <div class="status">
-      <span>Prêt • <b id="tokens-bottom">0</b> tokens restants</span>
-      <span id="net" class="net"></span>
-    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    ⚙️ Propulsé par <b>GPT-5 Thinking</b> — la version la plus avancée de Philomène I.A.
   </footer>
 
-  <!-- HIDDEN INPUTS -->
-  <input id="filePicker" type="file" accept=".pdf,.txt,.md,.doc,.docx,image/*" hidden />
-  <audio id="recorder" hidden></audio>
-
-  <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
