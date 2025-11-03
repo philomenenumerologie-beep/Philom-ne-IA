@@ -108,3 +108,32 @@ body{
 @supports (height: 100svh){
   #chat{min-height:calc(100svh - 200px)}
 }
+/* ✅ Correction position panneau d’attachement */
+.attach-zone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attach-panel {
+  position: absolute;
+  bottom: 58px;
+  left: 0;
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: transparent;
+  z-index: 20;
+}
+
+.attach-btn {
+  min-width: 180px;
+  background: var(--card);
+  border: 1px solid #2a2a3a;
+  color: var(--text);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
