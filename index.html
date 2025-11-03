@@ -1,76 +1,80 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Philomène I.A.</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark-mode">
+<body class="dark">
   <!-- HEADER -->
-  <header>
-    <div class="logo">🤍 Philomène I.A.</div>
-    <div class="top-buttons">
-      <button id="toggle-mode">🌗</button>
-      <div id="tokenDisplay">💎 <span id="tokenCount">1 000 000</span></div>
-      <button id="menuButton">☰</button>
+  <header class="topbar">
+    <div class="brand">🤍 Philomène I.A.</div>
+    <div class="actions">
+      <button id="toggleMode" title="Jour / Nuit">🌗</button>
+      <div id="tokenDisplay" class="tokens">💎 <span id="tokenCount">1 000 000</span></div>
+      <button id="menuBtn" title="Menu">☰</button>
     </div>
   </header>
 
-  <!-- MENU BURGER -->
-  <nav id="menu" class="hidden">
+  <!-- MENU -->
+  <nav id="menu" class="menu hidden">
     <ul>
       <li id="openFAQ">❓ FAQ</li>
-      <li id="resetChat">🔄 Nouvelle discussion</li>
+      <li id="newChat">🔄 Nouvelle discussion</li>
     </ul>
   </nav>
 
-  <!-- ZONE DE CHAT -->
-  <main id="chat-container">
-    <div id="chat-box"></div>
-    <div id="input-area">
-      <input id="user-input" type="text" placeholder="Écrivez votre message..." autocomplete="off">
-      <div id="input-buttons">
-        <button id="micButton">🎤</button>
-        <button id="photoButton">📷</button>
-        <button id="docButton">📄</button>
-        <button id="sendButton">➤</button>
+  <!-- CHAT -->
+  <main class="chat">
+    <div id="chatBox" class="chat-box"></div>
+
+    <div class="input-bar">
+      <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
+      <div class="ibtns">
+        <input id="photoFile" type="file" accept="image/*" hidden />
+        <input id="docFile" type="file" hidden />
+        <button id="micBtn" title="Dictée">🎤</button>
+        <button id="photoBtn" title="Photo">📷</button>
+        <button id="docBtn" title="Document">📄</button>
+        <button id="sendBtn" title="Envoyer">➤</button>
       </div>
     </div>
   </main>
 
-  <!-- FAQ POP-UP -->
-  <div id="faqPopup" class="popup hidden">
-    <div class="popup-content">
-      <span id="closeFAQ" class="close">&times;</span>
-      <h2>💬 Foire aux questions</h2>
-      <p><strong>Quelle IA utilise Philomène ?</strong><br>
-      Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée d’OpenAI.</p>
+  <!-- FAQ (fermée par défaut) -->
+  <div id="faq" class="faq-modal" aria-hidden="true">
+    <div class="faq-dialog" role="dialog" aria-modal="true" aria-labelledby="faq-title">
+      <button id="faqClose" class="faq-close" aria-label="Fermer">×</button>
+      <h2 id="faq-title">💬 Foire aux questions</h2>
 
-      <p><strong>Comment fonctionnent les tokens ?</strong><br>
-      Chaque question et réponse consomment un petit nombre de tokens selon leur longueur.<br>
-      Le diamant 💎 indique votre solde restant.</p>
+      <h3>Quelle IA utilise Philomène ?</h3>
+      <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée.</p>
 
-      <p><strong>Quels sont les packs disponibles ?</strong><br>
-      💎 1 000 000 tokens → 5 €<br>
-      💎 2 000 000 tokens → 10 €<br>
-      💎 4 000 000 tokens → 20 €<br>
-      <b>🎁 Premier achat : +50 % offerts !</b></p>
+      <h3>Comment fonctionnent les tokens ?</h3>
+      <p>Chaque question et réponse consomment des tokens (selon la longueur). Le 💎 affiche votre solde.</p>
 
-      <p><strong>Faut-il un abonnement ?</strong><br>
-      Non. Toute la puissance de GPT-5, sans abonnement.<br>
-      Vous payez uniquement ce que vous consommez.</p>
+      <h3>Packs disponibles</h3>
+      <ul class="packs">
+        <li>💎 1 000 000 tokens → 5 €</li>
+        <li>💎 2 000 000 tokens → 10 €</li>
+        <li>💎 4 000 000 tokens → 20 €</li>
+      </ul>
+      <p>🎁 <b>Premier achat : +50 % de tokens offerts</b> (1,5 M – 3 M – 6 M).</p>
 
-      <p><strong>Et la confidentialité ?</strong><br>
-      Vos échanges restent privés et ne sont pas utilisés à d’autres fins.</p>
+      <h3>Abonnement ?</h3>
+      <p>Aucun abonnement. Toute la puissance de GPT-5 ; vous payez uniquement ce que vous consommez.</p>
+
+      <h3>Confidentialité</h3>
+      <p>Échanges privés, non utilisés à d’autres fins.</p>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <footer>
-    ⚙️ Propulsé par <b>GPT-5 Thinking</b> — la version la plus avancée de Philomène I.A.
+  <footer class="footer">
+    ⚙️ Propulsé par <b>GPT-5 Thinking</b>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
