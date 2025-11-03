@@ -374,3 +374,34 @@ body {
     padding-bottom: 120px;
   }
 }
+/* ---- Topbar de base (si pas déjà présent) ---- */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:12px 16px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#1f1f28;border:1px solid #2a2a36;border-radius:12px;
+  padding:6px 10px;color:#e9e9f2;text-decoration:none;
+}
+.pill.login{max-width:100%}
+
+/* ---- Gestion libellés long/court ---- */
+.pill.login .label-full{display:inline}
+.pill.login .label-short{display:none}
+
+/* ---- Mobile : mise en colonne + libellé court ---- */
+@media (max-width: 480px){
+  .topbar{flex-direction:column;align-items:flex-start;gap:8px}
+  .brand{width:100%;justify-content:space-between}
+  .top-actions{width:100%;gap:8px}
+  .pill{flex:1;justify-content:center}
+  .pill.login{
+    max-width:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .pill.login .label-full{display:none}
+  .pill.login .label-short{display:inline} /* => affiche "Compte" */
+}
+
