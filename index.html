@@ -1,379 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Philomène I.A.</title>
-
-  <style>
-    :root{
-      --bg:#0e0e12;
-      --panel:#16161d;
-      --panel-2:#1d1d27;
-      --text:#f3f3f7;
-      --text-dim:#b8b8c7;
-      --accent:#a784ff;
-      --accent-2:#6f5bd6;
-      --chip:#262636;
-      --ok:#2ecc71;
-      --danger:#ff5d73;
-      --shadow:0 8px 24px rgba(0,0,0,.35);
-      --radius:14px;
-      --safe-b: env(safe-area-inset-bottom, 0px);
-      --safe-t: env(safe-area-inset-top, 0px);
-    }
-    .light{
-      --bg:#fafafa;
-      --panel:#ffffff;
-      --panel-2:#f3f3f7;
-      --text:#101015;
-      --text-dim:#4b4b55;
-      --accent:#7b61ff;
-      --accent-2:#5b49d6;
-      --chip:#e9e9f5;
-      --shadow:0 10px 26px rgba(13,11,60,.10);
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%; background:var(--bg); color:var(--text); margin:0}
-    body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;}
-
-    /* Layout */
-    .app{
-      height:100dvh; /* stable avec clavier mobile */
-      display:grid;
-      grid-template-rows: auto 1fr auto;
-    }
-
-    /* Header */
-    .header{
-      position:sticky; top:0; z-index:20;
-      background:var(--bg);
-      padding: calc(10px + var(--safe-t)) 14px 10px;
-      display:flex; align-items:center; gap:10px; justify-content:space-between;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:20px}
-    .heart{filter: drop-shadow(0 2px 8px rgba(0,0,0,.25))}
-    .row{display:flex; align-items:center; gap:10px}
-    .chip{
-      background:var(--chip); color:var(--text);
-      border-radius:12px; padding:8px 10px; display:flex; align-items:center; gap:8px;
-      box-shadow: var(--shadow);
-    }
-    .btn{
-      background:var(--chip);
-      border:none; color:var(--text);
-      border-radius:12px; padding:10px 12px; display:inline-flex; align-items:center; justify-content:center;
-      font-size:16px;
-    }
-    .btn:active{transform:scale(.98)}
-
-    .menu{position:relative}
-    .menu .sheet{
-      position:absolute; right:0; top:48px; width:220px;
-      background:var(--panel); border:1px solid rgba(255,255,255,.08);
-      border-radius:14px; box-shadow:var(--shadow); display:none;
-      overflow:hidden;
-    }
-    .menu.open .sheet{display:block}
-    .sheet button{
-      width:100%; background:transparent; border:none; color:var(--text);
-      text-align:left; padding:12px 14px; font-size:15px;
-    }
-    .sheet button+button{border-top:1px solid rgba(255,255,255,.06)}
-
-    /* Chat */
-    .chat{
-      padding:14px; padding-bottom: 8px;
-      overflow:auto;
-    }
-    .bubble{
-      max-width:86vw;
-      background:var(--panel);
-      border:1px solid rgba(255,255,255,.06);
-      margin:10px 0; padding:12px 14px; border-radius:16px; line-height:1.4;
-      box-shadow: var(--shadow);
-    }
-    .me{background:#6a4ff1; border-color:#6a4ff1; color:white; margin-left:auto}
-
-    /* Footer / input */
-    .composer{
-      position:sticky; bottom:0; z-index:15;
-      background: linear-gradient(180deg, transparent, var(--bg) 18%);
-      padding: 10px 10px calc(10px + var(--safe-b));
-    }
-    .bar{
-      display:flex; align-items:center; gap:8px;
-      background:var(--panel-2);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px; padding:8px; box-shadow:var(--shadow);
-    }
-    .plus{width:40px; height:40px; border-radius:12px; font-size:20px}
-    .input{
-      flex:1; background:transparent; border:none; color:var(--text);
-      font-size:16px; outline:none; padding:10px 8px;
-    }
-    .send{width:48px; height:40px; border-radius:12px; font-weight:700; background:#4a3ed6}
-    .send:disabled{opacity:.5}
-
-    /* Drawer vertical */
-    .drawer{
-      position:absolute; right:64px; bottom: calc(72px + var(--safe-b)); /* juste au-dessus de la barre */
-      display:flex; flex-direction:column; gap:8px; align-items:center;
-      transition:.2s ease; opacity:0; pointer-events:none; transform: translateY(8px);
-    }
-    .drawer.open{opacity:1; pointer-events:auto; transform: translateY(0)}
-    .tool{
-      width:44px; height:44px; border-radius:14px; border:1px solid rgba(255,255,255,.08);
-      background:var(--panel); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow)
-    }
-
-    /* FAQ modal */
-    .modal{
-      position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:50;
-      background:rgba(0,0,0,.45);
-      padding:20px;
-    }
-    .modal.open{display:flex}
-    .card{
-      width:min(680px, 96vw);
-      background:var(--panel); border:1px solid rgba(255,255,255,.08);
-      border-radius:16px; padding:18px; color:var(--text); box-shadow:var(--shadow);
-    }
-    .card h2{margin:0 0 6px; font-size:22px; color:var(--accent)}
-    .card h3{margin:14px 0 6px; font-size:18px}
-    .close-x{float:right; background:transparent; border:none; color:var(--text); font-size:22px}
-
-    /* “Propulsé par” */
-    .powered{
-      text-align:center; color:var(--text-dim); font-size:14px; padding:6px 0 6px;
-    }
-    .powered b{color:var(--accent)}
-
-    /* Evite les sauts quand le clavier mobile s’ouvre */
-    @supports (height: 100svh){
-      .app{height:100svh}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="">
-  <div class="app">
+<body>
+  <header class="top-bar">
+    <h1>🤍 Philomène I.A.</h1>
+    <div class="token-display">
+      🌙 <span id="themeToggle"></span>
+      💎 <span id="tokenCounter">1 000 000</span>
+    </div>
+  </header>
 
-    <!-- HEADER -->
-    <div class="header">
-      <div class="brand">
-        <span class="heart">🤍</span>
-        <span>Philomène I.A.</span>
-      </div>
+  <main class="chat">
+    <div class="bot-msg">
+      Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.
+    </div>
+  </main>
 
-      <div class="row">
-        <button id="modeBtn" class="btn chip" title="Jour/Nuit">🌗</button>
-
-        <div class="chip" id="wallet" title="Solde de tokens">
-          💎 <span id="tokenDigits">1 000 000</span>
-        </div>
-
-        <div class="menu">
-          <button id="menuBtn" class="btn">≡</button>
-          <div class="sheet" id="menuSheet">
-            <button id="openFaq">❓ FAQ</button>
-            <button id="newChat">🔄 Nouvelle discussion</button>
-          </div>
-        </div>
+  <!-- ===== BARRE D’ENTRÉE ===== -->
+  <div class="chat-footer">
+    <!-- FAB (+ / -) et son menu -->
+    <div class="fab-wrap">
+      <button id="fabToggle" class="fab-btn" aria-label="Ouvrir outils">+</button>
+      <div id="fabMenu" class="fab-menu">
+        <button id="micBtn" class="fab-item" aria-label="Micro">🎤</button>
+        <button id="camBtn" class="fab-item" aria-label="Appareil photo">📷</button>
+        <button id="docBtn" class="fab-item" aria-label="Document">📄</button>
       </div>
     </div>
 
-    <!-- CHAT -->
-    <div id="chat" class="chat" aria-live="polite">
-      <div class="bubble">
-        Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.
-      </div>
-    </div>
-
-    <!-- COMPOSER -->
-    <div class="composer">
-      <div class="bar">
-        <button id="plusBtn" class="btn plus" aria-expanded="false">＋</button>
-        <input id="msg" class="input" placeholder="Écrivez votre message…" autocomplete="off" />
-        <button id="sendBtn" class="btn send">➤</button>
-      </div>
-
-      <!-- Drawer vertical -->
-      <div id="drawer" class="drawer">
-        <button class="tool" id="micBtn" title="Micro 🎤">🎤</button>
-        <button class="tool" id="camBtn" title="Photo 📷">📷</button>
-        <button class="tool" id="docBtn" title="Document 📄">📄</button>
-      </div>
-
-      <div class="powered">Propulsé par <b>GPT-5 Thinking</b></div>
-    </div>
+    <!-- Champ de saisie + envoi -->
+    <input id="userInput" class="msg-input" type="text" placeholder="Écrivez votre message…" />
+    <button id="sendBtn" class="send-btn" aria-label="Envoyer">➤</button>
   </div>
 
-  <!-- FAQ MODAL -->
-  <div id="faqModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="faqTitle">
-    <div class="card">
-      <button class="close-x" id="faqClose">✕</button>
-      <h2 id="faqTitle">💬 Foire aux questions</h2>
+  <footer>
+    <p>⚙️ Propulsé par <b>GPT-5 Thinking</b></p>
+  </footer>
 
-      <h3>Quelle IA utilise Philomène ?</h3>
-      <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée d’OpenAI.</p>
-
-      <h3>Comment fonctionnent les tokens ?</h3>
-      <p>Chaque question et chaque réponse consomment un petit nombre de tokens (selon la longueur).
-        Le diamant 💎 affiche votre <b>solde</b>.</p>
-
-      <h3>Packs disponibles</h3>
-      <p>💎 1 000 000 tokens → 5 €<br>
-         💎 2 000 000 tokens → 10 €<br>
-         💎 4 000 000 tokens → 20 €</p>
-      <p>🎁 <b>Premier achat : +50 % offerts</b> (1,5 M – 3 M – 6 M).</p>
-
-      <h3>Abonnement ?</h3>
-      <p>Aucun abonnement. Toute la puissance de GPT-5 : vous payez uniquement ce que vous consommez.</p>
-
-      <h3>Confidentialité</h3>
-      <p>Vos échanges restent privés et ne sont pas utilisés à d’autres fins.</p>
-    </div>
-  </div>
-
-  <script>
-    /********** CONFIG **********/
-    const API_URL = "https://api.philomeneia.com/ask"; // ton backend Render/proxy
-    const GUEST_START = 1_000_000;                      // affichage de départ si aucun compte
-    const USER_ID = "guest";                            // à remplacer si tu branches l’auth
-
-    /********** ETAT **********/
-    let tokenBalance = GUEST_START;
-    const chat = document.getElementById('chat');
-    const msg  = document.getElementById('msg');
-    const send = document.getElementById('sendBtn');
-    const plus = document.getElementById('plusBtn');
-    const drawer = document.getElementById('drawer');
-    const tokenDigits = document.getElementById('tokenDigits');
-
-    // Mémoire locale d’affichage (la vraie mémoire est côté serveur)
-    let conversation = [];
-
-    /********** UTIL **********/
-    const fmt = n => n.toLocaleString('fr-FR');
-
-    function addBubble(text, mine=false){
-      const b = document.createElement('div');
-      b.className = 'bubble' + (mine ? ' me' : '');
-      b.innerHTML = text.replace(/\n/g,'<br>');
-      chat.appendChild(b);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    function setTokens(n){
-      tokenBalance = Math.max(0, n);
-      tokenDigits.textContent = fmt(tokenBalance);
-    }
-
-    // Thème
-    const modeBtn = document.getElementById('modeBtn');
-    modeBtn.addEventListener('click', ()=>{
-      document.body.classList.toggle('light');
-    });
-
-    // Menu
-    const menu = document.querySelector('.menu');
-    document.getElementById('menuBtn').addEventListener('click', ()=>{
-      menu.classList.toggle('open');
-    });
-    document.addEventListener('click',(e)=>{
-      if(!menu.contains(e.target)) menu.classList.remove('open');
-    });
-
-    // FAQ
-    const faqModal = document.getElementById('faqModal');
-    document.getElementById('openFaq').addEventListener('click', ()=>{
-      faqModal.classList.add('open'); menu.classList.remove('open');
-    });
-    document.getElementById('faqClose').addEventListener('click', ()=> faqModal.classList.remove('open'));
-    faqModal.addEventListener('click', (e)=>{ if(e.target===faqModal) faqModal.classList.remove('open'); });
-
-    // Nouvelle discussion (reset affichage)
-    document.getElementById('newChat').addEventListener('click', ()=>{
-      conversation = [];
-      chat.innerHTML = '';
-      addBubble("Bonjour 👋 Nouvelle discussion. Comment puis-je vous aider aujourd’hui ?");
-      menu.classList.remove('open');
-    });
-
-    // Plus / Drawer
-    plus.addEventListener('click', ()=>{
-      const open = drawer.classList.toggle('open');
-      plus.textContent = open ? '−' : '＋';
-      plus.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-
-    // Outils (stubs à brancher)
-    document.getElementById('micBtn').addEventListener('click', ()=> alert('🎤 Dictée vocale : à activer'));
-    document.getElementById('camBtn').addEventListener('click', ()=> alert('📷 Envoi photo : à activer'));
-    document.getElementById('docBtn').addEventListener('click', ()=> alert('📄 Envoi document : à activer'));
-
-    // Envoi
-    async function sendMsg(){
-      const text = msg.value.trim();
-      if(!text) return;
-      addBubble(text, true);
-      msg.value = '';
-      send.disabled = true;
-
-      // On n’envoie au serveur que l’ID user + la dernière phrase (la mémoire est côté serveur)
-      try{
-        const payload = {
-          conversation: [{role:'user', content:text}],
-          userId: USER_ID
-        };
-        const r = await fetch(API_URL, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
-
-        if(!r.ok){
-          const t = await r.text();
-          console.error('Erreur API', r.status, t);
-          addBubble("Désolée, j’ai eu un petit souci réseau. Réessaie.");
-          return;
-        }
-
-        const data = await r.json();
-        addBubble(data.answer || "…");
-
-        // Mise à jour VRAIE si le backend renvoie tokensLeft
-        if(typeof data.tokensLeft === 'number'){
-          setTokens(data.tokensLeft);
-        }
-
-      }catch(e){
-        console.error(e);
-        addBubble("Oups, connexion interrompue.");
-      }finally{
-        send.disabled = false;
-        chat.scrollTop = chat.scrollHeight;
-      }
-    }
-
-    send.addEventListener('click', sendMsg);
-    msg.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); } });
-
-    // Anti “sauts” quand le clavier iOS/Android s’ouvre
-    if(window.visualViewport){
-      const fix = ()=>{
-        document.documentElement.style.setProperty('--safe-b', `calc(env(safe-area-inset-bottom, 0px) + ${Math.max(0,(window.innerHeight - visualViewport.height))}px)`);
-      };
-      visualViewport.addEventListener('resize', fix);
-      visualViewport.addEventListener('scroll', fix);
-      fix();
-    }
-
-    // Init
-    setTokens(tokenBalance);
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
