@@ -2,82 +2,79 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <!-- Empêche le zoom iOS sur focus + gère les encoches -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark">
-  <!-- HEADER -->
+<body class="theme-dark">
+
+  <!-- Topbar -->
   <header class="topbar">
     <div class="brand">🤍 Philomène I.A.</div>
-    <div class="actions">
-      <button id="toggleMode" title="Jour / Nuit" aria-label="Jour / Nuit">🌗</button>
-      <div id="tokenDisplay" class="tokens" aria-label="Solde tokens">
-        💎 <span id="tokenCount">1 000 000</span>
-      </div>
-      <button id="menuBtn" title="Menu" aria-haspopup="true" aria-expanded="false">☰</button>
+    <div class="top-actions">
+      <button id="toggleMode" class="icon-btn" title="Jour/Nuit">🌗</button>
+      <div class="tokens">💎 <span id="tokenCount">1 000 000</span></div>
+      <button id="menuBtn" class="icon-btn" title="Menu">☰</button>
     </div>
+    <nav id="menu" class="menu hidden" aria-hidden="true">
+      <ul>
+        <li id="openFAQ">❓ FAQ</li>
+        <li id="newChat">🔄 Nouvelle discussion</li>
+      </ul>
+    </nav>
   </header>
 
-  <!-- MENU -->
-  <nav id="menu" class="menu hidden" aria-hidden="true">
-    <ul>
-      <li id="openFAQ">❓ FAQ</li>
-      <li id="newChat">🔄 Nouvelle discussion</li>
-    </ul>
-  </nav>
-
-  <!-- CHAT -->
-  <main class="chat" id="chatRoot">
+  <!-- Zone de chat -->
+  <main id="app" class="app">
     <div id="chatBox" class="chat-box" aria-live="polite"></div>
 
-    <div class="input-bar" id="inputBar">
-      <input id="userInput" type="text" inputmode="text" placeholder="Écrivez votre message…" autocomplete="off" />
-      <div class="ibtns">
-        <input id="photoFile" type="file" accept="image/*" hidden />
-        <input id="docFile" type="file" hidden />
-        <button id="micBtn" title="Dictée" aria-label="Dictée">🎤</button>
-        <button id="photoBtn" title="Photo" aria-label="Envoyer une photo">📷</button>
-        <button id="docBtn" title="Document" aria-label="Envoyer un document">📄</button>
-        <button id="sendBtn" title="Envoyer" aria-label="Envoyer">➤</button>
+    <!-- Barre d'entrée + tiroir vertical -->
+    <div class="input-wrap" id="inputWrap">
+      <button id="attachToggle" class="circle" aria-expanded="false" title="Plus">＋</button>
+
+      <div class="input-bar">
+        <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
+        <button id="sendBtn" class="send" title="Envoyer">➤</button>
+      </div>
+
+      <!-- Tiroir pièces jointes (vertical vers le haut) -->
+      <div id="attachTray" class="attach-tray" aria-hidden="true">
+        <button id="pickPhoto" class="tray-btn" title="Photo">📷</button>
+        <button id="pickDoc"   class="tray-btn" title="Document">📄</button>
+        <button id="pickMic"   class="tray-btn" title="Micro">🎤</button>
       </div>
     </div>
   </main>
 
-  <!-- FAQ (fermée par défaut) -->
-  <div id="faq" class="faq-modal" aria-hidden="true">
-    <div class="faq-dialog" role="dialog" aria-modal="true" aria-labelledby="faq-title">
-      <button id="faqClose" class="faq-close" aria-label="Fermer">×</button>
-      <h2 id="faq-title">💬 Foire aux questions</h2>
+  <!-- Bandeau bas -->
+  <footer class="powered">
+    <span>⚙️ Propulsé par <strong>GPT-5 Thinking</strong></span>
+  </footer>
+
+  <!-- Modale FAQ -->
+  <div id="faqModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="faqTitle">
+    <div class="modal-content">
+      <button class="modal-close" id="faqClose" aria-label="Fermer">✕</button>
+      <h2 id="faqTitle">💬 Foire aux questions</h2>
 
       <h3>Quelle IA utilise Philomène ?</h3>
-      <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée.</p>
+      <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
 
       <h3>Comment fonctionnent les tokens ?</h3>
-      <p>Chaque question et réponse consomment des tokens (selon la longueur). Le 💎 affiche votre solde.</p>
+      <p>Chaque question et réponse consomme quelques tokens selon la longueur.
+         Le 💎 affiche votre solde.</p>
 
       <h3>Packs disponibles</h3>
-      <ul class="packs">
+      <ul>
         <li>💎 1 000 000 tokens → 5 €</li>
         <li>💎 2 000 000 tokens → 10 €</li>
         <li>💎 4 000 000 tokens → 20 €</li>
       </ul>
-      <p>🎁 <b>Premier achat : +50 % de tokens offerts</b> (1,5 M – 3 M – 6 M).</p>
-
-      <h3>Abonnement ?</h3>
-      <p>Aucun abonnement. Toute la puissance de GPT-5 ; vous payez uniquement ce que vous consommez.</p>
-
-      <h3>Confidentialité</h3>
-      <p>Échanges privés, non utilisés à d’autres fins.</p>
+      <p>🎁 Premier achat : <strong>+50 %</strong> offerts.</p>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    ⚙️ Propulsé par <b>GPT-5 Thinking</b>
-  </footer>
-
-  <script src="script.js" defer></script>
+  <script src="app.js"></script>
 </body>
 </html>
