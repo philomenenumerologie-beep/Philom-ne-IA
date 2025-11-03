@@ -1,87 +1,141 @@
-// ====== Sélecteurs ======
-const fabToggle = document.getElementById('fabToggle');
-const fabMenu = document.getElementById('fabMenu');
-const micBtn = document.getElementById('micBtn');
-const camBtn = document.getElementById('camBtn');
-const docBtn = document.getElementById('docBtn');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-const chat = document.querySelector('.chat');
-const tokenEl = document.getElementById('tokenCounter');
+// ===========================
+// CONFIG
+// ===========================
+const API_URL = "https://api.philomeneia.com/ask"; // ton proxy Render
+const DEFAULT_USER = "guest";
 
-let tokenBalance = Number((tokenEl?.textContent || '0').replace(/\s/g, ''));
+// ===========================
+// UI HELPERS
+// ===========================
+const $ = (sel) => document.querySelector(sel);
 
-// ===== MENU + =====
-let fabOpen = false;
-function toggleFab(open){
-  fabOpen = open !== undefined ? open : !fabOpen;
-  fabMenu.classList.toggle('open', fabOpen);
-  fabToggle.textContent = fabOpen ? '−' : '+';
+function setTokenCounter(n){
+  const el = $("#tokenCounter");
+  if (!el) return;
+  try { el.textContent = new Intl.NumberFormat("fr-FR").format(Number(n||0)); }
+  catch { el.textContent = String(n||0); }
 }
-fabToggle.addEventListener('click', ()=> toggleFab());
-document.addEventListener('click', e=>{
-  if(!fabOpen) return;
-  if(!e.target.closest('.fab-wrap')) toggleFab(false);
+
+// ===========================
+// ÉTAT
+// ===========================
+let tokenBalance = 1_000_000;
+let conversation = [{ role:"system", content:"Tu es Philomène I.A., claire et utile." }];
+
+setTokenCounter(tokenBalance);
+
+// ===========================
+// TOP BAR actions
+// ===========================
+$("#menuBtn")?.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  $("#menuPanel")?.classList.toggle("hidden");
+});
+document.addEventListener("click",(e)=>{
+  const p = $("#menuPanel"), b = $("#menuBtn");
+  if (p && !p.contains(e.target) && e.target !== b) p.classList.add("hidden");
 });
 
-// ===== Actions menu =====
-micBtn.addEventListener('click', ()=>{ alert('Micro activé (à brancher)'); toggleFab(false); });
-camBtn.addEventListener('click', ()=>{ alert('Caméra (à brancher)'); toggleFab(false); });
-docBtn.addEventListener('click', ()=>{ alert('Document (à brancher)'); toggleFab(false); });
+$("#openFaq")?.addEventListener("click", ()=>{
+  $("#menuPanel")?.classList.add("hidden");
+  $("#faqModal")?.classList.remove("hidden");
+});
+$("#faqClose")?.addEventListener("click", ()=> $("#faqModal")?.classList.add("hidden"));
+$("#newChat")?.addEventListener("click", resetConversation);
 
-// ===== Message =====
-function addMessage(text, type='bot'){
-  const div = document.createElement('div');
-  div.className = type === 'user' ? 'user-msg' : 'bot-msg';
-  div.textContent = text;
+$("#themeBtn")?.addEventListener("click", ()=>{
+  document.documentElement.classList.toggle("light"); // hook si tu veux un thème clair
+});
+
+// ===========================
+// PLUS -> pile verticale
+// ===========================
+const plusBtn = $("#plusBtn");
+const attachStack = $("#attachStack");
+plusBtn?.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  const open = attachStack.classList.toggle("hidden");
+  plusBtn.textContent = open ? "+" : "−";
+  plusBtn.setAttribute("aria-expanded", String(!open));
+});
+document.addEventListener("click",(e)=>{
+  if (attachStack && !attachStack.contains(e.target) && e.target !== plusBtn){
+    attachStack.classList.add("hidden");
+    plusBtn.textContent = "+";
+    plusBtn.setAttribute("aria-expanded","false");
+  }
+});
+
+// (Placeholders des trois actions)
+$("#attachMic")?.addEventListener("click", ()=> alert("Micro à brancher plus tard."));
+$("#attachCam")?.addEventListener("click", ()=> alert("Caméra à brancher plus tard."));
+$("#attachDoc")?.addEventListener("click", ()=> alert("Document à brancher plus tard."));
+
+// ===========================
+//
+// ENVOI MESSAGE
+//
+// ===========================
+const chat = $("#chat");
+const input = $("#userInput");
+$("#sendBtn")?.addEventListener("click", sendMessage);
+input?.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sendMessage(); });
+
+function appendMsg(role, text){
+  const div = document.createElement("div");
+  div.className = `msg ${role==="assistant"?"bot":"user"}`;
+  div.innerHTML = text.replace(/\n/g,"<br/>");
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
 }
 
-// ===== Estimation tokens =====
-function estimateTokens(txt){
-  return Math.max(1, Math.ceil(txt.length / 4));
+function resetConversation(){
+  conversation = [{ role:"system", content:"Tu es Philomène I.A., claire et utile." }];
+  chat.innerHTML = `<div class="msg bot">Nouvelle discussion. Pose ta question 🙂</div>`;
 }
 
-// ===== Envoi =====
-const API_URL = "https://api.philomeneia.com/ask";
-
 async function sendMessage(){
-  const text = userInput.value.trim();
-  if(!text) return;
+  const text = input.value.trim();
+  if (!text) return;
 
-  addMessage(text, 'user');
-  userInput.value = '';
-  toggleFab(false);
+  // UI
+  appendMsg("user", text);
+  input.value = "";
 
-  let tokensLeft = null;
+  // mémoire locale & requête
+  conversation.push({ role:"user", content:text });
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+  try{
+    const resp = await fetch(API_URL, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
-        conversation: [{ role: "user", content: text }],
+        conversation,
+        userId: DEFAULT_USER,
         tokens: tokenBalance
       })
     });
-    const data = await res.json();
-    addMessage(data.answer || "Erreur serveur.");
-    if(typeof data.tokensLeft === "number") tokensLeft = data.tokensLeft;
-  } catch(e) {
-    addMessage("Connexion impossible pour le moment.");
-  }
 
-  // Décrément local si pas de retour serveur
-  if (typeof tokensLeft === "number") {
-    tokenBalance = Math.max(0, Math.floor(tokensLeft));
-  } else {
-    tokenBalance -= estimateTokens(text) + 50;
+    if (!resp.ok) throw new Error("Erreur réseau");
+
+    const data = await resp.json();
+    const answer = data.answer || "Désolé, pas de réponse.";
+    appendMsg("assistant", answer);
+
+    // MAJ tokens (si backend renvoie tokensLeft)
+    if (typeof data.tokensLeft === "number"){
+      tokenBalance = data.tokensLeft;
+    } else {
+      // fallback soft : estimation locale (basse) pour éviter 0
+      const est = Math.max(0, tokenBalance - 20 - Math.ceil(answer.length/20));
+      tokenBalance = est;
+    }
+    setTokenCounter(tokenBalance);
+
+    // mémoire
+    conversation.push({ role:"assistant", content: answer });
+
+  } catch(err){
+    appendMsg("assistant", "Oups, problème réseau. Réessaie dans un instant.");
   }
-  tokenEl.textContent = tokenBalance.toLocaleString('fr-FR');
 }
-
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendMessage();
-});
