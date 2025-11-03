@@ -1,0 +1,192 @@
+/* 🌙 STYLE GLOBAL */
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #0b0b0b;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ☀️ MODE CLAIR */
+body.light-mode {
+  background-color: #f2f2f2;
+  color: #111;
+}
+
+/* 🔝 HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #111;
+  border-bottom: 2px solid #6a00ff;
+}
+header .logo {
+  font-weight: bold;
+  font-size: 18px;
+}
+.top-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.top-buttons button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.2s;
+}
+.top-buttons button:hover {
+  transform: scale(1.2);
+}
+
+/* 💎 TOKEN DISPLAY */
+#tokenDisplay {
+  font-weight: bold;
+  color: #b085ff;
+  font-size: 17px;
+}
+
+/* 🍔 MENU BURGER */
+nav {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+  background: #1b1b1b;
+  border: 1px solid #6a00ff;
+  border-radius: 6px;
+  z-index: 100;
+}
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+}
+nav ul li {
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: #fff;
+}
+nav ul li:hover {
+  background: #6a00ff;
+}
+.hidden {
+  display: none;
+}
+
+/* 💬 CHAT */
+#chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  overflow-y: auto;
+}
+#chat-box {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+.message {
+  padding: 10px 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  max-width: 80%;
+  line-height: 1.4;
+}
+.message.user {
+  background: #6a00ff;
+  align-self: flex-end;
+  color: #fff;
+}
+.message.bot {
+  background: #222;
+  align-self: flex-start;
+  color: #fff;
+}
+
+/* 📝 INPUT */
+#input-area {
+  display: flex;
+  align-items: center;
+  background: #111;
+  padding: 8px;
+  border-top: 2px solid #6a00ff;
+}
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+}
+#input-buttons {
+  display: flex;
+  gap: 8px;
+}
+#input-buttons button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #b085ff;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#input-buttons button:hover {
+  transform: scale(1.2);
+}
+
+/* ❓ FAQ POPUP */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.popup-content {
+  background: #1b1b1b;
+  color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  width: 85%;
+  max-width: 600px;
+  border: 2px solid #6a00ff;
+  box-shadow: 0 0 10px #6a00ff;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+.popup-content h2 {
+  color: #b085ff;
+}
+.popup .close {
+  float: right;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+/* ⚙️ FOOTER */
+footer {
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+  background: #111;
+  border-top: 1px solid #6a00ff;
+  color: #b085ff;
+}
