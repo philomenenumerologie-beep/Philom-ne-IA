@@ -224,3 +224,51 @@ footer {
   border-top: 1px solid #6a00ff;
   color: #b085ff;
 }
+/* ====== BARRE DE CHAT ====== */
+.ph-chatbar{
+  position: fixed; left:0; right:0; bottom:0;
+  display:flex; gap:.75rem; align-items:center;
+  padding:.6rem .9rem env(safe-area-inset-bottom, .6rem);
+  background: var(--bg-800, #0f0f12);
+  border-top: 2px solid #6a22f2;
+  z-index: 50;
+}
+.ph-btn{
+  min-width:44px; height:44px; border-radius:12px;
+  background:#1a1a21; color:#eae6ff; border:1px solid #2a2a33;
+  font-size:22px; line-height:1; display:inline-flex; align-items:center; justify-content:center;
+}
+.ph-plus{padding:0 .6rem; font-weight:600;}
+.ph-send{padding:0 .8rem; font-weight:700;}
+
+.ph-input-wrap{
+  position:relative; flex:1; display:flex; align-items:center;
+  background:#131318; border:1px solid #2a2a33; border-radius:14px; height:44px;
+}
+.ph-input{
+  flex:1; height:100%; background:transparent; border:0; outline:none;
+  color:#f2f2ff; padding:.2rem 3rem .2rem .9rem; font-size:16px;
+}
+.ph-mic{
+  position:absolute; right:.4rem; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border-radius:10px; border:1px solid #2a2a33;
+  background:#1a1a21; color:#f2f2ff; font-size:16px;
+}
+.ph-mic.ph-rec{ background:#b11313; }
+
+/* ====== FEUILLE D'ACTION ====== */
+.ph-sheet-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:70;
+}
+.ph-sheet{
+  position:fixed; left:0; right:0; bottom:0; z-index:80;
+  background:#0f0f12; border-top-left-radius:16px; border-top-right-radius:16px;
+  box-shadow:0 -10px 30px rgba(0,0,0,.4); padding:12px;
+  border-top:2px solid #6a22f2;
+}
+.ph-sheet-item, .ph-sheet-cancel{
+  width:100%; text-align:left; padding:14px 16px; margin:6px 0;
+  background:#171720; color:#eae6ff; border:1px solid #2a2a33; border-radius:12px;
+  font-size:16px;
+}
+.ph-sheet-cancel{ background:#262633; }
