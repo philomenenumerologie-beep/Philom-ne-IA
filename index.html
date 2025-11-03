@@ -318,5 +318,33 @@ addMsg("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.","b
 updateTokens();
 document.body.classList.add('dark'); // sombre par défaut
 </script>
+  <!-- ====== CHAT BAR (nouvelle) ====== -->
+<div class="ph-chatbar">
+  <!-- Bouton PLUS -->
+  <button class="ph-btn ph-plus" id="phPlusBtn" aria-label="Ouvrir le menu des pièces jointes">＋</button>
+
+  <!-- Zone de saisie + micro intégré -->
+  <div class="ph-input-wrap">
+    <input id="phMessage" class="ph-input" type="text" placeholder="Écrivez votre message…">
+    <button class="ph-mic" id="phMicBtn" aria-label="Dictée vocale">🎤</button>
+  </div>
+
+  <!-- Envoyer -->
+  <button class="ph-btn ph-send" id="phSendBtn" aria-label="Envoyer">➤</button>
+</div>
+
+<!-- ====== FEUILLE D'ACTION (menu du PLUS) ====== -->
+<div class="ph-sheet-backdrop" id="phSheetBackdrop" hidden></div>
+<div class="ph-sheet" id="phSheet" hidden aria-label="Menu pièces jointes">
+  <button class="ph-sheet-item" id="phPickPhoto">📷 Photothèque</button>
+  <button class="ph-sheet-item" id="phTakePhoto">📸 Prendre une photo</button>
+  <button class="ph-sheet-item" id="phPickFile">📄 Choisir un fichier</button>
+  <button class="ph-sheet-cancel" id="phSheetCancel">Annuler</button>
+</div>
+
+<!-- Inputs cachés -->
+<input type="file" id="phImageLibraryInput" accept="image/*" hidden>
+<input type="file" id="phImageCameraInput" accept="image/*" capture="environment" hidden>
+<input type="file" id="phDocInput" accept="*/*" hidden>
 </body>
 </html>
