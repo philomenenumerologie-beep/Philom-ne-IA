@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Empêche le zoom iOS sur focus + gère les encoches -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,14 +12,16 @@
   <header class="topbar">
     <div class="brand">🤍 Philomène I.A.</div>
     <div class="actions">
-      <button id="toggleMode" title="Jour / Nuit">🌗</button>
-      <div id="tokenDisplay" class="tokens">💎 <span id="tokenCount">1 000 000</span></div>
-      <button id="menuBtn" title="Menu">☰</button>
+      <button id="toggleMode" title="Jour / Nuit" aria-label="Jour / Nuit">🌗</button>
+      <div id="tokenDisplay" class="tokens" aria-label="Solde tokens">
+        💎 <span id="tokenCount">1 000 000</span>
+      </div>
+      <button id="menuBtn" title="Menu" aria-haspopup="true" aria-expanded="false">☰</button>
     </div>
   </header>
 
   <!-- MENU -->
-  <nav id="menu" class="menu hidden">
+  <nav id="menu" class="menu hidden" aria-hidden="true">
     <ul>
       <li id="openFAQ">❓ FAQ</li>
       <li id="newChat">🔄 Nouvelle discussion</li>
@@ -26,18 +29,18 @@
   </nav>
 
   <!-- CHAT -->
-  <main class="chat">
-    <div id="chatBox" class="chat-box"></div>
+  <main class="chat" id="chatRoot">
+    <div id="chatBox" class="chat-box" aria-live="polite"></div>
 
-    <div class="input-bar">
-      <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
+    <div class="input-bar" id="inputBar">
+      <input id="userInput" type="text" inputmode="text" placeholder="Écrivez votre message…" autocomplete="off" />
       <div class="ibtns">
         <input id="photoFile" type="file" accept="image/*" hidden />
         <input id="docFile" type="file" hidden />
-        <button id="micBtn" title="Dictée">🎤</button>
-        <button id="photoBtn" title="Photo">📷</button>
-        <button id="docBtn" title="Document">📄</button>
-        <button id="sendBtn" title="Envoyer">➤</button>
+        <button id="micBtn" title="Dictée" aria-label="Dictée">🎤</button>
+        <button id="photoBtn" title="Photo" aria-label="Envoyer une photo">📷</button>
+        <button id="docBtn" title="Document" aria-label="Envoyer un document">📄</button>
+        <button id="sendBtn" title="Envoyer" aria-label="Envoyer">➤</button>
       </div>
     </div>
   </main>
