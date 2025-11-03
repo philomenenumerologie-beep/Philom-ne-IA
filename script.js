@@ -1,157 +1,191 @@
-// === CONFIG GÉNÉRALE ===
-const API_URL = "https://api.philomeneia.com/ask"; // ton backend GPT-5
-let tokenCount = 1000000; // solde initial par défaut
-let darkMode = true;
-let recognition;
+// ====== CONFIG ======
+const API_ASK = "https://api.philomeneia.com/ask";
+const API_IMG = "https://api.philomeneia.com/analyze-image";
 
-// === ÉLÉMENTS DU DOM ===
-const chatBox = document.getElementById("chat-box");
-const userInput = document.getElementById("user-input");
-const sendButton = document.getElementById("sendButton");
-const micButton = document.getElementById("micButton");
-const photoButton = document.getElementById("photoButton");
-const docButton = document.getElementById("docButton");
+// ====== ÉTAT ======
+let userId = localStorage.getItem("philo_uid");
+if (!userId){ userId = "u_" + Math.random().toString(36).slice(2,10); localStorage.setItem("philo_uid", userId); }
+
+let tokenCount = +(localStorage.getItem("philo_tokens") || 1000000); // solde visible
+let conversation = []; // affichage (la vraie mémoire est côté serveur)
+
+// ====== DOM ======
+const chatBox   = document.getElementById("chatBox");
+const userInput = document.getElementById("userInput");
+const sendBtn   = document.getElementById("sendBtn");
+const micBtn    = document.getElementById("micBtn");
+const photoBtn  = document.getElementById("photoBtn");
+const docBtn    = document.getElementById("docBtn");
+const photoFile = document.getElementById("photoFile");
+const docFile   = document.getElementById("docFile");
 const tokenCountEl = document.getElementById("tokenCount");
-const toggleMode = document.getElementById("toggle-mode");
-const menuButton = document.getElementById("menuButton");
-const menu = document.getElementById("menu");
-const openFAQ = document.getElementById("openFAQ");
-const faqPopup = document.getElementById("faqPopup");
-const closeFAQ = document.getElementById("closeFAQ");
-const resetChat = document.getElementById("resetChat");
+const menuBtn   = document.getElementById("menuBtn");
+const menu      = document.getElementById("menu");
+const toggleMode= document.getElementById("toggleMode");
+const faq       = document.getElementById("faq");
+const openFAQ   = document.getElementById("openFAQ");
+const faqClose  = document.getElementById("faqClose");
+const newChat   = document.getElementById("newChat");
 
-let conversation = [];
-const userId = "guest_" + Math.random().toString(36).substring(2, 10);
+// ====== UI helpers ======
+function scrollBottom(){ setTimeout(()=>{ chatBox.scrollTop = chatBox.scrollHeight; }, 30); }
 
-// === AFFICHAGE DE MESSAGE ===
-function addMessage(content, sender = "bot") {
-  const msg = document.createElement("div");
-  msg.classList.add("message", sender);
-  msg.textContent = content;
-  chatBox.appendChild(msg);
-  chatBox.scrollTop = chatBox.scrollHeight;
+function addMsg(text, who="bot", cls=""){
+  const div = document.createElement("div");
+  div.className = `msg ${who} ${cls}`.trim();
+  div.textContent = text;
+  chatBox.appendChild(div);
+  scrollBottom();
+  return div;
 }
 
-// === ENVOI DU MESSAGE UTILISATEUR ===
-async function sendMessage() {
-  const text = userInput.value.trim();
-  if (!text) return;
+function typingOn(){ return addMsg("…", "bot", "typing"); }
+function typingOff(node){ if(node && node.parentNode) node.parentNode.removeChild(node); }
 
-  addMessage(text, "user");
+function updateTokensDisplay(){
+  tokenCountEl.textContent = tokenCount.toLocaleString("fr-FR");
+  localStorage.setItem("philo_tokens", String(tokenCount));
+}
+
+function approxTokensFromText(s){ return Math.max(1, Math.ceil((s||"").length/4)); } // ~1 token ≈ 4 chars
+
+// filtre anti-message parasite (abonnement YouTube)
+function sanitizeAnswer(text){
+  const banned = [/merci d'avoir regardé/i, /abonne[- ]?toi/i, /n.h.site pas .* t.abonner/i];
+  return banned.some(r=>r.test(text)) ? "" : text;
+}
+
+// ====== ENVOI TEXTE ======
+async function sendMessage(){
+  const text = userInput.value.trim();
+  if(!text) return;
+
+  addMsg(text, "user");
   userInput.value = "";
 
-  // Estimation du coût en tokens selon la taille du message
-  const estimatedTokens = Math.ceil(text.length / 4); // ~1 token = 4 caractères
-  tokenCount -= estimatedTokens;
-  updateTokenDisplay();
+  // Débit (approx) à l'envoi
+  tokenCount -= approxTokensFromText(text);
+  updateTokensDisplay();
 
-  addMessage("...", "bot");
+  const tnode = typingOn();
 
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+  try{
+    const resp = await fetch(API_ASK, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
         userId,
-        conversation: [...conversation, { role: "user", content: text }]
+        conversation: [...conversation, {role:"user", content:text}]
       })
     });
 
-    const data = await response.json();
-    chatBox.lastChild.remove(); // retire le "..."
-    if (data.answer) {
-      addMessage(data.answer, "bot");
+    const data = await resp.json();
+    typingOff(tnode);
 
-      // Estimation du coût de la réponse
-      const answerTokens = Math.ceil(data.answer.length / 4);
-      tokenCount -= answerTokens;
-      updateTokenDisplay();
-
-      // Mémorisation locale
-      conversation.push({ role: "user", content: text });
-      conversation.push({ role: "assistant", content: data.answer });
-    } else {
-      addMessage("Erreur : aucune réponse reçue.", "bot");
+    if(!data || !data.answer){
+      addMsg("Désolée, j'ai eu un problème réseau.", "bot");
+      return;
     }
-  } catch (err) {
-    chatBox.lastChild.remove();
-    addMessage("Erreur de connexion au serveur.", "bot");
+
+    let answer = sanitizeAnswer(data.answer.trim());
+    if (!answer) answer = "…";
+
+    addMsg(answer, "bot");
+
+    // Débit (approx) à la réponse. Si le backend fournit usage, on l'utilise.
+    if (data.usage && (data.usage.prompt_tokens || data.usage.completion_tokens)){
+      const used = (data.usage.prompt_tokens||0) + (data.usage.completion_tokens||0);
+      tokenCount = Math.max(0, tokenCount - used);  // vrai décompte si dispo
+    } else {
+      tokenCount -= approxTokensFromText(answer);    // fallback
+    }
+    updateTokensDisplay();
+
+    conversation.push({role:"user", content:text});
+    conversation.push({role:"assistant", content:answer});
+  }catch(e){
+    typingOff(tnode);
+    addMsg("Désolée, j'ai eu un problème réseau.", "bot");
   }
 }
 
-// === MISE À JOUR DU DIAMANT ===
-function updateTokenDisplay() {
-  tokenCountEl.textContent = tokenCount.toLocaleString("fr-FR");
-  if (tokenCount < 1000) tokenCountEl.style.color = "#ff5555";
-  else tokenCountEl.style.color = "#b085ff";
+// ====== ANALYSE IMAGE ======
+async function sendImage(file){
+  if(!file) return;
+  const t = typingOn();
+
+  try{
+    const fd = new FormData();
+    fd.append("image", file);
+    fd.append("userId", userId);
+    fd.append("prompt", "Analyse cette image et explique clairement ce que tu vois.");
+
+    const resp = await fetch(API_IMG, { method:"POST", body: fd });
+    const data = await resp.json();
+    typingOff(t);
+
+    if(data && data.answer){
+      addMsg(data.answer, "bot");
+      // décompte approx (la vraie conso image dépend du modèle, on ajuste ici)
+      tokenCount -= approxTokensFromText(data.answer) + 200; // petit forfait image
+      updateTokensDisplay();
+    } else {
+      addMsg("Impossible d'analyser l'image.", "bot");
+    }
+  }catch(e){
+    typingOff(t);
+    addMsg("Erreur envoi image.", "bot");
+  }
 }
 
-// === MICRO ===
-micButton.addEventListener("click", () => {
-  if (!("webkitSpeechRecognition" in window)) {
-    alert("La reconnaissance vocale n’est pas supportée sur ce navigateur.");
-    return;
-  }
-
-  if (recognition) {
-    recognition.stop();
-    recognition = null;
-    micButton.textContent = "🎤";
-  } else {
-    recognition = new webkitSpeechRecognition();
-    recognition.lang = "fr-FR";
-    recognition.onresult = e => {
-      userInput.value = e.results[0][0].transcript;
-    };
-    recognition.start();
-    micButton.textContent = "🛑";
-  }
+// ====== MICRO ======
+let recognition;
+micBtn.addEventListener("click", () => {
+  if (!("webkitSpeechRecognition" in window)){ alert("Reconnaissance vocale non supportée."); return; }
+  if (recognition){ recognition.stop(); recognition = null; micBtn.textContent="🎤"; return; }
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = "fr-FR";
+  recognition.onresult = (e)=>{ userInput.value = e.results[0][0].transcript; };
+  recognition.onend = ()=>{ micBtn.textContent="🎤"; };
+  recognition.start();
+  micBtn.textContent="🛑";
 });
 
-// === MODE JOUR/NUIT ===
-toggleMode.addEventListener("click", () => {
-  darkMode = !darkMode;
-  document.body.classList.toggle("light-mode", !darkMode);
-});
+// ====== EVENTS ======
+sendBtn.addEventListener("click", sendMessage);
+userInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sendMessage(); });
 
-// === MENU BURGER ===
-menuButton.addEventListener("click", () => {
-  menu.classList.toggle("hidden");
-});
+menuBtn.addEventListener("click", ()=> menu.classList.toggle("hidden"));
+openFAQ.addEventListener("click", ()=>{ faq.classList.add("open"); faq.setAttribute("aria-hidden","false"); menu.classList.add("hidden"); });
+faqClose.addEventListener("click", ()=>{ faq.classList.remove("open"); faq.setAttribute("aria-hidden","true"); });
 
-// === FAQ ===
-openFAQ.addEventListener("click", () => {
-  faqPopup.classList.remove("hidden");
-  menu.classList.add("hidden");
-});
-closeFAQ.addEventListener("click", () => {
-  faqPopup.classList.add("hidden");
-});
+faq.addEventListener("click", (e)=>{ if(e.target===faq){ faq.classList.remove("open"); faq.setAttribute("aria-hidden","true"); } });
+window.addEventListener("keydown", (e)=>{ if(e.key==="Escape" && faq.classList.contains("open")){ faq.classList.remove("open"); faq.setAttribute("aria-hidden","true"); } });
 
-// === RESET CHAT ===
-resetChat.addEventListener("click", () => {
+newChat.addEventListener("click", ()=>{
   conversation = [];
   chatBox.innerHTML = "";
-  addMessage("Nouvelle discussion commencée.", "bot");
+  addMsg("Nouvelle discussion commencée.", "bot");
   menu.classList.add("hidden");
 });
 
-// === ENVOI PAR BOUTON OU ENTER ===
-sendButton.addEventListener("click", sendMessage);
-userInput.addEventListener("keypress", e => {
-  if (e.key === "Enter") sendMessage();
+// Mode jour/nuit
+toggleMode.addEventListener("click", ()=>{
+  document.body.classList.toggle("dark");
 });
 
-// === BOUTON PHOTO ===
-photoButton.addEventListener("click", () => {
-  alert("📷 L’analyse d’image sera activée dans la prochaine mise à jour !");
-});
+// Boutons photo/document
+photoBtn.addEventListener("click", ()=> photoFile.click());
+docBtn.addEventListener("click", ()=> docFile.click());
+photoFile.addEventListener("change", ()=> sendImage(photoFile.files[0]));
+docFile.addEventListener("change", ()=> addMsg("📄 Envoi de documents (bientôt actif).", "bot"));
 
-// === BOUTON DOCUMENT ===
-docButton.addEventListener("click", () => {
-  alert("📄 L’envoi de documents sera disponible prochainement !");
-});
-
-// === INITIALISATION ===
-addMessage("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.", "bot");
-updateTokenDisplay();
+// ====== INIT ======
+function init(){
+  updateTokensDisplay();
+  addMsg("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.", "bot");
+  // Toujours démarrer FAQ fermée
+  faq.classList.remove("open"); faq.setAttribute("aria-hidden","true");
+  menu.classList.add("hidden");
+}
+init();
