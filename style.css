@@ -307,3 +307,70 @@ body {
 .hidden {
   display: none;
 }
+/* ===== FIX : Optimisation bandeau supérieur mobile ===== */
+@media (max-width: 480px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .brand {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .top-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.85rem;
+    padding: 6px 8px;
+    text-align: center;
+  }
+
+  .pill.login {
+    max-width: none;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .counter {
+    flex: 0 0 auto;
+  }
+
+  .composer-inner {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .plus {
+    width: 42px;
+    height: 42px;
+  }
+
+  .input {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  .send {
+    width: 50px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
+
+  .chat {
+    padding-bottom: 120px;
+  }
+}
