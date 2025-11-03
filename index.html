@@ -1,125 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr" class="theme-dark">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Philomène I.A.</title>
 
   <style>
-    /* =========================
-       THEME VARIABLES (dark/light)
-       ========================= */
-    :root {
-      --bg-page: #000;
-      --bg-grad-start: rgba(128,0,255,0.25);
-      --bg-grad-end: rgba(0,0,0,0);
-
-      --text-primary: #fff;
-      --text-secondary: #888;
-      --text-dim: #aaa;
-
-      --bubble-user-bg1: rgba(86,64,255,0.9);
-      --bubble-user-bg2: rgba(12,0,64,1);
-      --bubble-user-border: rgba(120,80,255,0.6);
-
-      --bubble-assistant-bg: rgba(255,255,255,0.07);
-      --bubble-assistant-border: rgba(255,255,255,0.15);
-
-      --bubble-default-bg: #1f1f1f;
-      --bubble-default-border: rgba(255,255,255,0.08);
-
-      --header-bg: #000;
-      --header-border: rgba(255,255,255,0.07);
-
-      --auth-bg: rgba(20,20,20,0.9);
-      --auth-border: rgba(255,255,255,0.2);
-
-      --input-bg: rgba(20,20,30,0.8);
-      --input-border: rgba(255,255,255,0.15);
-      --input-placeholder: #888;
-
-      --footer-bg: rgba(0,0,0,0.6);
-      --footer-border: rgba(255,255,255,0.07);
-
-      --mini-menu-bg: rgba(10,10,20,0.8);
-      --mini-menu-border: rgba(255,255,255,0.15);
-
-      --overlay-bg-grad1: rgba(40,0,60,0.8);
-      --overlay-bg-grad2: rgba(10,0,20,0.9);
-      --overlay-border: rgba(255,255,255,0.15);
-
-      --overlay-text-main: #fff;
-      --overlay-text-secondary: #bbb;
-      --overlay-row-border: rgba(255,255,255,0.07);
-      --overlay-divider: rgba(255,255,255,0.1);
-
-      --token-color: #ffd44b;
-      --token-diamond: #4ccfff;
-      --lock-color: #d4b26a;
-
-      --accent-bg1: rgba(86,64,255,1);
-      --accent-bg2: rgba(12,0,64,1);
-      --accent-border: rgba(120,80,255,0.7);
-      --accent-glow: rgba(120,80,255,0.6);
-
-      --typing-bg: rgba(20,0,60,0.6);
-      --typing-border: rgba(140,80,255,0.6);
-      --typing-glow: rgba(120,80,255,0.4);
-
-      --file-name-color: #ccc;
-    }
-
-    .theme-light {
-      --bg-page: #fafafa;
-      --bg-grad-start: rgba(150,120,255,0.12);
-      --bg-grad-end: rgba(255,255,255,0);
-
-      --text-primary: #111;
-      --text-secondary: #444;
-      --text-dim: #666;
-
-      --bubble-user-bg1: rgba(86,64,255,0.9);
-      --bubble-user-bg2: rgba(12,0,64,1);
-      --bubble-user-border: rgba(120,80,255,0.6);
-
-      --bubble-assistant-bg: rgba(0,0,0,0.06);
-      --bubble-assistant-border: rgba(0,0,0,0.15);
-
-      --bubble-default-bg: #fff;
-      --bubble-default-border: rgba(0,0,0,0.08);
-
-      --header-bg: #fff;
-      --header-border: rgba(0,0,0,0.07);
-
-      --auth-bg: rgba(255,255,255,0.9);
-      --auth-border: rgba(0,0,0,0.2);
-
-      --input-bg: rgba(255,255,255,0.9);
-      --input-border: rgba(0,0,0,0.2);
-      --input-placeholder: #666;
-
-      --footer-bg: rgba(255,255,255,0.8);
-      --footer-border: rgba(0,0,0,0.07);
-
-      --mini-menu-bg: rgba(255,255,255,0.9);
-      --mini-menu-border: rgba(0,0,0,0.15);
-
-      --overlay-bg-grad1: rgba(255,255,255,0.95);
-      --overlay-bg-grad2: rgba(245,245,255,0.95);
-      --overlay-border: rgba(0,0,0,0.15);
-
-      --overlay-text-main: #000;
-      --overlay-text-secondary: #444;
-      --overlay-row-border: rgba(0,0,0,0.07);
-      --overlay-divider: rgba(0,0,0,0.1);
-
-      --typing-bg: rgba(230,225,255,0.8);
-      --typing-border: rgba(120,80,255,0.4);
-      --typing-glow: rgba(120,80,255,0.2);
-
-      --file-name-color: #444;
-    }
-
     * {
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
@@ -128,28 +14,25 @@
     }
 
     body {
-      background-color: var(--bg-page);
-      color: var(--text-primary);
+      background-color: #000;
+      color: #fff;
       font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
       line-height: 1.45;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background-image: radial-gradient(
-        circle at 30% 30%,
-        var(--bg-grad-start) 0%,
-        var(--bg-grad-end) 60%
-      );
+      background-image:
+        radial-gradient(circle at 30% 30%, rgba(128,0,255,0.25) 0%, rgba(0,0,0,0) 60%);
       background-repeat: no-repeat;
       background-size: 120% 120%;
     }
 
-    /* HEADER */
+    /* TOP BAR */
     .topbar {
-      background-color: var(--header-bg);
-      color: var(--text-primary);
+      background-color: #000;
+      color: #fff;
       padding: 12px 16px;
-      border-bottom: 1px solid var(--header-border);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -172,15 +55,11 @@
       border-radius: 8px;
       background-color: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.12);
-      color: var(--text-primary);
-      font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-    .theme-light .burger-btn {
-      background-color: rgba(0,0,0,0.05);
-      border-color: rgba(0,0,0,0.12);
+      font-size: 20px;
+      color: #fff;
     }
 
     .tokens-box {
@@ -195,27 +74,28 @@
       gap: 6px;
       font-size: 18px;
       font-weight: 600;
-      color: var(--token-color);
+      color: #ffd44b;
     }
 
     .tokens-diamond {
       font-size: 20px;
-      color: var(--token-diamond);
+      color: #4ccfff;
     }
 
     .tokens-amount {
-      color: var(--token-color);
+      color: #ffd44b;
     }
 
     .assistant-name {
-      color: var(--text-secondary);
+      color: #888;
       font-size: 13px;
       font-weight: 500;
     }
 
+    /* Bouton Connexion / Inscription dans le header */
     #auth-btn {
-      background-color: var(--auth-bg);
-      border: 1px solid var(--auth-border);
+      background-color: rgba(20,20,20,0.9);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 8px;
       padding: 10px 12px;
       min-height: 44px;
@@ -223,7 +103,7 @@
       flex-direction: column;
       justify-content: center;
       text-align: left;
-      color: var(--text-primary);
+      color: #fff;
       font-size: 15px;
       font-weight: 500;
       line-height: 1.2;
@@ -235,21 +115,21 @@
       gap: 8px;
       font-size: 16px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #fff;
     }
 
     #auth-mainline .lock {
       font-size: 18px;
-      color: var(--lock-color);
+      color: #d4b26a;
     }
 
     #auth-subline {
       font-size: 12px;
-      color: var(--text-secondary);
+      color: #8f8f8f;
       font-weight: 400;
     }
 
-    /* CHAT AREA */
+    /* CHAT ZONE */
     .chat-area {
       flex: 1;
       padding: 16px;
@@ -257,68 +137,41 @@
       flex-direction: column;
       gap: 16px;
       overflow-y: auto;
-      padding-bottom: 140px; /* espace pour pas cacher le dernier msg */
     }
 
     .bubble {
-      background-color: var(--bubble-default-bg);
-      border: 1px solid var(--bubble-default-border);
+      background-color: #1f1f1f;
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
       padding: 16px;
-      color: var(--text-primary);
+      color: #fff;
       max-width: 90%;
-      font-size: 16px;
-      line-height: 1.4;
+      font-size: 18px;
+      line-height: 1.45;
       word-wrap: break-word;
       white-space: pre-wrap;
     }
 
     .bubble.assistant {
       align-self: flex-start;
-      background: var(--bubble-assistant-bg);
-      border: 1px solid var(--bubble-assistant-border);
-      color: var(--text-primary);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
     }
 
     .bubble.user {
       align-self: flex-end;
-      background: radial-gradient(
-        circle at 50% 0%,
-        var(--bubble-user-bg1) 0%,
-        var(--bubble-user-bg2) 60%
-      );
-      border: 1px solid var(--bubble-user-border);
+      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,0.9) 0%, rgba(12,0,64,1) 60%);
+      border: 1px solid rgba(120,80,255,0.6);
       color: #fff;
       font-weight: 500;
     }
 
-    .bubble.user.image-bubble {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .bubble.user.image-bubble img {
-      max-width: 260px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-    .theme-light .bubble.user.image-bubble img {
-      border: 1px solid rgba(0,0,0,0.2);
-    }
-
-    .file-name {
-      font-size: 14px;
-      color: var(--file-name-color);
-      font-weight: 400;
-    }
-
-    /* typing bubble */
+    /* Bulle "en train d'écrire" */
     .typing-bubble {
       align-self: flex-start;
-      background: var(--typing-bg);
-      border: 1px solid var(--typing-border);
-      box-shadow: 0 0 16px var(--typing-glow);
+      background: rgba(20,0,60,0.6);
+      border: 1px solid rgba(140,80,255,0.6);
+      box-shadow: 0 0 16px rgba(120,80,255,0.4);
       border-radius: 12px;
       padding: 16px;
       display: inline-flex;
@@ -326,8 +179,6 @@
       justify-content: center;
       min-width: 60px;
       height: 44px;
-      font-size: 16px;
-      line-height: 1.4;
     }
 
     .typing-dots {
@@ -343,8 +194,7 @@
       animation: blink 1s infinite;
       opacity: 0.2;
     }
-
-    .typing-dot:nth-child(1) { animation-delay: 0s;   }
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
@@ -358,13 +208,11 @@
     /* INPUT BAR */
     .input-bar-wrapper {
       padding: 16px;
-      border-top: 1px solid var(--footer-border);
-      background-color: var(--footer-bg);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      background-color: rgba(0,0,0,0.6);
       position: sticky;
       bottom: 0;
       z-index: 900;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
     }
 
     .input-row {
@@ -386,15 +234,15 @@
       max-width: 64px;
       height: 64px;
       border-radius: 12px;
-      background: radial-gradient(circle at 50% 0%, var(--accent-bg1) 0%, var(--accent-bg2) 60%);
-      border: 1px solid var(--accent-border);
+      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,1) 0%, rgba(12,0,64,1) 60%);
+      border: 1px solid rgba(120,80,255,0.7);
       color: #fff;
       font-size: 32px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 20px rgba(120,80,255,0.6);
       line-height: 0;
     }
 
@@ -403,10 +251,10 @@
       bottom: 72px;
       left: 0;
       right: 0;
-      background: var(--mini-menu-bg);
+      background: rgba(10,10,20,0.8);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      border: 1px solid var(--mini-menu-border);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 12px;
       padding: 12px;
       display: flex;
@@ -431,23 +279,23 @@
       width: 44px;
       height: 44px;
       border-radius: 10px;
-      background: radial-gradient(circle at 50% 0%, var(--accent-bg1) 0%, var(--accent-bg2) 60%);
-      border: 1px solid var(--accent-border);
+      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,1) 0%, rgba(12,0,64,1) 60%);
+      border: 1px solid rgba(120,80,255,0.7);
       color: #fff;
       font-size: 22px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 16px var(--accent-glow);
+      box-shadow: 0 0 16px rgba(120,80,255,0.5);
     }
 
     #message-input {
       flex: 1;
-      background-color: var(--input-bg);
-      border: 1px solid var(--input-border);
+      background-color: rgba(20,20,30,0.8);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 12px;
-      color: var(--text-primary);
+      color: #fff;
       font-size: 18px;
       padding: 16px;
       font-family: inherit;
@@ -455,7 +303,7 @@
     }
 
     #message-input::placeholder {
-      color: var(--input-placeholder);
+      color: #888;
     }
 
     .send-btn {
@@ -463,20 +311,20 @@
       max-width: 64px;
       height: 64px;
       border-radius: 12px;
-      background: radial-gradient(circle at 50% 0%, var(--accent-bg1) 0%, var(--accent-bg2) 60%);
-      border: 1px solid var(--accent-border);
+      background: radial-gradient(circle at 50% 0%, rgba(86,64,255,1) 0%, rgba(12,0,64,1) 60%);
+      border: 1px solid rgba(120,80,255,0.7);
       color: #fff;
       font-size: 28px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 20px rgba(120,80,255,0.6);
       line-height: 0;
     }
 
     .status-row {
-      color: var(--text-dim);
+      color: #aaa;
       font-size: 15px;
       margin-top: 10px;
       display: flex;
@@ -485,7 +333,7 @@
       line-height: 1.4;
     }
 
-    /* BURGER MENU OVERLAY */
+    /* MENU OVERLAY (burger) */
     .user-menu-overlay {
       position: fixed;
       inset: 0;
@@ -499,9 +347,8 @@
       z-index: 9999;
       opacity: 0;
       transition: opacity 0.18s ease;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
+      font-family: inherit;
     }
-
     .user-menu-overlay.show {
       display: flex;
       opacity: 1;
@@ -510,11 +357,11 @@
     .user-menu-card {
       width: 100%;
       max-width: 460px;
-      background: radial-gradient(circle at 50% 0%, var(--overlay-bg-grad1) 0%, var(--overlay-bg-grad2) 70%);
-      border: 1px solid var(--overlay-border);
+      background: radial-gradient(circle at 50% 0%, rgba(40,0,60,0.8) 0%, rgba(10,0,20,0.9) 70%);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 12px;
       box-shadow: 0 30px 120px rgba(0,0,0,0.8);
-      color: var(--overlay-text-main);
+      color: #fff;
       padding: 20px;
     }
 
@@ -523,7 +370,7 @@
       flex-direction: column;
       gap: 6px;
       margin-bottom: 16px;
-      border-bottom: 1px solid var(--overlay-divider);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       padding-bottom: 16px;
     }
 
@@ -545,18 +392,13 @@
       align-items: center;
       justify-content: center;
       border: 1px solid rgba(255,255,255,0.2);
-      color: var(--text-primary);
-    }
-    .theme-light .close-menu-btn {
-      background: rgba(0,0,0,0.05);
-      border-color: rgba(0,0,0,0.2);
-      color: #000;
+      color: #fff;
     }
 
     .user-menu-balance {
       font-size: 18px;
       font-weight: 600;
-      color: var(--token-color);
+      color: #ffd44b;
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
@@ -565,39 +407,31 @@
     }
 
     .user-menu-balance .diamond {
-      color: var(--token-diamond);
+      color: #4ccfff;
       font-size: 20px;
     }
 
     .user-menu-sub {
       font-size: 14px;
-      color: var(--overlay-text-secondary);
+      color: #bbb;
       line-height: 1.4;
     }
 
     .user-menu-list {
       list-style: none;
-      margin: 16px 0 0 0;
+      margin: 0;
       padding: 0;
-      border-top: 1px solid var(--overlay-divider);
-      border-bottom: 1px solid var(--overlay-divider);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .user-menu-item {
       padding: 16px 0;
-      border-top: 1px solid var(--overlay-row-border);
+      border-top: 1px solid rgba(255,255,255,0.07);
       display: flex;
       flex-direction: row;
       align-items: flex-start;
       gap: 12px;
-      color: var(--overlay-text-main);
-      font-size: 16px;
-      line-height: 1.4;
-      cursor: pointer;
-    }
-
-    .user-menu-item:first-child {
-      border-top: none;
+      color: #fff;
     }
 
     .menu-icon {
@@ -614,116 +448,27 @@
       font-size: 16px;
       line-height: 1.4;
     }
-
     .menu-title {
       font-weight: 600;
-      color: var(--overlay-text-main);
+      color: #fff;
     }
-
     .menu-sub {
       font-size: 14px;
-      color: var(--overlay-text-secondary);
+      color: #9d9d9d;
       line-height: 1.4;
     }
 
     .user-menu-footer {
       font-size: 14px;
-      color: var(--overlay-text-secondary);
+      color: #bbb;
       line-height: 1.5;
       margin-top: 16px;
     }
 
     .footer-line1 {
       font-weight: 500;
-      color: var(--overlay-text-main);
+      color: #fff;
       margin-bottom: 4px;
-    }
-
-    /* FAQ MODAL (tarifs) */
-    #faq-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 99999;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      color: #fff;
-    }
-
-    #faq-card {
-      background: radial-gradient(circle at 50% 0%, rgba(40,0,60,0.9) 0%, rgba(10,0,20,0.95) 70%);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 24px;
-      max-width: 520px;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-      color: #fff;
-    }
-    .theme-light #faq-card {
-      background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.95) 0%, rgba(240,240,255,0.95) 70%);
-      color: #000;
-      border: 1px solid rgba(0,0,0,0.2);
-    }
-
-    #faq-card h2 {
-      margin-bottom: 12px;
-      font-size: 20px;
-      line-height: 1.3;
-      font-weight: 600;
-    }
-
-    #faq-card h3 {
-      margin-bottom: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.4;
-    }
-
-    #faq-card table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 16px;
-      font-size: 15px;
-      line-height: 1.4;
-    }
-
-    #faq-card th {
-      text-align: left;
-      padding: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.15);
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .theme-light #faq-card th {
-      border-bottom: 1px solid rgba(0,0,0,0.2);
-    }
-
-    #faq-card td {
-      padding: 6px;
-      font-size: 14px;
-      vertical-align: top;
-    }
-
-    #faq-close-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
-      color: #fff;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-size: 15px;
-      line-height: 1.4;
-    }
-    .theme-light #faq-close-btn {
-      background: rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.2);
-      color: #000;
     }
   </style>
 </head>
@@ -760,39 +505,29 @@
   <!-- CHAT -->
   <main class="chat-area" id="chat-area">
     <div class="bubble assistant" id="welcome">
-      👋 Bonjour ! Je suis Philomène I.A., ton assistante personnelle.<br><br>
-      Je te réponds tout de suite avec <strong>GPT-5</strong> (IA avancée).<br><br>
-      🎁 <strong>Bonus :</strong><br>
-      • 200 000 tokens pour seulement 5 €<br>
-      • +20% de tokens offerts lors de ton premier achat<br>
-      • Réponses privées 24h/24<br><br>
+      👋 Bonjour ! Je suis Philomène I.A., ton assistante personnelle.
+
+      <br><br>
+      Je te réponds tout de suite avec <b>GPT-5</b> (IA avancée).
+
+      <br><br>🎁 Bonus :
+      <br>• 200&nbsp;000 tokens pour seulement 5&nbsp;€
+      <br>• +20% de tokens offerts lors de ton premier achat
+      <br>• Réponses privées 24h/24
+
+      <br><br>
       Pose ta première question. Je suis prête. 💬
     </div>
   </main>
 
-  <!-- INPUT BAR -->
+  <!-- BARRE D'ENTRÉE -->
   <footer class="input-bar-wrapper">
     <div class="input-row">
       <div class="plus-wrapper">
         <div class="plus-menu" id="plus-menu">
-          <div class="plus-action" id="photo-btn" title="Photo">📷</div>
-          <div class="plus-action" id="file-btn" title="Document">📄</div>
-          <div class="plus-action" id="mic-btn" title="Micro">🎤</div>
-
-          <!-- inputs cachés -->
-          <input
-            type="file"
-            id="camera-input"
-            accept="image/*"
-            capture="environment"
-            style="display:none"
-          />
-          <input
-            type="file"
-            id="file-input"
-            accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg,.heic,.webp,.gif"
-            style="display:none"
-          />
+          <div class="plus-action" title="Photo">📷</div>
+          <div class="plus-action" title="Document">📄</div>
+          <div class="plus-action" title="Micro">🎤</div>
         </div>
         <button class="plus-btn" id="plus-btn">+</button>
       </div>
@@ -805,11 +540,11 @@
       <div class="status-left">
         Prêt · <span id="token-count-footer">1000</span> tokens restants
       </div>
-      <div class="status-right" id="status-right" style="font-weight:600;"></div>
+      <div class="status-right" id="status-right" style="color:#fff;font-weight:600;"></div>
     </div>
   </footer>
 
-  <!-- BURGER MENU OVERLAY -->
+  <!-- MENU BURGER OVERLAY -->
   <div class="user-menu-overlay" id="user-menu-overlay">
     <div class="user-menu-card">
       <div class="user-menu-header">
@@ -827,15 +562,17 @@
       </div>
 
       <ul class="user-menu-list">
-        <li class="user-menu-item" id="faq-open-btn">
+        <li class="user-menu-item">
           <div class="menu-icon">❓</div>
           <div class="menu-texts">
             <div class="menu-title">Aide / FAQ</div>
-            <div class="menu-sub">Tokens, tarifs, première recharge</div>
+            <div class="menu-sub">
+              Comment ça marche ? Prix ? Sécurité ?
+            </div>
           </div>
         </li>
 
-        <li class="user-menu-item" id="buy-tokens-item">
+        <li class="user-menu-item">
           <div class="menu-icon">💎</div>
           <div class="menu-texts">
             <div class="menu-title">Acheter des tokens</div>
@@ -843,7 +580,7 @@
           </div>
         </li>
 
-        <li class="user-menu-item" id="theme-toggle-btn">
+        <li class="user-menu-item">
           <div class="menu-icon">🌙</div>
           <div class="menu-texts">
             <div class="menu-title">Mode clair / sombre</div>
@@ -854,222 +591,59 @@
 
       <div class="user-menu-footer">
         <div class="footer-line1">Propulsé par GPT-5</div>
-        <div class="footer-line2">Sans abonnement mensuel obligatoire</div>
+        <div class="footer-line2">Recharge juste des tokens. Pas d’abonnement obligatoire.</div>
       </div>
     </div>
   </div>
 
-  <!-- FAQ MODAL -->
-  <div id="faq-modal">
-    <div id="faq-card">
-      <h2>💎 Tarifs & bonus Philomène I.A.</h2>
-
-      <table>
-        <tr>
-          <th>Offre</th>
-          <th>Prix</th>
-          <th>Tokens</th>
-          <th>1er achat</th>
-        </tr>
-        <tr>
-          <td>🟣 Pack Découverte</td>
-          <td>5 €</td>
-          <td>200 000</td>
-          <td>+20% = 240 000</td>
-        </tr>
-        <tr>
-          <td>🔵 Pack Confort</td>
-          <td>10 €</td>
-          <td>400 000</td>
-          <td>+20% = 480 000</td>
-        </tr>
-        <tr>
-          <td>🟡 Pack Premium</td>
-          <td>20 €</td>
-          <td>800 000</td>
-          <td>+20% = 960 000</td>
-        </tr>
-      </table>
-
-      <h3>⚙️ Comment ça marche</h3>
-      <p style="font-size:16px;line-height:1.5;margin-bottom:8px;">
-        • 1 échange complet (ta question + ma réponse) ≈ <b>480 tokens</b><br>
-        • Ma réponse fait environ <b>15 à 20 lignes</b><br>
-        • Les tokens ne se perdent pas : tu peux les utiliser quand tu veux<br>
-        • Aucun abonnement mensuel : tu recharges seulement quand tu veux<br>
-      </p>
-
-      <div style="text-align:right;margin-top:16px;">
-        <button id="faq-close-btn">Fermer</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Clerk SDK -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVvcmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.clerk.dev/clerk.js">
-  </script>
-
-  <!-- APP LOGIC -->
+  <!-- SCRIPT APP -->
   <script>
+    // =========================
     // CONFIG
-    const API_URL = "https://philo-backend-su29.onrender.com/ask";
-    const GUEST_TOKENS_START = 1000;
-    const SIGNUP_BONUS = 3000;
+    // =========================
+    // IMPORTANT : on pointe maintenant vers ton vrai domaine backend
+    const API_URL = "https://api.philomeneia.com/ask";
 
-    // RUNTIME STATE
-    let currentUserId = "guest";
-    let currentUserEmail = null;
-    let isSignedIn = false;
+    const GUEST_TOKENS_START = 1000; // ce que tu montres à un invité au début
+    const TOKEN_COST_PER_MSG = 20;   // ce que tu retires à chaque échange (ton système actuel)
+
+    // état runtime
+    let currentUserId = "guest";    // quand on branchera Clerk ou autre auth, on remplacera
     let tokenBalance = GUEST_TOKENS_START;
-    let clerkReady = false;
 
-    // historique pour /ask
-    const conversation = [
-      {
-        role: "assistant",
-        content:
-          "👋 Bonjour ! Je suis Philomène I.A., ton assistante personnelle."
-      }
-    ];
+    // On garde un tableau local juste pour afficher les bulles,
+    // mais la vraie mémoire conversation est maintenant côté serveur.
+    const conversation = [];
 
-    // DOM refs
+    // RÉFÉRENCES DOM
     const chatArea      = document.getElementById("chat-area");
     const inputField    = document.getElementById("message-input");
     const sendBtn       = document.getElementById("send-btn");
-
     const plusBtn       = document.getElementById("plus-btn");
     const plusMenu      = document.getElementById("plus-menu");
-
-    const photoBtn      = document.getElementById("photo-btn");
-    const fileBtn       = document.getElementById("file-btn");
-    const micBtn        = document.getElementById("mic-btn");
-
-    const cameraInput   = document.getElementById("camera-input");
-    const fileInput     = document.getElementById("file-input");
 
     const tokenHeader   = document.getElementById("token-count-header");
     const tokenFooter   = document.getElementById("token-count-footer");
     const overlayBal    = document.getElementById("overlay-balance");
 
-    const authBtn       = document.getElementById("auth-btn");
-    const authLabel     = document.getElementById("auth-label");
-    const authSubline   = document.getElementById("auth-subline");
-
     const burgerBtn     = document.getElementById("burger-btn");
     const menuOverlay   = document.getElementById("user-menu-overlay");
     const closeMenuBtn  = document.getElementById("close-menu-btn");
 
-    const themeToggleBtn = document.getElementById("theme-toggle-btn");
-    const themeState     = document.getElementById("theme-state");
-
-    const statusRight   = document.getElementById("status-right");
-    const htmlRoot      = document.documentElement;
-
-    // FAQ modal refs
-    const faqOpenBtn    = document.getElementById("faq-open-btn");
-    const faqModal      = document.getElementById("faq-modal");
-    const faqCloseBtn   = document.getElementById("faq-close-btn");
-
-    // THEME
-    function applyTheme(themeName) {
-      if (themeName === "light") {
-        htmlRoot.classList.remove("theme-dark");
-        htmlRoot.classList.add("theme-light");
-        themeState.textContent = "Actuellement : clair";
-      } else {
-        htmlRoot.classList.remove("theme-light");
-        htmlRoot.classList.add("theme-dark");
-        themeState.textContent = "Actuellement : sombre";
-      }
-      localStorage.setItem("philo_theme", themeName);
-    }
-
-    function toggleTheme() {
-      const nowIsLight = htmlRoot.classList.contains("theme-light");
-      applyTheme(nowIsLight ? "dark" : "light");
-    }
-
-    themeToggleBtn.addEventListener("click", () => {
-      toggleTheme();
-    });
-
-    (function initThemeFromStorage() {
-      const saved = localStorage.getItem("philo_theme");
-      if (saved === "light") {
-        applyTheme("light");
-      } else {
-        applyTheme("dark");
-      }
-    })();
-
-    // SCROLL
+    // =========================
+    // UI helpers
+    // =========================
     function scrollToBottom() {
-      requestAnimationFrame(() => {
+      // petit setTimeout pour laisser le DOM peindre
+      setTimeout(() => {
         chatArea.scrollTop = chatArea.scrollHeight;
-        setTimeout(() => {
-          chatArea.scrollTop = chatArea.scrollHeight;
-        }, 60);
-      });
+      }, 50);
     }
 
-    // LOCAL STORAGE TOKENS
-    function storageKeyForUser(id) {
-      return "philomene_tokens_" + id;
-    }
-
-    function loadTokensFor(id) {
-      const raw = localStorage.getItem(storageKeyForUser(id));
-      if (!raw) return null;
-      const num = parseInt(raw, 10);
-      return Number.isNaN(num) ? null : num;
-    }
-
-    function saveTokensFor(id, amount) {
-      localStorage.setItem(storageKeyForUser(id), String(amount));
-    }
-
-    function initGuestTokens() {
-      const saved = loadTokensFor("guest");
-      if (saved !== null) {
-        tokenBalance = saved;
-      } else {
-        tokenBalance = GUEST_TOKENS_START;
-        saveTokensFor("guest", tokenBalance);
-      }
-    }
-
-    function grantSignupBonus(userIdFromClerk) {
-      const already = loadTokensFor(userIdFromClerk);
-
-      if (already !== null) {
-        tokenBalance = already;
-      } else {
-        const guestTokensBefore = loadTokensFor("guest") ?? GUEST_TOKENS_START;
-        tokenBalance = guestTokensBefore + SIGNUP_BONUS;
-        saveTokensFor(userIdFromClerk, tokenBalance);
-      }
-    }
-
-    function loadExistingUserTokens(userIdFromClerk) {
-      const already = loadTokensFor(userIdFromClerk);
-      if (already !== null) {
-        tokenBalance = already;
-      } else {
-        const guestTokensBefore = loadTokensFor("guest") ?? GUEST_TOKENS_START;
-        tokenBalance = guestTokensBefore + SIGNUP_BONUS;
-        saveTokensFor(userIdFromClerk, tokenBalance);
-      }
-    }
-
-    // UI HELPERS
     function refreshTokenDisplay() {
       tokenHeader.textContent = tokenBalance;
       tokenFooter.textContent = tokenBalance;
-      overlayBal.textContent = tokenBalance + " tokens";
+      overlayBal.textContent  = tokenBalance + " tokens";
     }
 
     function appendMessage(role, text) {
@@ -1080,49 +654,9 @@
       scrollToBottom();
     }
 
-    function appendImageMessage(file) {
-      const url = URL.createObjectURL(file);
-
-      const div = document.createElement("div");
-      div.className = "bubble user image-bubble";
-
-      const img = document.createElement("img");
-      img.src = url;
-
-      const name = document.createElement("div");
-      name.className = "file-name";
-      name.textContent = file.name || "Photo";
-
-      div.appendChild(img);
-      div.appendChild(name);
-
-      chatArea.appendChild(div);
-
-      img.onload = () => {
-        scrollToBottom();
-      };
-
-      scrollToBottom();
-    }
-
-    function appendFileMessage(file) {
-      const div = document.createElement("div");
-      div.className = "bubble user";
-
-      div.innerHTML = `
-        📄 ${file.name || "Fichier"}\n
-        <span style="color:var(--text-dim);font-size:14px;font-weight:400;">
-          (envoyé à Philomène)
-        </span>
-      `;
-
-      chatArea.appendChild(div);
-      scrollToBottom();
-    }
-
+    // bulle "..." en cours
     function showTypingIndicator() {
       if (document.getElementById("typing-indicator")) return;
-
       const wrap = document.createElement("div");
       wrap.className = "typing-bubble";
       wrap.id = "typing-indicator";
@@ -1145,79 +679,91 @@
       if (el) el.remove();
     }
 
-    function renderAuthButton() {
-      if (isSignedIn) {
-        authLabel.textContent = "Se déconnecter";
-        authSubline.textContent = currentUserEmail || "Connecté";
-      } else {
-        authLabel.textContent = "Connexion / Inscription";
-        authSubline.textContent = "Sécurisé";
-      }
+    function spendTokensForMessage() {
+      tokenBalance = Math.max(0, tokenBalance - TOKEN_COST_PER_MSG);
+      refreshTokenDisplay();
     }
 
-    // ENVOI MESSAGE (nouvelle version avec vrai solde venant du backend)
+    // =========================
+    // ENVOI MESSAGE AU BACKEND
+    // =========================
     async function sendMessage() {
       const text = inputField.value.trim();
       if (!text) return;
 
+      // on ajoute la bulle user tout de suite
       appendMessage("user", text);
 
+      // On garde une trace locale du dernier message user
       conversation.push({
         role: "user",
         content: text
       });
 
+      // on dépense les tokens
+      spendTokensForMessage();
+
+      // on vide l'input
       inputField.value = "";
 
+      // bulle "..." pendant qu'on attend
       showTypingIndicator();
-      scrollToBottom();
 
       try {
+        // on envoie AU SERVEUR :
+        // - l'historique local (juste pour lui donner le dernier message)
+        // - l'userId
+        // - le solde tokens actuel (optionnel)
         const resp = await fetch(API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             conversation,
             userId: currentUserId,
-            tokens: tokenBalance // ← on envoie le solde actuel au serveur
+            tokens: tokenBalance
           })
         });
 
         const data = await resp.json();
 
         hideTypingIndicator();
-        scrollToBottom();
 
         if (!data || !data.answer) {
-          appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+          appendMessage(
+            "assistant",
+            "Désolée, j'ai eu un problème réseau."
+          );
           scrollToBottom();
           return;
         }
 
-        // 🔄 mise à jour du solde reçu du serveur
-        if (typeof data.new_balance === "number") {
-          tokenBalance = data.new_balance;
-          saveTokensFor(currentUserId, tokenBalance);
-          refreshTokenDisplay();
-        }
-
         const answer = data.answer.trim();
+
+        // on affiche la réponse
         appendMessage("assistant", answer);
 
+        // on ajoute aussi dans la conversation locale
         conversation.push({
           role: "assistant",
           content: answer
         });
 
-        scrollToBottom();
-
       } catch (err) {
+        console.error("Erreur fetch /ask:", err);
         hideTypingIndicator();
-        appendMessage("assistant", "Désolée, j'ai eu un problème réseau.");
+        appendMessage(
+          "assistant",
+          "Désolée, j'ai eu un problème réseau."
+        );
         scrollToBottom();
       }
     }
 
+    // =========================
+    // EVENTS
+    // =========================
     sendBtn.addEventListener("click", sendMessage);
 
     inputField.addEventListener("keydown", (ev) => {
@@ -1227,88 +773,10 @@
       }
     });
 
-    // PLUS MENU
     plusBtn.addEventListener("click", () => {
       plusMenu.classList.toggle("open");
-      scrollToBottom();
     });
 
-    photoBtn.addEventListener("click", () => {
-      cameraInput.click();
-    });
-
-    cameraInput.addEventListener("change", async (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      appendImageMessage(file);
-
-      appendMessage(
-        "assistant",
-        "📷 J'ai bien reçu ta photo. Tu veux que je l'analyse ?"
-      );
-    });
-
-    fileBtn.addEventListener("click", () => {
-      fileInput.click();
-    });
-
-    fileInput.addEventListener("change", async (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      const isImage = file.type && file.type.startsWith("image/");
-      if (isImage) {
-        appendImageMessage(file);
-      } else {
-        appendFileMessage(file);
-      }
-
-      appendMessage(
-        "assistant",
-        "📄 Fichier bien reçu. Tu veux que je le lise ou que je le résume ?"
-      );
-    });
-
-    micBtn.addEventListener("click", () => {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("La dictée vocale n'est pas supportée sur ce navigateur.");
-        return;
-      }
-
-      const recognition = new SpeechRecognition();
-      recognition.lang = "fr-FR";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      statusRight.textContent = "🎤 J'écoute...";
-      statusRight.style.color = "var(--text-primary)";
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        inputField.value = transcript;
-        statusRight.textContent = "Dictée terminée ✅";
-        statusRight.style.color = "var(--token-diamond)";
-        setTimeout(() => {
-          statusRight.textContent = "";
-        }, 2000);
-      };
-
-      recognition.onerror = () => {
-        statusRight.textContent = "Micro refusé ou erreur.";
-        statusRight.style.color = "var(--token-color)";
-        setTimeout(() => {
-          statusRight.textContent = "";
-        }, 2500);
-      };
-
-      recognition.onend = () => {};
-      recognition.start();
-    });
-
-    // BURGER MENU
     burgerBtn.addEventListener("click", () => {
       menuOverlay.classList.add("show");
     });
@@ -1323,112 +791,22 @@
       }
     });
 
-    // OUVERTURE FAQ MODAL
-    faqOpenBtn.addEventListener("click", () => {
-      // fermer le menu burger
-      menuOverlay.classList.remove("show");
-      // ouvrir la FAQ
-      faqModal.style.display = "flex";
-    });
+    // =========================
+    // INIT
+    // =========================
+    window.addEventListener("load", () => {
+      // pour l'instant on fait simple :
+      // userId = "guest" tout le temps, tokens = 1000
+      currentUserId = "guest";
+      tokenBalance = GUEST_TOKENS_START;
 
-    faqCloseBtn.addEventListener("click", () => {
-      faqModal.style.display = "none";
-    });
-
-    faqModal.addEventListener("click", (e) => {
-      if (e.target === faqModal) {
-        faqModal.style.display = "none";
-      }
-    });
-
-    // CLERK AUTH
-    async function initClerk() {
-      if (!window.Clerk) {
-        console.warn("Clerk pas encore dispo.");
-        return;
-      }
-
-      try {
-        await window.Clerk.load();
-        clerkReady = true;
-
-        const user = window.Clerk.user;
-        const session = window.Clerk.session;
-
-        if (user && session) {
-          isSignedIn = true;
-          currentUserId = user.id || "unknown";
-          currentUserEmail = user.primaryEmailAddress
-            ? user.primaryEmailAddress.emailAddress
-            : null;
-
-          loadExistingUserTokens(currentUserId);
-        } else {
-          isSignedIn = false;
-          currentUserId = "guest";
-          currentUserEmail = null;
-
-          initGuestTokens();
-        }
-
-        refreshTokenDisplay();
-        renderAuthButton();
-      } catch (err) {
-        console.error("Erreur initClerk:", err);
-      }
-    }
-
-    // bouton d'auth
-    authBtn.addEventListener("click", async () => {
-      if (!clerkReady || !window.Clerk) {
-        alert("Connexion momentanément indisponible. Réessaie dans une seconde.");
-        return;
-      }
-
-      if (isSignedIn) {
-        try {
-          saveTokensFor(currentUserId, tokenBalance);
-          await window.Clerk.signOut();
-
-          isSignedIn = false;
-          currentUserId = "guest";
-          currentUserEmail = null;
-
-          initGuestTokens();
-          refreshTokenDisplay();
-          renderAuthButton();
-        } catch (e) {
-          console.error("Erreur signOut:", e);
-        }
-        return;
-      }
-
-      try {
-        await window.Clerk.openSignIn({
-          afterSignIn: async () => {
-            await initClerk();
-          },
-          afterSignUp: async () => {
-            await initClerk();
-            if (isSignedIn && currentUserId !== "guest") {
-              grantSignupBonus(currentUserId);
-              refreshTokenDisplay();
-              renderAuthButton();
-            }
-          }
-        });
-      } catch (err) {
-        console.error("Erreur openSignIn:", err);
-      }
-    });
-
-    // LANCEMENT
-    window.addEventListener("load", async () => {
-      initGuestTokens();
       refreshTokenDisplay();
-      renderAuthButton();
-      initClerk();
-      scrollToBottom();
+
+      // message système initial côté front
+      conversation.push({
+        role: "assistant",
+        content: "👋 Bonjour ! Je suis Philomène I.A., ton assistante personnelle."
+      });
     });
   </script>
 </body>
