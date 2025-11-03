@@ -1,47 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Philomène I.A.</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="ui.css" />
 </head>
 <body>
-  <header class="top-bar">
-    <h1>🤍 Philomène I.A.</h1>
-    <div class="token-display">
-      🌙 <span id="themeToggle"></span>
-      💎 <span id="tokenCounter">1 000 000</span>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="heart">🤍</span>
+      <span class="title">Philomène I.A.</span>
+    </div>
+
+    <div class="top-actions">
+      <button id="themeBtn" class="pill" aria-label="Mode Jour/Nuit">🌙</button>
+
+      <div class="counter pill" aria-label="Solde de tokens">
+        💎 <span id="tokenCounter">1 000 000</span>
+      </div>
+
+      <a id="loginBtn" class="pill login"
+         href="https://accounts.philomeneia.com/" rel="noopener">
+        Connexion / Inscription
+      </a>
+
+      <button id="menuBtn" class="pill" aria-label="Menu">☰</button>
     </div>
   </header>
 
-  <main class="chat">
-    <div class="bot-msg">
+  <!-- MENU BURGER -->
+  <nav id="menuPanel" class="menu hidden" aria-label="Menu rapide">
+    <button class="menu-item" id="openFaq">❓ FAQ</button>
+    <button class="menu-item" id="newChat">🔄 Nouvelle discussion</button>
+  </nav>
+
+  <!-- CHAT -->
+  <main id="chat" class="chat">
+    <div class="msg bot">
       Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.
     </div>
   </main>
 
-  <!-- ===== BARRE D’ENTRÉE ===== -->
-  <div class="chat-footer">
-    <!-- FAB (+ / -) et son menu -->
-    <div class="fab-wrap">
-      <button id="fabToggle" class="fab-btn" aria-label="Ouvrir outils">+</button>
-      <div id="fabMenu" class="fab-menu">
-        <button id="micBtn" class="fab-item" aria-label="Micro">🎤</button>
-        <button id="camBtn" class="fab-item" aria-label="Appareil photo">📷</button>
-        <button id="docBtn" class="fab-item" aria-label="Document">📄</button>
+  <!-- COMPOSER -->
+  <footer class="composer" id="composer">
+    <div class="composer-inner">
+      <button id="plusBtn" class="plus" aria-expanded="false" aria-controls="attachStack">+</button>
+
+      <div id="attachStack" class="attach-stack hidden" role="menu" aria-label="Pièces jointes">
+        <button id="attachMic"  class="attach-item"  role="menuitem">🎤 Micro</button>
+        <button id="attachCam"  class="attach-item"  role="menuitem">📷 Appareil photo</button>
+        <button id="attachDoc"  class="attach-item"  role="menuitem">📄 Document</button>
       </div>
+
+      <input id="userInput" class="input" type="text" placeholder="Écrivez votre message…" />
+      <button id="sendBtn" class="send" aria-label="Envoyer">➤</button>
     </div>
 
-    <!-- Champ de saisie + envoi -->
-    <input id="userInput" class="msg-input" type="text" placeholder="Écrivez votre message…" />
-    <button id="sendBtn" class="send-btn" aria-label="Envoyer">➤</button>
-  </div>
-
-  <footer>
-    <p>⚙️ Propulsé par <b>GPT-5 Thinking</b></p>
+    <div class="powered">⚙️ Propulsé par <b>GPT-5 Thinking</b></div>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- MODALE FAQ -->
+  <div id="faqModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="faqTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="faqTitle">💬 Foire aux questions</h2>
+        <button id="faqClose" class="close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><b>Quelle IA utilise Philomène ?</b><br/>
+           Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée.</p>
+
+        <p><b>Comment fonctionnent les tokens ?</b><br/>
+           Chaque message consomme quelques tokens selon la longueur.
+           Le diamant 💎 affiche votre solde.</p>
+
+        <p><b>Packs disponibles</b><br/>
+           💎 1 000 000 → 5 €<br/>
+           💎 2 000 000 → 10 €<br/>
+           💎 4 000 000 → 20 €<br/>
+           🎁 Premier achat : <b>+50 % offerts</b>.</p>
+
+        <p><b>Abonnement ?</b><br/> Aucun. Vous payez uniquement ce que vous consommez.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
