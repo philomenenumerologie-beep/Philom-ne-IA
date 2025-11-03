@@ -919,9 +919,6 @@
     const API_URL = "https://philo-backend-su29.onrender.com/ask";
     const GUEST_TOKENS_START = 1000;
     const SIGNUP_BONUS = 3000;
-    // NOTE: on ne décrémente plus à l'aveugle dans le front long terme,
-    // mais on garde cette valeur pour l'instant en attendant le backend usage réel.
-    const TOKEN_COST_PER_MSG = 20;
 
     // RUNTIME STATE
     let currentUserId = "guest";
@@ -1158,19 +1155,11 @@
       }
     }
 
-    // TOKEN SPEND (temporaire côté front)
-    function spendTokensForMessage() {
-      tokenBalance = Math.max(0, tokenBalance - TOKEN_COST_PER_MSG);
-      saveTokensFor(currentUserId, tokenBalance);
-      refreshTokenDisplay();
-    }
-
-    // ENVOI MESSAGE
+    // ENVOI MESSAGE (nouvelle version avec vrai solde venant du backend)
     async function sendMessage() {
       const text = inputField.value.trim();
       if (!text) return;
 
-      // ton message
       appendMessage("user", text);
 
       conversation.push({
@@ -1178,23 +1167,19 @@
         content: text
       });
 
-      spendTokensForMessage();
       inputField.value = "";
 
-      // "..." en cours
       showTypingIndicator();
       scrollToBottom();
 
       try {
         const resp = await fetch(API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             conversation,
             userId: currentUserId,
-            tokens: tokenBalance
+            tokens: tokenBalance // ← on envoie le solde actuel au serveur
           })
         });
 
@@ -1209,11 +1194,14 @@
           return;
         }
 
+        // 🔄 mise à jour du solde reçu du serveur
+        if (typeof data.new_balance === "number") {
+          tokenBalance = data.new_balance;
+          saveTokensFor(currentUserId, tokenBalance);
+          refreshTokenDisplay();
+        }
+
         const answer = data.answer.trim();
-
-        // on retire aussi pour la réponse IA (temporaire tant qu'on n'a pas le vrai comptage usage GPT-5)
-        spendTokensForMessage();
-
         appendMessage("assistant", answer);
 
         conversation.push({
