@@ -2,95 +2,355 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
   <title>Philomène I.A.</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="color-scheme" content="dark light" />
+
+  <style>
+    :root{
+      --bg:#0f0f12;
+      --card:#17171c;
+      --card-2:#1d1d23;
+      --text:#e9e9f1;
+      --sub:#a7a7bb;
+      --accent:#6c63ff;
+      --accent-2:#7e75ff;
+      --line:#2a2a33;
+      --pill:#1b1b22;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+    [data-theme="light"]{
+      --bg:#f7f7fb;
+      --card:#ffffff;
+      --card-2:#ffffff;
+      --text:#191922;
+      --sub:#4a4a5e;
+      --accent:#5c52ff;
+      --accent-2:#695fff;
+      --line:#e8e8f2;
+      --pill:#f0f0f8;
+      --shadow: 0 12px 30px rgba(0,0,0,.06);
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+      -webkit-font-smoothing:antialiased;
+    }
+    .page{
+      min-height:100dvh;
+      padding: env(safe-area-inset-top) 12px calc(16px + env(safe-area-inset-bottom));
+      display:flex; flex-direction:column;
+      gap:14px;
+    }
+
+    /* Header */
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:8px 6px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .brand .heart{font-size:22px; opacity:.9}
+    .title{font-weight:800; font-size:22px; letter-spacing:.2px}
+    .right{
+      display:flex; align-items:center; gap:10px;
+      margin-left:auto;
+    }
+    .pill{
+      background:var(--pill);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:8px 12px;
+      display:flex; align-items:center; gap:8px;
+      box-shadow:var(--shadow);
+      white-space:nowrap;
+    }
+    .pill .moon{font-size:18px}
+    .pill .diamond{font-size:18px}
+    .link-pill{
+      background:transparent; border:1px solid var(--line);
+      color:var(--text); text-decoration:none; border-radius:14px;
+      padding:8px 12px; font-weight:600;
+    }
+    .burger{
+      width:34px; height:34px; border-radius:12px;
+      display:grid; place-items:center; background:var(--pill);
+      border:1px solid var(--line);
+    }
+    .menu{
+      position:fixed; right:12px; top:56px; z-index:20;
+      background:var(--card); border:1px solid var(--line);
+      border-radius:14px; box-shadow:var(--shadow);
+      overflow:hidden; display:none; min-width:210px;
+    }
+    .menu.open{display:block}
+    .menu button{
+      width:100%; text-align:left; background:transparent; color:var(--text);
+      border:0; padding:12px 14px; display:flex; gap:8px; align-items:center;
+    }
+    .menu button + button{border-top:1px solid var(--line)}
+
+    /* Chat list */
+    .chat{
+      flex:1 1 auto;
+      display:flex; flex-direction:column; gap:10px;
+      overflow:auto; scroll-padding-bottom:140px;
+    }
+    .bubble{
+      background:var(--card); border:1px solid var(--line);
+      border-radius:18px; padding:14px 16px; box-shadow:var(--shadow);
+      max-width:92%;
+    }
+    .bubble.me{
+      align-self:flex-end; background:var(--accent);
+      color:white; border-color:transparent;
+    }
+
+    /* Composer */
+    .composer-wrap{
+      position:sticky; bottom:0; left:0; right:0;
+      padding-top:6px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.12));
+      backdrop-filter:saturate(160%) blur(2px);
+    }
+    .composer{
+      display:flex; align-items:center; gap:10px;
+      padding:6px 0 2px;
+    }
+    .plus{
+      width:46px; height:46px; border-radius:16px;
+      background:var(--pill); border:1px solid var(--line);
+      display:grid; place-items:center; font-size:22px; font-weight:700;
+      color:var(--text);
+      position:relative; z-index:2;
+    }
+    .attachments{
+      position:absolute; bottom:54px; /* au-dessus du + */
+      left:6px;
+      display:flex; flex-direction:column; gap:10px;
+      transition:opacity .15s, transform .18s;
+      opacity:0; pointer-events:none; transform:translateY(6px);
+    }
+    .attachments.open{opacity:1; pointer-events:auto; transform:translateY(0)}
+    .att-btn{
+      background:var(--card-2); border:1px solid var(--line);
+      color:var(--text); border-radius:14px; padding:12px 14px;
+      display:flex; gap:10px; align-items:center; min-width:180px;
+      box-shadow:var(--shadow);
+    }
+    .input{
+      flex:1; background:var(--card); border:1px solid var(--line);
+      border-radius:16px; padding:12px 14px; color:var(--text);
+      outline:none;
+    }
+    .send{
+      width:64px; height:48px; border-radius:16px;
+      background:var(--accent); border:0; color:white; font-weight:800;
+      box-shadow:0 10px 22px rgba(108,99,255,.35);
+    }
+    .powered{
+      color:var(--sub); font-weight:700; letter-spacing:.2px;
+      display:flex; gap:8px; align-items:center; justify-content:center;
+      margin-top:6px;
+    }
+
+    /* Utiles */
+    .muted{color:var(--sub)}
+    .hide{display:none}
+    .nowrap{white-space:nowrap}
+
+    /* iOS: éviter le zoom sur focus */
+    input,button{font-size:16px}
+
+  </style>
 </head>
-<body class="theme-dark">
-  <!-- HEADER -->
-  <header class="app-header">
-    <div class="brand">
-      <span class="heart">🤍</span>
-      <div class="title">
-        <span>Philomène</span><span>I.A.</span>
-      </div>
-    </div>
+<body data-theme="dark">
+  <div class="page">
 
-    <div class="header-actions">
-      <button id="themeToggle" class="pill" aria-label="Mode jour/nuit">🌙</button>
-
-      <div class="pill balance">
-        💎 <span id="tokenBalance">1000000</span>
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="heart">🤍</div>
+        <div class="title">Philomène<br/>I.A.</div>
       </div>
 
-      <a id="accountBtn" class="pill account" href="https://accounts.philomeneia.com" rel="noopener">
-        Connexion / Inscription
-      </a>
+      <div class="right">
+        <button id="themeBtn" class="pill" aria-label="Basculer thème">
+          <span class="moon">🌙</span>
+        </button>
 
-      <button id="burgerBtn" class="pill burger" aria-label="Menu">≡</button>
-      <nav id="burgerMenu" class="dropdown" hidden>
-        <button id="openFaq" class="drop-item">❓ FAQ</button>
-        <button id="newChat" class="drop-item">🔄 Nouvelle discussion</button>
-      </nav>
-    </div>
-  </header>
+        <div class="pill" id="tokenPill" aria-label="Solde">
+          <span class="diamond">💎</span>
+          <span id="tokenCount" class="nowrap">1 000 000</span>
+        </div>
 
-  <!-- MESSAGES -->
-  <main id="chat" role="main" aria-live="polite">
-    <div class="msg bot">
-      Bonjour 👋 Je suis Philomène I.A., propulsée par <strong>GPT-5 Thinking</strong>.
-    </div>
-  </main>
+        <a class="link-pill" href="#" id="loginLink">Connexion / Inscription</a>
 
-  <!-- COMPOSER -->
-  <footer class="composer safe-area-bottom">
-    <div class="attach-zone">
-      <button id="plusBtn" class="plus" aria-expanded="false" aria-controls="attachPanel">＋</button>
-
-      <!-- panneau vertical qui monte -->
-      <div id="attachPanel" class="attach-panel" hidden>
-        <button class="attach-btn" id="micBtn">🎤 Micro</button>
-        <button class="attach-btn" id="camBtn">📷 Appareil photo</button>
-        <button class="attach-btn" id="docBtn">📄 Document</button>
+        <button class="burger" id="burgerBtn" aria-label="Menu">
+          <span style="font-size:18px">≡</span>
+        </button>
+        <div class="menu" id="menu">
+          <button id="faqBtn">❓ FAQ</button>
+          <button id="newBtn">🔄 Nouvelle discussion</button>
+        </div>
       </div>
+    </header>
+
+    <!-- CHAT -->
+    <main class="chat" id="chat">
+      <div class="bubble">
+        Bonjour 👋 Je suis Philomène I.A., propulsée par <b>GPT-5 Thinking</b>.
+      </div>
+    </main>
+
+    <!-- COMPOSER -->
+    <div class="composer-wrap">
+      <div class="composer">
+        <button class="plus" id="plusBtn" aria-expanded="false">+</button>
+
+        <!-- menu attachs qui MONTE au-dessus du + -->
+        <div class="attachments" id="attachments" aria-hidden="true">
+          <button class="att-btn" id="micBtn">🎙️ Micro</button>
+          <button class="att-btn" id="camBtn">📷 Appareil photo</button>
+          <button class="att-btn" id="docBtn">📄 Document</button>
+        </div>
+
+        <input id="msg" class="input" placeholder="Écrivez votre message…" autocomplete="off" />
+        <button class="send" id="sendBtn">➤</button>
+      </div>
+      <div class="powered">⚙️ <span>Propulsé par <b>GPT-5 Thinking</b></span></div>
     </div>
 
-    <input id="messageInput" class="input" placeholder="Écrivez votre message…" autocomplete="off" />
+  </div>
 
-    <button id="sendBtn" class="send" aria-label="Envoyer">➤</button>
-  </footer>
+  <script>
+    // ---------- CONFIG DEMO ----------
+    const COST_PER_MSG = 120;        // démo: coût fixe par message
+    const COST_PER_CHAR = 1;         // + 1 token par caractère (démo)
+    let tokenBalance = 1000000;      // valeur affichée dans la pastille
 
-  <div class="powered">⚙️ Propulsé par <strong>GPT-5 Thinking</strong></div>
+    // ---------- UI ----------
+    const chat = document.getElementById('chat');
+    const msg  = document.getElementById('msg');
+    const send = document.getElementById('sendBtn');
+    const plus = document.getElementById('plusBtn');
+    const atts = document.getElementById('attachments');
+    const tokenCount = document.getElementById('tokenCount');
 
-  <!-- MODAL FAQ -->
-  <dialog id="faqModal" class="modal">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h3>💬 Foire aux questions</h3>
-        <button id="faqClose" class="close">×</button>
-      </div>
-      <div class="modal-body">
-        <h4>Quelle IA utilise Philomène ?</h4>
-        <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
+    const burgerBtn = document.getElementById('burgerBtn');
+    const menu = document.getElementById('menu');
+    const themeBtn = document.getElementById('themeBtn');
 
-        <h4>Comment fonctionnent les tokens ?</h4>
-        <p>Chaque message consomme quelques tokens (selon la longueur). Le 💎 affiche votre solde.</p>
+    function formatNb(n){
+      // 1 000 000 style FR
+      return n.toLocaleString('fr-FR');
+    }
+    function updateTokensDisplay(){
+      tokenCount.textContent = formatNb(Math.max(0, tokenBalance));
+    }
+    updateTokensDisplay();
 
-        <h4>Packs disponibles</h4>
-        <ul class="packs">
-          <li>💎 1 000 000 tokens → 5 €</li>
-          <li>💎 2 000 000 tokens → 10 €</li>
-          <li>💎 4 000 000 tokens → 20 €</li>
-        </ul>
-        <p>🎁 Premier achat : <strong>+50 % offerts</strong> (1,5 M – 3 M – 6 M).</p>
+    function addBubble(text, me=false){
+      const b = document.createElement('div');
+      b.className = 'bubble' + (me ? ' me' : '');
+      b.textContent = text;
+      chat.appendChild(b);
+      // autoscroll
+      chat.scrollTo({top: chat.scrollHeight, behavior: 'smooth'});
+    }
 
-        <h4>Abonnement ?</h4>
-        <p>Aucun abonnement. Vous payez uniquement ce que vous consommez.</p>
-      </div>
-    </div>
-  </dialog>
+    function spendTokensFor(text){
+      const spent = COST_PER_MSG + (text?.length || 0) * COST_PER_CHAR;
+      tokenBalance = Math.max(0, tokenBalance - spent);
+      updateTokensDisplay();
+    }
 
-  <!-- ⚙️ Appel du script -->
-  <script src="script.js"></script>
+    // Envoi démo (simule la réponse)
+    async function handleSend(){
+      const text = msg.value.trim();
+      if(!text) return;
+      addBubble(text, true);
+      spendTokensFor(text);
+      msg.value = '';
+
+      // Simule une petite réponse
+      setTimeout(()=>{
+        addBubble('OK.');
+        // On simule aussi la dépense réponse
+        spendTokensFor('OK.');
+      }, 400);
+    }
+
+    send.addEventListener('click', handleSend);
+    msg.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    // Plus / Moins & attachs (montent au-dessus)
+    function toggleAtts(force){
+      const open = force ?? !atts.classList.contains('open');
+      if(open){
+        atts.classList.add('open');
+        plus.textContent = '−';
+        plus.setAttribute('aria-expanded','true');
+        atts.setAttribute('aria-hidden','false');
+      }else{
+        atts.classList.remove('open');
+        plus.textContent = '+';
+        plus.setAttribute('aria-expanded','false');
+        atts.setAttribute('aria-hidden','true');
+      }
+    }
+    plus.addEventListener('click', ()=>toggleAtts());
+
+    // Fermer les attachs si on tape dans l’input
+    msg.addEventListener('focus', ()=>toggleAtts(false));
+
+    // Burger menu
+    burgerBtn.addEventListener('click', ()=>{
+      menu.classList.toggle('open');
+    });
+    document.addEventListener('click', (e)=>{
+      if(!menu.contains(e.target) && e.target !== burgerBtn){
+        menu.classList.remove('open');
+      }
+    });
+
+    // Thème (jour/nuit)
+    themeBtn.addEventListener('click', ()=>{
+      const cur = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+    });
+
+    // iOS: empêcher le “saut d’écran” quand le clavier sort
+    // (on garde la hauteur de la page stable)
+    if ('virtualKeyboard' in navigator) {
+      navigator.virtualKeyboard.overlaysContent = true;
+    }
+
+    // Boutons attach (démo)
+    document.getElementById('micBtn').addEventListener('click', ()=>addBubble('🎙️ (micro)'));
+    document.getElementById('camBtn').addEventListener('click', ()=>addBubble('📷 (photo)'));
+    document.getElementById('docBtn').addEventListener('click', ()=>addBubble('📄 (document)'));
+
+    // FAQ / New chat (démo)
+    document.getElementById('faqBtn').addEventListener('click', ()=>{
+      addBubble('FAQ :\n• GPT-5 Thinking\n• Packs 1M/2M/4M\n• +50% au 1er achat');
+      menu.classList.remove('open');
+    });
+    document.getElementById('newBtn').addEventListener('click', ()=>{
+      chat.innerHTML = '';
+      addBubble('Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.');
+      menu.classList.remove('open');
+    });
+  </script>
 </body>
 </html>
