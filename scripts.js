@@ -238,12 +238,51 @@ pickLibrary.addEventListener("click", () => imgLibraryInput.click());
 takePhoto.addEventListener("click",   () => imgCameraInput.click());
 pickFile.addEventListener("click",    () => docInput.click());
 
+/* ===== Image -> analyse via backend ===== */
+async function uploadImageToAnalyze(file) {
+  if (!file) return;
+  addBubble(`${LANG==="fr"?"📎 Fichier reçu":"📎 Bestand ontvangen"} : ${file.name}`, "user");
+  setTyping(true);
+
+  // même domaine que /ask : on remplace juste le chemin
+  const urlBase = (API_URL || FALLBACK_URL);
+  const url = urlBase.includes("/ask") ? urlBase.replace("/ask","/analyze-image") : urlBase + "/analyze-image";
+
+  const fd = new FormData();
+  fd.append("image", file);
+  fd.append("userId", userId);
+  fd.append("prompt", LANG==="fr" ? "Analyse cette image."
+                                 : LANG==="nl" ? "Analyseer deze afbeelding."
+                                               : "Analyze this image.");
+
+  try {
+    const resp = await fetch(url, { method: "POST", body: fd });
+    const data = await resp.json();
+
+    setTyping(false);
+    const answer = data?.answer
+      || (LANG==="fr"?"Je n’ai rien détecté."
+          :LANG==="nl"?"Niets gedetecteerd."
+          :"Nothing detected.");
+    addBubble(answer, "bot");
+
+    // si le backend renvoie usage pour la vision
+    if (data?.usage?.total_tokens) spendTokensReal(data.usage);
+  } catch (e) {
+    setTyping(false);
+    addBubble(LANG==="fr"?"Erreur d’analyse d’image."
+             :LANG==="nl"?"Fout bij afbeeldingsanalyse."
+             :"Image analysis error.", "bot");
+    console.error(e);
+  }
+}
+
+/* Remplace l'ancien handler: on envoie l'image au backend */
 function handlePickedFile(file){
   if (!file) return;
-  addBubble(`📎 Fichier reçu : ${file.name}`, "user");
-  // TODO: appeler /analyze-image si tu veux traiter côté serveur
-  closeSheet();
+  uploadImageToAnalyze(file);
 }
+
 imgLibraryInput.onchange = (e) => handlePickedFile(e.target.files?.[0]);
 imgCameraInput.onchange  = (e) => handlePickedFile(e.target.files?.[0]);
 docInput.onchange        = (e) => handlePickedFile(e.target.files?.[0]);
