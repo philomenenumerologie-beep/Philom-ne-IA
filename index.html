@@ -8,44 +8,45 @@
 <style>
   :root{
     --bg:#0c0c0e; --panel:#121218; --panel2:#181824; --text:#f2f2f5; --muted:#bcbcd2;
-    --brand:#8b5cf6; --brand-2:#a78bfa; --ok:#22c55e; --ring: 0 0 0 2px rgba(139,92,246,.45);
-    --bubble-user:#1e1e2a; --bubble-bot:#151524; --stroke:#2a2a3a;
+    --brand:#8b5cf6; --brand-2:#a78bfa; --accent:#a78bfa; --stroke:#2a2a3a;
+    --bubble-user:#1e1e2a; --bubble-bot:#151524;
   }
   body.light{
     --bg:#ffffff; --panel:#f7f7fb; --panel2:#f1f1f8; --text:#16161a; --muted:#4b4b5e;
-    --brand:#7c3aed; --brand-2:#6d28d9; --bubble-user:#eef; --bubble-bot:#fff; --stroke:#e8e8ef;
+    --brand:#7c3aed; --brand-2:#6d28d9; --accent:#6d28d9; --bubble-user:#eef; --bubble-bot:#fff; --stroke:#e8e8ef;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;}
-  /* Header */
-  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:.75rem;
-    padding:.9rem 1rem;border-bottom:1px solid var(--stroke);background:linear-gradient(180deg,var(--panel),var(--panel2));}
-  .brand{display:flex;align-items:center;gap:.6rem;font-weight:750;font-size:1.1rem;letter-spacing:.2px}
-  .dot{width:.55rem;height:.55rem;border-radius:50%;background:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.25);}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif}
+  /* Topbar */
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:.6rem;
+    padding:.8rem 1rem;border-bottom:1px solid var(--stroke);background:linear-gradient(180deg,var(--panel),var(--panel2))}
+  .brand{display:flex;align-items:center;gap:.6rem;font-weight:750;font-size:1.08rem}
+  .dot{width:.55rem;height:.55rem;border-radius:50%;background:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.25)}
   .spacer{flex:1}
-  .moon{cursor:pointer;font-size:1.15rem;filter:drop-shadow(0 0 6px rgba(0,0,0,.25))}
-  .counter{display:flex;align-items:center;gap:.45rem;font-weight:800;color:#c7b8ff}
-  .counter .d{font-size:1.15rem}
-  .menu{cursor:pointer;font-size:1.25rem;padding:.2rem .3rem;border-radius:.5rem}
-  .menu:active{background:rgba(139,92,246,.18)}
-  /* Chat area */
-  .chat{height:calc(100dvh - 150px);overflow:auto;padding:1rem;scroll-behavior:smooth}
+  .topbtn{margin-left:.4rem;padding:.35rem .6rem;border:1px solid var(--stroke);border-radius:.55rem;background:transparent;color:var(--text);font-weight:700}
+  .topbtn.buy{border-color:var(--accent)}
+  .moon{cursor:pointer;font-size:1.05rem}
+  .counter{display:flex;align-items:center;gap:.35rem;font-weight:800;color:#c7b8ff}
+  .counter .d{font-size:1.1rem}
+  .menu{cursor:pointer;font-size:1.2rem;padding:.2rem .3rem;border-radius:.5rem}
+  /* Chat */
+  .chat{height:calc(100dvh - 152px);overflow:auto;padding:1rem;scroll-behavior:smooth}
   .bubble{max-width:min(680px,92%);border:1px solid var(--stroke);border-radius:16px;padding:.9rem 1rem;margin:.4rem 0}
   .bot{background:var(--bubble-bot)}
   .me{background:var(--bubble-user);margin-left:auto}
   /* Composer */
   .composer{position:sticky;bottom:0;z-index:30;padding:.7rem .8rem 1rem;border-top:1px solid var(--stroke);
-    background:linear-gradient(180deg,var(--panel2),var(--panel));}
+    background:linear-gradient(180deg,var(--panel2),var(--panel))}
   .row{display:flex;align-items:center;gap:.6rem}
   .btn{border:none;background:transparent;color:var(--text);cursor:pointer}
   .btn.icon{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--stroke)}
-  .btn.icon:active{outline:var(--ring)}
   .inputWrap{flex:1;display:flex;align-items:center;gap:.55rem;border:1px solid var(--stroke);background:var(--bg);
     border-radius:12px;padding:.55rem .7rem}
   .inputWrap input{flex:1;border:none;outline:none;background:transparent;color:var(--text);font:inherit}
   .send{background:var(--brand);color:white;border:none;border-radius:12px;padding:.65rem .9rem;font-weight:700}
-  .send:active{transform:translateY(1px)}
+  .foot{display:flex;gap:.5rem;align-items:center;justify-content:center;color:var(--muted);font-size:.92rem;margin:.55rem 0}
+  .foot strong{color:#c9a7ff}
   /* Plus sheet */
   .sheetBg{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);display:none}
   .sheet{position:fixed;left:0;right:0;bottom:0;transform:translateY(110%);transition:.28s ease;z-index:41}
@@ -62,11 +63,22 @@
   .packs{display:grid;gap:.6rem;margin:.6rem 0 1rem}
   .pack{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--stroke);padding:.9rem 1rem;border-radius:12px}
   .gift{margin:.6rem 0 0;padding:.75rem 1rem;border-radius:12px;background:rgba(139,92,246,.12);border:1px solid var(--stroke)}
-  /* Footer small */
-  .foot{display:flex;gap:.5rem;align-items:center;justify-content:center;color:var(--muted);font-size:.92rem;margin:.55rem 0}
-  .foot strong{color:#c9a7ff}
-  /* Hidden inputs for file access */
-  input[type=file]{display:none}
+  /* Auth/Pay modals */
+  .modalWrap[hidden]{display:none}
+  .modalWrap{position:fixed;inset:0;z-index:70}
+  .mBg{position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)}
+  .mPanel{position:relative;margin:7vh auto 0;max-width:520px;background:var(--panel2);border:1px solid var(--stroke);
+    border-radius:14px;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  .mHead{display:flex;align-items:center;justify-content:space-between}
+  .mHead h3{margin:0}
+  .mClose{font-size:1.3rem;background:transparent;border:none;color:var(--text);cursor:pointer}
+  .mBody{margin-top:10px;display:grid;gap:10px}
+  .mBody input{width:100%;padding:.7rem .8rem;border-radius:.6rem;border:1px solid var(--stroke);background:var(--panel);color:var(--text)}
+  .mActions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:12px}
+  .btnSolid{padding:.6rem 1rem;border-radius:.6rem;border:none;color:#fff;background:var(--brand)}
+  .btnGhost{padding:.6rem 1rem;border-radius:.6rem;border:1px solid var(--stroke);background:transparent;color:var(--text)}
+  .packRow{display:flex;align-items:center;gap:.6rem;padding:.5rem;border-radius:.6rem;background:var(--panel);border:1px solid var(--stroke)}
+  .bonus{margin:.4rem 0 0;color:var(--accent)}
 </style>
 </head>
 <body class="dark">
@@ -74,11 +86,14 @@
   <div class="topbar">
     <div class="brand"><span class="dot"></span> Philomène I.A.</div>
     <div class="spacer"></div>
+
+    <!-- nouveaux boutons -->
+    <button id="loginBtn" class="topbtn">Connexion</button>
+    <button id="payBtn" class="topbtn buy">Acheter 💎</button>
+
     <div id="toggleMode" class="moon" title="Jour / Nuit">🌙</div>
-    <div class="counter" title="Solde tokens">
-      <span class="d">💎</span><span id="tokenCount">1 000 000</span>
-    </div>
-    <div id="openMenu" class="menu" title="Menu / FAQ">☰</div>
+    <div class="counter" title="Solde tokens"><span class="d">💎</span><span id="tokenCount">1 000 000</span></div>
+    <div id="openMenu" class="menu" title="FAQ">❓</div>
   </div>
 
   <!-- CHAT -->
@@ -90,12 +105,10 @@
   <div class="composer">
     <div class="row">
       <button id="plusBtn" class="btn icon" title="Plus">＋</button>
-
       <div class="inputWrap">
         <input id="userInput" placeholder="Écrivez votre message…" autocomplete="off" />
         <button id="micBtn" class="btn" title="Dicter">🎤</button>
       </div>
-
       <button id="sendBtn" class="send" title="Envoyer">➤</button>
     </div>
     <div class="foot">⚙️ Propulsé par <strong>GPT-5 Thinking</strong> — la version la plus avancée de Philomène I.A.</div>
@@ -123,13 +136,10 @@
   <div id="faqModal" class="modal" aria-hidden="true" style="display:none">
     <div class="card">
       <h2>💬 Foire aux questions</h2>
-
       <h3>Quelle IA utilise Philomène ?</h3>
-      <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
-
+      <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
       <h3>Comment fonctionnent les tokens ?</h3>
-      <p>Chaque question + réponse consomment un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
-
+      <p>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
       <h3>Packs disponibles</h3>
       <div class="packs">
         <div class="pack">💎 1 000 000 tokens → 5 €</div>
@@ -137,34 +147,73 @@
         <div class="pack">💎 4 000 000 tokens → 20 €</div>
       </div>
       <div class="gift">🎁 <strong>Premier achat : +50 % offerts</strong> (1,5 M · 3 M · 6 M)</div>
-
-      <h3>Abonnement ?</h3>
-      <p>Non. Toute la puissance de GPT-5, sans abonnement. Vous payez uniquement ce que vous consommez.</p>
-
-      <h3>Confidentialité</h3>
-      <p>Vos échanges restent privés.</p>
-
+      <h3>Abonnement ?</h3><p>Non. Toute la puissance de GPT-5, sans abonnement.</p>
+      <h3>Confidentialité</h3><p>Vos échanges restent privés.</p>
       <div class="row" style="justify-content:flex-end;margin-top:.8rem">
         <button id="closeFaq" class="btn icon">✕</button>
       </div>
     </div>
   </div>
 
+  <!-- MODALE CONNEXION -->
+  <div id="loginModal" class="modalWrap" hidden>
+    <div class="mBg" data-close="loginModal"></div>
+    <div class="mPanel">
+      <div class="mHead">
+        <h3>Connexion</h3>
+        <button class="mClose" data-close="loginModal">×</button>
+      </div>
+      <div class="mBody">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="ton@email.com">
+        <label for="loginCode">Code (optionnel)</label>
+        <input id="loginCode" type="text" placeholder="Reçu par email/SMS">
+        <p class="hint">Pas de compte ? La connexion invitée reste active.</p>
+      </div>
+      <div class="mActions">
+        <button class="btnGhost" data-close="loginModal">Annuler</button>
+        <button id="loginSubmit" class="btnSolid">Se connecter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE PAIEMENT -->
+  <div id="payModal" class="modalWrap" hidden>
+    <div class="mBg" data-close="payModal"></div>
+    <div class="mPanel">
+      <div class="mHead">
+        <h3>Acheter des tokens 💎</h3>
+        <button class="mClose" data-close="payModal">×</button>
+      </div>
+      <div class="mBody">
+        <label>Packs</label>
+        <div class="packRow"><input type="radio" name="pack" value="1000000" checked> 💎 1 000 000 — 5 €</div>
+        <div class="packRow"><input type="radio" name="pack" value="2000000">     💎 2 000 000 — 10 €</div>
+        <div class="packRow"><input type="radio" name="pack" value="4000000">     💎 4 000 000 — 20 €</div>
+        <p class="bonus">🎁 Premier achat : <b>+50%</b> offerts</p>
+      </div>
+      <div class="mActions">
+        <button class="btnGhost" data-close="payModal">Annuler</button>
+        <button id="paySubmit" class="btnSolid">Payer avec PayPal</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 (() => {
-  // ===== CONFIG =====
+  // ===== CONFIG
   const API_URL = "https://api.philomeneia.com/ask";
   const API_IMG = "https://api.philomeneia.com/analyze-image";
   const DEFAULT_TOKENS = 1_000_000;
 
-  // ===== STATE =====
+  // ===== STATE
   let tokenCount = Number(localStorage.getItem("tokens") || DEFAULT_TOKENS);
   let theme = localStorage.getItem("theme") || "dark";
   let recognition = null;
-  const userId = "guest_" + Math.random().toString(36).slice(2,8);
-  const conversation = [];
+  const userId = localStorage.getItem("userId") || ("guest_" + Math.random().toString(36).slice(2,8));
+  localStorage.setItem("userId", userId);
 
-  // ===== DOM =====
+  // ===== DOM
   const chat = document.getElementById("chat");
   const tokenCountEl = document.getElementById("tokenCount");
   const userInput = document.getElementById("userInput");
@@ -187,11 +236,20 @@
   const faqModal = document.getElementById("faqModal");
   const closeFaq = document.getElementById("closeFaq");
 
-  // ===== INIT =====
+  // Auth/Pay
+  const loginBtn = document.getElementById('loginBtn');
+  const payBtn   = document.getElementById('payBtn');
+  const loginModal = document.getElementById('loginModal');
+  const payModal   = document.getElementById('payModal');
+  const loginSubmit= document.getElementById('loginSubmit');
+  const paySubmit  = document.getElementById('paySubmit');
+
+  // ===== INIT
   if(theme === "light"){ document.body.classList.remove("dark"); document.body.classList.add("light"); }
   updateTokens();
+  addMessage("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.","bot");
 
-  // ===== UI helpers =====
+  // ===== Helpers
   function addMessage(text, who="bot"){
     const b = document.createElement("div");
     b.className = "bubble " + (who === "me" ? "me":"bot");
@@ -201,15 +259,11 @@
   }
   function setTyping(on){
     if(on){
-      typingEl = document.createElement("div");
-      typingEl.className = "bubble bot";
-      typingEl.id = "typing";
-      typingEl.textContent = "…";
-      chat.appendChild(typingEl);
-      chat.scrollTop = chat.scrollHeight;
+      const t=document.createElement("div");
+      t.className="bubble bot"; t.id="typing"; t.textContent="…";
+      chat.appendChild(t); chat.scrollTop=chat.scrollHeight;
     }else{
-      const t = document.getElementById("typing");
-      if(t) t.remove();
+      document.getElementById("typing")?.remove();
     }
   }
   function updateTokens(){
@@ -217,132 +271,116 @@
     localStorage.setItem("tokens", tokenCount);
   }
 
-  // ===== Theme toggle =====
+  // ===== Theme
   toggleMode.addEventListener("click", () => {
     const isDark = document.body.classList.contains("dark");
     document.body.classList.toggle("dark", !isDark);
     document.body.classList.toggle("light", isDark);
-    theme = isDark ? "light" : "dark";
-    localStorage.setItem("theme", theme);
+    localStorage.setItem("theme", isDark ? "light" : "dark");
   });
 
-  // ===== Send text =====
+  // ===== Send
   async function sendText(){
     const msg = (userInput.value || "").trim();
     if(!msg) return;
+    addMessage(msg,"me"); userInput.value="";
 
-    addMessage(msg, "me");
-    userInput.value = "";
-
-    // coût estimé simple (à affiner plus tard avec tokens réels)
-    tokenCount = Math.max(0, tokenCount - (20 + Math.ceil(msg.length/12)));
-    updateTokens();
+    tokenCount = Math.max(0, tokenCount - (20 + Math.ceil(msg.length/12))); updateTokens();
 
     setTyping(true);
     try{
-      const body = { userId, conversation:[{role:"user", content:msg}] };
-      const resp = await fetch(API_URL, {
+      const resp = await fetch(API_URL,{
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(body)
+        body: JSON.stringify({ userId, conversation:[{role:"user", content:msg}] })
       });
       const data = await resp.json();
       setTyping(false);
-
       const answer = data?.answer || "Désolée, je n’ai pas pu répondre.";
-      addMessage(answer, "bot");
-
-      // petite estimation sortie
-      tokenCount = Math.max(0, tokenCount - Math.ceil(answer.length/14));
-      updateTokens();
-    }catch(e){
-      setTyping(false);
-      addMessage("Erreur réseau.", "bot");
-    }
+      addMessage(answer,"bot");
+      tokenCount = Math.max(0, tokenCount - Math.ceil(answer.length/14)); updateTokens();
+    }catch{ setTyping(false); addMessage("Erreur réseau.","bot"); }
   }
   sendBtn.addEventListener("click", sendText);
-  userInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendText(); }});
+  userInput.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendText(); }});
 
-  // ===== Mic (Web Speech API si dispo) =====
+  // ===== Mic
   micBtn.addEventListener("click", () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(!SR){ alert("La dictée vocale n’est pas disponible sur ce navigateur."); return; }
-    if(recognition){ recognition.stop(); recognition = null; return; }
-    recognition = new SR();
-    recognition.lang = "fr-FR";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.onresult = (ev)=>{
-      const txt = ev.results[0][0].transcript || "";
-      userInput.value = (userInput.value ? userInput.value+" " : "") + txt;
-    };
-    recognition.onend = ()=>{ recognition = null; };
-    recognition.start();
+    if(window.__rec){ try{window.__rec.stop();}catch{}; window.__rec=null; return; }
+    const rec=new SR(); window.__rec=rec;
+    rec.lang="fr-FR"; rec.interimResults=false; rec.maxAlternatives=1;
+    rec.onresult=(ev)=>{ const txt=ev.results[0][0].transcript||""; userInput.value=(userInput.value?userInput.value+" ":"")+txt; };
+    rec.onend=()=>{ window.__rec=null; };
+    rec.start();
   });
 
-  // ===== Plus sheet =====
-  function openSheet(){
-    sheetBg.style.display = "block";
-    sheet.style.transform = "translateY(0)";
-    sheet.style.display = "block";
-  }
-  function closeSheet(){
-    sheet.style.transform = "translateY(110%)";
-    setTimeout(()=>{ sheet.style.display=""; sheetBg.style.display="none"; }, 280);
-  }
+  // ===== Sheet
+  function openSheet(){ sheetBg.style.display="block"; sheet.style.transform="translateY(0)"; sheet.style.display="block"; }
+  function closeSheet(){ sheet.style.transform="translateY(110%)"; setTimeout(()=>{ sheet.style.display=""; sheetBg.style.display="none"; },280); }
   plusBtn.addEventListener("click", openSheet);
   sheetBg.addEventListener("click", closeSheet);
 
-  // triggers
   pickLibrary.addEventListener("click", ()=> imgLibrary.click());
-  pickCamera.addEventListener("click",  ()=> imgCamera.click());
-  pickDoc.addEventListener("click",     ()=> docInput.click());
+  pickCamera .addEventListener("click", ()=> imgCamera.click());
+  pickDoc    .addEventListener("click", ()=> docInput.click());
 
-  imgLibrary.addEventListener("change", (e)=> handleImage(e.target.files?.[0]));
-  imgCamera .addEventListener("change", (e)=> handleImage(e.target.files?.[0]));
-  docInput  .addEventListener("change", (e)=> handleImage(e.target.files?.[0]));
-  
-  async function handleImage(file){
-    closeSheet();
-    if(!file) return;
+  imgLibrary.addEventListener("change", e=> handleFile(e.target.files?.[0]));
+  imgCamera .addEventListener("change", e=> handleFile(e.target.files?.[0]));
+  docInput  .addEventListener("change", e=> handleFile(e.target.files?.[0]));
 
+  async function handleFile(file){
+    closeSheet(); if(!file) return;
     const form = new FormData();
     form.append("image", file);
     form.append("userId", userId);
-    form.append("prompt", "Analyse cette image et explique clairement ce qu’elle montre.");
-
+    form.append("prompt", "Analyse ce fichier / cette image et explique clairement.");
     setTyping(true);
     try{
-      const resp = await fetch(API_IMG, { method:"POST", body:form });
-      const data = await resp.json();
+      const r = await fetch("https://api.philomeneia.com/analyze-image",{ method:"POST", body:form });
+      const d = await r.json();
       setTyping(false);
-      const answer = data?.answer || "Image reçue, mais je n’ai pas pu l’analyser.";
-      addMessage(answer, "bot");
-      tokenCount = Math.max(0, tokenCount - Math.ceil((answer.length||80)/12));
-      updateTokens();
-    }catch(e){
-      setTyping(false);
-      addMessage("Erreur lors de l’envoi du fichier.", "bot");
-    }finally{
-      // reset inputs
-      imgLibrary.value = ""; imgCamera.value = ""; docInput.value="";
-    }
+      const answer = d?.answer || "Fichier reçu, mais pas d’analyse disponible.";
+      addMessage(answer,"bot");
+      tokenCount = Math.max(0, tokenCount - Math.ceil((answer.length||80)/12)); updateTokens();
+    }catch{ setTyping(false); addMessage("Erreur lors de l’envoi du fichier.","bot"); }
+    imgLibrary.value=""; imgCamera.value=""; docInput.value="";
   }
 
-  // ===== FAQ =====
-  function openFaq(){
-    faqBg.style.display = "block";
-    faqModal.style.display = "grid";
-    faqModal.setAttribute("aria-hidden","false");
-  }
-  function closeFaqFn(){
-    faqBg.style.display = "none";
-    faqModal.style.display = "none";
-    faqModal.setAttribute("aria-hidden","true");
-  }
+  // ===== FAQ
+  function openFaq(){ faqBg.style.display="block"; faqModal.style.display="grid"; faqModal.setAttribute("aria-hidden","false"); }
+  function closeFaq(){ faqBg.style.display="none";  faqModal.style.display="none";  faqModal.setAttribute("aria-hidden","true"); }
   menuBtn.addEventListener("click", openFaq);
-  faqBg.addEventListener("click", closeFaqFn);
-  closeFaq.addEventListener("click", closeFaqFn);
+  faqBg.addEventListener("click", closeFaq);
+  closeFaq.addEventListener("click", closeFaq);
+
+  // ===== Connexion (local only, pour valider l’UI)
+  loginBtn.addEventListener('click', ()=> open(loginModal));
+  payBtn  .addEventListener('click', ()=> open(payModal));
+
+  function open(modal){ modal.hidden=false; }
+  function close(modal){ modal.hidden=true; }
+  document.addEventListener('click',(e)=>{
+    const id=e.target?.dataset?.close;
+    if(id){ const m=document.getElementById(id); if(m) close(m); }
+  });
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='Escape'){ [loginModal,payModal].forEach(m=>!m.hidden&&close(m)); }
+  });
+
+  loginSubmit.addEventListener('click', ()=>{
+    const email = document.getElementById('loginEmail')?.value?.trim();
+    if(email){ localStorage.setItem("userEmail", email); addMessage(`Connecté : ${email} ✅`,"bot"); }
+    else { addMessage("Connexion invitée activée ✅","bot"); }
+    close(loginModal);
+  });
+
+  paySubmit.addEventListener('click', ()=>{
+    const v = document.querySelector('input[name="pack"]:checked')?.value || "1000000";
+    addMessage(`Paiement démarré pour ${Number(v).toLocaleString("fr-FR")} tokens (simulation).`,"bot");
+    close(payModal);
+  });
 })();
 </script>
 </body>
