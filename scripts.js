@@ -1,297 +1,190 @@
-// ===== CONFIG =====
+// ====== Configuration ======
+// Mets ici ton vrai endpoint si différent :
 const API_URL = "https://api.philomeneia.com/ask";
-const API_IMG = "https://api.philomeneia.com/analyze-image"; // déjà en place dans ton backend
-let tokenCount = 1_000_000; // visible à côté du 💎
-let darkMode = true;
-let recognition = null;
 
-const userId = "guest_" + Math.random().toString(36).slice(2,10);
-let conversation = [];
-
-// ===== DOM =====
-const chatBox = document.getElementById("chat-box");
-const userInput = document.getElementById("user-input");
-const sendButton = document.getElementById("sendButton");
-const micButton = document.getElementById("micButton");
-const photoButton = document.getElementById("photoButton");
-const docButton = document.getElementById("docButton");
-const docPicker = document.getElementById("docPicker");
-const tokenCountEl = document.getElementById("tokenCount");
-const toggleMode = document.getElementById("toggle-mode");
-const menuButton = document.getElementById("menuButton");
-const menu = document.getElementById("menu");
-const openFAQ = document.getElementById("openFAQ");
-const faqPopup = document.getElementById("faqPopup");
-const closeFAQ = document.getElementById("closeFAQ");
-const resetChat = document.getElementById("resetChat");
-
-// ===== UI helpers =====
-function addMessage(content, sender="bot", cls=""){
-  const msg = document.createElement("div");
-  msg.className = `message ${sender} ${cls}`;
-  msg.textContent = content;
-  chatBox.appendChild(msg);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-function setTyping(on){
-  if(on){ addMessage("…", "bot", "typing"); }
-  else{
-    const last = chatBox.querySelector(".typing");
-    if(last) last.remove();
-  }
-}
-function updateTokenDisplay(){
-  tokenCountEl.textContent = tokenCount.toLocaleString("fr-FR");
-  tokenCountEl.style.color = tokenCount < 5_000 ? "#ff6666" : "#b085ff";
-}
-
-// ===== SEND MESSAGE (réel + usage tokens) =====
-async function sendMessage(){
-  const text = userInput.value.trim();
-  if(!text) return;
-
-  addMessage(text, "user");
-  userInput.value = "";
-  // Estimation entrée (secours si usage non renvoyé)
-  const estIn = Math.ceil(text.length/4);
-  tokenCount -= estIn;
-  updateTokenDisplay();
-
-  setTyping(true);
-  try{
-    const resp = await fetch(API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        userId,
-        conversation: [...conversation, {role:"user", content:text}]
-      })
-    });
-    const data = await resp.json();
-    setTyping(false);
-
-    if(!data || !data.answer){
-      addMessage("Erreur : aucune réponse reçue.", "bot");
-      return;
-    }
-
-    addMessage(data.answer, "bot");
-
-    // Décompte réel si dispo (OpenAI usage)
-    if(data.usage && typeof data.usage.total_tokens === "number"){
-      tokenCount -= Math.max(0, data.usage.total_tokens - estIn);
-    } else {
-      // Estimation sortie (fallback)
-      const estOut = Math.ceil(data.answer.length/4);
-      tokenCount -= estOut;
-    }
-    updateTokenDisplay();
-
-    // Mémorisation locale
-    conversation.push({role:"user", content:text});
-    conversation.push({role:"assistant", content:data.answer});
-  }catch(e){
-    setTyping(false);
-    addMessage("Erreur de connexion au serveur.", "bot");
-  }
-}
-
-// ===== JOUR/NUIT =====
-toggleMode.addEventListener("click", ()=>{
-  darkMode = !darkMode;
-  document.body.classList.toggle("light-mode", !darkMode);
-});
-
-// ===== MENU =====
-menuButton.addEventListener("click", ()=> menu.classList.toggle("hidden"));
-
-// ===== FAQ =====
-openFAQ.addEventListener("click", ()=>{
-  faqPopup.classList.remove("hidden");
-  menu.classList.add("hidden");
-});
-closeFAQ.addEventListener("click", ()=> faqPopup.classList.add("hidden"));
-
-// ===== RESET CHAT =====
-resetChat.addEventListener("click", ()=>{
-  conversation = [];
-  chatBox.innerHTML = "";
-  addMessage("Nouvelle discussion commencée.", "bot");
-  menu.classList.add("hidden");
-});
-
-// ===== ENVOI =====
-sendButton.addEventListener("click", sendMessage);
-userInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sendMessage(); });
-
-// ===== MICRO =====
-micButton.addEventListener("click", ()=>{
-  if(!("webkitSpeechRecognition" in window)){
-    alert("La reconnaissance vocale n’est pas supportée sur ce navigateur.");
-    return;
-  }
-  if(recognition){
-    recognition.stop(); recognition = null; micButton.textContent = "🎤";
-  }else{
-    recognition = new webkitSpeechRecognition();
-    recognition.lang = "fr-FR";
-    recognition.onresult = e => { userInput.value = e.results[0][0].transcript; };
-    recognition.onend = ()=> { micButton.textContent = "🎤"; };
-    recognition.start();
-    micButton.textContent = "🛑";
-  }
-});
-
-// ===== PHOTO = Recherche d’images web directe =====
-photoButton.addEventListener("click", ()=>{
-  const q = userInput.value.trim() || "Photo";
-  const url = "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q);
-  window.open(url, "_blank");
-});
-
-// ===== DOCUMENT / IMAGE (envoi serveur -> analyze-image) =====
-docButton.addEventListener("click", ()=> docPicker.click());
-docPicker.addEventListener("change", async ()=>{
-  if(!docPicker.files || !docPicker.files[0]) return;
-  const file = docPicker.files[0];
-
-  const form = new FormData();
-  form.append("image", file);        // le backend attend "image"
-  form.append("userId", userId);
-  form.append("prompt", "Analyse ce fichier / cette image et réponds clairement.");
-
-  setTyping(true);
-  try{
-    const resp = await fetch(API_IMG, { method:"POST", body: form });
-    const data = await resp.json();
-    setTyping(false);
-
-    if(data && data.answer){
-      addMessage(data.answer, "bot");
-      // estimation coût sortie si usage non dispo côté /analyze-image
-      const estOut = Math.ceil(data.answer.length/4);
-      tokenCount -= estOut;
-      updateTokenDisplay();
-      conversation.push({role:"assistant", content:data.answer});
-    }else{
-      addMessage("Fichier reçu mais pas de réponse.", "bot");
-    }
-  }catch(e){
-    setTyping(false);
-    addMessage("Erreur lors de l’envoi du fichier.", "bot");
-  }finally{
-    docPicker.value = "";
-  }
-});
-
-// ===== INIT =====
-addMessage("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.", "bot");
-updateTokenDisplay();
-<script>
-// ====== Sélecteurs robustes ======
-const API_URL = (typeof API_URL !== 'undefined' && API_URL) ? API_URL : "https://api.philomeneia.com/ask";
-
-const input =
-  document.getElementById('userInput')
-  || document.getElementById('messageInput')
-  || document.querySelector('#inputContainer input, .input-row input, input[type="text"]');
-
-const sendBtn =
-  document.getElementById('sendButton')
-  || document.getElementById('sendBtn')
-  || document.querySelector('#inputContainer button[type="submit"], .input-row .send, .send-btn');
-
-function setTypingSafe(v){
-  try { if (typeof setTyping === 'function') setTyping(v); } catch(e){}
-}
-function addMessageSafe(text, who='bot'){
-  try { 
-    if (typeof addMessage === 'function') addMessage(text, who);
-    else console.log(`[${who}]`, text);
-  } catch(e){ console.log(text); }
-}
-function updateTokensSafe(deltaIn = 0, deltaOut = 0){
-  try { 
-    if (typeof updateTokenDisplay === 'function') updateTokenDisplay();
-    if (typeof tokenCount !== 'undefined') {
-      tokenCount = Math.max(0, tokenCount - Math.ceil(deltaIn + deltaOut));
-      const el = document.getElementById('tokenCount') || document.querySelector('[data-token-count]');
-      if (el) el.textContent = tokenCount.toLocaleString('fr-FR');
-    }
-  } catch(e){}
-}
-
-// ====== Envoi ======
+// Etat
+let tokenCount = 1_000_000; // affiché au diamant
 let sending = false;
 
+// Sélecteurs
+const el = (id)=>document.getElementById(id);
+const chatScroll = el('chatScroll');
+const input      = el('userInput');
+const sendBtn    = el('sendButton');
+const plusBtn    = el('plusBtn');
+const micBtn     = el('micBtn');
+const tokenEl    = el('tokenCount');
+
+// Menus / modals
+const menuBtn = el('btnMenu'), menuSheet = el('menuSheet'), toggleMode = el('toggleMode'), openFaq = el('openFaq');
+const faqModal = el('faqModal'), closeFaq = el('closeFaq');
+const dialog = el('dialog'), dialogText = el('dialogText'), dialogClose = el('dialogClose');
+
+// Attach sheet & inputs
+const attachSheet = el('attachSheet'), closeAttach = el('closeAttach');
+const pickPhoto = el('pickPhoto'), takePhoto = el('takePhoto'), pickFile = el('pickFile');
+const imgLibInput = el('imgLibInput'), imgCamInput = el('imgCamInput'), docInput = el('docInput');
+
+// Login / Buy
+const btnLogin = el('btnLogin'), btnBuy = el('btnBuy');
+
+// ====== UI helpers ======
+const fmt = (n)=> n.toLocaleString('fr-FR');
+
+function addBubble(text, who='bot'){
+  const b = document.createElement('div');
+  b.className = `bubble ${who}`;
+  b.textContent = text;
+  chatScroll.appendChild(b);
+  chatScroll.scrollTop = chatScroll.scrollHeight;
+}
+function typing(v){
+  if(v){ addBubble('…','bot'); }
+}
+function setTheme(mode){
+  document.body.classList.toggle('light', mode==='light');
+  document.body.classList.toggle('dark',  mode!=='light');
+  localStorage.setItem('ph_theme', mode);
+}
+function initTheme(){
+  const saved = localStorage.getItem('ph_theme');
+  setTheme(saved || 'dark'); // Par défaut: sombre
+}
+function show(elm){ elm.setAttribute('aria-hidden','false'); }
+function hide(elm){ elm.setAttribute('aria-hidden','true'); }
+
+// ====== Menu ======
+menuBtn.addEventListener('click', ()=>{
+  const open = menuSheet.getAttribute('aria-hidden') === 'true';
+  menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  menuSheet.setAttribute('aria-hidden', open ? 'false' : 'true');
+});
+toggleMode.addEventListener('click', ()=>{
+  const nowLight = !document.body.classList.contains('light') ? 'light' : 'dark';
+  setTheme(nowLight);
+  hide(menuSheet);
+});
+openFaq.addEventListener('click', ()=>{ hide(menuSheet); show(faqModal); });
+closeFaq.addEventListener('click', ()=> hide(faqModal));
+
+// ====== Dialog helper ======
+function notify(text){ dialogText.textContent = text; show(dialog); }
+dialogClose.addEventListener('click', ()=> hide(dialog));
+
+// ====== Login / Buy placeholders ======
+btnLogin.addEventListener('click', ()=> notify('Connexion : lier ton compte (placeholder).'));
+btnBuy.addEventListener('click',   ()=> notify('Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).'));
+
+// ====== Attach sheet ======
+plusBtn.addEventListener('click', ()=> show(attachSheet));
+closeAttach.addEventListener('click', ()=> hide(attachSheet));
+pickPhoto.addEventListener('click', ()=> { imgLibInput.click(); });
+takePhoto.addEventListener('click', ()=> { imgCamInput.click(); });
+pickFile.addEventListener('click',  ()=> { docInput.click(); });
+
+imgLibInput.addEventListener('change', onImagePicked);
+imgCamInput.addEventListener('change', onImagePicked);
+docInput.addEventListener('change', onFilePicked);
+
+function onImagePicked(e){
+  hide(attachSheet);
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  sendWithFile(f, 'Analyse cette image, décris ce que tu vois.');
+}
+function onFilePicked(e){
+  hide(attachSheet);
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  sendWithFile(f, 'Analyse ce document.');
+}
+
+// ====== Speech to text ======
+let recognition = null;
+if ('webkitSpeechRecognition' in window){
+  const R = window.webkitSpeechRecognition;
+  recognition = new R(); recognition.lang = 'fr-FR'; recognition.interimResults = false;
+  recognition.onresult = (e)=>{ input.value = e.results[0][0].transcript; };
+}
+micBtn.addEventListener('click', ()=>{
+  if(!recognition){ notify('🎤 Dictée non disponible sur ce navigateur.'); return; }
+  recognition.start();
+});
+
+// ====== Envoi texte ======
+sendBtn.addEventListener('click', sendMessage);
+input.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+
 async function sendMessage(){
-  if (!input) return;
   const text = (input.value || '').trim();
-  if (!text || sending) return;
+  if(!text || sending) return;
+  sending = true; sendBtn.disabled = true;
 
-  sending = true;
-  sendBtn && (sendBtn.disabled = true);
-  setTypingSafe(true);
+  addBubble(text, 'user'); input.value = ''; typing(true);
 
-  // message utilisateur dans le chat (si tu l’affiches côté front)
-  try { if (typeof addMessage === 'function') addMessage(text, 'user'); } catch(e){}
-
-  // construction payload (ajuste userId si besoin)
   const payload = {
-    userId: (typeof userId !== 'undefined') ? userId : ('guest_' + Math.random().toString(36).slice(2,8)),
+    userId: localStorage.getItem('ph_uid') || 'guest_'+Math.random().toString(36).slice(2,8),
     prompt: text
   };
 
-  // petit timeout de sécurité
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), 20000);
+  await performFetch(payload);
+}
+
+async function sendWithFile(file, prompt){
+  addBubble('📎 '+file.name, 'user'); typing(true);
+
+  const form = new FormData();
+  form.append('image', file);
+  form.append('userId', localStorage.getItem('ph_uid') || 'guest_'+Math.random().toString(36).slice(2,8));
+  form.append('prompt', prompt);
+
+  await performFetch(form, true);
+}
+
+async function performFetch(body, isForm=false){
+  const ctrl = new AbortController();
+  const timeout = setTimeout(()=>ctrl.abort(), 20000);
 
   try{
-    const resp = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload),
-      signal: controller.signal
+    const r = await fetch(API_URL, {
+      method:'POST',
+      headers: isForm ? undefined : {'Content-Type':'application/json'},
+      body: isForm ? body : JSON.stringify(body),
+      signal: ctrl.signal
     });
+    clearTimeout(timeout);
 
-    clearTimeout(t);
+    // retire le dernier "…" de typing
+    const last = chatScroll.lastElementChild;
+    if(last && last.textContent==='…') last.remove();
 
-    if (!resp.ok){
-      addMessageSafe("⚠️ Impossible de joindre le serveur (code " + resp.status + ").", 'bot');
-    }else{
-      const data = await resp.json().catch(()=> ({}));
-      const answer = data?.answer || data?.message || data?.text;
+    if(!r.ok){ addBubble(`⚠️ Serveur indisponible (code ${r.status}).`,'bot'); }
+    else{
+      const data = await r.json().catch(()=> ({}));
+      const answer = data?.answer || data?.message || data?.text || '🤔 Réponse vide du serveur.';
+      addBubble(answer, 'bot');
 
-      if (answer){
-        addMessageSafe(answer, 'bot');
-
-        // maj tokens si le backend les renvoie
-        const tin  = Number(data?.tokens_in  || data?.prompt_tokens  || 0);
-        const tout = Number(data?.tokens_out || data?.completion_tokens || 0);
-        updateTokensSafe(tin, tout);
-      }else{
-        addMessageSafe("🤔 Réponse vide du serveur.", 'bot');
+      // MAJ compteur tokens si fourni
+      const tin  = Number(data?.tokens_in || data?.prompt_tokens || 0);
+      const tout = Number(data?.tokens_out || data?.completion_tokens || 0);
+      if (Number.isFinite(tin+tout)){
+        tokenCount = Math.max(0, tokenCount - Math.ceil(tin + tout));
+        tokenEl.textContent = fmt(tokenCount);
       }
     }
-  }catch(err){
-    const msg = (err && err.name === 'AbortError')
-      ? "⏱️ Délai dépassé. Réessaie."
-      : "❌ Erreur réseau. Vérifie ta connexion.";
-    addMessageSafe(msg, 'bot');
+  }catch(e){
+    const last = chatScroll.lastElementChild;
+    if(last && last.textContent==='…') last.remove();
+    addBubble(e?.name === 'AbortError' ? '⏱️ Délai dépassé. Réessaie.' : '❌ Erreur réseau.', 'bot');
   }finally{
-    setTypingSafe(false);
-    sendBtn && (sendBtn.disabled = false);
-    input.value = '';
-    sending = false;
+    sending = false; sendBtn.disabled = false;
+    chatScroll.scrollTop = chatScroll.scrollHeight;
   }
 }
 
-// ====== Listeners (click + Enter) ======
-sendBtn && sendBtn.addEventListener('click', sendMessage);
-input && input.addEventListener('keydown', (e)=>{
-  if (e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    sendMessage();
-  }
-});
-</script>
+// ====== Init ======
+initTheme();
+addBubble('Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.', 'bot');
+tokenEl.textContent = fmt(tokenCount);
