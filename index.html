@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Clerk (Connexion) -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_xxx_REMPLACE_ICI_xxx"
+    src="https://cdn.clerk.dev/clerk.js">
+  </script>
 </head>
 <body class="theme-dark">
   <!-- Topbar -->
@@ -17,7 +25,8 @@
     <div class="topbar__right">
       <div id="tokenBadge" class="gem">
         <span class="gem__icon">💎</span>
-        <span id="tokenCount">1 000 000</span>
+        <!-- Astuce: démarre à 2 000 (invité) -->
+        <span id="tokenCount">2 000</span>
       </div>
       <button id="btnMenu" class="chip icon">≡</button>
     </div>
@@ -37,7 +46,6 @@
 
   <!-- Chat area -->
   <main id="chat">
-    <!-- (une seule) bulle d’accueil -->
     <div class="bubble bot">
       <div class="bubble__content">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
     </div>
@@ -64,7 +72,6 @@
         <button id="pickFile" class="pill">🗂️ Choisir un fichier</button>
         <button id="closeSheet" class="pill pill--ghost">Fermer</button>
       </div>
-      <!-- Inputs cachés -->
       <input id="imgLibraryInput" type="file" accept="image/*" hidden />
       <input id="imgCameraInput" type="file" accept="image/*" capture="environment" hidden />
       <input id="docInput" type="file" hidden />
@@ -82,7 +89,7 @@
     </div>
   </dialog>
 
-  <!-- FAQ modal (fermée par défaut) -->
+  <!-- FAQ modal -->
   <dialog id="faqModal" class="modal" data-kind="faq">
     <div class="modal__card">
       <div class="modal__title">💬 Foire aux questions</div>
@@ -113,33 +120,33 @@
     </div>
   </dialog>
 
+  <!-- Modal Paiement (PLACÉE AVANT scripts.js) -->
+  <dialog id="payModal" class="modal">
+    <div class="modal__card">
+      <div class="modal__title">Acheter des tokens</div>
+      <div class="modal__body">
+        <div class="packsRow" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="pill" data-pack="5">5€ • 1M</button>
+          <button class="pill" data-pack="10">10€ • 2M</button>
+          <button class="pill" data-pack="20">20€ • 4M</button>
+        </div>
+        <div id="paypal-buttons" style="margin:8px 0 4px 0"></div>
+        <div style="margin-top:6px;color:var(--text-dim);font-size:14px">
+          🎁 Premier achat : <strong>+50%</strong> de tokens offerts.
+        </div>
+      </div>
+      <div class="modal__actions">
+        <button id="payClose" class="pill pill--ghost">Fermer</button>
+      </div>
+    </div>
+  </dialog>
+
   <!-- Footer technique -->
   <div id="techFooter">
     ⚙️ Propulsé par <strong>GPT-5 Thinking</strong>
   </div>
 
+  <!-- Ton JS en dernier (ou ajouter defer) -->
   <script src="scripts.js"></script>
-  <!-- Modal Paiement -->
-<dialog id="payModal" class="modal">
-  <div class="modal__card">
-    <div class="modal__title">Acheter des tokens</div>
-    <div class="modal__body">
-      <!-- Choix de pack -->
-      <div class="packsRow" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        <button class="pill" data-pack="5">5€ • 1M</button>
-        <button class="pill" data-pack="10">10€ • 2M</button>
-        <button class="pill" data-pack="20">20€ • 4M</button>
-      </div>
-      <!-- Bouton PayPal (en haut, bien visible) -->
-      <div id="paypal-buttons" style="margin:8px 0 4px 0"></div>
-      <div style="margin-top:6px;color:var(--text-dim);font-size:14px">
-        🎁 Premier achat : <strong>+50%</strong> de tokens offerts.
-      </div>
-    </div>
-    <div class="modal__actions">
-      <button id="payClose" class="pill pill--ghost">Fermer</button>
-    </div>
-  </div>
-</dialog>
 </body>
 </html>
