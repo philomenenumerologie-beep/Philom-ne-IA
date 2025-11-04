@@ -1,105 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Philomène I.A. — version 1.0</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="dark">
-  <!-- ===== Topbar ===== -->
+  <!-- ===== Top Bar ===== -->
   <header class="topbar">
-    <div class="topbar__left">
+    <div class="left">
       <button id="btnLogin" class="pill">Connexion</button>
       <button id="btnBuy" class="pill">Acheter</button>
     </div>
-    <div class="topbar__right">
-      <button id="btnTheme" class="icon-pill" title="Mode jour / nuit">🌙</button>
-      <div id="tokenBadge" class="token-badge" title="Solde de tokens">💎 <span id="tokenCount">1 000 000</span></div>
-      <button id="btnMenu" class="icon-pill" aria-haspopup="true" aria-expanded="false">≡</button>
+
+    <div class="center">
+      <div class="tokens pill pill--primary">
+        <span class="diamond">💎</span>
+        <span id="tokenCount">1 000 000</span>
+      </div>
+    </div>
+
+    <div class="right">
+      <button id="btnMenu" class="icon pill" aria-label="Menu">≡</button>
     </div>
   </header>
 
-  <!-- ===== Subheader (status) ===== -->
-  <div class="subheader">
-    <span class="dot dot--on"></span>
-    <span class="brand">Philomène I.A. — <b>version 1.0</b></span>
+  <!-- ===== Title Row ===== -->
+  <div class="titleRow">
+    <span class="statusDot"></span>
+    <span class="titleTxt">Philomène I.A. — <strong>version 1.0</strong></span>
   </div>
 
-  <!-- ===== Chat area ===== -->
+  <!-- ===== Chat Area ===== -->
   <main id="chat" class="chat">
-    <div id="messages" class="messages">
-      <div class="bubble bot">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
+    <div class="bubble bot">
+      Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.
     </div>
   </main>
 
-  <!-- ===== Input bar (fixed bottom) ===== -->
+  <!-- ===== Composer (fixed bottom) ===== -->
+  <div class="composerSafeArea"></div>
   <footer class="composer">
-    <button id="btnPlus" class="fab">+</button>
-    <div class="composer__input">
-      <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
-      <button id="btnMic" class="inset" title="Parler">🎙️</button>
+    <button id="plusBtn" class="fab">+</button>
+
+    <div class="inputWrap">
+      <input id="userInput" type="text" inputmode="text" autocomplete="off"
+             placeholder="Écrivez votre message…" />
+      <button id="micBtn" class="mic iconBtn" aria-label="Dictée">🎤</button>
     </div>
-    <button id="btnSend" class="send">➤</button>
+
+    <button id="sendBtn" class="send">➤</button>
   </footer>
 
-  <!-- ===== Plus sheet ===== -->
-  <div id="sheetBg" class="sheet-bg" hidden></div>
-  <div id="sheet" class="sheet" hidden>
-    <div class="sheet__title">Joindre…</div>
-    <div class="sheet__row">
-      <button id="pickPhoto" class="sheet-btn">🖼️&nbsp;Photothèque</button>
-      <button id="takePhoto" class="sheet-btn">📸&nbsp;Prendre une photo</button>
-      <button id="pickFile"  class="sheet-btn">📄&nbsp;Choisir un fichier</button>
+  <!-- ===== Menus / Sheets / Popups ===== -->
+  <!-- Burger menu -->
+  <div id="menuSheet" class="sheet hidden">
+    <div class="sheetCard">
+      <button id="toggleMode" class="sheetItem">🌗 Mode jour / nuit</button>
+      <button id="openFaq" class="sheetItem">❓ F.A.Q.</button>
+      <button id="closeMenu" class="sheetClose">Fermer</button>
     </div>
-    <button id="sheetClose" class="sheet-close">Fermer</button>
-
-    <!-- inputs cachés -->
-    <input id="imgLibInput" type="file" accept="image/*" hidden />
-    <input id="imgCamInput" type="file" accept="image/*" capture="environment" hidden />
-    <input id="docInput"    type="file" hidden />
   </div>
 
-  <!-- ===== Menu (burger) ===== -->
-  <div id="menu" class="menu" hidden>
-    <button class="menu-item" id="menuTheme">🌗&nbsp;Mode jour / nuit</button>
-    <button class="menu-item" id="menuFaq">❓&nbsp;F.A.Q.</button>
+  <!-- Attachments sheet -->
+  <div id="attachSheet" class="sheet hidden">
+    <div class="sheetCard">
+      <button id="pickGallery" class="sheetItem">🖼️ Photothèque</button>
+      <button id="takePhoto"   class="sheetItem">📸 Prendre une photo</button>
+      <button id="pickFile"    class="sheetItem">📄 Choisir un fichier</button>
+      <button id="closeAttach" class="sheetClose">Fermer</button>
+    </div>
   </div>
 
-  <!-- ===== Modales ===== -->
-  <dialog id="modalBuy" class="modal">
-    <h3>Acheter des tokens</h3>
-    <p>1M = 5 € • 2M = 10 € • 4M = 20 € <br><b>+50 % offerts</b> au 1er achat.</p>
-    <div class="modal__actions">
-      <button class="pill" data-close="modalBuy">Fermer</button>
-    </div>
-  </dialog>
+  <!-- Generic popup -->
+  <dialog id="popup" class="popup"></dialog>
 
-  <dialog id="modalLogin" class="modal">
-    <h3>Connexion</h3>
-    <p>Connexion : lier ton compte (placeholder).</p>
-    <div class="modal__actions">
-      <button class="pill" data-close="modalLogin">Fermer</button>
-    </div>
-  </dialog>
-
-  <dialog id="modalFaq" class="modal modal--lg">
-    <h3>Foire aux questions</h3>
-    <h4>Quelle IA utilise Philomène ?</h4>
-    <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée d’OpenAI.</p>
-    <h4>Comment fonctionnent les tokens ?</h4>
-    <p>Chaque question + réponse consomment un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
-    <h4>Packs disponibles</h4>
-    <ul>
-      <li>💎 1 000 000 tokens → 5 €</li>
-      <li>💎 2 000 000 tokens → 10 €</li>
-      <li>💎 4 000 000 tokens → 20 €</li>
-      <li>🎁 Premier achat : <b>+50 % offerts</b>.</li>
-    </ul>
-    <div class="modal__actions">
-      <button class="pill" data-close="modalFaq">Fermer</button>
-    </div>
-  </dialog>
+  <!-- Hidden inputs for attachments -->
+  <input id="imgFromLib" type="file" accept="image/*" hidden />
+  <input id="imgFromCam" type="file" accept="image/*" capture="environment" hidden />
+  <input id="docInput"   type="file" hidden />
 
   <script src="scripts.js"></script>
 </body>
