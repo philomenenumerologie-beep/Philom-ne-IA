@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
@@ -6,104 +6,113 @@
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="dark">
+<body class="theme-dark">
+  <!-- ====== HEADER ====== -->
+  <header id="topbar">
+    <div class="brand">
+      <span class="status-dot"></span>
+      <span class="brand-name">Philomène I.A.</span>
+    </div>
 
-  <!-- ===== Header ===== -->
-  <header class="topbar">
-    <div class="left"></div>
-    <div class="actions">
-      <button id="btnLogin" class="btn ghost">Connexion</button>
-      <button id="btnBuy" class="btn ghost">Acheter</button>
+    <div class="top-actions">
+      <button id="btnLogin" class="pill">Connexion</button>
+      <button id="btnBuy" class="pill">Acheter</button>
 
-      <div class="diamond pill">
+      <div class="diamond pill" title="Solde de tokens">
         <span class="emoji">💎</span>
-        <span id="tokenCount" data-token-count>1 000 000</span>
+        <span id="tokenCount">1 000 000</span>
       </div>
 
-      <button id="btnMenu" class="btn ghost icon" aria-haspopup="menu" aria-expanded="false">≡</button>
-      <div id="menuSheet" class="menu" role="menu" aria-hidden="true">
-        <button id="toggleMode" class="menu-item">🌗 Mode jour / nuit</button>
-        <button id="openFaq" class="menu-item">❓ F.A.Q.</button>
-      </div>
+      <button id="btnMenu" class="icon-pill" aria-label="Menu">≡</button>
     </div>
   </header>
 
-  <!-- Version tag -->
-  <div class="versionRow">
-    <span class="dot online"></span>
+  <!-- Ligne version -->
+  <div id="versionLine">
     <span>Philomène I.A. — <strong>version 1.0</strong></span>
   </div>
 
-  <!-- ===== Chat area ===== -->
-  <main id="chatScroll" aria-live="polite" aria-label="Fil de discussion"></main>
+  <!-- ====== CHAT ====== -->
+  <main id="chat">
+    <div id="messages"></div>
+  </main>
 
-  <!-- ===== Composer collé en bas ===== -->
-  <div id="composer" role="form" aria-label="Envoyer un message">
-    <button id="plusBtn" class="btn plus" aria-label="Plus">+</button>
+  <!-- ====== INPUT BAR (fixée en bas) ====== -->
+  <footer id="composer">
+    <button id="plusBtn" class="plus">+</button>
 
-    <div class="inputWrap">
-      <input id="userInput" type="text" inputmode="text" autocomplete="off"
-             placeholder="Écrivez votre message…" />
-      <button id="micBtn" class="btn icon" aria-label="Dictée">🎤</button>
+    <div class="input-wrap">
+      <input id="userInput" type="text" placeholder="Écrivez votre message..." autocomplete="off" />
+      <button id="micBtn" class="inside" title="Dicter">🎤</button>
     </div>
 
-    <button id="sendButton" class="btn send" aria-label="Envoyer">➤</button>
+    <button id="sendBtn" class="send" title="Envoyer">➤</button>
+  </footer>
+
+  <!-- ====== ACTION SHEET ====== -->
+  <div id="sheetBg" class="sheet-bg" hidden></div>
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-title">Joindre…</div>
+    <div class="sheet-row">
+      <button id="pickPhoto" class="sheet-btn">🖼️ Photothèque</button>
+      <button id="takePhoto" class="sheet-btn">📸 Prendre une photo</button>
+      <button id="pickFile"  class="sheet-btn">📄 Choisir un fichier</button>
+    </div>
+    <button id="sheetClose" class="sheet-close">Fermer</button>
+
+    <!-- Inputs cachés pour les sélecteurs -->
+    <input id="imgLibrary" type="file" accept="image/*" hidden />
+    <input id="imgCamera"  type="file" accept="image/*" capture="environment" hidden />
+    <input id="docInput"   type="file" hidden />
   </div>
 
-  <!-- ===== Attach Sheet ===== -->
-  <div id="attachSheet" class="sheet" aria-hidden="true">
-    <div class="sheet-card">
-      <div class="sheet-title">Joindre…</div>
-      <div class="sheet-row">
-        <button id="pickPhoto" class="chip">📷 Photothèque</button>
-        <button id="takePhoto" class="chip">📸 Prendre une photo</button>
-        <button id="pickFile"  class="chip">📄 Choisir un fichier</button>
+  <!-- ====== POPUPS ====== -->
+  <dialog id="popup" class="popup">
+    <div class="popup-content">
+      <div id="popupBody"></div>
+      <div class="popup-actions">
+        <button id="popupClose" class="pill">Fermer</button>
       </div>
-      <button id="closeAttach" class="btn ghost block">Fermer</button>
     </div>
+  </dialog>
+
+  <!-- ====== MENU OVERLAY ====== -->
+  <div id="menu" class="menu" hidden>
+    <button id="toggleTheme" class="menu-item">🌗 Mode jour / nuit</button>
+    <button id="openFAQ" class="menu-item">❓ F.A.Q.</button>
   </div>
 
-  <!-- Hidden inputs for file/camera -->
-  <input id="imgLibInput" type="file" accept="image/*" class="hidden" />
-  <input id="imgCamInput" type="file" accept="image/*" capture="environment" class="hidden" />
-  <input id="docInput"    type="file" class="hidden" />
+  <!-- ====== FAQ MODAL ====== -->
+  <dialog id="faq" class="popup">
+    <div class="popup-content faq">
+      <h3>💬 Foire aux questions</h3>
 
-  <!-- ===== FAQ modal ===== -->
-  <div id="faqModal" class="modal" aria-hidden="true" role="dialog" aria-label="Foire aux questions">
-    <div class="modal-card">
-      <div class="modal-title">💬 Foire aux questions</div>
+      <p><strong>Quelle IA utilise Philomène ?</strong><br/>
+      Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
 
-      <div class="faq">
-        <h4>Quelle IA utilise Philomène ?</h4>
-        <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
+      <p><strong>Comment fonctionnent les tokens ?</strong><br/>
+      Chaque question + réponse consomment un petit nombre de tokens selon leur longueur.
+      Le diamant 💎 affiche votre solde.</p>
 
-        <h4>Comment fonctionnent les tokens ?</h4>
-        <p>Chaque question + réponse consomment un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
+      <p><strong>Packs disponibles :</strong></p>
+      <ul class="packs">
+        <li>💎 1 000 000 tokens → 5 €</li>
+        <li>💎 2 000 000 tokens → 10 €</li>
+        <li>💎 4 000 000 tokens → 20 €</li>
+      </ul>
+      <p class="bonus">🎁 Premier achat : <strong>+50 % offerts</strong>.</p>
 
-        <h4>Packs disponibles</h4>
-        <ul class="packs">
-          <li>💎 1 000 000 tokens → 5 €</li>
-          <li>💎 2 000 000 tokens → 10 €</li>
-          <li>💎 4 000 000 tokens → 20 €</li>
-        </ul>
-        <div class="promo">🎁 Premier achat : <strong>+50 % offerts</strong>.</div>
+      <p><strong>Abonnement ?</strong><br/>
+      Non. Toute la puissance de GPT-5, sans abonnement. Vous payez uniquement ce que vous consommez.</p>
 
-        <h4>Abonnement ?</h4>
-        <p>Non. Toute la puissance de GPT-5, sans abonnement. Vous payez uniquement ce que vous consommez.</p>
+      <p><strong>Confidentialité</strong><br/>
+      Vos échanges restent privés.</p>
 
-        <h4>Confidentialité</h4>
-        <p>Vos échanges restent privés.</p>
+      <div class="popup-actions">
+        <button id="faqClose" class="pill">Fermer</button>
       </div>
-
-      <button id="closeFaq" class="btn ghost block">Fermer</button>
     </div>
-  </div>
-
-  <!-- Placeholder dialog -->
-  <div id="dialog" class="modal" aria-hidden="true"><div class="modal-card">
-    <div id="dialogText" class="modal-text"></div>
-    <button id="dialogClose" class="btn ghost block">Fermer</button>
-  </div></div>
+  </dialog>
 
   <script src="scripts.js"></script>
 </body>
