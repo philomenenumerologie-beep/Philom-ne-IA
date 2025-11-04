@@ -159,3 +159,52 @@ body.light{
 .modal::backdrop{background:rgba(0,0,0,.5)}
 .modal__actions{display:flex; justify-content:flex-end; margin-top:12px}
 .modal--lg{max-width:640px}
+/* === Patch visuel Philomène I.A. === */
+
+/* Aligne les boutons en haut (Connexion, Acheter, 🌙, 💎, ≡) */
+.topbar__left, .topbar__right {
+  align-items: center;
+  gap: 10px;
+}
+.token-badge {
+  font-size: 15px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  height: 38px;
+}
+
+/* Remonte légèrement le bloc Philomène I.A. */
+.subheader {
+  margin-top: -4px;
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+
+/* Barre d'entrée : effet flottant doux */
+.composer {
+  background: linear-gradient(0deg, var(--bg) 40%, rgba(0,0,0,0) 100%);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.35);
+}
+
+/* Le champ d’écriture légèrement plus haut et plus centré */
+.composer__input {
+  padding: 8px 10px;
+}
+
+/* Le bouton violet ➤ légèrement plus rond et lumineux */
+.send {
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  box-shadow: 0 0 20px rgba(122,73,255,.4);
+}
+
+/* Ajuste la taille de la lune 🌙 pour être parfaitement alignée */
+.icon-pill {
+  height: 38px;
+  width: 38px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
