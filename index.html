@@ -1,350 +1,349 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Philomène I.A. — GPT-5 Thinking</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Philomène I.A.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' x='6' font-size='56'%3E💎%3C/text%3E%3C/svg%3E">
 <style>
-/* ====== BASE / THEME ====== */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,sans-serif;transition:background .25s,color .25s}
-body.dark{background:#0b0b0b;color:#f5f5f5}
-body.light{background:#f2f2f2;color:#111}
-
-/* ====== TOPBAR ====== */
-.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(10,10,10,.8);backdrop-filter:blur(8px);border-bottom:1px solid rgba(122,50,255,.35)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800}
-.brand .dot{width:10px;height:10px;border-radius:50%;background:#7a32ff;box-shadow:0 0 12px rgba(122,50,255,.6)}
-.actions{display:flex;align-items:center;gap:12px}
-.iconbtn{background:none;border:0;color:#fff;font-size:20px;cursor:pointer;transition:transform .18s}
-.iconbtn:hover{transform:scale(1.12)}
-.token-badge{display:flex;align-items:center;gap:8px;font-weight:800;color:#c9b3ff}
-.token-badge .gem{font-size:20px;filter:drop-shadow(0 0 6px rgba(128,105,255,.65))}
-#tokenCount{min-width:84px;display:inline-block;text-align:right}
-
-/* ====== MENU BURGER ====== */
-.menu{position:absolute;right:12px;top:56px;background:#1b1b1f;border:1px solid #6a00ff;border-radius:10px;box-shadow:0 16px 40px rgba(0,0,0,.55);display:none;min-width:220px;overflow:hidden}
-.menu.open{display:block}
-.menu ul{list-style:none;margin:0;padding:6px}
-.menu li{padding:10px 12px;color:#fff;border-radius:8px;cursor:pointer}
-.menu li:hover{background:#6a00ff}
-
-/* ====== CHAT ====== */
-.main{height:calc(100% - 60px);display:flex;flex-direction:column}
-#chat{flex:1;overflow-y:auto;padding:14px 14px 6px}
-.msg{max-width:85%;padding:10px 14px;border-radius:14px;margin:10px 0;line-height:1.45;word-wrap:break-word;white-space:pre-wrap}
-.msg.user{align-self:flex-end;background:linear-gradient(180deg,#6a00ff,#4b00b8);color:#fff;box-shadow:0 6px 18px rgba(106,0,255,.28)}
-.msg.bot{align-self:flex-start;background:#1c1c22;border:1px solid rgba(255,255,255,.08);color:#fff}
-.typing{opacity:.7;font-style:italic}
-
-/* ====== INPUT BAR ====== */
-.inputbar{display:flex;align-items:center;gap:8px;padding:10px;border-top:1px solid rgba(122,50,255,.35);background:#111}
-.input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:16px;padding:10px}
-.btn{background:none;border:0;color:#bfa6ff;font-size:22px;cursor:pointer;transition:transform .18s}
-.btn:hover{transform:scale(1.12)}
-.filepick{display:none}
-
-/* ====== FAQ MODAL ====== */
-.modal{position:fixed;inset:0;display:none;z-index:200}
-.modal.open{display:flex;align-items:center;justify-content:center}
-.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(2px)}
-.card{position:relative;width:92%;max-width:720px;background:#120f1f;color:#fff;border-radius:16px;border:2px solid #6e32ff;box-shadow:0 0 18px #6e32ff;max-height:80vh;overflow:auto;padding:20px 22px}
-.card h2{margin:0 0 10px;color:#c9b3ff}
-.card h3{margin:16px 0 6px;color:#fff}
-.close{position:absolute;right:10px;top:10px;font-size:22px;background:transparent;border:0;color:#bbb;cursor:pointer}
-.packlist{list-style:none;margin:6px 0;padding:0}
-.packlist li{padding:8px 10px;margin:6px 0;background:#17172a;border:1px solid #2a2a45;border-radius:10px}
-.bonus{margin:10px 0;padding:10px 12px;border-radius:10px;background:#1a1425;border:1px solid #6a00ff;color:#e9dcff;font-weight:800}
-
-/* ====== FOOTER ====== */
-footer{text-align:center;padding:10px;background:#111;border-top:1px solid rgba(122,50,255,.35);color:#bfa6ff}
-
-/* LIGHT overrides */
-body.light .topbar{background:rgba(255,255,255,.7);border-bottom:1px solid #d8d2ff}
-body.light .iconbtn{color:#222}
-body.light .menu{background:#fff;color:#111;border-color:#d8d2ff}
-body.light .menu li{color:#111}
-body.light .menu li:hover{background:#e9e3ff}
-body.light .inputbar{background:#fafafa;border-top:1px solid #d8d2ff}
-body.light .input{color:#111}
-body.light .msg.bot{background:#fff;border:1px solid #eee;color:#111}
-body.light footer{background:#fafafa;border-top:1px solid #d8d2ff;color:#6a00ff}
+  :root{
+    --bg:#0c0c0e; --panel:#121218; --panel2:#181824; --text:#f2f2f5; --muted:#bcbcd2;
+    --brand:#8b5cf6; --brand-2:#a78bfa; --ok:#22c55e; --ring: 0 0 0 2px rgba(139,92,246,.45);
+    --bubble-user:#1e1e2a; --bubble-bot:#151524; --stroke:#2a2a3a;
+  }
+  body.light{
+    --bg:#ffffff; --panel:#f7f7fb; --panel2:#f1f1f8; --text:#16161a; --muted:#4b4b5e;
+    --brand:#7c3aed; --brand-2:#6d28d9; --bubble-user:#eef; --bubble-bot:#fff; --stroke:#e8e8ef;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;}
+  /* Header */
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:.75rem;
+    padding:.9rem 1rem;border-bottom:1px solid var(--stroke);background:linear-gradient(180deg,var(--panel),var(--panel2));}
+  .brand{display:flex;align-items:center;gap:.6rem;font-weight:750;font-size:1.1rem;letter-spacing:.2px}
+  .dot{width:.55rem;height:.55rem;border-radius:50%;background:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.25);}
+  .spacer{flex:1}
+  .moon{cursor:pointer;font-size:1.15rem;filter:drop-shadow(0 0 6px rgba(0,0,0,.25))}
+  .counter{display:flex;align-items:center;gap:.45rem;font-weight:800;color:#c7b8ff}
+  .counter .d{font-size:1.15rem}
+  .menu{cursor:pointer;font-size:1.25rem;padding:.2rem .3rem;border-radius:.5rem}
+  .menu:active{background:rgba(139,92,246,.18)}
+  /* Chat area */
+  .chat{height:calc(100dvh - 150px);overflow:auto;padding:1rem;scroll-behavior:smooth}
+  .bubble{max-width:min(680px,92%);border:1px solid var(--stroke);border-radius:16px;padding:.9rem 1rem;margin:.4rem 0}
+  .bot{background:var(--bubble-bot)}
+  .me{background:var(--bubble-user);margin-left:auto}
+  /* Composer */
+  .composer{position:sticky;bottom:0;z-index:30;padding:.7rem .8rem 1rem;border-top:1px solid var(--stroke);
+    background:linear-gradient(180deg,var(--panel2),var(--panel));}
+  .row{display:flex;align-items:center;gap:.6rem}
+  .btn{border:none;background:transparent;color:var(--text);cursor:pointer}
+  .btn.icon{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--stroke)}
+  .btn.icon:active{outline:var(--ring)}
+  .inputWrap{flex:1;display:flex;align-items:center;gap:.55rem;border:1px solid var(--stroke);background:var(--bg);
+    border-radius:12px;padding:.55rem .7rem}
+  .inputWrap input{flex:1;border:none;outline:none;background:transparent;color:var(--text);font:inherit}
+  .send{background:var(--brand);color:white;border:none;border-radius:12px;padding:.65rem .9rem;font-weight:700}
+  .send:active{transform:translateY(1px)}
+  /* Plus sheet */
+  .sheetBg{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);display:none}
+  .sheet{position:fixed;left:0;right:0;bottom:0;transform:translateY(110%);transition:.28s ease;z-index:41}
+  .sheetInner{background:var(--panel2);border-top:1px solid var(--stroke);border-radius:16px 16px 0 0;padding:1rem}
+  .pickGrid{display:grid;grid-template-columns:1fr;gap:.6rem}
+  .pick{display:flex;align-items:center;gap:.7rem;border:1px solid var(--stroke);padding:.8rem;border-radius:12px;cursor:pointer}
+  .pick:hover{border-color:var(--brand)}
+  /* FAQ modal */
+  .modalBg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:60}
+  .modal{position:fixed;inset:0;display:grid;place-items:center;z-index:61}
+  .card{width:min(680px,92%);max-height:86dvh;overflow:auto;background:var(--panel);border:1px solid var(--stroke);
+    border-radius:18px;padding:1rem 1.1rem 1.2rem;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+  .card h2{margin:.3rem 0 1rem;font-size:1.6rem;color:#c9a7ff}
+  .packs{display:grid;gap:.6rem;margin:.6rem 0 1rem}
+  .pack{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--stroke);padding:.9rem 1rem;border-radius:12px}
+  .gift{margin:.6rem 0 0;padding:.75rem 1rem;border-radius:12px;background:rgba(139,92,246,.12);border:1px solid var(--stroke)}
+  /* Footer small */
+  .foot{display:flex;gap:.5rem;align-items:center;justify-content:center;color:var(--muted);font-size:.92rem;margin:.55rem 0}
+  .foot strong{color:#c9a7ff}
+  /* Hidden inputs for file access */
+  input[type=file]{display:none}
 </style>
 </head>
 <body class="dark">
-  <!-- TOPBAR -->
+  <!-- HEADER -->
   <div class="topbar">
     <div class="brand"><span class="dot"></span> Philomène I.A.</div>
-    <div class="actions">
-      <button id="modeBtn" class="iconbtn" title="Jour / Nuit">🌗</button>
-      <div class="token-badge" title="Solde tokens"><span class="gem">💎</span><span id="tokenCount">1 000 000</span></div>
-      <button id="menuBtn" class="iconbtn" title="Menu">☰</button>
+    <div class="spacer"></div>
+    <div id="toggleMode" class="moon" title="Jour / Nuit">🌙</div>
+    <div class="counter" title="Solde tokens">
+      <span class="d">💎</span><span id="tokenCount">1 000 000</span>
     </div>
-    <nav id="menu" class="menu">
-      <ul>
-        <li id="menuFAQ">❓ FAQ</li>
-        <li id="menuNew">🔄 Nouvelle discussion</li>
-      </ul>
-    </nav>
+    <div id="openMenu" class="menu" title="Menu / FAQ">☰</div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <div id="chat"></div>
+  <!-- CHAT -->
+  <div id="chat" class="chat">
+    <div class="bubble bot">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
+  </div>
 
-    <div class="inputbar">
-      <input id="inp" class="input" type="text" placeholder="Écrivez votre message..." autocomplete="off"/>
-      <div class="inputbtns">
+  <!-- COMPOSER -->
+  <div class="composer">
+    <div class="row">
+      <button id="plusBtn" class="btn icon" title="Plus">＋</button>
+
+      <div class="inputWrap">
+        <input id="userInput" placeholder="Écrivez votre message…" autocomplete="off" />
         <button id="micBtn" class="btn" title="Dicter">🎤</button>
-        <button id="photoBtn" class="btn" title="Chercher des images web">📷</button>
-        <button id="docBtn" class="btn" title="Envoyer un document / une image">📄</button>
-        <input id="filePick" class="filepick" type="file" accept="image/*,.pdf,.txt,.doc,.docx"/>
-        <button id="sendBtn" class="btn" title="Envoyer">➤</button>
+      </div>
+
+      <button id="sendBtn" class="send" title="Envoyer">➤</button>
+    </div>
+    <div class="foot">⚙️ Propulsé par <strong>GPT-5 Thinking</strong> — la version la plus avancée de Philomène I.A.</div>
+  </div>
+
+  <!-- PLUS SHEET -->
+  <div id="sheetBg" class="sheetBg"></div>
+  <div id="sheet" class="sheet">
+    <div class="sheetInner">
+      <div class="pickGrid">
+        <div id="pickLibrary" class="pick">🖼️ Photothèque</div>
+        <div id="pickCamera" class="pick">📷 Prendre une photo</div>
+        <div id="pickDoc" class="pick">📄 Choisir un fichier</div>
       </div>
     </div>
   </div>
 
-  <!-- FAQ MODAL -->
-  <div id="faq" class="modal" aria-hidden="true">
-    <div class="backdrop" id="faqBg"></div>
-    <div class="card" role="dialog" aria-modal="true" aria-labelledby="faqTitle">
-      <button id="faqClose" class="close" aria-label="Fermer">✕</button>
-      <h2 id="faqTitle">💬 Foire aux questions</h2>
+  <!-- Hidden inputs -->
+  <input id="imgLibrary" type="file" accept="image/*" />
+  <input id="imgCamera"  type="file" accept="image/*" capture="environment" />
+  <input id="docInput"   type="file" accept="image/*,application/pdf" />
+
+  <!-- FAQ -->
+  <div id="faqBg" class="modalBg"></div>
+  <div id="faqModal" class="modal" aria-hidden="true" style="display:none">
+    <div class="card">
+      <h2>💬 Foire aux questions</h2>
 
       <h3>Quelle IA utilise Philomène ?</h3>
-      <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée.</p>
+      <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
 
       <h3>Comment fonctionnent les tokens ?</h3>
-      <p>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
+      <p>Chaque question + réponse consomment un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
 
       <h3>Packs disponibles</h3>
-      <ul class="packlist">
-        <li>💎 <b>1 000 000</b> tokens → <b>5 €</b></li>
-        <li>💎 <b>2 000 000</b> tokens → <b>10 €</b></li>
-        <li>💎 <b>4 000 000</b> tokens → <b>20 €</b></li>
-      </ul>
-      <p class="bonus">🎁 <b>Premier achat : +50 % offerts</b> (1,5 M · 3 M · 6 M)</p>
+      <div class="packs">
+        <div class="pack">💎 1 000 000 tokens → 5 €</div>
+        <div class="pack">💎 2 000 000 tokens → 10 €</div>
+        <div class="pack">💎 4 000 000 tokens → 20 €</div>
+      </div>
+      <div class="gift">🎁 <strong>Premier achat : +50 % offerts</strong> (1,5 M · 3 M · 6 M)</div>
 
       <h3>Abonnement ?</h3>
-      <p>Non. <b>Toute la puissance de GPT-5, sans abonnement.</b> Vous payez uniquement ce que vous consommez.</p>
+      <p>Non. Toute la puissance de GPT-5, sans abonnement. Vous payez uniquement ce que vous consommez.</p>
 
       <h3>Confidentialité</h3>
       <p>Vos échanges restent privés.</p>
+
+      <div class="row" style="justify-content:flex-end;margin-top:.8rem">
+        <button id="closeFaq" class="btn icon">✕</button>
+      </div>
     </div>
   </div>
 
-  <footer>⚙️ Propulsé par <b>GPT-5 Thinking</b> — la version la plus avancée de Philomène I.A.</footer>
-
 <script>
-/* ====== CONFIG ====== */
-const API_URL = "https://api.philomeneia.com/ask";
-const API_IMG = "https://api.philomeneia.com/analyze-image"; // dispo sur ton backend
-let tokenCount = 1_000_000; // affiché à côté du 💎
-let dark = true;
-let recognition = null;
-const userId = "guest_" + Math.random().toString(36).slice(2,10);
-let conversation = []; // historique local (mémoire serveur = côté backend)
+(() => {
+  // ===== CONFIG =====
+  const API_URL = "https://api.philomeneia.com/ask";
+  const API_IMG = "https://api.philomeneia.com/analyze-image";
+  const DEFAULT_TOKENS = 1_000_000;
 
-/* ====== DOM ====== */
-const chat = document.getElementById('chat');
-const inp = document.getElementById('inp');
-const sendBtn = document.getElementById('sendBtn');
-const micBtn = document.getElementById('micBtn');
-const photoBtn = document.getElementById('photoBtn');
-const docBtn = document.getElementById('docBtn');
-const filePick = document.getElementById('filePick');
-const tokenCountEl = document.getElementById('tokenCount');
+  // ===== STATE =====
+  let tokenCount = Number(localStorage.getItem("tokens") || DEFAULT_TOKENS);
+  let theme = localStorage.getItem("theme") || "dark";
+  let recognition = null;
+  const userId = "guest_" + Math.random().toString(36).slice(2,8);
+  const conversation = [];
 
-const modeBtn = document.getElementById('modeBtn');
-const menuBtn = document.getElementById('menuBtn');
-const menu = document.getElementById('menu');
-const menuFAQ = document.getElementById('menuFAQ');
-const menuNew = document.getElementById('menuNew');
+  // ===== DOM =====
+  const chat = document.getElementById("chat");
+  const tokenCountEl = document.getElementById("tokenCount");
+  const userInput = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const plusBtn = document.getElementById("plusBtn");
+  const micBtn = document.getElementById("micBtn");
+  const toggleMode = document.getElementById("toggleMode");
+  const menuBtn = document.getElementById("openMenu");
 
-const faq = document.getElementById('faq');
-const faqClose = document.getElementById('faqClose');
-const faqBg = document.getElementById('faqBg');
+  const sheetBg = document.getElementById("sheetBg");
+  const sheet = document.getElementById("sheet");
+  const pickLibrary = document.getElementById("pickLibrary");
+  const pickCamera = document.getElementById("pickCamera");
+  const pickDoc = document.getElementById("pickDoc");
+  const imgLibrary = document.getElementById("imgLibrary");
+  const imgCamera = document.getElementById("imgCamera");
+  const docInput = document.getElementById("docInput");
 
-/* ====== UI HELPERS ====== */
-function addMsg(text, who="bot", cls=""){
-  const el = document.createElement('div');
-  el.className = `msg ${who} ${cls}`.trim();
-  el.textContent = text;
-  chat.appendChild(el);
-  chat.scrollTop = chat.scrollHeight;
-}
-function setTyping(on){
-  if(on){ addMsg("…","bot","typing"); }
-  else{
-    const t = chat.querySelector('.typing');
-    if(t) t.remove();
+  const faqBg = document.getElementById("faqBg");
+  const faqModal = document.getElementById("faqModal");
+  const closeFaq = document.getElementById("closeFaq");
+
+  // ===== INIT =====
+  if(theme === "light"){ document.body.classList.remove("dark"); document.body.classList.add("light"); }
+  updateTokens();
+
+  // ===== UI helpers =====
+  function addMessage(text, who="bot"){
+    const b = document.createElement("div");
+    b.className = "bubble " + (who === "me" ? "me":"bot");
+    b.textContent = text;
+    chat.appendChild(b);
+    chat.scrollTop = chat.scrollHeight;
   }
-}
-function fmt(n){ return n.toLocaleString("fr-FR"); }
-function updateTokens(){
-  tokenCountEl.textContent = fmt(Math.max(0, tokenCount));
-  tokenCountEl.style.color = tokenCount < 5_000 ? "#ff6666" : "#c9b3ff";
-}
-
-/* ====== SEND MESSAGE ====== */
-async function sendMessage(){
-  const text = inp.value.trim();
-  if(!text) return;
-
-  addMsg(text,"user");
-  inp.value = "";
-  // Estimation entrée (secours si usage non renvoyé)
-  const estIn = Math.ceil(text.length/4);
-  tokenCount -= estIn; updateTokens();
-
-  setTyping(true);
-  try{
-    const resp = await fetch(API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        userId,
-        conversation: [...conversation, {role:"user", content:text}]
-      })
-    });
-    const data = await resp.json();
-    setTyping(false);
-
-    if(!data || !data.answer){
-      addMsg("Erreur : aucune réponse reçue.","bot");
-      return;
+  function setTyping(on){
+    if(on){
+      typingEl = document.createElement("div");
+      typingEl.className = "bubble bot";
+      typingEl.id = "typing";
+      typingEl.textContent = "…";
+      chat.appendChild(typingEl);
+      chat.scrollTop = chat.scrollHeight;
+    }else{
+      const t = document.getElementById("typing");
+      if(t) t.remove();
     }
+  }
+  function updateTokens(){
+    tokenCountEl.textContent = tokenCount.toLocaleString("fr-FR");
+    localStorage.setItem("tokens", tokenCount);
+  }
 
-    addMsg(data.answer,"bot");
+  // ===== Theme toggle =====
+  toggleMode.addEventListener("click", () => {
+    const isDark = document.body.classList.contains("dark");
+    document.body.classList.toggle("dark", !isDark);
+    document.body.classList.toggle("light", isDark);
+    theme = isDark ? "light" : "dark";
+    localStorage.setItem("theme", theme);
+  });
 
-    // Décompte réel si le backend renvoie usage.total_tokens
-    if(data.usage && typeof data.usage.total_tokens === "number"){
-      // total_tokens inclut déjà l'entrée + sortie → on retire ce qu'on a estimé pour l'entrée
-      tokenCount -= Math.max(0, data.usage.total_tokens - estIn);
-    } else {
-      // fallback : estimation sortie
-      const estOut = Math.ceil(data.answer.length/4);
-      tokenCount -= estOut;
-    }
+  // ===== Send text =====
+  async function sendText(){
+    const msg = (userInput.value || "").trim();
+    if(!msg) return;
+
+    addMessage(msg, "me");
+    userInput.value = "";
+
+    // coût estimé simple (à affiner plus tard avec tokens réels)
+    tokenCount = Math.max(0, tokenCount - (20 + Math.ceil(msg.length/12)));
     updateTokens();
 
-    // mémoire locale
-    conversation.push({role:"user", content:text});
-    conversation.push({role:"assistant", content:data.answer});
-  }catch(e){
-    setTyping(false);
-    addMsg("Erreur de connexion au serveur.","bot");
-  }
-}
+    setTyping(true);
+    try{
+      const body = { userId, conversation:[{role:"user", content:msg}] };
+      const resp = await fetch(API_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(body)
+      });
+      const data = await resp.json();
+      setTyping(false);
 
-/* ====== IMAGE / DOC ====== */
-photoBtn.addEventListener('click', ()=>{
-  const q = inp.value.trim() || "photo";
-  const url = "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q);
-  window.open(url, "_blank");
-});
-docBtn.addEventListener('click', ()=> filePick.click());
-filePick.addEventListener('change', async ()=>{
-  if(!filePick.files || !filePick.files[0]) return;
-  const f = filePick.files[0];
-  const form = new FormData();
-  form.append("image", f);          // le backend attend "image"
-  form.append("userId", userId);
-  form.append("prompt", "Analyse ce fichier / cette image et réponds clairement.");
+      const answer = data?.answer || "Désolée, je n’ai pas pu répondre.";
+      addMessage(answer, "bot");
 
-  setTyping(true);
-  try{
-    const r = await fetch(API_IMG,{ method:"POST", body:form });
-    const d = await r.json();
-    setTyping(false);
-    if(d && d.answer){
-      addMsg(d.answer,"bot");
-      const estOut = Math.ceil(d.answer.length/4);
-      tokenCount -= estOut; updateTokens();
-      conversation.push({role:"assistant",content:d.answer});
-    } else {
-      addMsg("Fichier reçu mais pas de réponse.","bot");
+      // petite estimation sortie
+      tokenCount = Math.max(0, tokenCount - Math.ceil(answer.length/14));
+      updateTokens();
+    }catch(e){
+      setTyping(false);
+      addMessage("Erreur réseau.", "bot");
     }
-  }catch(err){
-    setTyping(false);
-    addMsg("Erreur lors de l’envoi du fichier.","bot");
-  }finally{
-    filePick.value = "";
   }
-});
+  sendBtn.addEventListener("click", sendText);
+  userInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendText(); }});
 
-/* ====== MICRO ====== */
-micBtn.addEventListener('click', ()=>{
-  if(!("webkitSpeechRecognition" in window)){
-    alert("La reconnaissance vocale n’est pas supportée sur ce navigateur.");
-    return;
-  }
-  if(recognition){
-    recognition.stop(); recognition=null; micBtn.textContent="🎤";
-  }else{
-    recognition = new webkitSpeechRecognition();
+  // ===== Mic (Web Speech API si dispo) =====
+  micBtn.addEventListener("click", () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){ alert("La dictée vocale n’est pas disponible sur ce navigateur."); return; }
+    if(recognition){ recognition.stop(); recognition = null; return; }
+    recognition = new SR();
     recognition.lang = "fr-FR";
-    recognition.onresult = e => { inp.value = e.results[0][0].transcript; };
-    recognition.onend = ()=> { micBtn.textContent="🎤"; };
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (ev)=>{
+      const txt = ev.results[0][0].transcript || "";
+      userInput.value = (userInput.value ? userInput.value+" " : "") + txt;
+    };
+    recognition.onend = ()=>{ recognition = null; };
     recognition.start();
-    micBtn.textContent="🛑";
+  });
+
+  // ===== Plus sheet =====
+  function openSheet(){
+    sheetBg.style.display = "block";
+    sheet.style.transform = "translateY(0)";
+    sheet.style.display = "block";
   }
-});
+  function closeSheet(){
+    sheet.style.transform = "translateY(110%)";
+    setTimeout(()=>{ sheet.style.display=""; sheetBg.style.display="none"; }, 280);
+  }
+  plusBtn.addEventListener("click", openSheet);
+  sheetBg.addEventListener("click", closeSheet);
 
-/* ====== MENU / FAQ / THEME ====== */
-modeBtn.addEventListener('click', ()=>{
-  dark = !dark;
-  document.body.classList.toggle('dark', dark);
-  document.body.classList.toggle('light', !dark);
-});
-menuBtn.addEventListener('click', ()=> menu.classList.toggle('open'));
-menuFAQ.addEventListener('click', ()=>{ menu.classList.remove('open'); faq.classList.add('open'); faq.setAttribute('aria-hidden','false'); });
-faqClose.addEventListener('click', ()=>{ faq.classList.remove('open'); faq.setAttribute('aria-hidden','true'); });
-faqBg.addEventListener('click', ()=>{ faq.classList.remove('open'); faq.setAttribute('aria-hidden','true'); });
-menuNew.addEventListener('click', ()=>{
-  menu.classList.remove('open');
-  conversation = [];
-  chat.innerHTML = "";
-  addMsg("Nouvelle discussion commencée.","bot");
-});
+  // triggers
+  pickLibrary.addEventListener("click", ()=> imgLibrary.click());
+  pickCamera.addEventListener("click",  ()=> imgCamera.click());
+  pickDoc.addEventListener("click",     ()=> docInput.click());
 
-/* ====== SEND BINDINGS ====== */
-sendBtn.addEventListener('click', sendMessage);
-inp.addEventListener('keydown', e=>{ if(e.key==="Enter") sendMessage(); });
+  imgLibrary.addEventListener("change", (e)=> handleImage(e.target.files?.[0]));
+  imgCamera .addEventListener("change", (e)=> handleImage(e.target.files?.[0]));
+  docInput  .addEventListener("change", (e)=> handleImage(e.target.files?.[0]));
+  
+  async function handleImage(file){
+    closeSheet();
+    if(!file) return;
 
-/* ====== INIT ====== */
-addMsg("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.","bot");
-updateTokens();
-document.body.classList.add('dark'); // sombre par défaut
+    const form = new FormData();
+    form.append("image", file);
+    form.append("userId", userId);
+    form.append("prompt", "Analyse cette image et explique clairement ce qu’elle montre.");
+
+    setTyping(true);
+    try{
+      const resp = await fetch(API_IMG, { method:"POST", body:form });
+      const data = await resp.json();
+      setTyping(false);
+      const answer = data?.answer || "Image reçue, mais je n’ai pas pu l’analyser.";
+      addMessage(answer, "bot");
+      tokenCount = Math.max(0, tokenCount - Math.ceil((answer.length||80)/12));
+      updateTokens();
+    }catch(e){
+      setTyping(false);
+      addMessage("Erreur lors de l’envoi du fichier.", "bot");
+    }finally{
+      // reset inputs
+      imgLibrary.value = ""; imgCamera.value = ""; docInput.value="";
+    }
+  }
+
+  // ===== FAQ =====
+  function openFaq(){
+    faqBg.style.display = "block";
+    faqModal.style.display = "grid";
+    faqModal.setAttribute("aria-hidden","false");
+  }
+  function closeFaqFn(){
+    faqBg.style.display = "none";
+    faqModal.style.display = "none";
+    faqModal.setAttribute("aria-hidden","true");
+  }
+  menuBtn.addEventListener("click", openFaq);
+  faqBg.addEventListener("click", closeFaqFn);
+  closeFaq.addEventListener("click", closeFaqFn);
+})();
 </script>
-  <!-- ====== CHAT BAR (nouvelle) ====== -->
-<div class="ph-chatbar">
-  <!-- Bouton PLUS -->
-  <button class="ph-btn ph-plus" id="phPlusBtn" aria-label="Ouvrir le menu des pièces jointes">＋</button>
-
-  <!-- Zone de saisie + micro intégré -->
-  <div class="ph-input-wrap">
-    <input id="phMessage" class="ph-input" type="text" placeholder="Écrivez votre message…">
-    <button class="ph-mic" id="phMicBtn" aria-label="Dictée vocale">🎤</button>
-  </div>
-
-  <!-- Envoyer -->
-  <button class="ph-btn ph-send" id="phSendBtn" aria-label="Envoyer">➤</button>
-</div>
-
-<!-- ====== FEUILLE D'ACTION (menu du PLUS) ====== -->
-<div class="ph-sheet-backdrop" id="phSheetBackdrop" hidden></div>
-<div class="ph-sheet" id="phSheet" hidden aria-label="Menu pièces jointes">
-  <button class="ph-sheet-item" id="phPickPhoto">📷 Photothèque</button>
-  <button class="ph-sheet-item" id="phTakePhoto">📸 Prendre une photo</button>
-  <button class="ph-sheet-item" id="phPickFile">📄 Choisir un fichier</button>
-  <button class="ph-sheet-cancel" id="phSheetCancel">Annuler</button>
-</div>
-
-<!-- Inputs cachés -->
-<input type="file" id="phImageLibraryInput" accept="image/*" hidden>
-<input type="file" id="phImageCameraInput" accept="image/*" capture="environment" hidden>
-<input type="file" id="phDocInput" accept="*/*" hidden>
 </body>
 </html>
