@@ -1,202 +1,205 @@
-// ===== Config & state =====
-const TOKEN_START = 1_000_000;
-const TOKEN_COST_PER_MSG = 25; // démo
+// ====== Config ======
+const API_URL = "";            // mettre votre backend si dispo, sinon fallback local
+let tokenCount = 1_000_000;    // affichage
+const VERSION = "1.0";
 
-let tokens = Number(localStorage.getItem("phi_tokens")) || TOKEN_START;
-let theme = localStorage.getItem("phi_theme") || "dark";
+// ====== DOM ======
+const chat = document.getElementById("chat");
+const tokenEl = document.getElementById("tokenCount");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const plusBtn = document.getElementById("plusBtn");
+const micBtn = document.getElementById("micBtn");
 
-// ===== DOM =====
-const messagesEl   = document.getElementById("messages");
-const inputEl      = document.getElementById("userInput");
-const sendBtn      = document.getElementById("btnSend");
-const micBtn       = document.getElementById("btnMic");
-const plusBtn      = document.getElementById("btnPlus");
+const btnMenu = document.getElementById("btnMenu");
+const menuSheet = document.getElementById("menuSheet");
+const toggleModeBtn = document.getElementById("toggleMode");
+const openFaqBtn = document.getElementById("openFaq");
+const closeMenuBtn = document.getElementById("closeMenu");
 
-const sheet        = document.getElementById("sheet");
-const sheetBg      = document.getElementById("sheetBg");
-const sheetClose   = document.getElementById("sheetClose");
-const pickPhotoBtn = document.getElementById("pickPhoto");
+const attachSheet = document.getElementById("attachSheet");
+const pickGalleryBtn = document.getElementById("pickGallery");
 const takePhotoBtn = document.getElementById("takePhoto");
-const pickFileBtn  = document.getElementById("pickFile");
-const imgLibInput  = document.getElementById("imgLibInput");
-const imgCamInput  = document.getElementById("imgCamInput");
-const docInput     = document.getElementById("docInput");
+const pickFileBtn = document.getElementById("pickFile");
+const closeAttachBtn = document.getElementById("closeAttach");
 
-const tokenCountEl = document.getElementById("tokenCount");
-const tokenBadgeEl = document.getElementById("tokenBadge");
+const imgLibInput = document.getElementById("imgFromLib");
+const imgCamInput = document.getElementById("imgFromCam");
+const docInput = document.getElementById("docInput");
 
-const btnLogin     = document.getElementById("btnLogin");
-const btnBuy       = document.getElementById("btnBuy");
-const btnTheme     = document.getElementById("btnTheme");
-const btnMenu      = document.getElementById("btnMenu");
+const btnLogin = document.getElementById("btnLogin");
+const btnBuy = document.getElementById("btnBuy");
+const popup = document.getElementById("popup");
 
-const menu         = document.getElementById("menu");
-const menuTheme    = document.getElementById("menuTheme");
-const menuFaq      = document.getElementById("menuFaq");
+// ====== Utils ======
+function fmtTokens(n){
+  return n.toLocaleString("fr-FR").replace(/\s/g, " ");
+}
+function addBubble(text, who="bot"){
+  const div = document.createElement("div");
+  div.className = `bubble ${who}`;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight + 9999;
+}
+function setTyping(on=true){
+  if(on){
+    addBubble("…", "bot");
+  }else{
+    // remove last typing
+    const last = chat.querySelector(".bubble.bot:last-child");
+    if(last && last.textContent === "…") last.remove();
+  }
+}
+function showPopup(html){
+  popup.innerHTML = html + `<div style="margin-top:14px; text-align:right"><button id="closePopup" class="pill">Fermer</button></div>`;
+  if(typeof popup.showModal === "function"){ popup.showModal(); } else { popup.setAttribute("open",""); }
+  popup.querySelector("#closePopup").onclick = () => popup.close();
+}
 
-const modalBuy     = document.getElementById("modalBuy");
-const modalLogin   = document.getElementById("modalLogin");
-const modalFaq     = document.getElementById("modalFaq");
+// ====== Menu / Sheets ======
+btnMenu.onclick = () => menuSheet.classList.remove("hidden");
+closeMenuBtn.onclick = () => menuSheet.classList.add("hidden");
+toggleModeBtn.onclick = () => {
+  document.body.classList.toggle("light");
+  document.body.classList.toggle("dark");
+};
+openFaqBtn.onclick = () => {
+  menuSheet.classList.add("hidden");
+  showPopup(`
+  <h3>Foire aux questions</h3>
+  <p><strong>Quelle IA utilise Philomène ?</strong><br>
+     Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>.</p>
+  <p><strong>Comment fonctionnent les tokens ?</strong><br>
+     Chaque question + réponse utilise un petit nombre de tokens. Le diamant 💎 affiche le solde.</p>
+  <p><strong>Packs :</strong><br>
+     💎 1 000 000 → 5 € &nbsp;•&nbsp; 💎 2 000 000 → 10 € &nbsp;•&nbsp; 💎 4 000 000 → 20 €<br>
+     🎁 Premier achat : <b>+50 % offerts</b>.</p>
+  `);
+};
 
-// ===== Init =====
-updateTokenUI();
-applyTheme(theme);
-scrollToBottom();
+// Attachments
+plusBtn.onclick = () => attachSheet.classList.remove("hidden");
+closeAttachBtn.onclick = () => attachSheet.classList.add("hidden");
 
-// ===== Events =====
-sendBtn.addEventListener("click", sendMessage);
-inputEl.addEventListener("keydown", (e)=>{
-  if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+pickGalleryBtn.onclick = () => imgLibInput.click();
+takePhotoBtn.onclick   = () => imgCamInput.click();
+pickFileBtn.onclick    = () => docInput.click();
+
+imgLibInput.onchange = handleImage;
+imgCamInput.onchange = handleImage;
+docInput.onchange    = handleDoc;
+
+async function handleImage(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  addBubble("📷 Image reçue. Analyse en cours…", "user");
+  await fakeLatency();
+  addBubble("J’ai bien reçu la photo. Dis-moi ce que tu veux que j’en fasse.", "bot");
+}
+async function handleDoc(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  addBubble(`📄 Fichier reçu : ${file.name}`, "user");
+  await fakeLatency();
+  addBubble("Merci. Je peux en extraire le texte si tu veux.", "bot");
+}
+
+// ====== Auth & Buy (popups placeholders) ======
+btnLogin.onclick = () => showPopup(`Connexion : lier ton compte (placeholder).`);
+btnBuy.onclick   = () => showPopup(`Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ <br/><b>(+50% au 1er achat)</b>.`);
+
+// ====== Send & AI ======
+sendBtn.onclick = sendMessage;
+userInput.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
-plusBtn.addEventListener("click", openSheet);
-sheetBg.addEventListener("click", closeSheet);
-sheetClose.addEventListener("click", closeSheet);
+function consumeTokens(inCount=60, outCount=140){
+  tokenCount = Math.max(0, tokenCount - (inCount + outCount));
+  tokenEl.textContent = fmtTokens(tokenCount);
+}
 
-pickPhotoBtn.addEventListener("click", ()=> imgLibInput.click());
-takePhotoBtn.addEventListener("click", ()=> imgCamInput.click());
-pickFileBtn .addEventListener("click", ()=> docInput.click());
+async function sendMessage(){
+  const text = (userInput.value || "").trim();
+  if(!text) return;
+  addBubble(text, "user");
+  userInput.value = "";
+  setTyping(true);
 
-imgLibInput.addEventListener("change", onPickImage);
-imgCamInput.addEventListener("change", onPickImage);
-docInput.addEventListener("change", onPickDoc);
+  // Essayez l’API si fournie, sinon fallback local
+  try{
+    let reply;
+    if(API_URL){
+      const resp = await fetch(API_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ message:text })
+      });
+      const data = await resp.json();
+      reply = data.answer || data.reply || JSON.stringify(data);
+    }else{
+      reply = await localReply(text);
+    }
+    setTyping(false);
+    addBubble(reply, "bot");
+    consumeTokens();
+  }catch(err){
+    setTyping(false);
+    addBubble("Désolé, une erreur est survenue. Réessaie.", "bot");
+  }
+}
 
-btnBuy  .addEventListener("click", ()=> modalBuy.showModal());
-btnLogin.addEventListener("click", ()=> modalLogin.showModal());
+// Fallback “intelligent” local
+async function localReply(q){
+  await fakeLatency();
+  const s = q.toLowerCase().trim();
 
-btnTheme.addEventListener("click", toggleTheme);
-menuTheme.addEventListener("click", ()=>{ toggleTheme(); hideMenu(); });
+  // maths rapides
+  const math = tryEval(s);
+  if(math !== null) return `🧮 Résultat : ${math}`;
 
-btnMenu.addEventListener("click", toggleMenu);
-document.addEventListener("click",(e)=>{
-  if(!menu.hidden && !menu.contains(e.target) && e.target!==btnMenu){ hideMenu(); }
-});
+  if(/(heure|time)/.test(s)){
+    return `⌚ Il est ${new Date().toLocaleTimeString("fr-FR")}.`;
+  }
+  if(/(bj|bonjour|salut|hello)/.test(s)) return "Bonjour ! Comment puis-je t’aider ?";
 
-menuFaq.addEventListener("click", ()=>{ modalFaq.showModal(); hideMenu(); });
+  if(s.length <= 3) return "👌 Bien reçu. Pose-moi la suite !";
 
-document.querySelectorAll("[data-close]")
-  .forEach(b=> b.addEventListener("click", (e)=>{
-    const id = e.currentTarget.getAttribute("data-close");
-    document.getElementById(id).close();
-  }));
+  return `D’accord. Voici ce que je comprends : « ${q} ». Dis-moi si tu veux un résumé, des idées, ou un calcul.`;
+}
+function tryEval(s){
+  // sécurise un petit parse math
+  if(!/^[\d\+\-\*\/\.\(\)\s%]+$/.test(s)) return null;
+  try{
+    // eslint-disable-next-line no-eval
+    const r = eval(s);
+    if(typeof r === "number" && isFinite(r)) return Number(r.toFixed(6));
+  }catch(_){}
+  return null;
+}
+function fakeLatency(){ return new Promise(r => setTimeout(r, 600)); }
 
-// Option micro (si dispo)
-let recognition = null;
-if("webkitSpeechRecognition" in window || "SpeechRecognition" in window){
+// ====== Speech to text ======
+let recognition=null;
+micBtn.onclick = () => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ showPopup("La dictée vocale n’est pas supportée sur cet appareil."); return; }
+  if(recognition){ recognition.stop(); recognition = null; micBtn.classList.remove("active"); return; }
   recognition = new SR();
   recognition.lang = "fr-FR";
   recognition.interimResults = false;
-  recognition.continuous = false;
-
-  micBtn.addEventListener("click", ()=>{
-    try{
-      recognition.start();
-      micBtn.textContent = "⏺️";
-    }catch(_){}
-  });
-
   recognition.onresult = (e)=>{
-    const text = Array.from(e.results).map(r=> r[0].transcript).join(" ");
-    inputEl.value = text.trim();
+    const txt = Array.from(e.results).map(r=>r[0].transcript).join(" ");
+    userInput.value = (userInput.value ? userInput.value+" " : "") + txt;
   };
-  recognition.onend = ()=> { micBtn.textContent = "🎙️"; };
-}else{
-  micBtn.addEventListener("click", ()=> alert("La dictée vocale n’est pas disponible sur ce navigateur."));
-}
+  recognition.onend = ()=>{ micBtn.classList.remove("active"); recognition=null; };
+  recognition.start(); micBtn.classList.add("active");
+};
 
-// ===== Functions =====
-function sendMessage(){
-  const text = inputEl.value.trim();
-  if(!text) return;
-
-  // ajoute bulle utilisateur
-  addBubble(text, "user");
-
-  // typing
-  const typing = addBubble("…", "bot typing");
-
-  // décompte tokens (démo)
-  tokens = Math.max(0, tokens - TOKEN_COST_PER_MSG);
-  persistTokens();
-
-  // Réponse démo locale (remplace l’appel API réel)
-  setTimeout(()=>{
-    typing.remove();
-    const answer = demoAnswer(text);
-    addBubble(answer, "bot");
-    scrollToBottom();
-  }, 450);
-  
-  inputEl.value = "";
-  scrollToBottom();
-}
-
-function addBubble(html, cls=""){
-  const div = document.createElement("div");
-  div.className = "bubble " + cls;
-  div.innerHTML = escapeHtml(html);
-  messagesEl.appendChild(div);
-  return div;
-}
-
-function openSheet(){ sheet.hidden=false; sheetBg.hidden=false; }
-function closeSheet(){ sheet.hidden=true;  sheetBg.hidden=true;  }
-function toggleMenu(){
-  if(menu.hidden){
-    const rect = btnMenu.getBoundingClientRect();
-    menu.style.top  = (rect.bottom + 6) + "px";
-    menu.style.right= (window.innerWidth - rect.right) + "px";
-    menu.hidden=false;
-  }else hideMenu();
-}
-function hideMenu(){ menu.hidden=true; }
-
-function onPickImage(e){
-  const file = e.target.files?.[0];
-  if(!file){ return; }
-  closeSheet();
-  addBubble("🖼️ Image reçue : <i>"+file.name+"</i>", "user");
-  // Ici tu brancheras ton endpoint d'analyse d'image si besoin.
-}
-function onPickDoc(e){
-  const file = e.target.files?.[0];
-  if(!file){ return; }
-  closeSheet();
-  addBubble("📄 Fichier reçu : <i>"+file.name+"</i>", "user");
-}
-
-function updateTokenUI(){
-  tokenCountEl.textContent = tokens.toLocaleString("fr-FR");
-}
-function persistTokens(){
-  localStorage.setItem("phi_tokens", String(tokens));
-  updateTokenUI();
-}
-
-function applyTheme(t){
-  document.body.classList.toggle("light", t==="light");
-  document.body.classList.toggle("dark",  t!=="light");
-  localStorage.setItem("phi_theme", t);
-  btnTheme.textContent = (t==="light") ? "☀️" : "🌙";
-}
-function toggleTheme(){
-  theme = (theme==="light") ? "dark" : "light";
-  applyTheme(theme);
-}
-
-function scrollToBottom(){ requestAnimationFrame(()=> window.scrollTo({top:document.body.scrollHeight, behavior:"smooth"})); }
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-}
-
-// Petite “IA” locale pour la démo
-function demoAnswer(text){
-  const t = text.toLowerCase();
-  if(/bonjour|salut|bj|bonsoir/.test(t)) return "Bonjour 👋 Comment puis-je t’aider ?";
-  if(/7[ \t]*\/[ \t]*3/.test(t)) return "7 ÷ 3 ≈ 2,33.";
-  if(/dagobert/.test(t)) return "Dagobert est un roi mérovingien du VIIᵉ siècle (le fameux 'le roi Dagobert a mis sa culotte à l’envers').";
-  if(/mode|nuit|jour/.test(t)) return "Le mode sombre est activé par défaut. Tu peux changer dans le menu ≡.";
-  return "👌 Bien reçu. Pose-moi la suite !";
-}
+// ====== Init ======
+tokenEl.textContent = fmtTokens(tokenCount);
+document.body.classList.add("dark");   // sombre par défaut
