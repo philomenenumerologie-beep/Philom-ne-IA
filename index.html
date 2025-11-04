@@ -1,105 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Philomène I.A. — version 1.2</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Philomène I.A.</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="theme-dark">
-  <!-- Header compact -->
-  <header class="appHeader">
-    <div class="headerLeft">
-      <button id="btnLogin" class="pill">Connexion</button>
-      <button id="btnBuy" class="pill">Acheter</button>
+  <!-- Topbar -->
+  <header id="topbar">
+    <div class="topbar__left">
+      <button id="btnLogin" class="chip">Connexion</button>
+      <button id="btnBuy" class="chip">Acheter</button>
     </div>
 
-    <div class="headerRight">
-      <div class="tokenBadge" id="tokenBadge">
-        <span class="gem">💎</span><span id="tokenCount">1 000 000</span>
+    <div class="topbar__right">
+      <div id="tokenBadge" class="gem">
+        <span class="gem__icon">💎</span>
+        <span id="tokenCount">1 000 000</span>
       </div>
-      <button id="menuButton" class="icon pill">≡</button>
+      <button id="btnMenu" class="chip icon">≡</button>
+    </div>
+
+    <!-- Dropdown menu -->
+    <div id="menuDropdown" class="dropdown" hidden>
+      <button id="toggleTheme" class="dropdown__item">🌗 Mode jour / nuit</button>
+      <button id="openFaq" class="dropdown__item">❓ F.A.Q.</button>
     </div>
   </header>
 
-  <!-- Ligne titre + version -->
-  <div class="titleRow">
-    <span class="statusDot"></span>
-    <span class="brand">Philomène I.A. — <strong>version 1.2</strong></span>
+  <!-- Version line -->
+  <div id="versionLine">
+    <span class="dot dot--on"></span>
+    <span>Philomène I.A. — <strong id="appVersion">version 1.2</strong></span>
   </div>
 
-  <!-- Zone messages -->
-  <main id="chatBox" class="chatBox" aria-live="polite">
-    <div class="bubble bot">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
+  <!-- Chat area -->
+  <main id="chat">
+    <!-- (une seule) bulle d’accueil -->
+    <div class="bubble bot">
+      <div class="bubble__content">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
+    </div>
+    <div id="messages"></div>
   </main>
 
-  <!-- Barre d’entrée FIXE, centrée -->
-  <footer class="composerSafe">
-    <div class="composer">
-      <button id="plusBtn" class="plusBtn" aria-label="Plus">+</button>
+  <!-- Composer -->
+  <footer id="composer">
+    <button id="plusBtn" class="fab">+</button>
 
-      <div class="inputWrap">
-        <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
-        <button id="micButton" class="microBtn" title="Dictée">🎙️</button>
+    <div class="inputWrap">
+      <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
+      <button id="micBtn" class="iconBtn" aria-label="Parler">🎤</button>
+    </div>
+
+    <button id="sendBtn" class="sendBtn" aria-label="Envoyer">➤</button>
+
+    <!-- Bottom sheet: Joindre… -->
+    <div id="attachSheet" class="sheet" hidden>
+      <div class="sheet__title">Joindre…</div>
+      <div class="sheet__row">
+        <button id="pickLibrary" class="pill">📷 Photothèque</button>
+        <button id="takePhoto" class="pill">📸 Prendre une photo</button>
+        <button id="pickFile" class="pill">🗂️ Choisir un fichier</button>
+        <button id="closeSheet" class="pill pill--ghost">Fermer</button>
       </div>
-
-      <button id="sendButton" class="sendBtn" title="Envoyer">➤</button>
+      <!-- Inputs cachés -->
+      <input id="imgLibraryInput" type="file" accept="image/*" hidden />
+      <input id="imgCameraInput" type="file" accept="image/*" capture="environment" hidden />
+      <input id="docInput" type="file" hidden />
     </div>
   </footer>
 
-  <!-- Feuille “Joindre…” (bottom-sheet + backdrop) -->
-  <div id="sheetBackdrop" class="backdrop" hidden></div>
-  <div id="attachSheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-    <div class="sheetGrip"></div>
-    <h3 id="sheetTitle">Joindre…</h3>
-    <div class="sheetActions">
-      <button id="pickPhoto" class="chip">🖼️ Photothèque</button>
-      <button id="takePhoto" class="chip">📸 Prendre une photo</button>
-      <button id="pickFile"  class="chip">📄 Choisir un fichier</button>
-    </div>
-    <button id="sheetClose" class="sheetClose">Fermer</button>
-    <!-- Inputs invisibles -->
-    <input id="imgLibInput" type="file" accept="image/*" hidden>
-    <input id="imgCamInput" type="file" accept="image/*" capture="environment" hidden>
-    <input id="docInput"    type="file" hidden>
-  </div>
-
-  <!-- Menu (burger) -->
-  <div id="menu" class="menu" hidden>
-    <button id="toggleMode" class="menuItem">🌗 Mode jour / nuit</button>
-    <button id="openFaq" class="menuItem">❓ F.A.Q.</button>
-  </div>
-
-  <!-- Popups génériques -->
-  <dialog id="popup" class="popup"></dialog>
-
-  <!-- F.A.Q. modal -->
-  <dialog id="faqModal" class="faqModal">
-    <div class="faqCard">
-      <h2>Foire aux questions</h2>
-      <section>
-        <h3>Quelle IA utilise Philomène ?</h3>
-        <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
-      </section>
-      <section>
-        <h3>Comment fonctionnent les tokens ?</h3>
-        <p>Chaque question + réponse consomme un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
-        <ul class="packs">
-          <li>💎 1 000 000 tokens → 5 €</li>
-          <li>💎 2 000 000 tokens → 10 €</li>
-          <li>💎 4 000 000 tokens → 20 €</li>
-          <li>🎁 Premier achat : <strong>+50 % offerts</strong>.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Abonnement ?</h3>
-        <p>Non. Toute la puissance de GPT-5, <strong>sans abonnement</strong>. Vous payez uniquement ce que vous consommez.</p>
-      </section>
-      <div class="faqActions">
-        <button id="faqClose" class="pill strong">Fermer</button>
+  <!-- Generic modal -->
+  <dialog id="modal" class="modal">
+    <div class="modal__card">
+      <div id="modalTitle" class="modal__title">Titre</div>
+      <div id="modalBody" class="modal__body">Contenu…</div>
+      <div class="modal__actions">
+        <button id="modalClose" class="pill pill--ghost">Fermer</button>
       </div>
     </div>
   </dialog>
