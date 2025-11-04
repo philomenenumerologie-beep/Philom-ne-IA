@@ -19,122 +19,65 @@ const imgCameraInput  = document.getElementById("imgCameraInput");
 const docInput        = document.getElementById("docInput");
 const micBtn     = document.getElementById("micBtn");
 const tokenCountEl = document.getElementById("tokenCount");
-
 const btnMenu    = document.getElementById("btnMenu");
 const dropdown   = document.getElementById("menuDropdown");
 const toggleTheme= document.getElementById("toggleTheme");
 const openFaq    = document.getElementById("openFaq");
 const btnLogin   = document.getElementById("btnLogin");
 const btnBuy     = document.getElementById("btnBuy");
-
 document.getElementById("appVersion").textContent = VERSION;
 
 /* ===== I18N (FR / EN / NL) ===== */
 const I18N = {
-  fr: {
-    welcome: "Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.",
-    login: "Connexion",
-    buy: "Acheter",
-    menuTheme: "🌗 Mode jour / nuit",
-    menuFaq: "❓ F.A.Q.",
-    inputPh: "Écrivez votre message…",
-    sheetTitle: "Joindre…",
-    lib: "📷 Photothèque",
-    cam: "📸 Prendre une photo",
-    file: "🗂️ Choisir un fichier",
-    close: "Fermer",
-    faqTitle: "Foire aux questions",
-    faqHtml: `
-      <p><strong>Quelle IA utilise Philomène ?</strong><br/>
-      Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
-      <p><strong>Comment fonctionnent les tokens ?</strong><br/>
-      Chaque question + réponse consomme des tokens selon leur longueur. Le diamant 💎 affiche votre solde (décompte réel).</p>
-      <p><strong>Packs disponibles :</strong><br/>
-      💎 1 000 000 tokens → 5 €<br/>
-      💎 2 000 000 tokens → 10 €<br/>
-      💎 4 000 000 tokens → 20 €<br/>
-      🎁 Premier achat : <strong>+50 % offerts</strong>.</p>
-      <p><strong>Abonnement ?</strong><br/>Non. Vous payez uniquement ce que vous consommez.</p>
-      <p><strong>Confidentialité</strong><br/>Vos échanges restent privés.</p>
-    `
-  },
-  en: {
-    welcome: "Hi 👋 I’m Philomène A.I., powered by GPT-5 Thinking.",
-    login: "Sign in",
-    buy: "Buy",
-    menuTheme: "🌗 Light / Dark mode",
-    menuFaq: "❓ FAQ",
-    inputPh: "Type your message…",
-    sheetTitle: "Attach…",
-    lib: "📷 Photo library",
-    cam: "📸 Take a photo",
-    file: "🗂️ Choose a file",
-    close: "Close",
-    faqTitle: "Frequently Asked Questions",
-    faqHtml: `
-      <p><strong>Which AI powers Philomène?</strong><br/>
-      Philomène A.I. is powered by <strong>GPT-5 Thinking</strong>, OpenAI’s most advanced version.</p>
-      <p><strong>How do tokens work?</strong><br/>
-      Each question + answer consumes a small number of tokens depending on length. The diamond 💎 shows your balance (real countdown).</p>
-      <p><strong>Packs:</strong><br/>
-      💎 1,000,000 tokens → €5<br/>💎 2,000,000 → €10<br/>💎 4,000,000 → €20<br/>
-      🎁 First purchase: <strong>+50% bonus</strong>.</p>
-      <p><strong>Subscription?</strong><br/>No. You only pay for what you use.</p>
-      <p><strong>Privacy</strong><br/>Your conversations remain private.</p>
-    `
-  },
-  nl: {
-    welcome: "Hallo 👋 Ik ben Philomène A.I., aangedreven door GPT-5 Thinking.",
-    login: "Inloggen",
-    buy: "Kopen",
-    menuTheme: "🌗 Licht / Donker",
-    menuFaq: "❓ Veelgestelde vragen",
-    inputPh: "Schrijf uw bericht…",
-    sheetTitle: "Bijvoegen…",
-    lib: "📷 Fotobibliotheek",
-    cam: "📸 Foto maken",
-    file: "🗂️ Bestand kiezen",
-    close: "Sluiten",
-    faqTitle: "Veelgestelde vragen",
-    faqHtml: `
-      <p><strong>Welke AI gebruikt Philomène?</strong><br/>
-      Philomène A.I. draait op <strong>GPT-5 Thinking</strong>, de meest geavanceerde versie van OpenAI.</p>
-      <p><strong>Hoe werken tokens?</strong><br/>
-      Elke vraag + antwoord verbruikt enkele tokens afhankelijk van de lengte. De diamant 💎 toont uw saldo (echte aftelling).</p>
-      <p><strong>Pakketten:</strong><br/>
-      💎 1.000.000 tokens → €5<br/>💎 2.000.000 → €10<br/>💎 4.000.000 → €20<br/>
-      🎁 Eerste aankoop: <strong>+50% bonus</strong>.</p>
-      <p><strong>Abonnement?</strong><br/>Nee. U betaalt enkel wat u verbruikt.</p>
-      <p><strong>Privacy</strong><br/>Uw gesprekken blijven privé.</p>
-    `
-  }
+  fr:{welcome:"Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.",
+      login:"Connexion",buy:"Acheter",menuTheme:"🌗 Mode jour / nuit",menuFaq:"❓ F.A.Q.",
+      inputPh:"Écrivez votre message…",sheetTitle:"Joindre…",
+      lib:"📷 Photothèque",cam:"📸 Prendre une photo",file:"🗂️ Choisir un fichier",close:"Fermer",
+      faqTitle:"Foire aux questions",
+      faqHtml:`<p><strong>Quelle IA utilise Philomène ?</strong><br/>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
+               <p><strong>Comment fonctionnent les tokens ?</strong><br/>Chaque question + réponse consomme des tokens selon leur longueur. Le diamant 💎 affiche votre solde (décompte réel).</p>
+               <p><strong>Packs disponibles :</strong><br/>💎 1 000 000 tokens → 5 €<br/>💎 2 000 000 tokens → 10 €<br/>💎 4 000 000 tokens → 20 €<br/>🎁 Premier achat : <strong>+50 % offerts</strong>.</p>
+               <p><strong>Abonnement ?</strong><br/>Non. Vous payez uniquement ce que vous consommez.</p>
+               <p><strong>Confidentialité</strong><br/>Vos échanges restent privés.</p>`},
+  en:{welcome:"Hi 👋 I’m Philomène A.I., powered by GPT-5 Thinking.",
+      login:"Sign in",buy:"Buy",menuTheme:"🌗 Light / Dark mode",menuFaq:"❓ FAQ",
+      inputPh:"Type your message…",sheetTitle:"Attach…",
+      lib:"📷 Photo library",cam:"📸 Take a photo",file:"🗂️ Choose a file",close:"Close",
+      faqTitle:"Frequently Asked Questions",
+      faqHtml:`<p><strong>Which AI powers Philomène?</strong><br/>Philomène A.I. is powered by <strong>GPT-5 Thinking</strong>, OpenAI’s most advanced version.</p>
+               <p><strong>How do tokens work?</strong><br/>Each question + answer consumes a small number of tokens depending on length. The diamond 💎 shows your balance (real countdown).</p>
+               <p><strong>Packs:</strong><br/>💎 1,000,000 tokens → €5<br/>💎 2,000,000 → €10<br/>💎 4,000,000 → €20<br/>🎁 First purchase: <strong>+50% bonus</strong>.</p>
+               <p><strong>Subscription?</strong><br/>No. You only pay for what you use.</p>
+               <p><strong>Privacy</strong><br/>Your conversations remain private.</p>`},
+  nl:{welcome:"Hallo 👋 Ik ben Philomène A.I., aangedreven door GPT-5 Thinking.",
+      login:"Inloggen",buy:"Kopen",menuTheme:"🌗 Licht / Donker",menuFaq:"❓ Veelgestelde vragen",
+      inputPh:"Schrijf uw bericht…",sheetTitle:"Bijvoegen…",
+      lib:"📷 Fotobibliotheek",cam:"📸 Foto maken",file:"🗂️ Bestand kiezen",close:"Sluiten",
+      faqTitle:"Veelgestelde vragen",
+      faqHtml:`<p><strong>Welke AI gebruikt Philomène?</strong><br/>Philomène A.I. draait op <strong>GPT-5 Thinking</strong>, de meest geavanceerde versie van OpenAI.</p>
+               <p><strong>Hoe werken tokens?</strong><br/>Elke vraag + antwoord verbruikt enkele tokens afhankelijk van de lengte. De diamant 💎 toont uw saldo (echte aftelling).</p>
+               <p><strong>Pakketten:</strong><br/>💎 1.000.000 tokens → €5<br/>💎 2.000.000 → €10<br/>💎 4.000.000 → €20<br/>🎁 Eerste aankoop: <strong>+50% bonus</strong>.</p>
+               <p><strong>Abonnement?</strong><br/>Nee. U betaalt enkel wat u verbruikt.</p>
+               <p><strong>Privacy</strong><br/>Uw gesprekken blijven privé.</p>`}
 };
-
 function detectLang(){
   const q = new URLSearchParams(location.search).get("lang");
   const ls = localStorage.getItem("lang");
   const nav = (navigator.language || "en").toLowerCase();
-  const guess = nav.startsWith("fr") ? "fr" : nav.startsWith("nl") ? "nl" : "en";
+  const guess = nav.startsWith("fr")?"fr":nav.startsWith("nl")?"nl":"en";
   const lang = (q || ls || guess);
   localStorage.setItem("lang", lang);
-  return ["fr","en","nl"].includes(lang) ? lang : "en";
+  return ["fr","en","nl"].includes(lang)?lang:"en";
 }
 const LANG = detectLang();
 const T = I18N[LANG];
-
 function applyI18N(){
-  btnLogin.textContent = T.login;
-  btnBuy.textContent   = T.buy;
-  toggleTheme.textContent = T.menuTheme;
-  openFaq.textContent  = T.menuFaq;
+  btnLogin.textContent = T.login; btnBuy.textContent = T.buy;
+  toggleTheme.textContent = T.menuTheme; openFaq.textContent = T.menuFaq;
   input.placeholder = T.inputPh;
   document.querySelector(".sheet__title").textContent = T.sheetTitle;
-  pickLibrary.textContent = T.lib;
-  takePhoto.textContent   = T.cam;
-  pickFile.textContent    = T.file;
-  sheetClose.textContent  = T.close;
-
-  // Met à jour la bulle d’accueil si elle existe déjà dans le DOM
+  pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam;
+  pickFile.textContent = T.file; sheetClose.textContent = T.close;
   const firstWelcome = document.querySelector(".bubble.bot .bubble__content");
   if (firstWelcome) firstWelcome.textContent = T.welcome;
 }
@@ -143,464 +86,226 @@ applyI18N();
 /* ===== État conversation & tokens ===== */
 const LS_USER   = "philo_user_id";
 const LS_TOKENS = "philo_tokens_balance";
-const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed"; // <- NEW
-
 let userId = localStorage.getItem(LS_USER);
-if (!userId) {
-  userId = "guest_" + Math.random().toString(36).slice(2, 10);
-  localStorage.setItem(LS_USER, userId);
-}
+if (!userId) { userId = "guest_" + Math.random().toString(36).slice(2,10); localStorage.setItem(LS_USER,userId); }
 
 let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
-// Invité : 2 000 tokens gratuits la 1re fois
-if (!Number.isFinite(tokenBalance)) {
-  tokenBalance = 2000; // <- CHANGED (avant: 1_000_000)
-  localStorage.setItem(LS_TOKENS, tokenBalance);
-}
+if (!Number.isFinite(tokenBalance)) { tokenBalance = 2000; localStorage.setItem(LS_TOKENS, tokenBalance); } // 2 000 gratuits invités
 updateTokenUI();
 
-const conversation = [
-  { role: "assistant", content: T.welcome }
-];
+const conversation = [{ role:"assistant", content:T.welcome }];
 
 /* ===== Utilitaires UI ===== */
-function addBubble(text, who = "bot") {
+function addBubble(text, who="bot"){
   const wrap = document.createElement("div");
   wrap.className = `bubble ${who}`;
   wrap.innerHTML = `<div class="bubble__content"></div>`;
   wrap.querySelector(".bubble__content").textContent = text;
   messagesBox.appendChild(wrap);
-  requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
+  requestAnimationFrame(()=> chat.scrollTop = chat.scrollHeight);
 }
-function setTyping(on) {
-  if (on) addBubble("…", "bot");
-  else {
+function setTyping(on){
+  if(on){ addBubble("…","bot"); }
+  else{
     const kids = messagesBox.querySelectorAll(".bubble.bot .bubble__content");
-    for (let i = kids.length - 1; i >= 0; i--) {
-      if (kids[i].textContent === "…") { kids[i].closest(".bubble").remove(); break; }
-    }
+    for(let i=kids.length-1;i>=0;i--){ if(kids[i].textContent==="…"){ kids[i].closest(".bubble").remove(); break; } }
   }
 }
-function pop(text, title = "Info") {
+function pop(html, title="Info"){
   const modal = document.getElementById("modal");
   document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalBody").innerHTML = text;
+  document.getElementById("modalBody").innerHTML = html;
   modal.showModal();
 }
 document.getElementById("modalClose").onclick = () => document.getElementById("modal").close();
 
-function updateTokenUI() {
-  if (tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR");
+function updateTokenUI(){ if(tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR"); }
+function spendTokensReal(usage){
+  const used = Math.max(0, Number(usage?.total_tokens)||0);
+  if(used>0){ tokenBalance = Math.max(0, tokenBalance - used); localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI(); }
 }
-function spendTokensReal(usage) {
-  const used = Math.max(0, Number(usage?.total_tokens) || 0);
-  if (used > 0) {
-    tokenBalance = Math.max(0, tokenBalance - used);
-    localStorage.setItem(LS_TOKENS, tokenBalance);
-    updateTokenUI();
-  }
-}
-function spendEstimateByText(str) {
-  const est = Math.ceil((str || "").length / 4); // ~1 token ≈ 4 chars
+function spendEstimateByText(str){
+  const est = Math.ceil((str||"").length/4);
   tokenBalance = Math.max(0, tokenBalance - est);
   localStorage.setItem(LS_TOKENS, tokenBalance);
   updateTokenUI();
 }
 
 /* ===== Menu ===== */
-btnMenu.addEventListener("click", () => {
-  dropdown.hidden = !dropdown.hidden;
-});
-document.addEventListener("click", (e) => {
-  if (!dropdown.hidden) {
-    const within = e.target.closest("#menuDropdown") || e.target.closest("#btnMenu");
-    if (!within) dropdown.hidden = true;
-  }
-});
-toggleTheme.addEventListener("click", () => {
-  const body = document.body;
-  const isLight = body.classList.toggle("theme-light");
-  if (isLight) body.classList.remove("theme-dark"); else body.classList.add("theme-dark");
-  dropdown.hidden = true;
-});
-openFaq.addEventListener("click", () => {
-  dropdown.hidden = true;
-  pop(T.faqHtml, T.faqTitle);
-});
-
-/* ===== Connexion : +3 000 tokens une seule fois ===== */
-function grantSignupBonus() {
-  const bonus = 3000;
-  tokenBalance += bonus;
-  localStorage.setItem(LS_TOKENS, tokenBalance);
-  updateTokenUI();
-
-  const msg =
-    LANG==="fr" ? `Bienvenue 🎉<br>Vous recevez <strong>${bonus.toLocaleString("fr-FR")}</strong> tokens offerts !`
-  : LANG==="nl" ? `Welkom 🎉<br>U ontvangt <strong>${bonus.toLocaleString("fr-FR")}</strong> gratis tokens!`
-                : `Welcome 🎉<br>You get <strong>${bonus.toLocaleString("fr-FR")}</strong> free tokens!`;
-
-  pop(msg, LANG==="fr" ? "Bonus d’inscription" : LANG==="nl" ? "Registratiebonus" : "Sign-up bonus");
-}
-
-// Remplace le placeholder par l’attribution du bonus 1 fois
-btnLogin.addEventListener("click", () => {
-  if (!localStorage.getItem(LS_SIGNUP_BONUS)) {
-    localStorage.setItem(LS_SIGNUP_BONUS, "1");
-    grantSignupBonus();
-  } else {
-    pop(
-      LANG==="fr" ? "Votre bonus d’inscription a déjà été crédité ✅"
-      : LANG==="nl" ? "Uw registratiebonus is al toegekend ✅"
-      : "Your sign-up bonus was already credited ✅",
-      T.login
-    );
-  }
-});
+btnMenu.addEventListener("click",()=> dropdown.hidden = !dropdown.hidden);
+document.addEventListener("click",(e)=>{ if(!dropdown.hidden){ const w = e.target.closest("#menuDropdown")||e.target.closest("#btnMenu"); if(!w) dropdown.hidden = true; }});
+toggleTheme.addEventListener("click",()=>{ const b=document.body; const isLight=b.classList.toggle("theme-light"); if(isLight) b.classList.remove("theme-dark"); else b.classList.add("theme-dark"); dropdown.hidden=true; });
+openFaq.addEventListener("click",()=>{ dropdown.hidden=true; pop(T.faqHtml, T.faqTitle); });
 
 /* ===== Sheet Joindre ===== */
 function openSheet(){ sheet.hidden = false; }
 function closeSheet(){ sheet.hidden = true; }
 plusBtn.addEventListener("click", openSheet);
 sheetClose.addEventListener("click", closeSheet);
-
-pickLibrary.addEventListener("click", () => imgLibraryInput.click());
-takePhoto.addEventListener("click",   () => imgCameraInput.click());
-pickFile.addEventListener("click",    () => docInput.click());
+pickLibrary.addEventListener("click", ()=> imgLibraryInput.click());
+takePhoto  .addEventListener("click", ()=> imgCameraInput.click());
+pickFile   .addEventListener("click", ()=> docInput.click());
 
 /* ===== Image -> analyse via backend ===== */
-async function uploadImageToAnalyze(file) {
-  if (!file) return;
-  addBubble(`${LANG==="fr"?"📎 Fichier reçu":"📎 Bestand ontvangen"} : ${file.name}`, "user");
+async function uploadImageToAnalyze(file){
+  if(!file) return;
+  addBubble(`${LANG==="fr"?"📎 Fichier reçu":"📎 Bestand ontvangen"} : ${file.name}`,"user");
   setTyping(true);
-
   const urlBase = (API_URL || FALLBACK_URL);
   const url = urlBase.includes("/ask") ? urlBase.replace("/ask","/analyze-image") : urlBase + "/analyze-image";
-
   const fd = new FormData();
   fd.append("image", file);
   fd.append("userId", userId);
-  fd.append("prompt", LANG==="fr" ? "Analyse cette image."
-                                 : LANG==="nl" ? "Analyseer deze afbeelding."
-                                               : "Analyze this image.");
-
-  try {
-    const resp = await fetch(url, { method: "POST", body: fd });
+  fd.append("prompt", LANG==="fr"?"Analyse cette image.":LANG==="nl"?"Analyseer deze afbeelding.":"Analyze this image.");
+  try{
+    const resp = await fetch(url,{ method:"POST", body:fd });
     const data = await resp.json();
-
     setTyping(false);
-    const answer = data?.answer
-      || (LANG==="fr"?"Je n’ai rien détecté."
-          :LANG==="nl"?"Niets gedetecteerd."
-          :"Nothing detected.");
-    addBubble(answer, "bot");
-
-    if (data?.usage?.total_tokens) spendTokensReal(data.usage);
-  } catch (e) {
+    const answer = data?.answer || (LANG==="fr"?"Je n’ai rien détecté.":LANG==="nl"?"Niets gedetecteerd.":"Nothing detected.");
+    addBubble(answer,"bot");
+    if(data?.usage?.total_tokens) spendTokensReal(data.usage);
+  }catch(e){
     setTyping(false);
-    addBubble(LANG==="fr"?"Erreur d’analyse d’image."
-             :LANG==="nl"?"Fout bij afbeeldingsanalyse."
-             :"Image analysis error.", "bot");
+    addBubble(LANG==="fr"?"Erreur d’analyse d’image.":LANG==="nl"?"Fout bij afbeeldingsanalyse.":"Image analysis error.","bot");
     console.error(e);
   }
 }
-
-/* Remplace l'ancien handler: on envoie l'image au backend */
-function handlePickedFile(file){
-  if (!file) return;
-  uploadImageToAnalyze(file);
-}
-
-imgLibraryInput.onchange = (e) => handlePickedFile(e.target.files?.[0]);
-imgCameraInput.onchange  = (e) => handlePickedFile(e.target.files?.[0]);
-docInput.onchange        = (e) => handlePickedFile(e.target.files?.[0]);
+imgLibraryInput.onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
+imgCameraInput .onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
+docInput       .onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
 
 /* ===== Micro (Web Speech API si dispo) ===== */
 let recognition = null;
-if ("webkitSpeechRecognition" in window) {
+if("webkitSpeechRecognition" in window){
   const R = window.webkitSpeechRecognition;
   recognition = new R();
-  recognition.lang = LANG === "nl" ? "nl-NL" : LANG === "en" ? "en-US" : "fr-FR";
+  recognition.lang = LANG==="nl"?"nl-NL":LANG==="en"?"en-US":"fr-FR";
   recognition.interimResults = false;
-  recognition.onresult = (e) => {
-    const txt = e.results[0][0].transcript;
-    input.value = txt;
-  };
+  recognition.onresult = (e)=>{ input.value = e.results[0][0].transcript; };
 }
-micBtn.addEventListener("click", () => {
-  if (recognition) recognition.start();
-  else pop(LANG==="fr"?"Le micro n’est pas supporté par ce navigateur."
-          :LANG==="nl"?"Microfoon niet ondersteund door deze browser."
-          :"Micro is not supported by this browser.",
-          "Micro");
-});
+micBtn.addEventListener("click", ()=> recognition ? recognition.start() :
+  pop(LANG==="fr"?"Le micro n’est pas supporté par ce navigateur.":LANG==="nl"?"Microfoon niet ondersteund door deze browser.":"Micro is not supported by this browser.","Micro")
+);
 
 /* ===== Envoi message (décompte réel) ===== */
-async function sendMessage() {
+async function sendMessage(){
   const text = input.value.trim();
-  if (!text) return;
-
-  addBubble(text, "user");
-  input.value = "";
-  setTyping(true);
-
-  conversation.push({ role: "user", content: text });
-
+  if(!text) return;
+  addBubble(text,"user"); input.value=""; setTyping(true);
+  conversation.push({ role:"user", content:text });
   const url = API_URL || FALLBACK_URL;
-
-  try {
+  try{
     let data;
-
-    if (url === FALLBACK_URL) {
-      await new Promise((r) => setTimeout(r, 400));
-      data = { answer: LANG==="fr"?"Bien reçu. Pose-moi la suite !":LANG==="nl"?"Begrepen. Stel je volgende vraag!":"Got it. Ask me more!", usage: { total_tokens: Math.ceil(text.length / 4) + 20 } };
-    } else {
-      const resp = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, conversation })
-      });
+    if(url===FALLBACK_URL){
+      await new Promise(r=>setTimeout(r,400));
+      data = { answer: LANG==="fr"?"Bien reçu. Pose-moi la suite !":LANG==="nl"?"Begrepen. Stel je volgende vraag!":"Got it. Ask me more!", usage:{ total_tokens: Math.ceil(text.length/4)+20 } };
+    }else{
+      const resp = await fetch(url,{ method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ userId, conversation }) });
       data = await resp.json();
     }
-
     setTyping(false);
-
     const answer = data?.answer || data?.output || data?.text || (LANG==="fr"?"Réponse vide.":LANG==="nl"?"Leeg antwoord.":"Empty response.");
-    addBubble(answer, "bot");
-
-    if (data?.usage && typeof data.usage.total_tokens === "number") {
-      spendTokensReal(data.usage);
-    } else {
-      spendEstimateByText(text);
-      spendEstimateByText(answer);
-    }
-
-    conversation.push({ role: "assistant", content: answer });
-  } catch (e) {
+    addBubble(answer,"bot");
+    if(data?.usage && typeof data.usage.total_tokens==="number") spendTokensReal(data.usage);
+    else { spendEstimateByText(text); spendEstimateByText(answer); }
+    conversation.push({ role:"assistant", content:answer });
+  }catch(e){
     setTyping(false);
-    addBubble(LANG==="fr"?"Erreur de connexion. Réessaie plus tard."
-              :LANG==="nl"?"Verbindingsfout. Probeer later opnieuw."
-              :"Connection error. Please try again later.", "bot");
+    addBubble(LANG==="fr"?"Erreur de connexion. Réessaie plus tard.":LANG==="nl"?"Verbindingsfout. Probeer later opnieuw.":"Connection error. Please try again later.","bot");
     console.error(e);
   }
 }
-
 sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") { e.preventDefault(); sendMessage(); }
-});
+input.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }});
 
-/* ===== PAYPAL STANDARD (client-only) ===== */
+/* ===== PAYPAL STANDARD (préparé) ===== */
 const payModal = document.getElementById("payModal");
 const payClose = document.getElementById("payClose");
-let chosenPack = 5; // 5 | 10 | 20  (euros)
-
-btnBuy.onclick = () => {
-  payModal.showModal();
-  renderPayPal(chosenPack);
-};
-payClose.onclick = () => payModal.close();
-
-// Sélection pack
-document.addEventListener("click", (e) => {
-  const b = e.target.closest(".packsRow .pill");
-  if (!b) return;
-  chosenPack = Number(b.dataset.pack);
-  renderPayPal(chosenPack);
-});
-
-// Charge SDK si besoin et rend les boutons
+let chosenPack = 5; // 5|10|20
+if(btnBuy && payModal){
+  btnBuy.onclick = ()=>{ payModal.showModal(); renderPayPal(chosenPack); };
+  payClose.onclick = ()=> payModal.close();
+  document.addEventListener("click",(e)=>{ const b=e.target.closest(".packsRow .pill"); if(!b) return; chosenPack=Number(b.dataset.pack); renderPayPal(chosenPack); });
+}
 async function renderPayPal(pack){
-  // 1) Charger le SDK une seule fois
   if(!document.getElementById("paypal-sdk")){
-    const s = document.createElement("script");
-    s.id = "paypal-sdk";
-    // ⚠️ Remplace __TON_CLIENT_ID__ par ton vrai client-id PayPal (mode sandbox d'abord)
-    s.src = "https://www.paypal.com/sdk/js?client-id=__TON_CLIENT_ID__&currency=EUR";
-    document.body.appendChild(s);
-    await new Promise(r => s.onload = r);
+    const s=document.createElement("script"); s.id="paypal-sdk";
+    s.src="https://www.paypal.com/sdk/js?client-id=__TON_CLIENT_ID__&currency=EUR";
+    document.body.appendChild(s); await new Promise(r=> s.onload=r);
   }
-
-  // 2) Calcul du montant en EUR
-  const amount = pack === 5 ? "5.00" : pack === 10 ? "10.00" : "20.00";
-
-  // 3) (Ré)initialiser le conteneur
-  const box = document.getElementById("paypal-buttons");
-  box.innerHTML = "";
-
-  // 4) Boutons standard (create/capture côté client)
+  const amount = pack===5?"5.00":pack===10?"10.00":"20.00";
+  const box=document.getElementById("paypal-buttons"); if(!box) return; box.innerHTML="";
   window.paypal.Buttons({
-    style: { layout: "horizontal", height: 45 },
-
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units: [{ amount: { currency_code: "EUR", value: amount } }]
-      });
-    },
-
-    onApprove: async (data, actions) => {
+    style:{ layout:"horizontal", height:45 },
+    createOrder:(data,actions)=> actions.order.create({ purchase_units:[{ amount:{ currency_code:"EUR", value:amount } }] }),
+    onApprove: async (data,actions)=>{
       try{
-        const details = await actions.order.capture();
-        // Crédit local des tokens (source de vérité = backend à brancher plus tard)
-        const baseTokens = pack === 5 ? 1_000_000 : pack === 10 ? 2_000_000 : 4_000_000;
-
-        // Bonus 50% pour tout premier achat (flag local)
-        const FIRST_FLAG = "philo_first_purchase_done";
-        const isFirst = !localStorage.getItem(FIRST_FLAG);
-        const bonus = isFirst ? Math.floor(baseTokens * 0.5) : 0;
-        if(isFirst) localStorage.setItem(FIRST_FLAG, "1");
-
-        const credited = baseTokens + bonus;
-        tokenBalance += credited;
-        localStorage.setItem(LS_TOKENS, tokenBalance);
-        updateTokenUI();
-
-        addBubble(
-          LANG==="fr"
-            ? `✅ Paiement confirmé (${amount}€). +${credited.toLocaleString("fr-FR")} tokens crédités.`
-            : LANG==="nl"
-              ? `✅ Betaling bevestigd (${amount}€). +${credited.toLocaleString("fr-FR")} tokens toegevoegd.`
-              : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added.`,
-          "bot"
-        );
+        await actions.order.capture();
+        const baseTokens = pack===5?1_000_000:pack===10?2_000_000:4_000_000;
+        const FIRST_FLAG="philo_first_purchase_done";
+        const isFirst=!localStorage.getItem(FIRST_FLAG);
+        const bonus=isFirst?Math.floor(baseTokens*0.5):0; if(isFirst) localStorage.setItem(FIRST_FLAG,"1");
+        const credited=baseTokens+bonus;
+        tokenBalance += credited; localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI();
+        addBubble(LANG==="fr"?`✅ Paiement confirmé (${amount}€). +${credited.toLocaleString("fr-FR")} tokens crédités.`:
+                 LANG==="nl"?`✅ Betaling bevestigd (${amount}€). +${credited.toLocaleString("fr-FR")} tokens toegevoegd.`:
+                              `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added.`,"bot");
         payModal.close();
       }catch(err){
         console.error(err);
-        addBubble(LANG==="fr"?"❌ Erreur lors de la capture du paiement."
-                 :LANG==="nl"?"❌ Fout bij betalingsverwerking."
-                 :"❌ Payment capture error.", "bot");
+        addBubble(LANG==="fr"?"❌ Erreur lors de la capture du paiement.":LANG==="nl"?"❌ Fout bij betalingsverwerking.":"❌ Payment capture error.","bot");
       }
     },
-
-    onError: (err) => {
-      console.error(err);
-      addBubble(LANG==="fr"?"❌ Paiement refusé/annulé."
-               :LANG==="nl"?"❌ Betaling geweigerd/geannuleerd."
-               :"❌ Payment failed/cancelled.", "bot");
-    }
+    onError:(err)=>{ console.error(err); addBubble(LANG==="fr"?"❌ Paiement refusé/annulé.":LANG==="nl"?"❌ Betaling geweigerd/geannuleerd.":"❌ Payment failed/cancelled.","bot"); }
   }).render("#paypal-buttons");
 }
-/* ===== Connexion Clerk ===== */
-window.addEventListener("load", async () => {
-  try {
-    await Clerk.load();
 
-    const loginBtn = document.getElementById("btnLogin");
-
-    // Vérifie si l'utilisateur est déjà connecté
-    Clerk.addListener(({ user }) => {
-      if (user) {
-        loginBtn.textContent = "Déconnexion";
-        localStorage.setItem("philo_user_email", user.primaryEmailAddress?.emailAddress || "");
-        localStorage.setItem("philo_user_id", user.id);
-      } else {
-        loginBtn.textContent = "Connexion";
-        localStorage.removeItem("philo_user_email");
-        localStorage.removeItem("philo_user_id");
-      }
-    });
-
-    // Clique sur le bouton
-    loginBtn.addEventListener("click", async () => {
-      const user = Clerk.user;
-      if (user) {
-        await Clerk.signOut();
-        addBubble("👋 Déconnecté avec succès.", "bot");
-      } else {
-        Clerk.openSignIn();
-      }
-    });
-  } catch (err) {
-    console.error("Erreur Clerk :", err);
-    addBubble("⚠️ Impossible de charger la connexion pour le moment.", "bot");
-  }
-});
-
-/* ===== Auto-scroll: garde le bas visible ===== */
-const io = new IntersectionObserver(() => { chat.scrollTop = chat.scrollHeight; });
-io.observe(document.getElementById("composer"));
-/* ===== Connexion avec Clerk (init + handler) ===== */
-let clerkReady = false;
-let currentEmail = null;
-
-async function initClerk() {
-  if (!window.Clerk) return;
-  try {
-    await window.Clerk.load();
-    clerkReady = true;
-
-    const user = window.Clerk.user;
-    const session = window.Clerk.session;
-
-    if (user && session) {
-      // connecté
-      currentEmail = user.primaryEmailAddress
-        ? user.primaryEmailAddress.emailAddress
-        : null;
-
-      // accorde le bonus si jamais pas encore crédité sur ce navigateur
-      if (!localStorage.getItem(LS_SIGNUP_BONUS)) {
-        localStorage.setItem(LS_SIGNUP_BONUS, "1");
-        grantSignupBonus(); // +3000 (déjà défini dans ton script)
-      }
-    }
-  } catch (e) {
-    console.warn("Clerk init error:", e);
+/* ===== Connexion avec Clerk (bloc unique & bonus) ===== */
+const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed_by_user";
+function giveSigninBonusFor(userId){
+  const key = `${LS_SIGNUP_BONUS}:${userId}`;
+  if(!localStorage.getItem(key)){
+    const bonus = 3000;
+    tokenBalance += bonus;
+    localStorage.setItem(LS_TOKENS, tokenBalance);
+    localStorage.setItem(key,"1");
+    updateTokenUI();
+    addBubble(`🎉 +${bonus.toLocaleString("fr-FR")} tokens offerts (inscription)`, "bot");
   }
 }
-
-// Remplace l’actuel handler "Connexion" (si tu l’as toujours) par celui-ci :
-btnLogin.addEventListener("click", async () => {
-  if (!clerkReady) {
-    await initClerk();
-  }
-  try {
-    const user = window.Clerk.user;
-    const session = window.Clerk.session;
-
-    if (user && session) {
-      // déjà connecté → on propose de se déconnecter
-      await window.Clerk.signOut();
-      currentEmail = null;
-      addBubble(
-        LANG==="fr" ? "Vous êtes déconnecté." :
-        LANG==="nl" ? "U bent uitgelogd." :
-                      "You are signed out.",
-        "bot"
-      );
+async function initClerkOnce(){
+  if(!window.Clerk) return false;
+  try{ await window.Clerk.load(); return true; } catch{ return false; }
+}
+(async()=>{
+  const ok = await initClerkOnce();
+  if(!ok){ console.warn("Clerk non chargé"); return; }
+  const loginBtn = document.getElementById("btnLogin");
+  Clerk.addListener(({ user, session })=>{
+    loginBtn.textContent = (user && session) ? "Déconnexion" : T.login;
+  });
+  loginBtn.addEventListener("click", async ()=>{
+    const { user, session } = Clerk;
+    if(user && session){
+      await Clerk.signOut();
+      addBubble("👋 Déconnecté.", "bot");
       return;
     }
-
-    await window.Clerk.openSignIn({
-      afterSignIn: async () => {
-        await initClerk();
-        addBubble(
-          LANG==="fr" ? "Bienvenue, connexion réussie ✅" :
-          LANG==="nl" ? "Welkom, u bent ingelogd ✅" :
-                        "Welcome, you’re signed in ✅",
-          "bot"
-        );
+    await Clerk.openSignIn({
+      afterSignUp: async ()=>{
+        await initClerkOnce();
+        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);
+        addBubble("✅ Inscription réussie", "bot");
       },
-      afterSignUp: async () => {
-        await initClerk(); // accordera le bonus si pas encore pris
-        addBubble(
-          LANG==="fr" ? "Inscription réussie ✅ (+3 000 tokens crédités)" :
-          LANG==="nl" ? "Registratie gelukt ✅ (+3.000 tokens toegevoegd)" :
-                        "Sign-up successful ✅ (+3,000 tokens credited)",
-          "bot"
-        );
+      afterSignIn: async ()=>{
+        await initClerkOnce();
+        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);
+        addBubble("✅ Connexion réussie", "bot");
       }
     });
-  } catch (e) {
-    console.error(e);
-    pop(
-      LANG==="fr" ? "Connexion momentanément indisponible." :
-      LANG==="nl" ? "Inloggen tijdelijk niet beschikbaar." :
-                    "Sign-in temporarily unavailable.",
-      T.login
-    );
-  }
-});
+  });
+})();
 
-// Lance l’init au chargement
-window.addEventListener("load", initClerk);
+/* ===== Auto-scroll ===== */
+const io = new IntersectionObserver(()=>{ chat.scrollTop = chat.scrollHeight; });
+io.observe(document.getElementById("composer"));
