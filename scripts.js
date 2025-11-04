@@ -1,195 +1,259 @@
 /* ===== CONFIG ===== */
-const API_URL = ""; // <- mets ton endpoint ici (ex: "https://api.philomeneia.com/ask")
-const FALLBACK_URL = "/ask"; // fallback si API_URL vide
-const VERSION = "version 1.2"; // affiché sous le header
+const API_URL = "https://api.philomeneia.com";   // <- remplace si besoin
+let tokenCount = 1_000_000;
+let sending = false;       // verrou anti double envoi
+let darkDefault = true;    // dark au démarrage
 
-/* ===== Sélecteurs ===== */
-const chat      = document.getElementById("chat");
-const messages  = document.getElementById("messages");
-const input     = document.getElementById("userInput");
-const sendBtn   = document.getElementById("sendBtn");
-const plusBtn   = document.getElementById("plusBtn");
-const sheet     = document.getElementById("attachSheet");
-const sheetClose= document.getElementById("closeSheet");
-const pickLibrary = document.getElementById("pickLibrary");
-const takePhoto   = document.getElementById("takePhoto");
-const pickFile    = document.getElementById("pickFile");
-const imgLibraryInput = document.getElementById("imgLibraryInput");
-const imgCameraInput  = document.getElementById("imgCameraInput");
-const docInput        = document.getElementById("docInput");
-const micBtn   = document.getElementById("micBtn");
+/* ===== DOM ===== */
+const chatBody     = document.getElementById("chatBody");
+const userInput    = document.getElementById("userInput");
+const btnSend      = document.getElementById("btnSend");
+const btnPlus      = document.getElementById("btnPlus");
+const plusSheet    = document.getElementById("plusSheet");
+const closeSheet   = document.getElementById("closeSheet");
+const pickGallery  = document.getElementById("pickGallery");
+const takePhotoBtn = document.getElementById("takePhoto");
+const pickFileLbl  = document.getElementById("pickFile");
+const imgLibrary   = document.getElementById("imgLibrary");
+const imgCamera    = document.getElementById("imgCamera");
+
+const btnMenu   = document.getElementById("btnMenu");
+const menu      = document.getElementById("menu");
+const toggleTheme = document.getElementById("toggleTheme");
+const openFAQ     = document.getElementById("openFAQ");
+const openAbout   = document.getElementById("openAbout");
+
+const btnLogin  = document.getElementById("btnLogin");
+const btnBuy    = document.getElementById("btnBuy");
 const tokenCountEl = document.getElementById("tokenCount");
 
-const btnMenu  = document.getElementById("btnMenu");
-const dropdown = document.getElementById("menuDropdown");
-const toggleTheme = document.getElementById("toggleTheme");
-const openFaq  = document.getElementById("openFaq");
-const btnLogin = document.getElementById("btnLogin");
-const btnBuy   = document.getElementById("btnBuy");
+const modal       = document.getElementById("modal");
+const modalTitle  = document.getElementById("modalTitle");
+const modalContent= document.getElementById("modalContent");
+const modalActions= document.getElementById("modalActions");
+const modalClose  = document.getElementById("modalClose");
 
-document.getElementById("appVersion").textContent = VERSION;
-
-/* ===== Utilitaires UI ===== */
-function addBubble(text, who="bot"){
-  const wrap = document.createElement("div");
-  wrap.className = `bubble ${who}`;
-  wrap.innerHTML = `<div class="bubble__content"></div>`;
-  wrap.querySelector(".bubble__content").textContent = text;
-  messages.appendChild(wrap);
-  requestAnimationFrame(() => chat.scrollTop = chat.scrollHeight);
+/* ===== Helpers UI ===== */
+const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
+function scrollToBottom() {
+  requestAnimationFrame(()=>{
+    const chat = document.getElementById("chat");
+    chat.scrollTo({top: chat.scrollHeight + 1000, behavior: "smooth"});
+  });
+}
+function addMessage(text, role="bot"){
+  const div = document.createElement("div");
+  div.className = "msg" + (role==="user" ? " user" : "");
+  div.textContent = text;
+  chatBody.appendChild(div);
+  scrollToBottom();
 }
 function setTyping(on){
   if(on){
-    addBubble("…", "bot"); // mini indicator (remplacé par la réponse)
+    typingEl = document.createElement("div");
+    typingEl.className = "msg";
+    typingEl.id = "typing";
+    typingEl.textContent = "Philomène écrit…";
+    chatBody.appendChild(typingEl);
   }else{
-    // supprime le dernier "…" s'il existe
-    const kids = messages.querySelectorAll(".bubble.bot .bubble__content");
-    for(let i=kids.length-1;i>=0;i--){
-      if(kids[i].textContent === "…"){ kids[i].closest(".bubble").remove(); break; }
-    }
+    const t = document.getElementById("typing");
+    if(t) t.remove();
   }
+  scrollToBottom();
 }
-function pop(text, title="Info"){
-  const modal = document.getElementById("modal");
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalBody").innerHTML = text;
-  modal.showModal();
+function setSending(on){
+  sending = on;
+  btnSend.disabled = on;
 }
-document.getElementById("modalClose").onclick = () => document.getElementById("modal").close();
+
+/* ===== Sheet (+) ===== */
+btnPlus.addEventListener("click", ()=> { plusSheet.hidden = false; });
+closeSheet.addEventListener("click", ()=> { plusSheet.hidden = true; });
+plusSheet.addEventListener("click", (e)=>{ if(e.target===plusSheet) plusSheet.hidden=true; });
+
+pickGallery.addEventListener("click", ()=> imgLibrary.click());
+imgLibrary.addEventListener("change", ()=>{
+  if(imgLibrary.files?.[0]) addMessage("📷 Image ajoutée (placeholder).", "user");
+  plusSheet.hidden = true;
+});
+takePhotoBtn.addEventListener("click", ()=> imgCamera.click());
+imgCamera.addEventListener("change", ()=>{
+  if(imgCamera.files?.[0]) addMessage("📸 Photo prise (placeholder).", "user");
+  plusSheet.hidden = true;
+});
+pickFileLbl.addEventListener("change", ()=>{
+  if(pickFileLbl.files?.[0]) addMessage("🗂️ Fichier joint (placeholder).", "user");
+  plusSheet.hidden = true;
+});
 
 /* ===== Menu ===== */
-btnMenu.addEventListener("click", () => {
-  dropdown.hidden = !dropdown.hidden;
+btnMenu.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  menu.hidden = !menu.hidden;
+  const r = btnMenu.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.top = (r.bottom + 8) + "px";
+  menu.style.left = (r.right - 200) + "px";
 });
-document.addEventListener("click", (e)=>{
-  if(!dropdown.hidden){
-    const within = e.target.closest("#menuDropdown") || e.target.closest("#btnMenu");
-    if(!within) dropdown.hidden = true;
-  }
-});
+document.addEventListener("click",()=> menu.hidden = true);
+
 toggleTheme.addEventListener("click", ()=>{
   const body = document.body;
-  const light = body.classList.toggle("theme-light");
-  if(light){ body.classList.remove("theme-dark"); } else { body.classList.add("theme-dark"); }
-});
-openFaq.addEventListener("click", ()=>{
-  dropdown.hidden = true;
-  pop(`
-    <div class="faq">
-      <p><strong>Quelle IA utilise Philomène ?</strong><br/>
-      Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
-
-      <p><strong>Comment fonctionnent les tokens ?</strong><br/>
-      Chaque question + réponse consomme un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
-
-      <p><strong>Packs disponibles :</strong><br/>
-      💎 1 000 000 tokens → 5 €<br/>
-      💎 2 000 000 tokens → 10 €<br/>
-      💎 4 000 000 tokens → 20 €<br/>
-      🎁 Premier achat : <strong>+50 % offerts</strong>.</p>
-
-      <p><strong>Abonnement ?</strong><br/>Non. Vous payez uniquement ce que vous consommez.</p>
-
-      <p><strong>Confidentialité</strong><br/>Vos échanges restent privés.</p>
-    </div>
-  `, "Foire aux questions");
+  const isDark = body.classList.contains("theme-dark");
+  if(isDark){ body.classList.remove("theme-dark"); body.classList.add("theme-light"); }
+  else      { body.classList.remove("theme-light"); body.classList.add("theme-dark"); }
+  menu.hidden = true;
 });
 
-/* ===== Connexion / Acheter (placeholders) ===== */
-btnLogin.addEventListener("click", ()=> pop("Connexion : lier ton compte (placeholder).","Connexion"));
-btnBuy.addEventListener("click", ()=> pop("Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).","Acheter"));
+openFAQ.addEventListener("click", ()=>{
+  showModal("Foire aux questions", `
+    <p><strong>Quelle IA utilise Philomène ?</strong><br/>
+    Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
+    <p><strong>Comment fonctionnent les tokens ?</strong><br/>
+    Chaque question + réponse consomment un petit nombre de tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
+    <p><strong>Packs disponibles :</strong><br/>
+    💎 1 000 000 → 5 € • 💎 2 000 000 → 10 € • 💎 4 000 000 → 20 €<br/>
+    <em>Premier achat : +50 % offerts.</em></p>
+  `, [{label:"Fermer"}]);
+  menu.hidden = true;
+});
 
-/* ===== Sheet Joindre ===== */
-function openSheet(){ sheet.hidden = false; }
-function closeSheet(){ sheet.hidden = true; }
-plusBtn.addEventListener("click", openSheet);
-sheetClose.addEventListener("click", closeSheet);
+openAbout.addEventListener("click", ()=>{
+  showModal("À propos", `
+    <p><strong>Philomène I.A.</strong> — version 1.3</p>
+    <p>Interface inspirée du style ChatGPT, avec glow violet.</p>
+  `,[{label:"Fermer"}]);
+  menu.hidden = true;
+});
 
-pickLibrary.addEventListener("click", ()=> imgLibraryInput.click());
-takePhoto.addEventListener("click",  ()=> imgCameraInput.click());
-pickFile.addEventListener("click",    ()=> docInput.click());
-
-/* upload handlers — envoient l’élément et affichent l’accusé */
-function handlePickedFile(file){
-  if(!file) return;
-  addBubble(`📎 Fichier reçu : ${file.name}`,"user");
-  // Ici tu pourras appeler ton endpoint d’upload si besoin
-  closeSheet();
+/* ===== Modale générique ===== */
+function showModal(title, html, actions=[]){
+  modalTitle.textContent = title;
+  modalContent.innerHTML = html;
+  modalActions.innerHTML = "";
+  actions.forEach(a=>{
+    const b = document.createElement("button");
+    b.className = "btn" + (a.primary ? " primary": "");
+    b.textContent = a.label;
+    b.addEventListener("click", ()=>{
+      a.onClick?.(); hideModal();
+    });
+    modalActions.appendChild(b);
+  });
+  modal.hidden = false;
 }
-imgLibraryInput.onchange = e => handlePickedFile(e.target.files?.[0]);
-imgCameraInput.onchange  = e => handlePickedFile(e.target.files?.[0]);
-docInput.onchange        = e => handlePickedFile(e.target.files?.[0]);
+function hideModal(){ modal.hidden = true; }
+modalClose.addEventListener("click", hideModal);
+modal.addEventListener("click", (e)=>{ if(e.target===modal) hideModal(); });
 
-/* ===== Micro (Web Speech API si dispo) ===== */
-let recognition = null;
-if("webkitSpeechRecognition" in window){
-  const R = window.webkitSpeechRecognition;
-  recognition = new R();
-  recognition.lang = "fr-FR";
-  recognition.interimResults = false;
-  recognition.onresult = (e)=>{
-    const txt = e.results[0][0].transcript;
-    input.value = txt;
-  };
-}
-micBtn.addEventListener("click", ()=>{
-  if(recognition){ recognition.start(); }
-  else{ pop("Le micro n’est pas supporté par ce navigateur.","Micro"); }
+/* ===== Connexion / Acheter (placeholders + hooks) ===== */
+btnLogin.addEventListener("click", ()=>{
+  showModal("Connexion", `
+    <p>Connecte ton compte pour sauvegarder l’historique et ton solde.</p>
+  `, [
+    {label:"Se connecter", primary:true, onClick: ()=> {
+      // Hook d’intégration :
+      window.onLoginSuccess?.({ userId: "demo_"+Math.random().toString(36).slice(2,8) });
+    }},
+    {label:"Fermer"}
+  ]);
 });
+btnBuy.addEventListener("click", ()=>{
+  showModal("Acheter des tokens", `
+    <p>Choisis ton pack :</p>
+    <ul>
+      <li>💎 1 000 000 → 5 €</li>
+      <li>💎 2 000 000 → 10 €</li>
+      <li>💎 4 000 000 → 20 € <em>(+50% au 1er achat)</em></li>
+    </ul>
+  `, [
+    {label:"Payer (placeholder)", primary:true, onClick: ()=>{
+      // Hook d’intégration :
+      const bonus = 0; // applique ton calcul si 1er achat
+      tokenCount += 1_000_000 + bonus;
+      updateTokenDisplay();
+      window.onPayballSuccess?.({ pack:"1M", amount:5 });
+    }},
+    {label:"Fermer"}
+  ]);
+});
+function updateTokenDisplay(){
+  tokenCountEl.textContent = tokenCount.toLocaleString("fr-FR");
+}
 
-/* ===== Envoi message ===== */
-async function sendMessage(){
-  const text = input.value.trim();
-  if(!text) return;
-  addBubble(text,"user");
-  input.value = "";
-  setTyping(true);
+/* ===== Chat / API ===== */
+const history = []; // {role:'user'|'assistant', content:string}
 
-  // Choix de l’URL (ton API si fournie, sinon fallback)
-  const url = API_URL || FALLBACK_URL;
+btnSend.addEventListener("click", sendFromInput);
+userInput.addEventListener("keydown", (e)=>{
+  if(e.key==="Enter"){ e.preventDefault(); sendFromInput(); }
+});
+userInput.addEventListener("focus", scrollToBottom);
 
+async function sendFromInput(){
+  const text = userInput.value.trim();
+  if(!text || sending) return;
+  userInput.value = "";
+  addMessage(text, "user");
+  history.push({role:"user", content:text});
+  await sendMessage(text);
+}
+
+async function sendMessage(text){
   try{
-    let resp;
-    if(url === FALLBACK_URL){
-      // Fallback demo locale (réponse simple)
-      await new Promise(r=>setTimeout(r, 400));
-      resp = { ok:true, json: async()=>({ answer: "Bien reçu. Pose-moi la suite !" }) };
-    }else{
-      resp = await fetch(url, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ userId:"guest", prompt:text })
-      });
-    }
+    setSending(true);
+    setTyping(true);
 
-    const data = await resp.json();
-    setTyping(false);
+    // Appel API
+    const resp = await fetch(`${API_URL}/ask`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        userId: localStorage.getItem("ph_user") || "guest_"+getOrSetGuestId(),
+        message: text,
+        history: history.slice(-10)
+      })
+    });
 
-    if(data && (data.answer || data.output || data.text)){
-      const answer = data.answer || data.output || data.text;
-      addBubble(answer,"bot");
-      // (décrémente un peu le compteur pour feedback visuel)
-      try{
-        const n = parseInt((tokenCountEl.textContent||"0").replace(/\s/g,""),10);
-        tokenCountEl.textContent = (Math.max(0, n-27)).toLocaleString("fr-FR");
-      }catch{}
-    }else{
-      addBubble("Réponse reçue mais vide.", "bot");
-    }
-  }catch(e){
+    const ok = resp.ok;
+    const data = ok ? await resp.json() : null;
+
     setTyping(false);
-    addBubble("Erreur de connexion. Réessaie plus tard.", "bot");
-    console.error(e);
+    setSending(false);
+
+    if(ok && data && (data.answer || data.message)){
+      const answer = data.answer || data.message;
+      addMessage(answer, "bot");
+      history.push({role:"assistant", content:answer});
+
+      // Décompte (estimation légère)
+      const estOut = Math.max(30, Math.ceil((answer.length)/4));
+      tokenCount = Math.max(0, tokenCount - estOut);
+      updateTokenDisplay();
+    }else{
+      addMessage("Désolé, le service est momentanément indisponible. Réessaie dans un instant.", "bot");
+    }
+  }catch(err){
+    setTyping(false);
+    setSending(false);
+    addMessage("Oups, problème réseau. Vérifie ta connexion et réessaie.", "bot");
+  }finally{
+    scrollToBottom();
   }
 }
+function getOrSetGuestId(){
+  let id = localStorage.getItem("ph_guest");
+  if(!id){ id = Math.random().toString(36).slice(2,10); localStorage.setItem("ph_guest", id); }
+  return id;
+}
 
-sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", (e)=>{
-  if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }
-});
+/* ===== INIT ===== */
+(function init(){
+  // Thème par défaut : sombre
+  document.body.classList.toggle("theme-dark", darkDefault);
+  document.body.classList.toggle("theme-light", !darkDefault);
 
-/* ===== Focus: toujours la zone en bas visible ===== */
-const io = new IntersectionObserver(()=>{
-  chat.scrollTop = chat.scrollHeight;
-});
-io.observe(document.getElementById("composer"));
+  updateTokenDisplay();
+  addMessage("Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.", "bot");
+  scrollToBottom();
+})();
