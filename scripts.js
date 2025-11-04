@@ -480,6 +480,41 @@ async function renderPayPal(pack){
     }
   }).render("#paypal-buttons");
 }
+/* ===== Connexion Clerk ===== */
+window.addEventListener("load", async () => {
+  try {
+    await Clerk.load();
+
+    const loginBtn = document.getElementById("btnLogin");
+
+    // Vérifie si l'utilisateur est déjà connecté
+    Clerk.addListener(({ user }) => {
+      if (user) {
+        loginBtn.textContent = "Déconnexion";
+        localStorage.setItem("philo_user_email", user.primaryEmailAddress?.emailAddress || "");
+        localStorage.setItem("philo_user_id", user.id);
+      } else {
+        loginBtn.textContent = "Connexion";
+        localStorage.removeItem("philo_user_email");
+        localStorage.removeItem("philo_user_id");
+      }
+    });
+
+    // Clique sur le bouton
+    loginBtn.addEventListener("click", async () => {
+      const user = Clerk.user;
+      if (user) {
+        await Clerk.signOut();
+        addBubble("👋 Déconnecté avec succès.", "bot");
+      } else {
+        Clerk.openSignIn();
+      }
+    });
+  } catch (err) {
+    console.error("Erreur Clerk :", err);
+    addBubble("⚠️ Impossible de charger la connexion pour le moment.", "bot");
+  }
+});
 
 /* ===== Auto-scroll: garde le bas visible ===== */
 const io = new IntersectionObserver(() => { chat.scrollTop = chat.scrollHeight; });
