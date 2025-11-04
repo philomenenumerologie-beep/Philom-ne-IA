@@ -484,3 +484,88 @@ async function renderPayPal(pack){
 /* ===== Auto-scroll: garde le bas visible ===== */
 const io = new IntersectionObserver(() => { chat.scrollTop = chat.scrollHeight; });
 io.observe(document.getElementById("composer"));
+/* ===== Connexion avec Clerk (init + handler) ===== */
+let clerkReady = false;
+let currentEmail = null;
+
+async function initClerk() {
+  if (!window.Clerk) return;
+  try {
+    await window.Clerk.load();
+    clerkReady = true;
+
+    const user = window.Clerk.user;
+    const session = window.Clerk.session;
+
+    if (user && session) {
+      // connecté
+      currentEmail = user.primaryEmailAddress
+        ? user.primaryEmailAddress.emailAddress
+        : null;
+
+      // accorde le bonus si jamais pas encore crédité sur ce navigateur
+      if (!localStorage.getItem(LS_SIGNUP_BONUS)) {
+        localStorage.setItem(LS_SIGNUP_BONUS, "1");
+        grantSignupBonus(); // +3000 (déjà défini dans ton script)
+      }
+    }
+  } catch (e) {
+    console.warn("Clerk init error:", e);
+  }
+}
+
+// Remplace l’actuel handler "Connexion" (si tu l’as toujours) par celui-ci :
+btnLogin.addEventListener("click", async () => {
+  if (!clerkReady) {
+    await initClerk();
+  }
+  try {
+    const user = window.Clerk.user;
+    const session = window.Clerk.session;
+
+    if (user && session) {
+      // déjà connecté → on propose de se déconnecter
+      await window.Clerk.signOut();
+      currentEmail = null;
+      addBubble(
+        LANG==="fr" ? "Vous êtes déconnecté." :
+        LANG==="nl" ? "U bent uitgelogd." :
+                      "You are signed out.",
+        "bot"
+      );
+      return;
+    }
+
+    await window.Clerk.openSignIn({
+      afterSignIn: async () => {
+        await initClerk();
+        addBubble(
+          LANG==="fr" ? "Bienvenue, connexion réussie ✅" :
+          LANG==="nl" ? "Welkom, u bent ingelogd ✅" :
+                        "Welcome, you’re signed in ✅",
+          "bot"
+        );
+      },
+      afterSignUp: async () => {
+        await initClerk(); // accordera le bonus si pas encore pris
+        addBubble(
+          LANG==="fr" ? "Inscription réussie ✅ (+3 000 tokens crédités)" :
+          LANG==="nl" ? "Registratie gelukt ✅ (+3.000 tokens toegevoegd)" :
+                        "Sign-up successful ✅ (+3,000 tokens credited)",
+          "bot"
+        );
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    pop(
+      LANG==="fr" ? "Connexion momentanément indisponible." :
+      LANG==="nl" ? "Inloggen tijdelijk niet beschikbaar." :
+                    "Sign-in temporarily unavailable.",
+      T.login
+    );
+  }
+});
+
+// Lance l’init au chargement
+window.addEventListener("load", initClerk);
