@@ -361,6 +361,96 @@ sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") { e.preventDefault(); sendMessage(); }
 });
+/* ===== PAYPAL STANDARD (client-only) ===== */
+const payModal = document.getElementById("payModal");
+const payClose = document.getElementById("payClose");
+let chosenPack = 5; // 5 | 10 | 20  (euros)
+
+btnBuy.onclick = () => {
+  payModal.showModal();
+  renderPayPal(chosenPack);
+};
+payClose.onclick = () => payModal.close();
+
+// Sélection pack
+document.addEventListener("click", (e) => {
+  const b = e.target.closest(".packsRow .pill");
+  if (!b) return;
+  chosenPack = Number(b.dataset.pack);
+  renderPayPal(chosenPack);
+});
+
+// Charge SDK si besoin et rend les boutons
+async function renderPayPal(pack){
+  // 1) Charger le SDK une seule fois
+  if(!document.getElementById("paypal-sdk")){
+    const s = document.createElement("script");
+    s.id = "paypal-sdk";
+    // ⚠️ Remplace __TON_CLIENT_ID__ par ton vrai client-id PayPal (mode sandbox d'abord)
+    s.src = "https://www.paypal.com/sdk/js?client-id=__TON_CLIENT_ID__&currency=EUR";
+    document.body.appendChild(s);
+    await new Promise(r => s.onload = r);
+  }
+
+  // 2) Calcul du montant en EUR
+  const amount = pack === 5 ? "5.00" : pack === 10 ? "10.00" : "20.00";
+
+  // 3) (Ré)initialiser le conteneur
+  const box = document.getElementById("paypal-buttons");
+  box.innerHTML = "";
+
+  // 4) Boutons standard (create/capture côté client)
+  window.paypal.Buttons({
+    style: { layout: "horizontal", height: 45 },
+
+    createOrder: (data, actions) => {
+      return actions.order.create({
+        purchase_units: [{ amount: { currency_code: "EUR", value: amount } }]
+      });
+    },
+
+    onApprove: async (data, actions) => {
+      try{
+        const details = await actions.order.capture();
+        // Crédit local des tokens (source de vérité = backend à brancher plus tard)
+        const baseTokens = pack === 5 ? 1_000_000 : pack === 10 ? 2_000_000 : 4_000_000;
+
+        // Bonus 50% pour tout premier achat (flag local)
+        const FIRST_FLAG = "philo_first_purchase_done";
+        const isFirst = !localStorage.getItem(FIRST_FLAG);
+        const bonus = isFirst ? Math.floor(baseTokens * 0.5) : 0;
+        if(isFirst) localStorage.setItem(FIRST_FLAG, "1");
+
+        const credited = baseTokens + bonus;
+        tokenBalance += credited;
+        localStorage.setItem(LS_TOKENS, tokenBalance);
+        updateTokenUI();
+
+        addBubble(
+          LANG==="fr"
+            ? `✅ Paiement confirmé (${amount}€). +${credited.toLocaleString("fr-FR")} tokens crédités.`
+            : LANG==="nl"
+              ? `✅ Betaling bevestigd (${amount}€). +${credited.toLocaleString("fr-FR")} tokens toegevoegd.`
+              : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added.`,
+          "bot"
+        );
+        payModal.close();
+      }catch(err){
+        console.error(err);
+        addBubble(LANG==="fr"?"❌ Erreur lors de la capture du paiement."
+                 :LANG==="nl"?"❌ Fout bij betalingsverwerking."
+                 :"❌ Payment capture error.", "bot");
+      }
+    },
+
+    onError: (err) => {
+      console.error(err);
+      addBubble(LANG==="fr"?"❌ Paiement refusé/annulé."
+               :LANG==="nl"?"❌ Betaling geweigerd/geannuleerd."
+               :"❌ Payment failed/cancelled.", "bot");
+    }
+  }).render("#paypal-buttons");
+}
 
 /* ===== Auto-scroll: garde le bas visible ===== */
 const io = new IntersectionObserver(() => { chat.scrollTop = chat.scrollHeight; });
