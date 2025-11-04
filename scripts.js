@@ -143,14 +143,18 @@ applyI18N();
 /* ===== État conversation & tokens ===== */
 const LS_USER   = "philo_user_id";
 const LS_TOKENS = "philo_tokens_balance";
+const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed"; // <- NEW
+
 let userId = localStorage.getItem(LS_USER);
 if (!userId) {
   userId = "guest_" + Math.random().toString(36).slice(2, 10);
   localStorage.setItem(LS_USER, userId);
 }
+
 let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
+// Invité : 2 000 tokens gratuits la 1re fois
 if (!Number.isFinite(tokenBalance)) {
-  tokenBalance = 1_000_000; // défaut invité
+  tokenBalance = 2000; // <- CHANGED (avant: 1_000_000)
   localStorage.setItem(LS_TOKENS, tokenBalance);
 }
 updateTokenUI();
@@ -224,9 +228,35 @@ openFaq.addEventListener("click", () => {
   pop(T.faqHtml, T.faqTitle);
 });
 
-/* ===== Connexion / Acheter (placeholders) ===== */
-btnLogin.addEventListener("click", () => pop("Connexion : lier ton compte (placeholder).", T.login));
-btnBuy.addEventListener("click", () => pop("Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).", T.buy));
+/* ===== Connexion : +3 000 tokens une seule fois ===== */
+function grantSignupBonus() {
+  const bonus = 3000;
+  tokenBalance += bonus;
+  localStorage.setItem(LS_TOKENS, tokenBalance);
+  updateTokenUI();
+
+  const msg =
+    LANG==="fr" ? `Bienvenue 🎉<br>Vous recevez <strong>${bonus.toLocaleString("fr-FR")}</strong> tokens offerts !`
+  : LANG==="nl" ? `Welkom 🎉<br>U ontvangt <strong>${bonus.toLocaleString("fr-FR")}</strong> gratis tokens!`
+                : `Welcome 🎉<br>You get <strong>${bonus.toLocaleString("fr-FR")}</strong> free tokens!`;
+
+  pop(msg, LANG==="fr" ? "Bonus d’inscription" : LANG==="nl" ? "Registratiebonus" : "Sign-up bonus");
+}
+
+// Remplace le placeholder par l’attribution du bonus 1 fois
+btnLogin.addEventListener("click", () => {
+  if (!localStorage.getItem(LS_SIGNUP_BONUS)) {
+    localStorage.setItem(LS_SIGNUP_BONUS, "1");
+    grantSignupBonus();
+  } else {
+    pop(
+      LANG==="fr" ? "Votre bonus d’inscription a déjà été crédité ✅"
+      : LANG==="nl" ? "Uw registratiebonus is al toegekend ✅"
+      : "Your sign-up bonus was already credited ✅",
+      T.login
+    );
+  }
+});
 
 /* ===== Sheet Joindre ===== */
 function openSheet(){ sheet.hidden = false; }
@@ -244,7 +274,6 @@ async function uploadImageToAnalyze(file) {
   addBubble(`${LANG==="fr"?"📎 Fichier reçu":"📎 Bestand ontvangen"} : ${file.name}`, "user");
   setTyping(true);
 
-  // même domaine que /ask : on remplace juste le chemin
   const urlBase = (API_URL || FALLBACK_URL);
   const url = urlBase.includes("/ask") ? urlBase.replace("/ask","/analyze-image") : urlBase + "/analyze-image";
 
@@ -266,7 +295,6 @@ async function uploadImageToAnalyze(file) {
           :"Nothing detected.");
     addBubble(answer, "bot");
 
-    // si le backend renvoie usage pour la vision
     if (data?.usage?.total_tokens) spendTokensReal(data.usage);
   } catch (e) {
     setTyping(false);
@@ -361,6 +389,7 @@ sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") { e.preventDefault(); sendMessage(); }
 });
+
 /* ===== PAYPAL STANDARD (client-only) ===== */
 const payModal = document.getElementById("payModal");
 const payClose = document.getElementById("payClose");
