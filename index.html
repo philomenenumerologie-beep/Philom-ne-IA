@@ -1,175 +1,325 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Philomène I.A.</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Philomène I.A.</title>
+<style>
+/* ===== Thème (sombre par défaut) ===== */
+:root{--bg:#0b0b0f;--fg:#eceaf6;--muted:#bfb5ff;--card:#12101b;--card2:#161225;--line:#2a1d38;--vio:#51307a;--vio2:#5a3d8f}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.light{--bg:#f5f6fb;--fg:#1f2230;--muted:#4a3e7b;--card:#ffffff;--card2:#ffffff;--line:#e7e7ee;--vio:#b79cf2;--vio2:#a68ae7}
+button{font:inherit}
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css" />
+/* ===== Topbar ===== */
+.topbar{position:sticky;top:0;z-index:10;background:#0c0c10;padding:10px 14px 6px;border-bottom:1px solid var(--line)}
+.light .topbar{background:#fff}
+.topbar .row{display:flex;align-items:center;gap:10px}
+.topbar .left,.topbar .right{display:flex;gap:10px;align-items:center}
+.topbar .right{margin-left:auto}
+.pill{background:#1c1427;border:1px solid var(--vio);color:#d8c9ff;border-radius:12px;padding:8px 14px;font-weight:600}
+.light .pill{background:#f3f0ff;color:#3a2b77;border-color:#cbb6ff}
+.pill:active{transform:scale(.98)}
+.burger{background:#1c1427;border:1px solid var(--vio);color:#d8c9ff;border-radius:10px;padding:8px 12px;font-weight:700}
+.light .burger{background:#f3f0ff;color:#3a2b77;border-color:#cbb6ff}
 
-  <!-- Icons (emoji via text) -->
-  <style>
-    /* Petites sécurités au cas où */
-    :root {
-      --violet:#7c4dff;
-      --violet-2:#9a76ff;
-      --bg:#0e0e11;
-      --bg-2:#14141a;
-      --text:#e9e9ee;
-      --muted:#bdbdd1;
-      --card:#1a1a22;
-      --border:#2a2a36;
-    }
-    html,body{height:100%}
-    body.dark{background:var(--bg); color:var(--text)}
-    .app{min-height:100%; display:flex; flex-direction:column}
+.token-badge{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--vio2);border-radius:14px;padding:6px 10px}
+.token-badge .gem{filter:drop-shadow(0 0 6px #6cf)}
+#tokenCount{font-variant-numeric:tabular-nums;font-weight:800;color:#a98cff}
+.light #tokenCount{color:#6b55c8}
 
-    /* HEADER */
-    .topbar{position:sticky; top:0; z-index:20; backdrop-filter:saturate(140%) blur(6px);
-      background:linear-gradient(180deg, rgba(10,10,14,.85), rgba(10,10,14,.6) 60%, transparent);
-      border-bottom:1px solid var(--border);
-    }
-    .topbar-inner{display:flex; align-items:center; gap:.75rem; padding:.9rem 1rem;}
-    .brand{font-weight:800; letter-spacing:.2px; font-size:1.3rem;}
-    .spacer{flex:1}
-    .btn{background:var(--card); color:var(--text); border:1px solid var(--border); padding:.45rem .9rem; border-radius:.8rem; font-weight:600}
-    .btn:hover{border-color:var(--violet)}
-    .token{display:flex; align-items:center; gap:.45rem; background:var(--card); padding:.4rem .7rem; border:1px solid var(--border); border-radius:.8rem; font-weight:700}
-    .burger{width:2.4rem; height:2.4rem; border-radius:.65rem; display:grid; place-items:center; background:var(--card); border:1px solid var(--border); cursor:pointer}
+/* Sous-ligne titre/version */
+.subtitle{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--muted);font-weight:600}
+.dot{width:10px;height:10px;border-radius:50%}
+.online{background:#7dff9c;box-shadow:0 0 8px #7dff9c}
 
-    /* Version sous l’en-tête */
-    .version{display:flex; align-items:center; gap:.5rem; padding: .4rem 1rem .8rem 1rem; color:var(--muted); font-weight:600}
-    .dot{width:.55rem; height:.55rem; background:#a56aff; border-radius:999px; box-shadow:0 0 8px #a56aff}
+/* Menu déroulant */
+.menu-panel{position:absolute;right:12px;top:58px;background:#14111e;border:1px solid var(--vio);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.45);overflow:hidden;min-width:220px}
+.light .menu-panel{background:#fff}
+.menu-item{display:block;width:100%;text-align:left;padding:10px 14px;color:#e8e1ff;background:transparent;border:none}
+.light .menu-item{color:#2a234e}
+.menu-item:hover{background:#1c1730}
+.light .menu-item:hover{background:#f2ecff}
 
-    /* MENU BURGER (drop) */
-    .menu{position:absolute; right:1rem; top:3.6rem; width:200px; background:var(--card);
-      border:1px solid var(--border); border-radius:.9rem; overflow:hidden; display:none; z-index:40}
-    .menu.open{display:block}
-    .menu button{all:unset; display:block; width:100%; padding:.8rem 1rem; cursor:pointer; color:var(--text)}
-    .menu button:hover{background:#222231}
+/* ===== Chat ===== */
+#chat{padding:14px;display:flex;flex-direction:column;gap:12px;max-width:900px;margin:0 auto}
+.bubble{max-width:92%;padding:12px 14px;border-radius:14px;background:var(--card)}
+.bubble.bot{border:1px solid var(--vio)}
+.bubble.user{margin-left:auto;background:#1b1630;border:1px solid #6341a4}
+.light .bubble{background:#fff;border:1px solid #e9e6ff}
+.light .bubble.user{background:#efeaff;border-color:#d6c8ff}
 
-    /* CHAT LISTE */
-    .chat{flex:1; padding:1rem; display:flex; flex-direction:column; gap:.8rem}
+/* ===== Composer ===== */
+.composer-wrap{position:sticky;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 60%);padding:10px 10px 16px}
+.composer{max-width:900px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.plus{width:44px;height:44px;border-radius:12px;background:#1c1427;border:1px solid var(--vio);color:#d8c9ff}
+.light .plus{background:#f3f0ff;color:#3a2b77;border-color:#cbb6ff}
+.input-box{flex:1;position:relative}
+#userInput{width:100%;padding:12px 88px 12px 12px;border-radius:12px;border:1px solid var(--vio);background:var(--card);color:var(--fg)}
+.mic-in{position:absolute;right:48px;top:50%;transform:translateY(-50%);background:transparent;border:none;opacity:.9}
+.send{width:44px;height:44px;border-radius:12px;background:#6b41ff;color:white;border:none;font-weight:800}
 
-    /* Composer */
-    .composer-wrap{padding:.8rem 1rem 1.1rem 1rem}
-    .composer{display:flex; align-items:center; gap:.6rem; background:var(--bg-2); border:1px solid var(--border); border-radius:1rem; padding:.35rem .4rem}
-    .plus{width:2.4rem; height:2.4rem; border-radius:.7rem; display:grid; place-items:center; background:var(--card); border:1px solid var(--border); cursor:pointer}
-    .input{flex:1; border:none; background:transparent; color:var(--text); padding:.6rem .2rem; font-size:1rem; outline:none}
-    .mic{width:2.4rem; height:2.4rem; display:grid; place-items:center; border-radius:.6rem; border:1px solid var(--border); background:var(--card)}
-    .send{width:2.6rem; height:2.6rem; border-radius:.8rem; border:none; background:linear-gradient(90deg,var(--violet),var(--violet-2)); color:white; font-weight:800; cursor:pointer}
+/* Action sheet (plus) */
+.sheet-bg{position:fixed;inset:0;background:rgba(5,5,10,.6);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;z-index:15}
+.sheet{width:100%;max-width:900px;background:#0f0c18;border-top-left-radius:16px;border-top-right-radius:16px;border-top:1px solid var(--vio);padding:10px}
+.sheet .row{display:flex;gap:10px}
+.sheet .opt{flex:1;background:#151228;border:1px solid var(--vio2);color:#e9e3ff;border-radius:12px;padding:12px}
 
-    /* Bottom sheet (+) */
-    .sheet-bg{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:45}
-    .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); border-top:1px solid var(--border); border-radius:1rem 1rem 0 0; padding:1rem; display:none; z-index:50}
-    .sheet h4{margin:.2rem 0 1rem 0}
-    .row{display:flex; gap:.6rem}
-    .opt{flex:1; display:flex; align-items:center; justify-content:center; gap:.5rem; background:var(--bg-2); border:1px solid var(--border); border-radius:.9rem; padding:.8rem; cursor:pointer}
-    .opt:active{transform:scale(.98)}
-    /* Typing bubble */
-    .bubble{max-width:90%; background:#1e1e27; border:1px solid var(--border); padding:.8rem 1rem; border-radius:1rem}
-  </style>
+/* FAQ */
+.faq-backdrop{position:fixed;inset:0;background:rgba(5,5,10,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:20}
+.faq-card{max-width:640px;width:92%;background:#0f0c18;color:#f2edff;border-radius:18px;padding:18px 18px 12px;position:relative;
+  box-shadow:0 0 0 3px #3b1f5f, 0 0 32px 6px rgba(135,16,255,.35)}
+.faq-card h2{margin:2px 0 10px;font-size:22px;color:#cbb6ff}
+.faq-section{margin:12px 0}
+.faq-pack{display:flex;align-items:center;gap:10px;background:#151228;border:1px solid #5a3d8f;border-radius:12px;padding:10px 12px;margin:8px 0}
+.faq-close{position:absolute;right:14px;top:10px;background:transparent;border:none;color:#cbb6ff;font-size:16px}
+
+/* Utils */
+.hidden{display:none}
+</style>
 </head>
-<body class="dark">
-  <div class="app">
-
-    <!-- HEADER -->
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">Philomène I.A.</div>
-
-        <button id="connectBtn" class="btn">Connexion</button>
-        <button id="buyBtn" class="btn">Acheter</button>
-
-        <div class="spacer"></div>
-
-        <!-- Compteur tokens -->
-        <div class="token" aria-label="Solde de tokens">
-          💎 <span id="tokenCount">1000000</span>
+<body>
+  <header class="topbar">
+    <div class="row">
+      <div class="left">
+        <button id="btnLogin" class="pill">Connexion</button>
+        <button id="btnBuy" class="pill">Acheter</button>
+      </div>
+      <div class="right">
+        <div class="token-badge" id="tokenBadge">
+          <span class="gem">💎</span><span id="tokenCount">1 000 000</span>
         </div>
-
-        <!-- Menu burger -->
-        <button id="menuButton" class="burger" aria-label="Menu">
-          ☰
-        </button>
-      </div>
-
-      <!-- Bandeau version -->
-      <div class="version">
-        <span class="dot"></span>
-        <span>Philomène I.A. — <strong>version 1.0</strong></span>
-      </div>
-
-      <!-- Menu déroulant -->
-      <div id="menu" class="menu" role="menu" aria-hidden="true">
-        <button id="toggleMode" role="menuitem">🌗 Mode jour / nuit</button>
-        <button id="faqBtn" role="menuitem">❓ F.A.Q.</button>
-      </div>
-    </header>
-
-    <!-- ZONE CHAT -->
-    <main id="chatBox" class="chat" aria-live="polite">
-      <div class="bubble">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
-    </main>
-
-    <!-- COMPOSER -->
-    <div class="composer-wrap">
-      <div class="composer">
-        <button id="plusBtn" class="plus" aria-label="Ouvrir les options">＋</button>
-        <input id="userInput" class="input" type="text" placeholder="Écrivez votre message..." />
-        <button id="micButton" class="mic" aria-label="Parler">🎤</button>
-        <button id="sendButton" class="send" aria-label="Envoyer">➤</button>
+        <button id="btnMenu" class="burger" aria-label="Menu">≡</button>
       </div>
     </div>
-
-    <!-- BOTTOM SHEET (+) -->
-    <div id="sheetBg" class="sheet-bg" aria-hidden="true"></div>
-    <div id="quickSheet" class="sheet" aria-hidden="true">
-      <h4>Ajouter depuis…</h4>
-      <div class="row">
-        <button id="pickPhoto" class="opt">🖼️ Photothèque</button>
-        <button id="takePhoto" class="opt">📷 Prendre une photo</button>
-        <button id="pickFile"  class="opt">📄 Choisir un fichier</button>
-      </div>
-      <!-- Inputs invisibles pilotés par scripts.js -->
-      <input id="imgLibInput" type="file" accept="image/*" hidden />
-      <input id="imgCamInput" type="file" accept="image/*" capture="environment" hidden />
-      <input id="docInput"    type="file" accept="image/*,.pdf,.txt" hidden />
+    <div class="subtitle">
+      <span class="dot online"></span>
+      <span>Philomène I.A. — <strong>version 1.0</strong></span>
     </div>
+    <div id="menuPanel" class="menu-panel" hidden>
+      <button id="toggleMode" class="menu-item">🌗 Mode jour / nuit</button>
+      <button id="openFaq" class="menu-item">❓ F.A.Q.</button>
+    </div>
+  </header>
 
-    <!-- Footer marque -->
-    <div style="padding:0 1rem 1.2rem 1rem; color:var(--muted);">
-      <small>Propulsé par <strong>GPT-5 Thinking</strong> — la version la plus avancée de Philomène I.A.</small>
+  <main id="chat">
+    <div class="bubble bot">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
+  </main>
+
+  <div class="composer-wrap">
+    <div class="composer">
+      <button id="plusBtn" class="plus">+</button>
+      <div class="input-box">
+        <input id="userInput" type="text" placeholder="Écrivez votre message..." autocomplete="off">
+        <button id="micBtn" class="mic-in" title="Dicter">🎤</button>
+      </div>
+      <button id="sendBtn" class="send">➤</button>
     </div>
   </div>
 
-  <!-- JS principal -->
-  <script src="scripts.js"></script>
+  <!-- Inputs invisibles pour fichiers -->
+  <input id="imgLibInput" type="file" accept="image/*" class="hidden">
+  <input id="imgCamInput" type="file" accept="image/*" capture="environment" class="hidden">
+  <input id="docInput" type="file" class="hidden">
 
-  <!-- Mini-hooks spécifiques au menu / FAQ (pas besoin d’éditer scripts.js) -->
-  <script>
-    // Ouvrir/fermer le menu
-    const menuBtn = document.getElementById('menuButton');
-    const menu = document.getElementById('menu');
-    document.addEventListener('click', (e)=>{
-      if(e.target === menuBtn){ menu.classList.toggle('open'); return; }
-      if(!menu.contains(e.target)) menu.classList.remove('open');
-    });
+<script>
+/* ================== CONFIG ================== */
+const API_URL = "https://api.philomeneia.com/ask"; // Texte
+const API_IMG = "https://api.philomeneia.com/vision"; // Images/Docs (à adapter côté backend)
+let tokenCount = 1_000_000;
 
-    // FAQ simple pop-up
-    document.getElementById('faqBtn').addEventListener('click', ()=>{
-      menu.classList.remove('open');
-      alert("Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).\n\nIA utilisée : GPT-5 Thinking.\n\nVos échanges restent privés.");
-    });
+/* ================== Sélecteurs ================== */
+const chat = document.getElementById('chat');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const plusBtn = document.getElementById('plusBtn');
+const micBtn = document.getElementById('micBtn');
+const tokenCountEl = document.getElementById('tokenCount');
+const btnMenu = document.getElementById('btnMenu');
+const menuPanel = document.getElementById('menuPanel');
+const toggleMode = document.getElementById('toggleMode');
+const openFaq = document.getElementById('openFaq');
+const btnLogin = document.getElementById('btnLogin');
+const btnBuy = document.getElementById('btnBuy');
+const imgLibInput = document.getElementById('imgLibInput');
+const imgCamInput = document.getElementById('imgCamInput');
+const docInput = document.getElementById('docInput');
 
-    // Connexion / Acheter : placeholders en pop-up (tu brancheras plus tard)
-    document.getElementById('connectBtn').addEventListener('click', ()=>{
-      alert("Connexion : lier ton compte (placeholder).");
+/* ============ Thème: sombre par défaut ============ */
+(() => {
+  const saved = localStorage.getItem('theme');
+  if(saved === 'light') document.body.classList.add('light');
+})();
+toggleMode.addEventListener('click', ()=>{
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme', document.body.classList.contains('light')?'light':'dark');
+  menuPanel.setAttribute('hidden','');
+});
+
+/* ================== Menu ================== */
+btnMenu.addEventListener('click', ()=>{
+  const hidden = menuPanel.hasAttribute('hidden');
+  document.querySelectorAll('.menu-panel').forEach(p=>p.setAttribute('hidden',''));
+  if(hidden) menuPanel.removeAttribute('hidden'); else menuPanel.setAttribute('hidden','');
+});
+document.addEventListener('click', (e)=>{
+  if(!menuPanel.contains(e.target) && e.target!==btnMenu) menuPanel.setAttribute('hidden','');
+});
+
+/* ================== Helpers UI ================== */
+function addBubble(text, who='bot'){
+  const b = document.createElement('div');
+  b.className = 'bubble ' + (who==='user'?'user':'bot');
+  b.textContent = text;
+  chat.appendChild(b);
+  chat.scrollTop = chat.scrollHeight;
+}
+function setTyping(on){
+  if(on){ addBubble('…', 'bot'); }
+  else{
+    const last = chat.lastElementChild;
+    if(last && last.textContent==='…') last.remove();
+  }
+}
+function updateTokenDisplay(){
+  tokenCountEl.textContent = tokenCount.toLocaleString('fr-FR');
+}
+window.updateTokensUI = (n)=>{ tokenCount = Number(n)||tokenCount; updateTokenDisplay(); };
+
+/* ================== Placeholders Connexion/Achat ================== */
+btnLogin.addEventListener('click', ()=>alert('Connexion : lier ton compte (placeholder).'));
+btnBuy.addEventListener('click', ()=>alert('Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).'));
+
+/* ================== FAQ Popup ================== */
+function showFAQ(){
+  const wrap = document.createElement('div');
+  wrap.className='faq-backdrop';
+  wrap.innerHTML=`
+  <div class="faq-card">
+    <button class="faq-close" aria-label="Fermer">Fermer ✖</button>
+    <h2>Foire aux questions</h2>
+    <div class="faq-section">
+      <strong>Quelle IA utilise Philomène ?</strong>
+      <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée d’OpenAI.</p>
+    </div>
+    <div class="faq-section">
+      <strong>Comment fonctionnent les tokens ?</strong>
+      <p>Chaque question + réponse consomme un petit nombre de tokens selon la longueur. Le diamant 💎 affiche votre solde.</p>
+    </div>
+    <div class="faq-section">
+      <strong>Packs disponibles</strong>
+      <div class="faq-pack">💎 1 000 000 tokens → 5 €</div>
+      <div class="faq-pack">💎 2 000 000 tokens → 10 €</div>
+      <div class="faq-pack">💎 4 000 000 tokens → 20 €</div>
+      <div class="faq-pack" style="justify-content:center;font-weight:700;">🎁 Premier achat : +50% au 1er achat</div>
+    </div>
+    <div class="faq-section">
+      <strong>Abonnement ?</strong>
+      <p>Non. Toute la puissance de GPT-5, sans abonnement : vous payez uniquement ce que vous consommez.</p>
+    </div>
+    <div class="faq-section">
+      <strong>Confidentialité</strong>
+      <p>Vos échanges restent privés.</p>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  wrap.querySelector('.faq-close').addEventListener('click', ()=>wrap.remove());
+  wrap.addEventListener('click', (e)=>{ if(e.target===wrap) wrap.remove(); });
+}
+openFaq.addEventListener('click', ()=>{ showFAQ(); menuPanel.setAttribute('hidden',''); });
+
+/* ================== Action Sheet (+) ================== */
+let sheetBg=null;
+function openSheet(){
+  if(sheetBg) return;
+  sheetBg = document.createElement('div');
+  sheetBg.className='sheet-bg';
+  sheetBg.innerHTML=`
+    <div class="sheet">
+      <div class="row">
+        <button class="opt" id="pickPhoto">📷 Photothèque</button>
+        <button class="opt" id="takePhoto">📸 Prendre une photo</button>
+        <button class="opt" id="pickFile">📄 Choisir un fichier</button>
+      </div>
+    </div>`;
+  document.body.appendChild(sheetBg);
+  sheetBg.addEventListener('click', e=>{ if(e.target===sheetBg){closeSheet();} });
+
+  document.getElementById('pickPhoto').onclick = ()=>{ imgLibInput.click(); closeSheet(); };
+  document.getElementById('takePhoto').onclick = ()=>{ imgCamInput.click(); closeSheet(); };
+  document.getElementById('pickFile').onclick  = ()=>{ docInput.click(); closeSheet(); };
+}
+function closeSheet(){ if(sheetBg){ sheetBg.remove(); sheetBg=null; } }
+plusBtn.addEventListener('click', openSheet);
+
+/* ================== Micro (speech-to-text) ================== */
+let recognition=null;
+if('webkitSpeechRecognition' in window){
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'fr-FR'; recognition.interimResults=false;
+  recognition.onresult = (e)=>{ const t = e.results[0][0].transcript; userInput.value = (userInput.value?userInput.value+' ':'') + t; };
+}
+micBtn.addEventListener('click', ()=>{
+  if(recognition){ recognition.start(); } else { alert("Micro non supporté sur ce navigateur."); }
+});
+
+/* ================== Envoi Texte ================== */
+async function sendMessage(){
+  const text = userInput.value.trim();
+  if(!text) return;
+  addBubble(text,'user');
+  userInput.value='';
+  setTyping(true);
+
+  try{
+    const r = await fetch(API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({message:text, userId:'guest_'+Math.random().toString(36).slice(2)})
     });
-    document.getElementById('buyBtn').addEventListener('click', ()=>{
-      alert("Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).");
-    });
-  </script>
+    const data = await r.json().catch(()=>({answer:"Désolé, réponse illisible."}));
+    setTyping(false);
+    addBubble(data.answer || "Une réponse est arrivée, mais sans contenu.", 'bot');
+
+    // Décompte estimatif
+    const est = Math.ceil((text.length + (data.answer?data.answer.length:80))/4);
+    tokenCount = Math.max(0, tokenCount - est);
+    updateTokenDisplay();
+  }catch(err){
+    setTyping(false);
+    addBubble("Erreur réseau. Réessaie.", 'bot');
+  }
+}
+sendBtn.addEventListener('click', sendMessage);
+userInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); }});
+
+/* ================== Upload Image / Doc ================== */
+async function handleUpload(file){
+  if(!file) return;
+  addBubble("Fichier reçu, j'analyse…",'bot');
+  try{
+    const form = new FormData();
+    form.append('file', file);
+    form.append('userId','guest_'+Math.random().toString(36).slice(2));
+    const r = await fetch(API_IMG,{method:'POST',body:form});
+    const data = await r.json().catch(()=>({answer:"Fichier reçu."}));
+    // Retire la bulle "j'analyse…" (dernière si c'est elle)
+    const last = chat.lastElementChild; if(last && last.textContent.startsWith("Fichier reçu")) last.remove();
+    addBubble(data.answer || "Fichier traité.", 'bot');
+
+    const est = Math.ceil((data.answer?data.answer.length:200)/4);
+    tokenCount = Math.max(0, tokenCount - est);
+    updateTokenDisplay();
+  }catch(e){
+    addBubble("Erreur lors de l'envoi du fichier.",'bot');
+  }
+}
+imgLibInput.addEventListener('change', ()=> handleUpload(imgLibInput.files?.[0]));
+imgCamInput.addEventListener('change', ()=> handleUpload(imgCamInput.files?.[0]));
+docInput.addEventListener('change', ()=> handleUpload(docInput.files?.[0]));
+
+/* ================== Init ================== */
+updateTokenDisplay();
+</script>
 </body>
 </html>
