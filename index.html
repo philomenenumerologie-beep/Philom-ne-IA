@@ -119,5 +119,27 @@
   </div>
 
   <script src="scripts.js"></script>
+  <!-- Modal Paiement -->
+<dialog id="payModal" class="modal">
+  <div class="modal__card">
+    <div class="modal__title">Acheter des tokens</div>
+    <div class="modal__body">
+      <!-- Choix de pack -->
+      <div class="packsRow" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="pill" data-pack="5">5€ • 1M</button>
+        <button class="pill" data-pack="10">10€ • 2M</button>
+        <button class="pill" data-pack="20">20€ • 4M</button>
+      </div>
+      <!-- Bouton PayPal (en haut, bien visible) -->
+      <div id="paypal-buttons" style="margin:8px 0 4px 0"></div>
+      <div style="margin-top:6px;color:var(--text-dim);font-size:14px">
+        🎁 Premier achat : <strong>+50%</strong> de tokens offerts.
+      </div>
+    </div>
+    <div class="modal__actions">
+      <button id="payClose" class="pill pill--ghost">Fermer</button>
+    </div>
+  </div>
+</dialog>
 </body>
 </html>
