@@ -205,3 +205,18 @@ body.theme-light #versionLine{ border-bottom:1px solid rgba(0,0,0,.06) }
   .gem{ min-width:auto; padding:8px 10px }
   #tokenCount{ font-size:14px }
 }
+/* --- Micro-améliorations mobile --- */
+
+/* 1) Chat plus fluide et stable (évite les sauts de scroll) */
+#chat{
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+  /* garde un peu plus d'espace si le clavier remonte (iOS/Android) */
+  padding-bottom: calc(128px + env(safe-area-inset-bottom));
+}
+
+/* 2) Clics plus faciles sur petits écrans */
+.chip, .pill, .iconBtn, .sendBtn, .fab{
+  touch-action: manipulation;
+}
