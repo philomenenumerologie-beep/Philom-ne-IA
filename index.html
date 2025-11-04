@@ -1,325 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Philomène I.A.</title>
-<style>
-/* ===== Thème (sombre par défaut) ===== */
-:root{--bg:#0b0b0f;--fg:#eceaf6;--muted:#bfb5ff;--card:#12101b;--card2:#161225;--line:#2a1d38;--vio:#51307a;--vio2:#5a3d8f}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-.light{--bg:#f5f6fb;--fg:#1f2230;--muted:#4a3e7b;--card:#ffffff;--card2:#ffffff;--line:#e7e7ee;--vio:#b79cf2;--vio2:#a68ae7}
-button{font:inherit}
-
-/* ===== Topbar ===== */
-.topbar{position:sticky;top:0;z-index:10;background:#0c0c10;padding:10px 14px 6px;border-bottom:1px solid var(--line)}
-.light .topbar{background:#fff}
-.topbar .row{display:flex;align-items:center;gap:10px}
-.topbar .left,.topbar .right{display:flex;gap:10px;align-items:center}
-.topbar .right{margin-left:auto}
-.pill{background:#1c1427;border:1px solid var(--vio);color:#d8c9ff;border-radius:12px;padding:8px 14px;font-weight:600}
-.light .pill{background:#f3f0ff;color:#3a2b77;border-color:#cbb6ff}
-.pill:active{transform:scale(.98)}
-.burger{background:#1c1427;border:1px solid var(--vio);color:#d8c9ff;border-radius:10px;padding:8px 12px;font-weight:700}
-.light .burger{background:#f3f0ff;color:#3a2b77;border-color:#cbb6ff}
-
-.token-badge{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--vio2);border-radius:14px;padding:6px 10px}
-.token-badge .gem{filter:drop-shadow(0 0 6px #6cf)}
-#tokenCount{font-variant-numeric:tabular-nums;font-weight:800;color:#a98cff}
-.light #tokenCount{color:#6b55c8}
-
-/* Sous-ligne titre/version */
-.subtitle{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--muted);font-weight:600}
-.dot{width:10px;height:10px;border-radius:50%}
-.online{background:#7dff9c;box-shadow:0 0 8px #7dff9c}
-
-/* Menu déroulant */
-.menu-panel{position:absolute;right:12px;top:58px;background:#14111e;border:1px solid var(--vio);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.45);overflow:hidden;min-width:220px}
-.light .menu-panel{background:#fff}
-.menu-item{display:block;width:100%;text-align:left;padding:10px 14px;color:#e8e1ff;background:transparent;border:none}
-.light .menu-item{color:#2a234e}
-.menu-item:hover{background:#1c1730}
-.light .menu-item:hover{background:#f2ecff}
-
-/* ===== Chat ===== */
-#chat{padding:14px;display:flex;flex-direction:column;gap:12px;max-width:900px;margin:0 auto}
-.bubble{max-width:92%;padding:12px 14px;border-radius:14px;background:var(--card)}
-.bubble.bot{border:1px solid var(--vio)}
-.bubble.user{margin-left:auto;background:#1b1630;border:1px solid #6341a4}
-.light .bubble{background:#fff;border:1px solid #e9e6ff}
-.light .bubble.user{background:#efeaff;border-color:#d6c8ff}
-
-/* ===== Composer ===== */
-.composer-wrap{position:sticky;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 60%);padding:10px 10px 16px}
-.composer{max-width:900px;margin:0 auto;display:flex;gap:10px;align-items:center}
-.plus{width:44px;height:44px;border-radius:12px;background:#1c1427;border:1px solid var(--vio);color:#d8c9ff}
-.light .plus{background:#f3f0ff;color:#3a2b77;border-color:#cbb6ff}
-.input-box{flex:1;position:relative}
-#userInput{width:100%;padding:12px 88px 12px 12px;border-radius:12px;border:1px solid var(--vio);background:var(--card);color:var(--fg)}
-.mic-in{position:absolute;right:48px;top:50%;transform:translateY(-50%);background:transparent;border:none;opacity:.9}
-.send{width:44px;height:44px;border-radius:12px;background:#6b41ff;color:white;border:none;font-weight:800}
-
-/* Action sheet (plus) */
-.sheet-bg{position:fixed;inset:0;background:rgba(5,5,10,.6);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;z-index:15}
-.sheet{width:100%;max-width:900px;background:#0f0c18;border-top-left-radius:16px;border-top-right-radius:16px;border-top:1px solid var(--vio);padding:10px}
-.sheet .row{display:flex;gap:10px}
-.sheet .opt{flex:1;background:#151228;border:1px solid var(--vio2);color:#e9e3ff;border-radius:12px;padding:12px}
-
-/* FAQ */
-.faq-backdrop{position:fixed;inset:0;background:rgba(5,5,10,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:20}
-.faq-card{max-width:640px;width:92%;background:#0f0c18;color:#f2edff;border-radius:18px;padding:18px 18px 12px;position:relative;
-  box-shadow:0 0 0 3px #3b1f5f, 0 0 32px 6px rgba(135,16,255,.35)}
-.faq-card h2{margin:2px 0 10px;font-size:22px;color:#cbb6ff}
-.faq-section{margin:12px 0}
-.faq-pack{display:flex;align-items:center;gap:10px;background:#151228;border:1px solid #5a3d8f;border-radius:12px;padding:10px 12px;margin:8px 0}
-.faq-close{position:absolute;right:14px;top:10px;background:transparent;border:none;color:#cbb6ff;font-size:16px}
-
-/* Utils */
-.hidden{display:none}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Philomène I.A.</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+
+<body class="dark"> <!-- sombre par défaut -->
+
+  <!-- ===== TOP BAR ===== -->
   <header class="topbar">
-    <div class="row">
-      <div class="left">
-        <button id="btnLogin" class="pill">Connexion</button>
-        <button id="btnBuy" class="pill">Acheter</button>
+    <div class="top-left">
+      <!-- (rien ici pour laisser de la place) -->
+    </div>
+
+    <div class="top-center">
+      <button id="connectBtn" class="chip">Connexion</button>
+      <button id="buyBtn" class="chip">Acheter</button>
+
+      <div id="tokenBadge" class="chip chip-diamond">
+        💎 <span id="tokenCount">1000000</span>
       </div>
-      <div class="right">
-        <div class="token-badge" id="tokenBadge">
-          <span class="gem">💎</span><span id="tokenCount">1 000 000</span>
-        </div>
-        <button id="btnMenu" class="burger" aria-label="Menu">≡</button>
-      </div>
+
+      <button id="menuBtn" class="chip chip-icon" aria-label="Menu">☰</button>
     </div>
-    <div class="subtitle">
-      <span class="dot online"></span>
-      <span>Philomène I.A. — <strong>version 1.0</strong></span>
-    </div>
-    <div id="menuPanel" class="menu-panel" hidden>
-      <button id="toggleMode" class="menu-item">🌗 Mode jour / nuit</button>
-      <button id="openFaq" class="menu-item">❓ F.A.Q.</button>
-    </div>
+
+    <div class="top-right"><!-- vide --></div>
   </header>
 
-  <main id="chat">
-    <div class="bubble bot">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
-  </main>
+  <!-- petit espace sous les boutons -->
+  <div style="height:8px"></div>
 
-  <div class="composer-wrap">
-    <div class="composer">
-      <button id="plusBtn" class="plus">+</button>
-      <div class="input-box">
-        <input id="userInput" type="text" placeholder="Écrivez votre message..." autocomplete="off">
-        <button id="micBtn" class="mic-in" title="Dicter">🎤</button>
-      </div>
-      <button id="sendBtn" class="send">➤</button>
-    </div>
+  <!-- Ligne titre + version -->
+  <div class="version-row">
+    <span class="status-dot"></span>
+    <span class="app-name">Philomène I.A. — <strong>version 1.0</strong></span>
   </div>
 
-  <!-- Inputs invisibles pour fichiers -->
-  <input id="imgLibInput" type="file" accept="image/*" class="hidden">
-  <input id="imgCamInput" type="file" accept="image/*" capture="environment" class="hidden">
-  <input id="docInput" type="file" class="hidden">
+  <!-- ===== BURGER MENU PANEL ===== -->
+  <nav id="menuPanel" class="menu-panel" hidden>
+    <button id="menuThemeBtn" class="menu-item">🌗 Mode jour / nuit</button>
+    <button id="menuFaqBtn" class="menu-item">❓ F.A.Q.</button>
+  </nav>
 
-<script>
-/* ================== CONFIG ================== */
-const API_URL = "https://api.philomeneia.com/ask"; // Texte
-const API_IMG = "https://api.philomeneia.com/vision"; // Images/Docs (à adapter côté backend)
-let tokenCount = 1_000_000;
-
-/* ================== Sélecteurs ================== */
-const chat = document.getElementById('chat');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-const plusBtn = document.getElementById('plusBtn');
-const micBtn = document.getElementById('micBtn');
-const tokenCountEl = document.getElementById('tokenCount');
-const btnMenu = document.getElementById('btnMenu');
-const menuPanel = document.getElementById('menuPanel');
-const toggleMode = document.getElementById('toggleMode');
-const openFaq = document.getElementById('openFaq');
-const btnLogin = document.getElementById('btnLogin');
-const btnBuy = document.getElementById('btnBuy');
-const imgLibInput = document.getElementById('imgLibInput');
-const imgCamInput = document.getElementById('imgCamInput');
-const docInput = document.getElementById('docInput');
-
-/* ============ Thème: sombre par défaut ============ */
-(() => {
-  const saved = localStorage.getItem('theme');
-  if(saved === 'light') document.body.classList.add('light');
-})();
-toggleMode.addEventListener('click', ()=>{
-  document.body.classList.toggle('light');
-  localStorage.setItem('theme', document.body.classList.contains('light')?'light':'dark');
-  menuPanel.setAttribute('hidden','');
-});
-
-/* ================== Menu ================== */
-btnMenu.addEventListener('click', ()=>{
-  const hidden = menuPanel.hasAttribute('hidden');
-  document.querySelectorAll('.menu-panel').forEach(p=>p.setAttribute('hidden',''));
-  if(hidden) menuPanel.removeAttribute('hidden'); else menuPanel.setAttribute('hidden','');
-});
-document.addEventListener('click', (e)=>{
-  if(!menuPanel.contains(e.target) && e.target!==btnMenu) menuPanel.setAttribute('hidden','');
-});
-
-/* ================== Helpers UI ================== */
-function addBubble(text, who='bot'){
-  const b = document.createElement('div');
-  b.className = 'bubble ' + (who==='user'?'user':'bot');
-  b.textContent = text;
-  chat.appendChild(b);
-  chat.scrollTop = chat.scrollHeight;
-}
-function setTyping(on){
-  if(on){ addBubble('…', 'bot'); }
-  else{
-    const last = chat.lastElementChild;
-    if(last && last.textContent==='…') last.remove();
-  }
-}
-function updateTokenDisplay(){
-  tokenCountEl.textContent = tokenCount.toLocaleString('fr-FR');
-}
-window.updateTokensUI = (n)=>{ tokenCount = Number(n)||tokenCount; updateTokenDisplay(); };
-
-/* ================== Placeholders Connexion/Achat ================== */
-btnLogin.addEventListener('click', ()=>alert('Connexion : lier ton compte (placeholder).'));
-btnBuy.addEventListener('click', ()=>alert('Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ (+50% au 1er achat).'));
-
-/* ================== FAQ Popup ================== */
-function showFAQ(){
-  const wrap = document.createElement('div');
-  wrap.className='faq-backdrop';
-  wrap.innerHTML=`
-  <div class="faq-card">
-    <button class="faq-close" aria-label="Fermer">Fermer ✖</button>
-    <h2>Foire aux questions</h2>
-    <div class="faq-section">
-      <strong>Quelle IA utilise Philomène ?</strong>
-      <p>Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>, la version la plus avancée d’OpenAI.</p>
+  <!-- ===== CHAT AREA ===== -->
+  <main id="chatBox" class="chat-box">
+    <div class="bot msg">
+      Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.
     </div>
-    <div class="faq-section">
-      <strong>Comment fonctionnent les tokens ?</strong>
-      <p>Chaque question + réponse consomme un petit nombre de tokens selon la longueur. Le diamant 💎 affiche votre solde.</p>
+  </main>
+
+  <!-- ===== INPUT BAR ===== -->
+  <footer class="input-wrap">
+    <button id="plusBtn" class="pill pill-icon" aria-label="Ouvrir les options">＋</button>
+
+    <div class="input-bar">
+      <input id="userInput" type="text" placeholder="Écrivez votre message..." autocomplete="off" />
+      <button id="micBtn"   class="icon-btn" aria-label="Parler">🎤</button>
+      <button id="sendBtn"  class="send-btn" aria-label="Envoyer">▶</button>
     </div>
-    <div class="faq-section">
-      <strong>Packs disponibles</strong>
-      <div class="faq-pack">💎 1 000 000 tokens → 5 €</div>
-      <div class="faq-pack">💎 2 000 000 tokens → 10 €</div>
-      <div class="faq-pack">💎 4 000 000 tokens → 20 €</div>
-      <div class="faq-pack" style="justify-content:center;font-weight:700;">🎁 Premier achat : +50% au 1er achat</div>
-    </div>
-    <div class="faq-section">
-      <strong>Abonnement ?</strong>
-      <p>Non. Toute la puissance de GPT-5, sans abonnement : vous payez uniquement ce que vous consommez.</p>
-    </div>
-    <div class="faq-section">
-      <strong>Confidentialité</strong>
+  </footer>
+
+  <!-- ===== OPTION SHEET (déployée par le +) ===== -->
+  <div id="sheetBg" class="sheet-bg" hidden></div>
+  <div id="sheet" class="sheet" hidden>
+    <button id="pickPhoto"   class="sheet-item">🖼️ Photothèque</button>
+    <button id="takePhoto"   class="sheet-item">📷 Prendre une photo</button>
+    <button id="pickFile"    class="sheet-item">📄 Choisir un fichier</button>
+    <button id="sheetCancel" class="sheet-cancel">Fermer</button>
+
+    <!-- Inputs techniques (cachés) -->
+    <input id="imgLibInput" type="file" accept="image/*" hidden />
+    <input id="imgCamInput" type="file" accept="image/*" capture="environment" hidden />
+    <input id="docInput"    type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp" hidden />
+  </div>
+
+  <!-- ===== FAQ POPUP ===== -->
+  <dialog id="faqModal" class="faq-modal" aria-label="Foire aux questions">
+    <div class="faq-card">
+      <h2>💬 Foire aux questions</h2>
+
+      <h3>Quelle IA utilise Philomène ?</h3>
+      <p>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
+
+      <h3>Comment fonctionnent les tokens ?</h3>
+      <p>Chaque question + réponse consomment quelques tokens selon la longueur. Le diamant 💎 affiche votre solde.</p>
+
+      <h3>Packs disponibles</h3>
+      <ul class="packs">
+        <li>💎 1 000 000 tokens → 5 €</li>
+        <li>💎 2 000 000 tokens → 10 €</li>
+        <li>💎 4 000 000 tokens → 20 €</li>
+      </ul>
+      <p class="bonus">🎁 Premier achat : <strong>+50 % offerts</strong>.</p>
+
+      <h3>Abonnement ?</h3>
+      <p>Non. Toute la puissance de GPT-5, sans abonnement. Vous payez uniquement ce que vous consommez.</p>
+
+      <h3>Confidentialité</h3>
       <p>Vos échanges restent privés.</p>
+
+      <button id="faqCloseBtn" class="chip">Fermer</button>
     </div>
-  </div>`;
-  document.body.appendChild(wrap);
-  wrap.querySelector('.faq-close').addEventListener('click', ()=>wrap.remove());
-  wrap.addEventListener('click', (e)=>{ if(e.target===wrap) wrap.remove(); });
-}
-openFaq.addEventListener('click', ()=>{ showFAQ(); menuPanel.setAttribute('hidden',''); });
+  </dialog>
 
-/* ================== Action Sheet (+) ================== */
-let sheetBg=null;
-function openSheet(){
-  if(sheetBg) return;
-  sheetBg = document.createElement('div');
-  sheetBg.className='sheet-bg';
-  sheetBg.innerHTML=`
-    <div class="sheet">
-      <div class="row">
-        <button class="opt" id="pickPhoto">📷 Photothèque</button>
-        <button class="opt" id="takePhoto">📸 Prendre une photo</button>
-        <button class="opt" id="pickFile">📄 Choisir un fichier</button>
-      </div>
-    </div>`;
-  document.body.appendChild(sheetBg);
-  sheetBg.addEventListener('click', e=>{ if(e.target===sheetBg){closeSheet();} });
-
-  document.getElementById('pickPhoto').onclick = ()=>{ imgLibInput.click(); closeSheet(); };
-  document.getElementById('takePhoto').onclick = ()=>{ imgCamInput.click(); closeSheet(); };
-  document.getElementById('pickFile').onclick  = ()=>{ docInput.click(); closeSheet(); };
-}
-function closeSheet(){ if(sheetBg){ sheetBg.remove(); sheetBg=null; } }
-plusBtn.addEventListener('click', openSheet);
-
-/* ================== Micro (speech-to-text) ================== */
-let recognition=null;
-if('webkitSpeechRecognition' in window){
-  recognition = new webkitSpeechRecognition();
-  recognition.lang = 'fr-FR'; recognition.interimResults=false;
-  recognition.onresult = (e)=>{ const t = e.results[0][0].transcript; userInput.value = (userInput.value?userInput.value+' ':'') + t; };
-}
-micBtn.addEventListener('click', ()=>{
-  if(recognition){ recognition.start(); } else { alert("Micro non supporté sur ce navigateur."); }
-});
-
-/* ================== Envoi Texte ================== */
-async function sendMessage(){
-  const text = userInput.value.trim();
-  if(!text) return;
-  addBubble(text,'user');
-  userInput.value='';
-  setTyping(true);
-
-  try{
-    const r = await fetch(API_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({message:text, userId:'guest_'+Math.random().toString(36).slice(2)})
-    });
-    const data = await r.json().catch(()=>({answer:"Désolé, réponse illisible."}));
-    setTyping(false);
-    addBubble(data.answer || "Une réponse est arrivée, mais sans contenu.", 'bot');
-
-    // Décompte estimatif
-    const est = Math.ceil((text.length + (data.answer?data.answer.length:80))/4);
-    tokenCount = Math.max(0, tokenCount - est);
-    updateTokenDisplay();
-  }catch(err){
-    setTyping(false);
-    addBubble("Erreur réseau. Réessaie.", 'bot');
-  }
-}
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); }});
-
-/* ================== Upload Image / Doc ================== */
-async function handleUpload(file){
-  if(!file) return;
-  addBubble("Fichier reçu, j'analyse…",'bot');
-  try{
-    const form = new FormData();
-    form.append('file', file);
-    form.append('userId','guest_'+Math.random().toString(36).slice(2));
-    const r = await fetch(API_IMG,{method:'POST',body:form});
-    const data = await r.json().catch(()=>({answer:"Fichier reçu."}));
-    // Retire la bulle "j'analyse…" (dernière si c'est elle)
-    const last = chat.lastElementChild; if(last && last.textContent.startsWith("Fichier reçu")) last.remove();
-    addBubble(data.answer || "Fichier traité.", 'bot');
-
-    const est = Math.ceil((data.answer?data.answer.length:200)/4);
-    tokenCount = Math.max(0, tokenCount - est);
-    updateTokenDisplay();
-  }catch(e){
-    addBubble("Erreur lors de l'envoi du fichier.",'bot');
-  }
-}
-imgLibInput.addEventListener('change', ()=> handleUpload(imgLibInput.files?.[0]));
-imgCamInput.addEventListener('change', ()=> handleUpload(imgCamInput.files?.[0]));
-docInput.addEventListener('change', ()=> handleUpload(docInput.files?.[0]));
-
-/* ================== Init ================== */
-updateTokenDisplay();
-</script>
+  <!-- ===== SCRIPTS ===== -->
+  <script src="scripts.js" defer></script>
 </body>
 </html>
