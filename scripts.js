@@ -1,205 +1,211 @@
-// ====== Config ======
-const API_URL = "";            // mettre votre backend si dispo, sinon fallback local
-let tokenCount = 1_000_000;    // affichage
-const VERSION = "1.0";
+// ===== CONFIG =====
+const API_URL = "/ask";      // fallback si pas d’API custom
+const API_IMG = "/img";      // fallback images
+let tokenCount = 1_000_000;  // affichage du diamant
+let conversation = [];
 
-// ====== DOM ======
-const chat = document.getElementById("chat");
-const tokenEl = document.getElementById("tokenCount");
-const userInput = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const plusBtn = document.getElementById("plusBtn");
-const micBtn = document.getElementById("micBtn");
+// ===== SELECTEURS =====
+const tokenCountEl = document.getElementById('tokenCount');
+const menuBtn   = document.getElementById('menuBtn');
+const menuSheet = document.getElementById('menuSheet');
+const toggleModeBtn = document.getElementById('toggleMode');
+const faqBtn = document.getElementById('openFaq');
 
-const btnMenu = document.getElementById("btnMenu");
-const menuSheet = document.getElementById("menuSheet");
-const toggleModeBtn = document.getElementById("toggleMode");
-const openFaqBtn = document.getElementById("openFaq");
-const closeMenuBtn = document.getElementById("closeMenu");
+const loginBtn = document.getElementById('loginBtn');
+const buyBtn   = document.getElementById('buyBtn');
 
-const attachSheet = document.getElementById("attachSheet");
-const pickGalleryBtn = document.getElementById("pickGallery");
-const takePhotoBtn = document.getElementById("takePhoto");
-const pickFileBtn = document.getElementById("pickFile");
-const closeAttachBtn = document.getElementById("closeAttach");
+const messagesEl = document.getElementById('messages');
+const userInput  = document.getElementById('userInput');
+const sendBtn    = document.getElementById('sendBtn');
+const micBtn     = document.getElementById('micBtn');
 
-const imgLibInput = document.getElementById("imgFromLib");
-const imgCamInput = document.getElementById("imgFromCam");
-const docInput = document.getElementById("docInput");
+const plusBtn    = document.getElementById('plusBtn');
+const attachSheet= document.getElementById('attachSheet');
+const closeAttach= document.getElementById('closeAttach');
+const pickPhoto  = document.getElementById('pickPhoto');
+const takePhoto  = document.getElementById('takePhoto');
+const pickFile   = document.getElementById('pickFile');
+const imgLibInput= document.getElementById('imgLibInput');
+const imgCamInput= document.getElementById('imgCamInput');
+const docInput   = document.getElementById('docInput');
 
-const btnLogin = document.getElementById("btnLogin");
-const btnBuy = document.getElementById("btnBuy");
-const popup = document.getElementById("popup");
+const popup = document.getElementById('popup');
+const popupContent = document.getElementById('popupContent');
+const popupClose = document.getElementById('popupClose');
 
-// ====== Utils ======
-function fmtTokens(n){
-  return n.toLocaleString("fr-FR").replace(/\s/g, " ");
-}
-function addBubble(text, who="bot"){
-  const div = document.createElement("div");
-  div.className = `bubble ${who}`;
+// ===== INIT =====
+tokenCountEl.textContent = tokenCount.toLocaleString('fr-FR');
+const savedMode = localStorage.getItem('mode') || 'dark';
+document.body.classList.toggle('light', savedMode === 'light');
+document.body.classList.toggle('dark',  savedMode !== 'light');
+
+// ===== UI HELPERS =====
+function addMessage(text, who='bot'){
+  const div = document.createElement('div');
+  div.className = 'bubble ' + (who==='user'?'from-user':'from-bot');
   div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight + 9999;
+  messagesEl.appendChild(div);
+  // scroll
+  setTimeout(()=>window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}),10);
 }
-function setTyping(on=true){
+function setTyping(on){
   if(on){
-    addBubble("…", "bot");
+    addMessage('…', 'bot');
   }else{
-    // remove last typing
-    const last = chat.querySelector(".bubble.bot:last-child");
-    if(last && last.textContent === "…") last.remove();
+    // remove last "…" if present
+    const last = messagesEl.lastElementChild;
+    if(last && last.textContent === '…') last.remove();
   }
 }
-function showPopup(html){
-  popup.innerHTML = html + `<div style="margin-top:14px; text-align:right"><button id="closePopup" class="pill">Fermer</button></div>`;
-  if(typeof popup.showModal === "function"){ popup.showModal(); } else { popup.setAttribute("open",""); }
-  popup.querySelector("#closePopup").onclick = () => popup.close();
+function openPopup(html){
+  popupContent.innerHTML = html;
+  popup.showModal();
 }
+popupClose.addEventListener('click', ()=>popup.close());
 
-// ====== Menu / Sheets ======
-btnMenu.onclick = () => menuSheet.classList.remove("hidden");
-closeMenuBtn.onclick = () => menuSheet.classList.add("hidden");
-toggleModeBtn.onclick = () => {
-  document.body.classList.toggle("light");
-  document.body.classList.toggle("dark");
-};
-openFaqBtn.onclick = () => {
-  menuSheet.classList.add("hidden");
-  showPopup(`
-  <h3>Foire aux questions</h3>
+// ===== MENU =====
+menuBtn.addEventListener('click', ()=>{
+  menuSheet.classList.toggle('hidden');
+});
+document.addEventListener('click', (e)=>{
+  if(!menuSheet.contains(e.target) && e.target!==menuBtn){
+    menuSheet.classList.add('hidden');
+  }
+});
+toggleModeBtn.addEventListener('click', ()=>{
+  const light = document.body.classList.toggle('light');
+  document.body.classList.toggle('dark', !light);
+  localStorage.setItem('mode', light ? 'light' : 'dark');
+  menuSheet.classList.add('hidden');
+});
+
+// ===== FAQ POPUP =====
+faqBtn.addEventListener('click', ()=>{
+  const html = `
+  <h3>🗨️ Foire aux questions</h3>
   <p><strong>Quelle IA utilise Philomène ?</strong><br>
-     Philomène I.A. est propulsée par <b>GPT-5 Thinking</b>.</p>
+  Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée d’OpenAI.</p>
   <p><strong>Comment fonctionnent les tokens ?</strong><br>
-     Chaque question + réponse utilise un petit nombre de tokens. Le diamant 💎 affiche le solde.</p>
-  <p><strong>Packs :</strong><br>
-     💎 1 000 000 → 5 € &nbsp;•&nbsp; 💎 2 000 000 → 10 € &nbsp;•&nbsp; 💎 4 000 000 → 20 €<br>
-     🎁 Premier achat : <b>+50 % offerts</b>.</p>
-  `);
-};
+  Chaque question + réponse consomment un petit nombre de tokens selon leur longueur.
+  Le diamant 💎 affiche votre solde.</p>
+  <p><strong>Packs disponibles :</strong><br>
+  💎 1 000 000 tokens → 5€<br>
+  💎 2 000 000 tokens → 10€<br>
+  💎 4 000 000 tokens → 20€<br>
+  🎁 Premier achat : <strong>+50 % offerts</strong>.</p>`;
+  openPopup(html);
+  menuSheet.classList.add('hidden');
+});
 
-// Attachments
-plusBtn.onclick = () => attachSheet.classList.remove("hidden");
-closeAttachBtn.onclick = () => attachSheet.classList.add("hidden");
+// ===== PLACEHOLDER Connexion / Acheter =====
+loginBtn.addEventListener('click', ()=>{
+  openPopup("Connexion : lier ton compte (placeholder).");
+});
+buyBtn.addEventListener('click', ()=>{
+  const html = `Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ <strong>(+50% au 1er achat)</strong>.`;
+  openPopup(html);
+});
 
-pickGalleryBtn.onclick = () => imgLibInput.click();
-takePhotoBtn.onclick   = () => imgCamInput.click();
-pickFileBtn.onclick    = () => docInput.click();
+// ===== ATTACH SHEET (+) =====
+plusBtn.addEventListener('click', ()=>{
+  attachSheet.classList.toggle('hidden');
+});
+closeAttach.addEventListener('click', ()=>attachSheet.classList.add('hidden'));
 
-imgLibInput.onchange = handleImage;
-imgCamInput.onchange = handleImage;
-docInput.onchange    = handleDoc;
+pickPhoto.addEventListener('click', ()=>imgLibInput.click());
+takePhoto.addEventListener('click', ()=>imgCamInput.click());
+pickFile .addEventListener('click', ()=>docInput.click());
 
-async function handleImage(e){
-  const file = e.target.files && e.target.files[0];
+// -> envoi image (photothèque / caméra)
+async function sendImage(file){
   if(!file) return;
-  addBubble("📷 Image reçue. Analyse en cours…", "user");
-  await fakeLatency();
-  addBubble("J’ai bien reçu la photo. Dis-moi ce que tu veux que j’en fasse.", "bot");
+  setTyping(true);
+  try{
+    const fd = new FormData();
+    fd.append("image", file);
+    const resp = await fetch(API_IMG, {method:"POST", body:fd});
+    const data = await resp.json().catch(()=>null);
+    setTyping(false);
+    addMessage(data?.answer || "Image reçue ✅ (stub).", 'bot');
+    // estimer coût
+    tokenCount = Math.max(0, tokenCount - 50);
+    tokenCountEl.textContent = tokenCount.toLocaleString('fr-FR');
+  }catch(e){
+    setTyping(false);
+    addMessage("Erreur lors de l’envoi de l’image.", 'bot');
+  }finally{
+    attachSheet.classList.add('hidden');
+  }
 }
-async function handleDoc(e){
-  const file = e.target.files && e.target.files[0];
-  if(!file) return;
-  addBubble(`📄 Fichier reçu : ${file.name}`, "user");
-  await fakeLatency();
-  addBubble("Merci. Je peux en extraire le texte si tu veux.", "bot");
-}
+imgLibInput.addEventListener('change', e=> sendImage(e.target.files?.[0]));
+imgCamInput.addEventListener('change', e=> sendImage(e.target.files?.[0]));
 
-// ====== Auth & Buy (popups placeholders) ======
-btnLogin.onclick = () => showPopup(`Connexion : lier ton compte (placeholder).`);
-btnBuy.onclick   = () => showPopup(`Acheter des tokens : 1M=5€ • 2M=10€ • 4M=20€ <br/><b>(+50% au 1er achat)</b>.`);
-
-// ====== Send & AI ======
-sendBtn.onclick = sendMessage;
-userInput.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
-    e.preventDefault();
-    sendMessage();
+// -> envoi document
+docInput.addEventListener('change', async (e)=>{
+  const f = e.target.files?.[0];
+  if(!f) return;
+  setTyping(true);
+  try{
+    const fd = new FormData();
+    fd.append("file", f);
+    fd.append("prompt","Analyse ce fichier et résume.");
+    const resp = await fetch(API_IMG, {method:"POST", body:fd});
+    const data = await resp.json().catch(()=>null);
+    setTyping(false);
+    addMessage(data?.answer || "Fichier reçu ✅ (stub).", 'bot');
+    tokenCount = Math.max(0, tokenCount - 40);
+    tokenCountEl.textContent = tokenCount.toLocaleString('fr-FR');
+  }catch(e){
+    setTyping(false);
+    addMessage("Erreur lors de l’envoi du fichier.", 'bot');
+  }finally{
+    attachSheet.classList.add('hidden');
   }
 });
 
-function consumeTokens(inCount=60, outCount=140){
-  tokenCount = Math.max(0, tokenCount - (inCount + outCount));
-  tokenEl.textContent = fmtTokens(tokenCount);
-}
-
+// ===== ENVOI TEXTE =====
 async function sendMessage(){
-  const text = (userInput.value || "").trim();
+  const text = userInput.value.trim();
   if(!text) return;
-  addBubble(text, "user");
+  addMessage(text,'user');
   userInput.value = "";
+
   setTyping(true);
-
-  // Essayez l’API si fournie, sinon fallback local
   try{
-    let reply;
-    if(API_URL){
-      const resp = await fetch(API_URL, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ message:text })
-      });
-      const data = await resp.json();
-      reply = data.answer || data.reply || JSON.stringify(data);
-    }else{
-      reply = await localReply(text);
-    }
+    // Si tu as une API maison, remplace ici:
+    // POST {prompt, conversation}
+    const resp = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ prompt:text, conversation })
+    });
+    const data = await resp.json().catch(()=>null);
     setTyping(false);
-    addBubble(reply, "bot");
-    consumeTokens();
-  }catch(err){
+    const answer = data?.answer || "Bien reçu. Pose-moi la suite !";
+    addMessage(answer,'bot');
+
+    conversation.push({role:'user', content:text});
+    conversation.push({role:'assistant', content:answer});
+
+    // tokens (demo)
+    const est = 20 + Math.ceil(answer.length/12);
+    tokenCount = Math.max(0, tokenCount - est);
+    tokenCountEl.textContent = tokenCount.toLocaleString('fr-FR');
+  }catch(e){
     setTyping(false);
-    addBubble("Désolé, une erreur est survenue. Réessaie.", "bot");
+    addMessage("Oups, le service est indisponible pour le moment.", 'bot');
   }
 }
+sendBtn.addEventListener('click', sendMessage);
+userInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); }});
 
-// Fallback “intelligent” local
-async function localReply(q){
-  await fakeLatency();
-  const s = q.toLowerCase().trim();
+// ===== MICRO (placeholder) =====
+micBtn.addEventListener('click', ()=>{
+  openPopup("Micro : dictée vocale (placeholder).");
+});
 
-  // maths rapides
-  const math = tryEval(s);
-  if(math !== null) return `🧮 Résultat : ${math}`;
-
-  if(/(heure|time)/.test(s)){
-    return `⌚ Il est ${new Date().toLocaleTimeString("fr-FR")}.`;
-  }
-  if(/(bj|bonjour|salut|hello)/.test(s)) return "Bonjour ! Comment puis-je t’aider ?";
-
-  if(s.length <= 3) return "👌 Bien reçu. Pose-moi la suite !";
-
-  return `D’accord. Voici ce que je comprends : « ${q} ». Dis-moi si tu veux un résumé, des idées, ou un calcul.`;
-}
-function tryEval(s){
-  // sécurise un petit parse math
-  if(!/^[\d\+\-\*\/\.\(\)\s%]+$/.test(s)) return null;
-  try{
-    // eslint-disable-next-line no-eval
-    const r = eval(s);
-    if(typeof r === "number" && isFinite(r)) return Number(r.toFixed(6));
-  }catch(_){}
-  return null;
-}
-function fakeLatency(){ return new Promise(r => setTimeout(r, 600)); }
-
-// ====== Speech to text ======
-let recognition=null;
-micBtn.onclick = () => {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){ showPopup("La dictée vocale n’est pas supportée sur cet appareil."); return; }
-  if(recognition){ recognition.stop(); recognition = null; micBtn.classList.remove("active"); return; }
-  recognition = new SR();
-  recognition.lang = "fr-FR";
-  recognition.interimResults = false;
-  recognition.onresult = (e)=>{
-    const txt = Array.from(e.results).map(r=>r[0].transcript).join(" ");
-    userInput.value = (userInput.value ? userInput.value+" " : "") + txt;
-  };
-  recognition.onend = ()=>{ micBtn.classList.remove("active"); recognition=null; };
-  recognition.start(); micBtn.classList.add("active");
-};
-
-// ====== Init ======
-tokenEl.textContent = fmtTokens(tokenCount);
-document.body.classList.add("dark");   // sombre par défaut
+// ===== Focus: garder la barre en bas sous clavier iOS/Android =====
+window.addEventListener('resize', ()=>{
+  // on force le scroll en bas quand le clavier s’ouvre
+  window.scrollTo(0, document.body.scrollHeight);
+});
