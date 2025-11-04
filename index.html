@@ -6,16 +6,11 @@
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+<body class="dark"><!-- sombre par défaut -->
 
-<body class="dark"> <!-- sombre par défaut -->
-
-  <!-- ===== TOP BAR ===== -->
+  <!-- ========= TOP BAR ========= -->
   <header class="topbar">
-    <div class="top-left">
-      <!-- (rien ici pour laisser de la place) -->
-    </div>
-
-    <div class="top-center">
+    <div class="topbar-row">
       <button id="connectBtn" class="chip">Connexion</button>
       <button id="buyBtn" class="chip">Acheter</button>
 
@@ -23,14 +18,9 @@
         💎 <span id="tokenCount">1000000</span>
       </div>
 
-      <button id="menuBtn" class="chip chip-icon" aria-label="Menu">☰</button>
+      <button id="menuBtn" class="chip chip-icon" aria-label="Menu">≡</button>
     </div>
-
-    <div class="top-right"><!-- vide --></div>
   </header>
-
-  <!-- petit espace sous les boutons -->
-  <div style="height:8px"></div>
 
   <!-- Ligne titre + version -->
   <div class="version-row">
@@ -38,45 +28,45 @@
     <span class="app-name">Philomène I.A. — <strong>version 1.0</strong></span>
   </div>
 
-  <!-- ===== BURGER MENU PANEL ===== -->
+  <!-- ========= MENU BURGER (popover) ========= -->
   <nav id="menuPanel" class="menu-panel" hidden>
     <button id="menuThemeBtn" class="menu-item">🌗 Mode jour / nuit</button>
     <button id="menuFaqBtn" class="menu-item">❓ F.A.Q.</button>
   </nav>
 
-  <!-- ===== CHAT AREA ===== -->
-  <main id="chatBox" class="chat-box">
+  <!-- ========= ZONE DE CHAT ========= -->
+  <main id="chatBox" class="chat-box" role="main">
     <div class="bot msg">
       Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.
     </div>
   </main>
 
-  <!-- ===== INPUT BAR ===== -->
+  <!-- ========= BARRE D’ENVOI ========= -->
   <footer class="input-wrap">
     <button id="plusBtn" class="pill pill-icon" aria-label="Ouvrir les options">＋</button>
 
     <div class="input-bar">
       <input id="userInput" type="text" placeholder="Écrivez votre message..." autocomplete="off" />
-      <button id="micBtn"   class="icon-btn" aria-label="Parler">🎤</button>
-      <button id="sendBtn"  class="send-btn" aria-label="Envoyer">▶</button>
+      <button id="micBtn" class="icon-btn" aria-label="Parler">🎤</button>
+      <button id="sendBtn" class="send-btn" aria-label="Envoyer">▶</button>
     </div>
   </footer>
 
-  <!-- ===== OPTION SHEET (déployée par le +) ===== -->
+  <!-- ========= SHEET (+) ========= -->
   <div id="sheetBg" class="sheet-bg" hidden></div>
   <div id="sheet" class="sheet" hidden>
-    <button id="pickPhoto"   class="sheet-item">🖼️ Photothèque</button>
-    <button id="takePhoto"   class="sheet-item">📷 Prendre une photo</button>
-    <button id="pickFile"    class="sheet-item">📄 Choisir un fichier</button>
+    <button id="pickPhoto" class="sheet-item">🖼️ Photothèque</button>
+    <button id="takePhoto" class="sheet-item">📷 Prendre une photo</button>
+    <button id="pickFile"  class="sheet-item">📄 Choisir un fichier</button>
     <button id="sheetCancel" class="sheet-cancel">Fermer</button>
 
-    <!-- Inputs techniques (cachés) -->
+    <!-- Inputs techniques cachés -->
     <input id="imgLibInput" type="file" accept="image/*" hidden />
     <input id="imgCamInput" type="file" accept="image/*" capture="environment" hidden />
     <input id="docInput"    type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp" hidden />
   </div>
 
-  <!-- ===== FAQ POPUP ===== -->
+  <!-- ========= FAQ POPUP ========= -->
   <dialog id="faqModal" class="faq-modal" aria-label="Foire aux questions">
     <div class="faq-card">
       <h2>💬 Foire aux questions</h2>
@@ -93,7 +83,7 @@
         <li>💎 2 000 000 tokens → 10 €</li>
         <li>💎 4 000 000 tokens → 20 €</li>
       </ul>
-      <p class="bonus">🎁 Premier achat : <strong>+50 % offerts</strong>.</p>
+      <p class="bonus">🎁 Premier achat : <strong>+50 % offerts</strong> (1,5 M · 3 M · 6 M).</p>
 
       <h3>Abonnement ?</h3>
       <p>Non. Toute la puissance de GPT-5, sans abonnement. Vous payez uniquement ce que vous consommez.</p>
@@ -105,7 +95,6 @@
     </div>
   </dialog>
 
-  <!-- ===== SCRIPTS ===== -->
   <script src="scripts.js" defer></script>
 </body>
 </html>
