@@ -7,8 +7,9 @@ const API_URL = "https://api.philomeneia.com/ask";
 const FALLBACK_URL = "/ask";
 const VERSION = "version 1.3";
 
-/* Optionnel : endpoint de config publique renvoyant { paymentsEnabled: boolean, paypalClientId: string } */
-const PUBLIC_CONFIG_URL = "/config";
+/* IMPORTANT : /config doit venir du même backend que /ask */
+const API_BASE = API_URL.replace(/\/ask$/, "");
+const PUBLIC_CONFIG_URL = `${API_BASE}/config`;
 
 /* ====== DOM ====== */
 const chat         = document.getElementById("chat");
@@ -70,7 +71,6 @@ const I18N = {
     menuTheme: "🌗 Light / Dark mode", menuFaq: "❓ FAQ",
     menuClear: "🧹 Clear history",
     inputPh: "Type your message…", sheetTitle: "Attach…",
-    lib: "📷 Photo library", cam: "📸 Take a photo", file: "🗂️ Choose a file", close: "Close",
     faqTitle: "Frequently Asked Questions",
     confirmClear: "Clear all chat history? (tokens stay unchanged)",
     faqHtml: `
@@ -91,7 +91,6 @@ const I18N = {
     menuTheme: "🌗 Licht / Donker", menuFaq: "❓ Veelgestelde vragen",
     menuClear: "🧹 Geschiedenis wissen",
     inputPh: "Schrijf uw bericht…", sheetTitle: "Bijvoegen…",
-    lib: "📷 Fotobibliotheek", cam: "📸 Foto maken", file: "🗂️ Bestand kiezen", close: "Sluiten",
     faqTitle: "Veelgestelde vragen",
     confirmClear: "Alle chatgeschiedenis wissen? (tokens blijven ongewijzigd)",
     faqHtml: `
@@ -171,7 +170,6 @@ if (!Array.isArray(conversation) || conversation.length === 0) {
   pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam;
   pickFile.textContent    = T.file; sheetClose.textContent = T.close;
 
-  // + bouton Effacer l’historique
   const clearBtn = document.createElement("button");
   clearBtn.id = "clearHistory";
   clearBtn.className = "dropdown__item";
@@ -301,15 +299,28 @@ micBtn.addEventListener("click", ()=> recognition ? recognition.start() :
 );
 
 /* ====== CHAT ====== */
+async function openPayUI(){
+  payModal.showModal();
+  refreshPackButtonsLabels?.();
+  await configReady;              // on attend la config avant d’essayer PayPal
+  if(!PAYPAL_CLIENT_ID || PAYPAL_CLIENT_ID === "__TON_CLIENT_ID__"){
+    addBubble(LANG==="fr"
+      ? "⚠️ Paiement indisponible : identifiant PayPal absent côté serveur (/config)."
+      : LANG==="nl"
+      ? "⚠️ Betaling niet beschikbaar: PayPal-ID ontbreekt (/config)."
+      : "⚠️ Payment unavailable: missing PayPal client ID from /config.", "bot");
+    return;
+  }
+  renderPayPal(chosenPack);
+}
+
 async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
-  // NEW: si plus de tokens, on ouvre PayPal et on bloque l’envoi
+  // si plus de tokens : on ouvre la modale d’achat
   if (tokenBalance <= 0) {
-    payModal.showModal();
-    refreshPackButtonsLabels?.();
-    renderPayPal(chosenPack);
+    openPayUI();
     return;
   }
 
@@ -348,7 +359,7 @@ const payClose = document.getElementById("payClose");
 let chosenPack = 5;
 
 let PAYMENTS_ENABLED = true;         // défaut : on suppose actif (pour compat)
-let PAYPAL_CLIENT_ID = "__TON_CLIENT_ID__"; // remplacé si /config répond
+let PAYPAL_CLIENT_ID = "__TON_CLIENT_ID__"; // remplacé via /config
 
 function refreshPackButtonsLabels(){
   const container = document.querySelector(".packsRow");
@@ -362,7 +373,10 @@ function refreshPackButtonsLabels(){
   });
 }
 
-// Essaye de charger la config publique
+/* — Attente de la config — */
+let _resolveConfig; 
+const configReady = new Promise(r => (_resolveConfig = r));
+
 (async function initPaymentsConfig(){
   try{
     const r = await fetch(PUBLIC_CONFIG_URL, { method:"GET" });
@@ -373,15 +387,11 @@ function refreshPackButtonsLabels(){
     }
   }catch(_){}
   if(!PAYMENTS_ENABLED && btnBuy){ btnBuy.style.display = "none"; }
+  _resolveConfig(true);
 })();
 
 if(btnBuy && payModal){
-  btnBuy.onclick = ()=>{
-    if(!PAYMENTS_ENABLED){ pop(LANG==="fr"?"Le paiement est temporairement désactivé.":"Payments are temporarily disabled.","Paiement"); return; }
-    payModal.showModal();
-    refreshPackButtonsLabels();
-    renderPayPal(chosenPack);
-  };
+  btnBuy.onclick = ()=> openPayUI();
   payClose.onclick = ()=> payModal.close();
   document.addEventListener("click",(e)=>{
     const b=e.target.closest(".packsRow .pill"); if(!b) return;
@@ -391,17 +401,34 @@ if(btnBuy && payModal){
 }
 
 async function ensurePayPalSDK(){
-  if(document.getElementById("paypal-sdk")) return;
-  const s=document.createElement("script");
-  s.id="paypal-sdk";
-  s.src=`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(PAYPAL_CLIENT_ID)}&currency=EUR`;
-  document.body.appendChild(s);
-  await new Promise(r=> s.onload=r);
+  // Déjà injecté et prêt
+  if (window.paypal) return;
+
+  if(!document.getElementById("paypal-sdk")){
+    const s=document.createElement("script");
+    s.id="paypal-sdk";
+    s.src=`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(PAYPAL_CLIENT_ID)}&currency=EUR&intent=capture`;
+    document.body.appendChild(s);
+  }
+
+  // Attend que window.paypal soit dispo
+  for(let i=0;i<40;i++){ // ~4s max
+    if(window.paypal) return;
+    await new Promise(r=> setTimeout(r,100));
+  }
+  throw new Error("PayPal SDK indisponible");
 }
 
 async function renderPayPal(pack){
   if(!PAYMENTS_ENABLED) return;
-  await ensurePayPalSDK();
+  if(!PAYPAL_CLIENT_ID || PAYPAL_CLIENT_ID === "__TON_CLIENT_ID__") return;
+
+  try{
+    await ensurePayPalSDK();
+  }catch(e){
+    addBubble(LANG==="fr"?"❌ Impossible de charger PayPal SDK.":"❌ Unable to load PayPal SDK.","bot");
+    return;
+  }
 
   const amount = PACKS[pack]?.amount || "5.00";
   const box=document.getElementById("paypal-buttons");
@@ -468,7 +495,6 @@ function giveSigninBonusFor(uid){
     addBubble(`🎉 +${bonus.toLocaleString("fr-FR")} tokens offerts (inscription)`, "bot");
   }
 }
-// Init Clerk robuste (attend jusqu’à 15s)
 async function initClerkOnce(timeoutMs=15000){
   const start = Date.now();
   while(Date.now()-start < timeoutMs){
