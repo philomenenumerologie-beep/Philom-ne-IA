@@ -1,9 +1,10 @@
 /* =========================
    Philomène I.A. — scripts.js
+   version 1.3 (avec calcul tokens amélioré)
    ========================= */
 
 /* ====== CONFIG ====== */
-const API_URL = "https://api.philomeneia.com/ask"; // backend (met FALLBACK_URL si offline)
+const API_URL = "https://api.philomeneia.com/ask";
 const FALLBACK_URL = "/ask";
 const VERSION = "version 1.3";
 
@@ -174,6 +175,20 @@ document.getElementById("modalClose").onclick =
 function updateTokenUI() {
   if (tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR");
 }
+
+/* ====== NOUVEAU SYSTÈME DE CALCUL ====== */
+function estimateTokensByText(text) {
+  if (!text) return 0;
+  const cleaned = text.trim();
+  const tokens = Math.ceil(cleaned.length / 3.5); // moyenne haute
+  return Math.max(1, tokens);
+}
+function spendTokensEstimate(prompt, answer) {
+  const totalTokens = estimateTokensByText(prompt + " " + answer);
+  tokenBalance = Math.max(0, tokenBalance - totalTokens);
+  localStorage.setItem(LS_TOKENS, tokenBalance);
+  updateTokenUI();
+}
 function spendTokensReal(usage) {
   const used = Math.max(0, Number(usage?.total_tokens) || 0);
   if (used > 0) {
@@ -182,107 +197,6 @@ function spendTokensReal(usage) {
     updateTokenUI();
   }
 }
-function spendEstimateByText(str) {
-  const est = Math.ceil((str || "").length / 4);
-  tokenBalance = Math.max(0, tokenBalance - est);
-  localStorage.setItem(LS_TOKENS, tokenBalance);
-  updateTokenUI();
-}
-
-/* ====== MENU ====== */
-btnMenu.addEventListener("click", () => (dropdown.hidden = !dropdown.hidden));
-document.addEventListener("click", (e) => {
-  if (!dropdown.hidden) {
-    const w = e.target.closest("#menuDropdown") || e.target.closest("#btnMenu");
-    if (!w) dropdown.hidden = true;
-  }
-});
-toggleTheme.addEventListener("click", () => {
-  const b = document.body;
-  const isLight = b.classList.toggle("theme-light");
-  if (isLight) b.classList.remove("theme-dark");
-  else b.classList.add("theme-dark");
-  dropdown.hidden = true;
-});
-openFaq.addEventListener("click", () => {
-  dropdown.hidden = true;
-  pop(T.faqHtml, T.faqTitle);
-});
-
-/* ====== SHEET JOINDRE ====== */
-const openSheet  = () => (sheet.hidden = false);
-const closeSheet = () => (sheet.hidden = true);
-plusBtn.addEventListener("click", openSheet);
-sheetClose.addEventListener("click", closeSheet);
-pickLibrary.addEventListener("click", () => imgLibraryInput.click());
-takePhoto  .addEventListener("click", () => imgCameraInput.click());
-pickFile   .addEventListener("click", () => docInput.click());
-
-/* ====== UPLOAD IMAGE ====== */
-async function uploadImageToAnalyze(file) {
-  if (!file) return;
-  addBubble(`${LANG === "fr" ? "📎 Fichier reçu" : LANG === "nl" ? "📎 Bestand ontvangen" : "📎 File received"} : ${file.name}`, "user");
-  setTyping(true);
-
-  const urlBase = API_URL || FALLBACK_URL;
-  const url = urlBase.includes("/ask") ? urlBase.replace("/ask", "/analyze-image") : urlBase + "/analyze-image";
-
-  const fd = new FormData();
-  fd.append("image", file);
-  fd.append("userId", userId);
-  fd.append("prompt",
-    LANG === "fr" ? "Analyse cette image."
-    : LANG === "nl" ? "Analyseer deze afbeelding."
-    : "Analyze this image."
-  );
-
-  try {
-    const resp = await fetch(url, { method: "POST", body: fd });
-    const data = await resp.json();
-    setTyping(false);
-    const answer =
-      data?.answer ||
-      (LANG === "fr" ? "Je n’ai rien détecté." : LANG === "nl" ? "Niets gedetecteerd." : "Nothing detected.");
-    addBubble(answer, "bot");
-    if (data?.usage?.total_tokens) spendTokensReal(data.usage);
-  } catch (e) {
-    setTyping(false);
-    addBubble(
-      LANG === "fr" ? "Erreur d’analyse d’image."
-      : LANG === "nl" ? "Fout bij afbeeldingsanalyse."
-      : "Image analysis error.",
-      "bot"
-    );
-    console.error(e);
-  }
-}
-imgLibraryInput.onchange = (e) => uploadImageToAnalyze(e.target.files?.[0]);
-imgCameraInput .onchange = (e) => uploadImageToAnalyze(e.target.files?.[0]);
-docInput       .onchange = (e) => uploadImageToAnalyze(e.target.files?.[0]);
-
-/* ====== MICRO ====== */
-let recognition = null;
-if ("webkitSpeechRecognition" in window) {
-  const R = window.webkitSpeechRecognition;
-  recognition = new R();
-  recognition.lang = LANG === "nl" ? "nl-NL" : LANG === "en" ? "en-US" : "fr-FR";
-  recognition.interimResults = false;
-  recognition.onresult = (e) => { input.value = e.results[0][0].transcript; };
-}
-micBtn.addEventListener(
-  "click",
-  () =>
-    recognition
-      ? recognition.start()
-      : pop(
-          LANG === "fr"
-            ? "Le micro n’est pas supporté par ce navigateur."
-            : LANG === "nl"
-            ? "Microfoon niet ondersteund door deze browser."
-            : "Micro is not supported by this browser.",
-          "Micro"
-        )
-);
 
 /* ====== CHAT ====== */
 async function sendMessage() {
@@ -299,7 +213,6 @@ async function sendMessage() {
   try {
     let data;
     if (url === FALLBACK_URL) {
-      // mock local
       await new Promise((r) => setTimeout(r, 400));
       data = {
         answer:
@@ -328,9 +241,7 @@ async function sendMessage() {
     if (data?.usage && typeof data.usage.total_tokens === "number") {
       spendTokensReal(data.usage);
     } else {
-      // fallback : décrément approximatif
-      spendEstimateByText(text);
-      spendEstimateByText(answer);
+      spendTokensEstimate(text, answer);
     }
 
     conversation.push({ role: "assistant", content: answer });
@@ -349,180 +260,3 @@ async function sendMessage() {
 }
 sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); sendMessage(); } });
-
-/* ====== PAYPAL (client-side) ====== */
-const payModal = document.getElementById("payModal");
-const payClose = document.getElementById("payClose");
-let chosenPack = 5;
-
-if (btnBuy && payModal) {
-  btnBuy.onclick = () => { payModal.showModal(); renderPayPal(chosenPack); };
-  payClose.onclick = () => payModal.close();
-  document.addEventListener("click", (e) => {
-    const b = e.target.closest(".packsRow .pill");
-    if (!b) return;
-    chosenPack = Number(b.dataset.pack);
-    renderPayPal(chosenPack);
-  });
-}
-
-async function renderPayPal(pack) {
-  if (!document.getElementById("paypal-sdk")) {
-    const s = document.createElement("script");
-    s.id = "paypal-sdk";
-    s.src = "https://www.paypal.com/sdk/js?client-id=__TON_CLIENT_ID__&currency=EUR";
-    document.body.appendChild(s);
-    await new Promise((r) => (s.onload = r));
-  }
-
-  const amount = pack === 5 ? "5.00" : pack === 10 ? "10.00" : "20.00";
-  const box = document.getElementById("paypal-buttons");
-  if (!box) return;
-  box.innerHTML = "";
-
-  window.paypal
-    .Buttons({
-      style: { layout: "horizontal", height: 45 },
-      createOrder: (data, actions) =>
-        actions.order.create({
-          purchase_units: [{ amount: { currency_code: "EUR", value: amount } }]
-        }),
-      onApprove: async (data, actions) => {
-        try {
-          await actions.order.capture();
-
-          const baseTokens = pack === 5 ? 1_000_000 : pack === 10 ? 2_000_000 : 4_000_000;
-          const FIRST_FLAG = "philo_first_purchase_done";
-          const isFirst = !localStorage.getItem(FIRST_FLAG);
-          const bonus = isFirst ? Math.floor(baseTokens * 0.5) : 0;
-          if (isFirst) localStorage.setItem(FIRST_FLAG, "1");
-
-          const credited = baseTokens + bonus;
-          tokenBalance += credited;
-          localStorage.setItem(LS_TOKENS, tokenBalance);
-          updateTokenUI();
-
-          const msg =
-            LANG === "fr"
-              ? `✅ Paiement confirmé (${amount}€). +${credited.toLocaleString("fr-FR")} tokens crédités.`
-              : LANG === "nl"
-              ? `✅ Betaling bevestigd (${amount}€). +${credited.toLocaleString("fr-FR")} tokens toegevoegd.`
-              : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added.`;
-          addBubble(msg, "bot");
-          payModal.close();
-        } catch (err) {
-          console.error(err);
-          addBubble(
-            LANG === "fr" ? "❌ Erreur lors de la capture du paiement."
-            : LANG === "nl" ? "❌ Fout bij betalingsverwerking."
-            : "❌ Payment capture error.",
-            "bot"
-          );
-        }
-      },
-      onError: (err) => {
-        console.error(err);
-        addBubble(
-          LANG === "fr" ? "❌ Paiement refusé/annulé."
-          : LANG === "nl" ? "❌ Betaling geweigerd/geannuleerd."
-          : "❌ Payment failed/cancelled.",
-          "bot"
-        );
-      }
-    })
-    .render("#paypal-buttons");
-}
-
-/* ====== CLERK (auth) ====== */
-const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed_by_user";
-
-function giveSigninBonusFor(uid) {
-  const key = `${LS_SIGNUP_BONUS}:${uid}`;
-  if (!localStorage.getItem(key)) {
-    const bonus = 3000;
-    tokenBalance += bonus;
-    localStorage.setItem(LS_TOKENS, tokenBalance);
-    localStorage.setItem(key, "1");
-    updateTokenUI();
-    addBubble(`🎉 +${bonus.toLocaleString("fr-FR")} tokens offerts (inscription)`, "bot");
-  }
-}
-
-// initialisation fiable (poll jusqu’à 15 s)
-async function initClerkOnce(timeoutMs = 15000) {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    if (window.Clerk) {
-      try {
-        await window.Clerk.load();
-        return true;
-      } catch (e) { /* on réessaye */ }
-    }
-    await new Promise((r) => setTimeout(r, 200));
-  }
-  return false;
-}
-
-// branchement
-(async () => {
-  const loginBtn = document.getElementById("btnLogin");
-
-  // Click avant que Clerk soit prêt → on tente l'init à la volée
-  loginBtn.addEventListener("click", async () => {
-    if (!window.Clerk || !window.Clerk.loaded) {
-      const okNow = await initClerkOnce();
-      if (!okNow) {
-        pop(
-          LANG === "fr"
-            ? "Connexion momentanément indisponible. Réessaie dans quelques secondes."
-            : LANG === "nl"
-            ? "Inloggen tijdelijk niet beschikbaar. Probeer zo meteen opnieuw."
-            : "Sign-in temporarily unavailable. Please try again in a moment.",
-          "Connexion"
-        );
-        return;
-      }
-    }
-
-    const { user, session } = Clerk;
-
-    // Déjà connecté → déconnexion
-    if (user && session) {
-      await Clerk.signOut();
-      addBubble("👋 Déconnecté.", "bot");
-      return;
-    }
-
-    // Sinon, ouverture modale
-    await Clerk.openSignIn({
-      afterSignUp: async () => {
-        await initClerkOnce();
-        const u = Clerk.user; if (u?.id) giveSigninBonusFor(u.id);
-        addBubble("✅ Inscription réussie", "bot");
-      },
-      afterSignIn: async () => {
-        await initClerkOnce();
-        const u = Clerk.user; if (u?.id) giveSigninBonusFor(u.id);
-        addBubble("✅ Connexion réussie", "bot");
-      }
-    });
-  });
-
-  // Quand Clerk devient prêt, on maintient le libellé du bouton
-  const ok = await initClerkOnce();
-  if (ok) {
-    Clerk.addListener(({ user, session }) => {
-      btnLogin.textContent = (user && session) ? T.logout : T.login;
-    });
-    const { user, session } = Clerk;
-    btnLogin.textContent = (user && session) ? T.logout : T.login;
-  } else {
-    console.warn("Clerk non chargé après attente.");
-  }
-})();
-
-/* ====== AUTO-SCROLL COMPOSER ====== */
-const io = new IntersectionObserver(() => {
-  chat.scrollTop = chat.scrollHeight;
-});
-io.observe(document.getElementById("composer"));
