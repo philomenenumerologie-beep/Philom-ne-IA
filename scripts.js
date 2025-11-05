@@ -1,4 +1,3 @@
-<!-- scripts.js -->
 /* =========================
    Philomène I.A. — scripts.js (clean + mémoire + clear + PayPal dynamique)
    ========================= */
@@ -53,7 +52,6 @@ const I18N = {
     lib: "📷 Photothèque", cam: "📸 Prendre une photo", file: "🗂️ Choisir un fichier", close: "Fermer",
     faqTitle: "Foire aux questions",
     confirmClear: "Effacer tout l’historique de chat ? (les tokens restent inchangés)",
-    // CHANGÉ : packs FAQ 500k / 1,2M / 3M + bonus 50 %
     faqHtml: `
       <p><strong>Quelle IA utilise Philomène ?</strong><br/>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Comment fonctionnent les tokens ?</strong><br/>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
@@ -307,6 +305,14 @@ async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
+  // NEW: si plus de tokens, on ouvre PayPal et on bloque l’envoi
+  if (tokenBalance <= 0) {
+    payModal.showModal();
+    refreshPackButtonsLabels?.();
+    renderPayPal(chosenPack);
+    return;
+  }
+
   addBubble(text,"user");
   conversation.push({ role:"user", content:text }); saveConversation();
 
@@ -344,7 +350,6 @@ let chosenPack = 5;
 let PAYMENTS_ENABLED = true;         // défaut : on suppose actif (pour compat)
 let PAYPAL_CLIENT_ID = "__TON_CLIENT_ID__"; // remplacé si /config répond
 
-// Mets à jour les libellés des boutons packs dans la modale (si le HTML a des textes obsolètes)
 function refreshPackButtonsLabels(){
   const container = document.querySelector(".packsRow");
   if (!container) return;
@@ -352,7 +357,6 @@ function refreshPackButtonsLabels(){
     const val = Number(btn.dataset.pack);
     const cfg = PACKS[val];
     if (!cfg) return;
-    // Affiche 500 000 / 1 200 000 / 3 000 000 en FR, etc.
     const formatted = cfg.tokens.toLocaleString(LANG==="fr"?"fr-FR":LANG==="nl"?"nl-NL":"en-US");
     btn.textContent = `${val}€ • ${formatted}`;
   });
@@ -375,7 +379,7 @@ if(btnBuy && payModal){
   btnBuy.onclick = ()=>{
     if(!PAYMENTS_ENABLED){ pop(LANG==="fr"?"Le paiement est temporairement désactivé.":"Payments are temporarily disabled.","Paiement"); return; }
     payModal.showModal();
-    refreshPackButtonsLabels();             // <-- met à jour l’affichage packs
+    refreshPackButtonsLabels();
     renderPayPal(chosenPack);
   };
   payClose.onclick = ()=> payModal.close();
@@ -413,7 +417,6 @@ async function renderPayPal(pack){
       try{
         await actions.order.capture();
 
-        // CHANGÉ : on crédite selon PACKS (500k / 1,2M / 3M)
         const baseTokens = PACKS[pack]?.tokens || 500_000;
         const FIRST_FLAG="philo_first_purchase_done";
         const isFirst=!localStorage.getItem(FIRST_FLAG);
@@ -433,9 +436,6 @@ async function renderPayPal(pack){
               : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added${isFirst?" (+50% first purchase)":""}.`
           ,"bot"
         );
-
-        // (optionnel) notifier ton backend
-        // try{ await fetch("/payments/notify", {method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ userId, pack, amount, credited })}); }catch(_){}
 
         payModal.close();
       }catch(err){
