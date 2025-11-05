@@ -6,7 +6,7 @@
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Clerk (Connexion) -->
+  <!-- Clerk (Connexion) : charge AVANT scripts.js -->
   <script
     async
     crossorigin="anonymous"
@@ -16,45 +16,44 @@
 </head>
 <body class="theme-dark">
   <!-- Topbar -->
-  <header id="topbar">
+  <header id="topbar" role="banner">
     <div class="topbar__left">
-      <button id="btnLogin" class="chip">Connexion</button>
-      <button id="btnBuy" class="chip">Acheter</button>
+      <button id="btnLogin" class="chip" aria-label="Se connecter">Connexion</button>
+      <button id="btnBuy" class="chip" aria-label="Acheter des tokens">Acheter</button>
     </div>
 
     <div class="topbar__right">
-      <div id="tokenBadge" class="gem">
-        <span class="gem__icon">💎</span>
-        <!-- Astuce: démarre à 2 000 (invité) -->
+      <div id="tokenBadge" class="gem" aria-live="polite">
+        <span class="gem__icon" aria-hidden="true">💎</span>
         <span id="tokenCount">2 000</span>
       </div>
-      <button id="btnMenu" class="chip icon">≡</button>
+      <button id="btnMenu" class="chip icon" aria-haspopup="true" aria-expanded="false">≡</button>
     </div>
 
-    <!-- Dropdown menu -->
-    <div id="menuDropdown" class="dropdown" hidden>
+    <!-- Menu -->
+    <nav id="menuDropdown" class="dropdown" hidden>
       <button id="toggleTheme" class="dropdown__item">🌗 Mode jour / nuit</button>
       <button id="openFaq" class="dropdown__item">❓ F.A.Q.</button>
-    </div>
+    </nav>
   </header>
 
-  <!-- Version line -->
-  <div id="versionLine">
-    <span class="dot dot--on"></span>
+  <!-- Version -->
+  <div id="versionLine" aria-live="polite">
+    <span class="dot dot--on" aria-hidden="true"></span>
     <span>Philomène I.A. — <strong id="appVersion">version 1.2</strong></span>
   </div>
 
-  <!-- Chat area -->
-  <main id="chat">
+  <!-- Chat -->
+  <main id="chat" role="main">
     <div class="bubble bot">
       <div class="bubble__content">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
     </div>
-    <div id="messages"></div>
+    <div id="messages" aria-live="polite"></div>
   </main>
 
   <!-- Composer -->
   <footer id="composer">
-    <button id="plusBtn" class="fab">+</button>
+    <button id="plusBtn" class="fab" aria-label="Joindre">+</button>
 
     <div class="inputWrap">
       <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
@@ -72,14 +71,15 @@
         <button id="pickFile" class="pill">🗂️ Choisir un fichier</button>
         <button id="closeSheet" class="pill pill--ghost">Fermer</button>
       </div>
+      <!-- Inputs cachés -->
       <input id="imgLibraryInput" type="file" accept="image/*" hidden />
       <input id="imgCameraInput" type="file" accept="image/*" capture="environment" hidden />
       <input id="docInput" type="file" hidden />
     </div>
   </footer>
 
-  <!-- Generic modal -->
-  <dialog id="modal" class="modal">
+  <!-- Modal générique -->
+  <dialog id="modal" class="modal" aria-modal="true">
     <div class="modal__card">
       <div id="modalTitle" class="modal__title">Titre</div>
       <div id="modalBody" class="modal__body">Contenu…</div>
@@ -89,30 +89,21 @@
     </div>
   </dialog>
 
-  <!-- FAQ modal -->
-  <dialog id="faqModal" class="modal" data-kind="faq">
+  <!-- FAQ -->
+  <dialog id="faqModal" class="modal" data-kind="faq" aria-modal="true">
     <div class="modal__card">
       <div class="modal__title">💬 Foire aux questions</div>
       <div class="modal__body">
-        <p><strong>Quelle IA utilise Philomène ?</strong><br>
-        Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée.</p>
-
-        <p><strong>Comment fonctionnent les tokens ?</strong><br>
-        Chaque question + réponse consomment des tokens selon leur longueur.
-        Le diamant 💎 affiche votre solde (décompte réel).</p>
-
+        <p><strong>Quelle IA utilise Philomène ?</strong><br>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée.</p>
+        <p><strong>Comment fonctionnent les tokens ?</strong><br>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde (décompte réel).</p>
         <p><strong>Packs disponibles</strong><br>
-        💎 <strong>1 000 000</strong> tokens → <strong>5 €</strong><br>
-        💎 <strong>2 000 000</strong> tokens → <strong>10 €</strong><br>
-        💎 <strong>4 000 000</strong> tokens → <strong>20 €</strong><br>
-        🎁 <strong>Premier achat : +50 % offerts</strong> (1,5 M · 3 M · 6 M)</p>
-
-        <p><strong>Abonnement ?</strong><br>
-        Non. Toute la puissance de GPT-5, <strong>sans abonnement</strong>.
-        Vous payez uniquement ce que vous consommez.</p>
-
-        <p><strong>Confidentialité</strong><br>
-        Vos échanges restent privés.</p>
+          💎 <strong>1 000 000</strong> tokens → <strong>5 €</strong><br>
+          💎 <strong>2 000 000</strong> tokens → <strong>10 €</strong><br>
+          💎 <strong>4 000 000</strong> tokens → <strong>20 €</strong><br>
+          🎁 <strong>Premier achat : +50 % offerts</strong> (1,5 M · 3 M · 6 M)
+        </p>
+        <p><strong>Abonnement ?</strong><br>Non. Toute la puissance de GPT-5, <strong>sans abonnement</strong>. Vous payez uniquement ce que vous consommez.</p>
+        <p><strong>Confidentialité</strong><br>Vos échanges restent privés.</p>
       </div>
       <div class="modal__actions">
         <button id="faqClose" class="pill pill--ghost">Fermer</button>
@@ -120,8 +111,8 @@
     </div>
   </dialog>
 
-  <!-- Modal Paiement (PLACÉE AVANT scripts.js) -->
-  <dialog id="payModal" class="modal">
+  <!-- Paiement -->
+  <dialog id="payModal" class="modal" aria-modal="true">
     <div class="modal__card">
       <div class="modal__title">Acheter des tokens</div>
       <div class="modal__body">
@@ -130,6 +121,7 @@
           <button class="pill" data-pack="10">10€ • 2M</button>
           <button class="pill" data-pack="20">20€ • 4M</button>
         </div>
+        <!-- Boutons PayPal rendus par scripts.js -->
         <div id="paypal-buttons" style="margin:8px 0 4px 0"></div>
         <div style="margin-top:6px;color:var(--text-dim);font-size:14px">
           🎁 Premier achat : <strong>+50%</strong> de tokens offerts.
@@ -146,7 +138,7 @@
     ⚙️ Propulsé par <strong>GPT-5 Thinking</strong>
   </div>
 
-  <!-- Ton JS en dernier (ou ajouter defer) -->
-  <script src="scripts.js"></script>
+  <!-- JS (différé pour éviter tout clignement) -->
+  <script src="scripts.js" defer></script>
 </body>
 </html>
