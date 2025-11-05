@@ -220,3 +220,28 @@ body.theme-light #versionLine{ border-bottom:1px solid rgba(0,0,0,.06) }
 .chip, .pill, .iconBtn, .sendBtn, .fab{
   touch-action: manipulation;
 }
+
+/* =========================
+   PATCHS AJOUTÉS
+   ========================= */
+
+/* 1) PayPal: forcer la largeur à 100% dans la modale */
+#paypal-buttons > div { width: 100% !important; }
+
+/* 2) Bubbles: préserver les retours à la ligne et couper proprement */
+.bubble__content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* 3) Modales: scroll si contenu long sur petit écran */
+.modal__card {
+  max-height: 80vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 4) Sécurité z-index (dropdown au-dessus du topbar et des iframes) */
+.dropdown { z-index: 999; }
+.modal { z-index: 1000; }
