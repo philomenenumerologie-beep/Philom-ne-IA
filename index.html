@@ -1,5 +1,3 @@
-Rien le code
-
 <!doctype html>
 <html lang="fr">
 <head>
@@ -8,14 +6,15 @@ Rien le code
   <title>Philomène I.A.</title>
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Clerk (Connexion) : charge AVANT scripts.js -->
+  <!-- ✅ Clerk (Connexion) : version correcte pour ton domaine -->
   <script
     async
     crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_ZW5vdWdoLXRyZWVmcm9nLTIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.clerk.dev/clerk.js">
+    data-clerk-publishable-key="pk_live_Y2xlcmsucGhpbG9tZW5laWEuY29tJA"
+    src="https://clerk.philomeneia.com/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
   </script>
 </head>
+
 <body class="theme-dark">
   <!-- Topbar -->
   <header id="topbar" role="banner">
@@ -27,25 +26,22 @@ Rien le code
     <div class="topbar__right">
       <div id="tokenBadge" class="gem" aria-live="polite">
         <span class="gem__icon" aria-hidden="true">💎</span>
-        <span id="tokenCount">2 000</span>
+        <span id="tokenCount">2 945</span>
       </div>
       <button id="btnMenu" class="chip icon" aria-haspopup="true" aria-expanded="false">≡</button>
     </div>
 
-    <!-- Menu -->
     <nav id="menuDropdown" class="dropdown" hidden>
       <button id="toggleTheme" class="dropdown__item">🌗 Mode jour / nuit</button>
       <button id="openFaq" class="dropdown__item">❓ F.A.Q.</button>
     </nav>
   </header>
 
-  <!-- Version -->
   <div id="versionLine" aria-live="polite">
     <span class="dot dot--on" aria-hidden="true"></span>
-    <span>Philomène I.A. — <strong id="appVersion">version 1.2</strong></span>
+    <span>Philomène I.A. — <strong id="appVersion">version 1.3</strong></span>
   </div>
 
-  <!-- Chat -->
   <main id="chat" role="main">
     <div class="bubble bot">
       <div class="bubble__content">Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.</div>
@@ -53,7 +49,6 @@ Rien le code
     <div id="messages" aria-live="polite"></div>
   </main>
 
-  <!-- Composer -->
   <footer id="composer">
     <button id="plusBtn" class="fab" aria-label="Joindre">+</button>
 
@@ -64,7 +59,6 @@ Rien le code
 
     <button id="sendBtn" class="sendBtn" aria-label="Envoyer">➤</button>
 
-    <!-- Bottom sheet: Joindre… -->
     <div id="attachSheet" class="sheet" hidden>
       <div class="sheet__title">Joindre…</div>
       <div class="sheet__row">
@@ -73,14 +67,12 @@ Rien le code
         <button id="pickFile" class="pill">🗂️ Choisir un fichier</button>
         <button id="closeSheet" class="pill pill--ghost">Fermer</button>
       </div>
-      <!-- Inputs cachés -->
       <input id="imgLibraryInput" type="file" accept="image/*" hidden />
       <input id="imgCameraInput" type="file" accept="image/*" capture="environment" hidden />
       <input id="docInput" type="file" hidden />
     </div>
   </footer>
 
-  <!-- Modal générique -->
   <dialog id="modal" class="modal" aria-modal="true">
     <div class="modal__card">
       <div id="modalTitle" class="modal__title">Titre</div>
@@ -91,21 +83,19 @@ Rien le code
     </div>
   </dialog>
 
-  <!-- FAQ -->
   <dialog id="faqModal" class="modal" data-kind="faq" aria-modal="true">
     <div class="modal__card">
       <div class="modal__title">💬 Foire aux questions</div>
       <div class="modal__body">
-        <p><strong>Quelle IA utilise Philomène ?</strong><br>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>, la version la plus avancée.</p>
-        <p><strong>Comment fonctionnent les tokens ?</strong><br>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde (décompte réel).</p>
+        <p><strong>Quelle IA utilise Philomène ?</strong><br>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
+        <p><strong>Comment fonctionnent les tokens ?</strong><br>Chaque échange consomme des tokens selon la longueur du message.</p>
         <p><strong>Packs disponibles</strong><br>
           💎 <strong>1 000 000</strong> tokens → <strong>5 €</strong><br>
           💎 <strong>2 000 000</strong> tokens → <strong>10 €</strong><br>
           💎 <strong>4 000 000</strong> tokens → <strong>20 €</strong><br>
-          🎁 <strong>Premier achat : +50 % offerts</strong> (1,5 M · 3 M · 6 M)
+          🎁 <strong>Premier achat : +50 % offerts</strong>
         </p>
-        <p><strong>Abonnement ?</strong><br>Non. Toute la puissance de GPT-5, <strong>sans abonnement</strong>. Vous payez uniquement ce que vous consommez.</p>
-        <p><strong>Confidentialité</strong><br>Vos échanges restent privés.</p>
+        <p><strong>Abonnement ?</strong><br>Non, vous payez uniquement ce que vous consommez.</p>
       </div>
       <div class="modal__actions">
         <button id="faqClose" class="pill pill--ghost">Fermer</button>
@@ -113,7 +103,6 @@ Rien le code
     </div>
   </dialog>
 
-  <!-- Paiement -->
   <dialog id="payModal" class="modal" aria-modal="true">
     <div class="modal__card">
       <div class="modal__title">Acheter des tokens</div>
@@ -123,7 +112,6 @@ Rien le code
           <button class="pill" data-pack="10">10€ • 2M</button>
           <button class="pill" data-pack="20">20€ • 4M</button>
         </div>
-        <!-- Boutons PayPal rendus par scripts.js -->
         <div id="paypal-buttons" style="margin:8px 0 4px 0"></div>
         <div style="margin-top:6px;color:var(--text-dim);font-size:14px">
           🎁 Premier achat : <strong>+50%</strong> de tokens offerts.
@@ -135,12 +123,22 @@ Rien le code
     </div>
   </dialog>
 
-  <!-- Footer technique -->
   <div id="techFooter">
     ⚙️ Propulsé par <strong>GPT-5 Thinking</strong>
   </div>
 
-  <!-- JS (différé pour éviter tout clignement) -->
   <script src="scripts.js" defer></script>
+
+  <!-- ✅ Script pour ouvrir la fenêtre Clerk -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await window.Clerk.load({
+        publishableKey: "pk_live_Y2xlcmsucGhpbG9tZW5laWEuY29tJA",
+      });
+      document.getElementById("btnLogin").addEventListener("click", () => {
+        window.Clerk.openSignIn();
+      });
+    });
+  </script>
 </body>
 </html>
