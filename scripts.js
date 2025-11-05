@@ -1,6 +1,5 @@
 /* =========================
-   Philomène I.A. — scripts.js
-   version 1.3 (avec calcul tokens amélioré)
+   Philomène I.A. — scripts.js (clean)
    ========================= */
 
 /* ====== CONFIG ====== */
@@ -36,38 +35,24 @@ document.getElementById("appVersion").textContent = VERSION;
 const I18N = {
   fr: {
     welcome: "Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.",
-    login: "Connexion",
-    logout: "Déconnexion",
-    buy: "Acheter",
-    menuTheme: "🌗 Mode jour / nuit",
-    menuFaq: "❓ F.A.Q.",
-    inputPh: "Écrivez votre message…",
-    sheetTitle: "Joindre…",
-    lib: "📷 Photothèque",
-    cam: "📸 Prendre une photo",
-    file: "🗂️ Choisir un fichier",
-    close: "Fermer",
+    login: "Connexion", logout: "Déconnexion", buy: "Acheter",
+    menuTheme: "🌗 Mode jour / nuit", menuFaq: "❓ F.A.Q.",
+    inputPh: "Écrivez votre message…", sheetTitle: "Joindre…",
+    lib: "📷 Photothèque", cam: "📸 Prendre une photo", file: "🗂️ Choisir un fichier", close: "Fermer",
     faqTitle: "Foire aux questions",
     faqHtml: `
       <p><strong>Quelle IA utilise Philomène ?</strong><br/>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Comment fonctionnent les tokens ?</strong><br/>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
-      <p><strong>Packs disponibles :</strong><br/>💎 1 000 000 → 5 €<br/>💎 2 000 000 → 10 €<br/>💎 4 000 000 → 20 €<br/>🎁 Premier achat : <strong>+50 %</strong>.</p>
+      <p><strong>Packs disponibles :</strong><br/>💎 1 000 000 → 5 € • 💎 2 000 000 → 10 € • 💎 4 000 000 → 20 €<br/>🎁 Premier achat : <strong>+50 %</strong>.</p>
       <p><strong>Abonnement ?</strong> Non.</p>
       <p><strong>Confidentialité :</strong> vos échanges restent privés.</p>`
   },
   en: {
     welcome: "Hi 👋 I’m Philomène A.I., powered by GPT-5 Thinking.",
-    login: "Sign in",
-    logout: "Sign out",
-    buy: "Buy",
-    menuTheme: "🌗 Light / Dark mode",
-    menuFaq: "❓ FAQ",
-    inputPh: "Type your message…",
-    sheetTitle: "Attach…",
-    lib: "📷 Photo library",
-    cam: "📸 Take a photo",
-    file: "🗂️ Choose a file",
-    close: "Close",
+    login: "Sign in", logout: "Sign out", buy: "Buy",
+    menuTheme: "🌗 Light / Dark mode", menuFaq: "❓ FAQ",
+    inputPh: "Type your message…", sheetTitle: "Attach…",
+    lib: "📷 Photo library", cam: "📸 Take a photo", file: "🗂️ Choose a file", close: "Close",
     faqTitle: "Frequently Asked Questions",
     faqHtml: `
       <p><strong>Which AI?</strong> <strong>GPT-5 Thinking</strong>.</p>
@@ -78,17 +63,10 @@ const I18N = {
   },
   nl: {
     welcome: "Hallo 👋 Ik ben Philomène A.I., aangedreven door GPT-5 Thinking.",
-    login: "Inloggen",
-    logout: "Uitloggen",
-    buy: "Kopen",
-    menuTheme: "🌗 Licht / Donker",
-    menuFaq: "❓ Veelgestelde vragen",
-    inputPh: "Schrijf uw bericht…",
-    sheetTitle: "Bijvoegen…",
-    lib: "📷 Fotobibliotheek",
-    cam: "📸 Foto maken",
-    file: "🗂️ Bestand kiezen",
-    close: "Sluiten",
+    login: "Inloggen", logout: "Uitloggen", buy: "Kopen",
+    menuTheme: "🌗 Licht / Donker", menuFaq: "❓ Veelgestelde vragen",
+    inputPh: "Schrijf uw bericht…", sheetTitle: "Bijvoegen…",
+    lib: "📷 Fotobibliotheek", cam: "📸 Foto maken", file: "🗂️ Bestand kiezen", close: "Sluiten",
     faqTitle: "Veelgestelde vragen",
     faqHtml: `
       <p><strong>Welke AI?</strong> <strong>GPT-5 Thinking</strong>.</p>
@@ -98,7 +76,6 @@ const I18N = {
       <p><strong>Privacy:</strong> gesprekken blijven privé.</p>`
   }
 };
-
 function detectLang() {
   const q  = new URLSearchParams(location.search).get("lang");
   const ls = localStorage.getItem("lang");
@@ -110,18 +87,15 @@ function detectLang() {
 }
 const LANG = detectLang();
 const T = I18N[LANG];
-
 (function applyI18N(){
   btnLogin.textContent = T.login;
   btnBuy.textContent   = T.buy;
   toggleTheme.textContent = T.menuTheme;
-  openFaq.textContent = T.menuFaq;
-  input.placeholder   = T.inputPh;
+  openFaq.textContent  = T.menuFaq;
+  input.placeholder    = T.inputPh;
   document.querySelector(".sheet__title").textContent = T.sheetTitle;
-  pickLibrary.textContent = T.lib;
-  takePhoto.textContent   = T.cam;
-  pickFile.textContent    = T.file;
-  sheetClose.textContent  = T.close;
+  pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam;
+  pickFile.textContent    = T.file; sheetClose.textContent = T.close;
   const firstWelcome = document.querySelector(".bubble.bot .bubble__content");
   if (firstWelcome) firstWelcome.textContent = T.welcome;
 })();
@@ -129,14 +103,15 @@ const T = I18N[LANG];
 /* ====== ÉTAT & TOKENS ====== */
 const LS_USER   = "philo_user_id";
 const LS_TOKENS = "philo_tokens_balance";
+const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed_by_user";
 
 let userId = localStorage.getItem(LS_USER);
 if (!userId) {
-  userId = "guest_" + Math.random().toString(36).slice(2, 10);
+  userId = "guest_" + Math.random().toString(36).slice(2,10);
   localStorage.setItem(LS_USER, userId);
 }
-
 let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
+// 2000 pour les invités au premier accès
 if (!Number.isFinite(tokenBalance)) {
   tokenBalance = 2000;
   localStorage.setItem(LS_TOKENS, tokenBalance);
@@ -146,117 +121,252 @@ updateTokenUI();
 const conversation = [{ role: "assistant", content: T.welcome }];
 
 /* ====== UI HELPERS ====== */
-function addBubble(text, who = "bot") {
+function addBubble(text, who="bot"){
   const wrap = document.createElement("div");
   wrap.className = `bubble ${who}`;
   wrap.innerHTML = `<div class="bubble__content"></div>`;
   wrap.querySelector(".bubble__content").textContent = text;
   messagesBox.appendChild(wrap);
-  requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
+  requestAnimationFrame(()=> (chat.scrollTop = chat.scrollHeight));
 }
-
-function setTyping(on) {
-  if (on) { addBubble("…", "bot"); return; }
+function setTyping(on){
+  if(on){ addBubble("…","bot"); return; }
   const kids = messagesBox.querySelectorAll(".bubble.bot .bubble__content");
-  for (let i = kids.length - 1; i >= 0; i--) {
-    if (kids[i].textContent === "…") { kids[i].closest(".bubble").remove(); break; }
+  for(let i=kids.length-1;i>=0;i--){
+    if(kids[i].textContent==="…"){ kids[i].closest(".bubble").remove(); break; }
   }
 }
-
-function pop(html, title = "Info") {
+function pop(html, title="Info"){
   const modal = document.getElementById("modal");
   document.getElementById("modalTitle").textContent = title;
   document.getElementById("modalBody").innerHTML = html;
   modal.showModal();
 }
-document.getElementById("modalClose").onclick =
-  () => document.getElementById("modal").close();
+document.getElementById("modalClose").onclick = () => document.getElementById("modal").close();
 
-function updateTokenUI() {
-  if (tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR");
+function updateTokenUI(){ if(tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR"); }
+function spendTokensReal(usage){
+  const used = Math.max(0, Number(usage?.total_tokens)||0);
+  if(used>0){ tokenBalance = Math.max(0, tokenBalance - used); localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI(); }
 }
-
-/* ====== NOUVEAU SYSTÈME DE CALCUL ====== */
-function estimateTokensByText(text) {
-  if (!text) return 0;
-  const cleaned = text.trim();
-  const tokens = Math.ceil(cleaned.length / 3.5); // moyenne haute
-  return Math.max(1, tokens);
-}
-function spendTokensEstimate(prompt, answer) {
-  const totalTokens = estimateTokensByText(prompt + " " + answer);
-  tokenBalance = Math.max(0, tokenBalance - totalTokens);
+function spendEstimateByText(str){
+  const est = Math.ceil((str||"").length/4);
+  tokenBalance = Math.max(0, tokenBalance - est);
   localStorage.setItem(LS_TOKENS, tokenBalance);
   updateTokenUI();
 }
-function spendTokensReal(usage) {
-  const used = Math.max(0, Number(usage?.total_tokens) || 0);
-  if (used > 0) {
-    tokenBalance = Math.max(0, tokenBalance - used);
-    localStorage.setItem(LS_TOKENS, tokenBalance);
-    updateTokenUI();
+
+/* ====== MENU ====== */
+btnMenu.addEventListener("click",()=> dropdown.hidden = !dropdown.hidden);
+document.addEventListener("click",(e)=>{
+  if(!dropdown.hidden){
+    const w = e.target.closest("#menuDropdown") || e.target.closest("#btnMenu");
+    if(!w) dropdown.hidden = true;
+  }
+});
+toggleTheme.addEventListener("click",()=>{
+  const b=document.body;
+  const isLight=b.classList.toggle("theme-light");
+  if(isLight) b.classList.remove("theme-dark"); else b.classList.add("theme-dark");
+  dropdown.hidden=true;
+});
+openFaq.addEventListener("click",()=>{ dropdown.hidden=true; pop(T.faqHtml, T.faqTitle); });
+
+/* ====== SHEET JOINDRE ====== */
+const openSheet  = () => (sheet.hidden = false);
+const closeSheet = () => (sheet.hidden = true);
+plusBtn.addEventListener("click", openSheet);
+sheetClose.addEventListener("click", closeSheet);
+pickLibrary.addEventListener("click", ()=> imgLibraryInput.click());
+takePhoto  .addEventListener("click", ()=> imgCameraInput.click());
+pickFile   .addEventListener("click", ()=> docInput.click());
+
+/* ====== UPLOAD IMAGE ====== */
+async function uploadImageToAnalyze(file){
+  if(!file) return;
+  addBubble(`${LANG==="fr"?"📎 Fichier reçu":LANG==="nl"?"📎 Bestand ontvangen":"📎 File received"} : ${file.name}`,"user");
+  setTyping(true);
+  const urlBase = API_URL || FALLBACK_URL;
+  const url = urlBase.includes("/ask") ? urlBase.replace("/ask","/analyze-image") : urlBase + "/analyze-image";
+  const fd = new FormData();
+  fd.append("image", file);
+  fd.append("userId", userId);
+  fd.append("prompt", LANG==="fr"?"Analyse cette image.":LANG==="nl"?"Analyseer deze afbeelding.":"Analyze this image.");
+  try{
+    const resp = await fetch(url,{ method:"POST", body:fd });
+    const data = await resp.json();
+    setTyping(false);
+    const answer = data?.answer || (LANG==="fr"?"Je n’ai rien détecté.":LANG==="nl"?"Niets gedetecteerd.":"Nothing detected.");
+    addBubble(answer,"bot");
+    if(data?.usage?.total_tokens) spendTokensReal(data.usage);
+  }catch(e){
+    setTyping(false);
+    addBubble(LANG==="fr"?"Erreur d’analyse d’image.":LANG==="nl"?"Fout bij afbeeldingsanalyse.":"Image analysis error.","bot");
   }
 }
+imgLibraryInput.onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
+imgCameraInput .onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
+docInput       .onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
+
+/* ====== MICRO ====== */
+let recognition = null;
+if("webkitSpeechRecognition" in window){
+  const R = window.webkitSpeechRecognition;
+  recognition = new R();
+  recognition.lang = LANG==="nl"?"nl-NL":LANG==="en"?"en-US":"fr-FR";
+  recognition.interimResults = false;
+  recognition.onresult = (e)=>{ input.value = e.results[0][0].transcript; };
+}
+micBtn.addEventListener("click", ()=> recognition ? recognition.start() :
+  pop(LANG==="fr"?"Le micro n’est pas supporté par ce navigateur.":LANG==="nl"?"Microfoon niet ondersteund door deze browser.":"Micro is not supported by this browser.","Micro")
+);
 
 /* ====== CHAT ====== */
-async function sendMessage() {
+async function sendMessage(){
   const text = input.value.trim();
-  if (!text) return;
-
-  addBubble(text, "user");
-  input.value = "";
-  setTyping(true);
-  conversation.push({ role: "user", content: text });
-
+  if(!text) return;
+  addBubble(text,"user"); input.value=""; setTyping(true);
+  conversation.push({ role:"user", content:text });
   const url = API_URL || FALLBACK_URL;
-
-  try {
+  try{
     let data;
-    if (url === FALLBACK_URL) {
-      await new Promise((r) => setTimeout(r, 400));
-      data = {
-        answer:
-          LANG === "fr"
-            ? "Bien reçu. Pose-moi la suite !"
-            : LANG === "nl"
-            ? "Begrepen. Stel je volgende vraag!"
-            : "Got it. Ask me more!",
-        usage: { total_tokens: Math.ceil(text.length / 4) + 20 }
-      };
-    } else {
-      const resp = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, conversation })
-      });
+    if(url===FALLBACK_URL){
+      await new Promise(r=>setTimeout(r,400));
+      data = { answer: LANG==="fr"?"Bien reçu. Pose-moi la suite !":LANG==="nl"?"Begrepen. Stel je volgende vraag!":"Got it. Ask me more!", usage:{ total_tokens: Math.ceil(text.length/4)+20 } };
+    }else{
+      const resp = await fetch(url,{ method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ userId, conversation }) });
       data = await resp.json();
     }
-
     setTyping(false);
-    const answer =
-      data?.answer || data?.output || data?.text ||
-      (LANG === "fr" ? "Réponse vide." : LANG === "nl" ? "Leeg antwoord." : "Empty response.");
-    addBubble(answer, "bot");
-
-    if (data?.usage && typeof data.usage.total_tokens === "number") {
-      spendTokensReal(data.usage);
-    } else {
-      spendTokensEstimate(text, answer);
-    }
-
-    conversation.push({ role: "assistant", content: answer });
-  } catch (e) {
+    const answer = data?.answer || data?.output || data?.text || (LANG==="fr"?"Réponse vide.":LANG==="nl"?"Leeg antwoord.":"Empty response.");
+    addBubble(answer,"bot");
+    if(data?.usage && typeof data.usage.total_tokens==="number") spendTokensReal(data.usage);
+    else { spendEstimateByText(text); spendEstimateByText(answer); }
+    conversation.push({ role:"assistant", content:answer });
+  }catch(e){
     setTyping(false);
-    addBubble(
-      LANG === "fr"
-        ? "Erreur de connexion. Réessaie plus tard."
-        : LANG === "nl"
-        ? "Verbindingsfout. Probeer later opnieuw."
-        : "Connection error. Please try again later.",
-      "bot"
-    );
-    console.error(e);
+    addBubble(LANG==="fr"?"Erreur de connexion. Réessaie plus tard.":LANG==="nl"?"Verbindingsfout. Probeer later opnieuw.":"Connection error. Please try again later.","bot");
   }
 }
 sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); sendMessage(); } });
+input.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }});
+
+/* ====== PAYPAL (client-side prêt) ====== */
+const payModal = document.getElementById("payModal");
+const payClose = document.getElementById("payClose");
+let chosenPack = 5;
+if(btnBuy && payModal){
+  btnBuy.onclick = ()=>{ payModal.showModal(); renderPayPal(chosenPack); };
+  payClose.onclick = ()=> payModal.close();
+  document.addEventListener("click",(e)=>{ const b=e.target.closest(".packsRow .pill"); if(!b) return; chosenPack=Number(b.dataset.pack); renderPayPal(chosenPack); });
+}
+async function renderPayPal(pack){
+  if(!document.getElementById("paypal-sdk")){
+    const s=document.createElement("script"); s.id="paypal-sdk";
+    s.src="https://www.paypal.com/sdk/js?client-id=__TON_CLIENT_ID__&currency=EUR";
+    document.body.appendChild(s); await new Promise(r=> s.onload=r);
+  }
+  const amount = pack===5?"5.00":pack===10?"10.00":"20.00";
+  const box=document.getElementById("paypal-buttons"); if(!box) return; box.innerHTML="";
+  window.paypal.Buttons({
+    style:{ layout:"horizontal", height:45 },
+    createOrder:(data,actions)=> actions.order.create({ purchase_units:[{ amount:{ currency_code:"EUR", value:amount } }] }),
+    onApprove: async (data,actions)=>{
+      try{
+        await actions.order.capture();
+        const baseTokens = pack===5?1_000_000:pack===10?2_000_000:4_000_000;
+        const FIRST_FLAG="philo_first_purchase_done";
+        const isFirst=!localStorage.getItem(FIRST_FLAG);
+        const bonus=isFirst?Math.floor(baseTokens*0.5):0; if(isFirst) localStorage.setItem(FIRST_FLAG,"1");
+        const credited=baseTokens+bonus;
+        tokenBalance += credited; localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI();
+        addBubble(LANG==="fr"?`✅ Paiement confirmé (${amount}€). +${credited.toLocaleString("fr-FR")} tokens crédités.`:
+                 LANG==="nl"?`✅ Betaling bevestigd (${amount}€). +${credited.toLocaleString("fr-FR")} tokens toegevoegd.`:
+                              `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added.`,"bot");
+        payModal.close();
+      }catch(err){
+        addBubble(LANG==="fr"?"❌ Erreur lors de la capture du paiement.":LANG==="nl"?"❌ Fout bij betalingsverwerking.":"❌ Payment capture error.","bot");
+      }
+    },
+    onError:()=>{ addBubble(LANG==="fr"?"❌ Paiement refusé/annulé.":LANG==="nl"?"❌ Betaling geweigerd/geannuleerd.":"❌ Payment failed/cancelled.","bot"); }
+  }).render("#paypal-buttons");
+}
+
+/* ====== CLERK (auth + bonus + bouton fiable) ====== */
+function giveSigninBonusFor(uid){
+  const key = `${LS_SIGNUP_BONUS}:${uid}`;
+  if(!localStorage.getItem(key)){
+    const bonus = 3000;                 // +3000 à l’inscription/connexion
+    tokenBalance += bonus;
+    localStorage.setItem(LS_TOKENS, tokenBalance);
+    localStorage.setItem(key,"1");
+    updateTokenUI();
+    addBubble(`🎉 +${bonus.toLocaleString("fr-FR")} tokens offerts (inscription)`, "bot");
+  }
+}
+// Init robuste (attend Clerk jusqu’à 15s si besoin)
+async function initClerkOnce(timeoutMs=15000){
+  const start = Date.now();
+  while(Date.now()-start < timeoutMs){
+    if(window.Clerk){
+      try{ await window.Clerk.load(); return true; }catch{}
+    }
+    await new Promise(r=> setTimeout(r, 200));
+  }
+  return false;
+}
+(async()=>{
+  const ok = await initClerkOnce();
+  const loginBtn = document.getElementById("btnLogin");
+
+  // MàJ du libellé si Clerk prêt
+  if(ok){
+    Clerk.addListener(({ user, session })=>{
+      btnLogin.textContent = (user && session) ? T.logout : T.login;
+    });
+    const { user, session } = Clerk;
+    btnLogin.textContent = (user && session) ? T.logout : T.login;
+  }
+
+  // Click “Connexion” — gère tous les cas
+  loginBtn.addEventListener("click", async ()=>{
+    if(!window.Clerk || !window.Clerk.loaded){
+      const ready = await initClerkOnce();
+      if(!ready){
+        pop(LANG==="fr"?"Connexion momentanément indisponible. Réessaie dans quelques secondes."
+            :LANG==="nl"?"Inloggen tijdelijk niet beschikbaar. Probeer zo meteen opnieuw."
+            :"Sign-in temporarily unavailable. Please try again shortly.", "Connexion");
+        return;
+      }
+    }
+    const { user, session } = Clerk;
+
+    // Déjà connecté → déconnexion
+    if(user && session){
+      await Clerk.signOut();
+      addBubble("👋 Déconnecté.", "bot");
+      btnLogin.textContent = T.login;
+      return;
+    }
+
+    // Ouverture modale Clerk
+    await Clerk.openSignIn({
+      afterSignUp: async ()=>{
+        await initClerkOnce();
+        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);  // +3000
+        addBubble("✅ Inscription réussie", "bot");
+        btnLogin.textContent = T.logout;
+      },
+      afterSignIn: async ()=>{
+        await initClerkOnce();
+        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);  // +3000 si pas encore pris
+        addBubble("✅ Connexion réussie", "bot");
+        btnLogin.textContent = T.logout;
+      }
+    });
+  });
+})();
+
+/* ====== AUTO-SCROLL ====== */
+const io = new IntersectionObserver(()=>{ chat.scrollTop = chat.scrollHeight; });
+io.observe(document.getElementById("composer"));
