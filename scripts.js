@@ -1,5 +1,6 @@
+<!-- scripts.js -->
 /* =========================
-   Philomène I.A. — scripts.js (clean)
+   Philomène I.A. — scripts.js (clean + mémoire + clear)
    ========================= */
 
 /* ====== CONFIG ====== */
@@ -37,9 +38,11 @@ const I18N = {
     welcome: "Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.",
     login: "Connexion", logout: "Déconnexion", buy: "Acheter",
     menuTheme: "🌗 Mode jour / nuit", menuFaq: "❓ F.A.Q.",
+    menuClear: "🧹 Effacer l’historique",
     inputPh: "Écrivez votre message…", sheetTitle: "Joindre…",
     lib: "📷 Photothèque", cam: "📸 Prendre une photo", file: "🗂️ Choisir un fichier", close: "Fermer",
     faqTitle: "Foire aux questions",
+    confirmClear: "Effacer tout l’historique de chat ? (les tokens restent inchangés)",
     faqHtml: `
       <p><strong>Quelle IA utilise Philomène ?</strong><br/>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Comment fonctionnent les tokens ?</strong><br/>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
@@ -51,9 +54,11 @@ const I18N = {
     welcome: "Hi 👋 I’m Philomène A.I., powered by GPT-5 Thinking.",
     login: "Sign in", logout: "Sign out", buy: "Buy",
     menuTheme: "🌗 Light / Dark mode", menuFaq: "❓ FAQ",
+    menuClear: "🧹 Clear history",
     inputPh: "Type your message…", sheetTitle: "Attach…",
     lib: "📷 Photo library", cam: "📸 Take a photo", file: "🗂️ Choose a file", close: "Close",
     faqTitle: "Frequently Asked Questions",
+    confirmClear: "Clear all chat history? (tokens stay unchanged)",
     faqHtml: `
       <p><strong>Which AI?</strong> <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Tokens:</strong> Q+A consume tokens. 💎 shows your balance.</p>
@@ -65,9 +70,11 @@ const I18N = {
     welcome: "Hallo 👋 Ik ben Philomène A.I., aangedreven door GPT-5 Thinking.",
     login: "Inloggen", logout: "Uitloggen", buy: "Kopen",
     menuTheme: "🌗 Licht / Donker", menuFaq: "❓ Veelgestelde vragen",
+    menuClear: "🧹 Geschiedenis wissen",
     inputPh: "Schrijf uw bericht…", sheetTitle: "Bijvoegen…",
     lib: "📷 Fotobibliotheek", cam: "📸 Foto maken", file: "🗂️ Bestand kiezen", close: "Sluiten",
     faqTitle: "Veelgestelde vragen",
+    confirmClear: "Alle chatgeschiedenis wissen? (tokens blijven ongewijzigd)",
     faqHtml: `
       <p><strong>Welke AI?</strong> <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Tokens:</strong> vraag + antwoord verbruiken tokens. 💎 toont saldo.</p>
@@ -76,6 +83,7 @@ const I18N = {
       <p><strong>Privacy:</strong> gesprekken blijven privé.</p>`
   }
 };
+
 function detectLang() {
   const q  = new URLSearchParams(location.search).get("lang");
   const ls = localStorage.getItem("lang");
@@ -87,6 +95,48 @@ function detectLang() {
 }
 const LANG = detectLang();
 const T = I18N[LANG];
+
+/* ====== ÉTAT & TOKENS & MÉMOIRE ====== */
+const LS_USER   = "philo_user_id";
+const LS_TOKENS = "philo_tokens_balance";
+const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed_by_user";
+const LS_CONV  = "philo_conversation";
+const MAX_CONV = 100;
+
+// user id
+let userId = localStorage.getItem(LS_USER);
+if (!userId) {
+  userId = "guest_" + Math.random().toString(36).slice(2,10);
+  localStorage.setItem(LS_USER, userId);
+}
+
+// tokens (2000 invités au premier accès)
+let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
+if (!Number.isFinite(tokenBalance)) {
+  tokenBalance = 2000;
+  localStorage.setItem(LS_TOKENS, tokenBalance);
+}
+updateTokenUI();
+
+// conversation : charge depuis mémoire si dispo
+function safeParse(json, fallback){ try { return JSON.parse(json); } catch { return fallback; } }
+let conversation = safeParse(localStorage.getItem(LS_CONV), []);
+if (!Array.isArray(conversation) || conversation.length === 0) {
+  conversation = [{ role: "assistant", content: T.welcome }];
+  saveConversation();
+}
+
+// si historique présent, on enlève la bulle statique du HTML et on rend tout
+(function initialRender(){
+  if (conversation && conversation.length > 0) {
+    const staticWelcome = document.querySelector("#chat > .bubble.bot");
+    if (staticWelcome) staticWelcome.remove();
+    messagesBox.innerHTML = "";
+    renderConversation(conversation);
+  }
+})();
+
+/* ====== I18N → texte UI ====== */
 (function applyI18N(){
   btnLogin.textContent = T.login;
   btnBuy.textContent   = T.buy;
@@ -96,31 +146,26 @@ const T = I18N[LANG];
   document.querySelector(".sheet__title").textContent = T.sheetTitle;
   pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam;
   pickFile.textContent    = T.file; sheetClose.textContent = T.close;
-  const firstWelcome = document.querySelector(".bubble.bot .bubble__content");
-  if (firstWelcome) firstWelcome.textContent = T.welcome;
+
+  // + bouton Effacer l’historique (ajouté dynamiquement au menu)
+  const clearBtn = document.createElement("button");
+  clearBtn.id = "clearHistory";
+  clearBtn.className = "dropdown__item";
+  clearBtn.textContent = T.menuClear;
+  dropdown.appendChild(clearBtn);
+  clearBtn.addEventListener("click", handleClearHistory);
 })();
 
-/* ====== ÉTAT & TOKENS ====== */
-const LS_USER   = "philo_user_id";
-const LS_TOKENS = "philo_tokens_balance";
-const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed_by_user";
-
-let userId = localStorage.getItem(LS_USER);
-if (!userId) {
-  userId = "guest_" + Math.random().toString(36).slice(2,10);
-  localStorage.setItem(LS_USER, userId);
+/* ====== HELPERS ====== */
+function saveConversation() {
+  const trimmed = conversation.slice(-MAX_CONV);
+  localStorage.setItem(LS_CONV, JSON.stringify(trimmed));
 }
-let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
-// 2000 pour les invités au premier accès
-if (!Number.isFinite(tokenBalance)) {
-  tokenBalance = 2000;
-  localStorage.setItem(LS_TOKENS, tokenBalance);
+function renderConversation(list){
+  for (const m of list) {
+    addBubble(m.content, m.role === "user" ? "user" : "bot");
+  }
 }
-updateTokenUI();
-
-const conversation = [{ role: "assistant", content: T.welcome }];
-
-/* ====== UI HELPERS ====== */
 function addBubble(text, who="bot"){
   const wrap = document.createElement("div");
   wrap.className = `bubble ${who}`;
@@ -154,6 +199,18 @@ function spendEstimateByText(str){
   tokenBalance = Math.max(0, tokenBalance - est);
   localStorage.setItem(LS_TOKENS, tokenBalance);
   updateTokenUI();
+}
+
+/* ====== Effacer l’historique ====== */
+function handleClearHistory(){
+  const msg = T.confirmClear || "Clear history?";
+  if (!confirm(msg)) return;
+  localStorage.removeItem(LS_CONV);
+  conversation = [{ role:"assistant", content: T.welcome }];
+  messagesBox.innerHTML = "";
+  addBubble(T.welcome, "bot");
+  saveConversation();
+  // on garde les tokens intacts
 }
 
 /* ====== MENU ====== */
@@ -199,6 +256,7 @@ async function uploadImageToAnalyze(file){
     const answer = data?.answer || (LANG==="fr"?"Je n’ai rien détecté.":LANG==="nl"?"Niets gedetecteerd.":"Nothing detected.");
     addBubble(answer,"bot");
     if(data?.usage?.total_tokens) spendTokensReal(data.usage);
+    conversation.push({ role:"assistant", content: answer }); saveConversation();
   }catch(e){
     setTyping(false);
     addBubble(LANG==="fr"?"Erreur d’analyse d’image.":LANG==="nl"?"Fout bij afbeeldingsanalyse.":"Image analysis error.","bot");
@@ -225,8 +283,11 @@ micBtn.addEventListener("click", ()=> recognition ? recognition.start() :
 async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
-  addBubble(text,"user"); input.value=""; setTyping(true);
-  conversation.push({ role:"user", content:text });
+
+  addBubble(text,"user");
+  conversation.push({ role:"user", content:text }); saveConversation();
+
+  input.value=""; setTyping(true);
   const url = API_URL || FALLBACK_URL;
   try{
     let data;
@@ -242,7 +303,8 @@ async function sendMessage(){
     addBubble(answer,"bot");
     if(data?.usage && typeof data.usage.total_tokens==="number") spendTokensReal(data.usage);
     else { spendEstimateByText(text); spendEstimateByText(answer); }
-    conversation.push({ role:"assistant", content:answer });
+
+    conversation.push({ role:"assistant", content:answer }); saveConversation();
   }catch(e){
     setTyping(false);
     addBubble(LANG==="fr"?"Erreur de connexion. Réessaie plus tard.":LANG==="nl"?"Verbindingsfout. Probeer later opnieuw.":"Connection error. Please try again later.","bot");
@@ -292,11 +354,11 @@ async function renderPayPal(pack){
   }).render("#paypal-buttons");
 }
 
-/* ====== CLERK (auth + bonus + bouton fiable) ====== */
+/* ====== CLERK (auth + bonus) ====== */
 function giveSigninBonusFor(uid){
   const key = `${LS_SIGNUP_BONUS}:${uid}`;
   if(!localStorage.getItem(key)){
-    const bonus = 3000;                 // +3000 à l’inscription/connexion
+    const bonus = 3000; // +3000 à l’inscription/connexion (une seule fois par userId)
     tokenBalance += bonus;
     localStorage.setItem(LS_TOKENS, tokenBalance);
     localStorage.setItem(key,"1");
@@ -304,7 +366,7 @@ function giveSigninBonusFor(uid){
     addBubble(`🎉 +${bonus.toLocaleString("fr-FR")} tokens offerts (inscription)`, "bot");
   }
 }
-// Init robuste (attend Clerk jusqu’à 15s si besoin)
+// Init Clerk robuste (attend jusqu’à 15s)
 async function initClerkOnce(timeoutMs=15000){
   const start = Date.now();
   while(Date.now()-start < timeoutMs){
@@ -319,7 +381,6 @@ async function initClerkOnce(timeoutMs=15000){
   const ok = await initClerkOnce();
   const loginBtn = document.getElementById("btnLogin");
 
-  // MàJ du libellé si Clerk prêt
   if(ok){
     Clerk.addListener(({ user, session })=>{
       btnLogin.textContent = (user && session) ? T.logout : T.login;
@@ -328,7 +389,6 @@ async function initClerkOnce(timeoutMs=15000){
     btnLogin.textContent = (user && session) ? T.logout : T.login;
   }
 
-  // Click “Connexion” — gère tous les cas
   loginBtn.addEventListener("click", async ()=>{
     if(!window.Clerk || !window.Clerk.loaded){
       const ready = await initClerkOnce();
@@ -341,7 +401,6 @@ async function initClerkOnce(timeoutMs=15000){
     }
     const { user, session } = Clerk;
 
-    // Déjà connecté → déconnexion
     if(user && session){
       await Clerk.signOut();
       addBubble("👋 Déconnecté.", "bot");
@@ -349,17 +408,16 @@ async function initClerkOnce(timeoutMs=15000){
       return;
     }
 
-    // Ouverture modale Clerk
     await Clerk.openSignIn({
       afterSignUp: async ()=>{
         await initClerkOnce();
-        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);  // +3000
+        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);
         addBubble("✅ Inscription réussie", "bot");
         btnLogin.textContent = T.logout;
       },
       afterSignIn: async ()=>{
         await initClerkOnce();
-        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);  // +3000 si pas encore pris
+        const u = Clerk.user; if(u?.id) giveSigninBonusFor(u.id);
         addBubble("✅ Connexion réussie", "bot");
         btnLogin.textContent = T.logout;
       }
