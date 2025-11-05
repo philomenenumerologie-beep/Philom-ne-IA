@@ -35,6 +35,13 @@ const btnLogin     = document.getElementById("btnLogin");
 const btnBuy       = document.getElementById("btnBuy");
 document.getElementById("appVersion").textContent = VERSION;
 
+/* ====== PACKS (NOUVELLES VALEURS) ====== */
+const PACKS = {
+  5:  { amount: "5.00",  tokens: 500_000 },
+  10: { amount: "10.00", tokens: 1_200_000 },
+  20: { amount: "20.00", tokens: 3_000_000 }
+};
+
 /* ====== I18N ====== */
 const I18N = {
   fr: {
@@ -46,10 +53,16 @@ const I18N = {
     lib: "📷 Photothèque", cam: "📸 Prendre une photo", file: "🗂️ Choisir un fichier", close: "Fermer",
     faqTitle: "Foire aux questions",
     confirmClear: "Effacer tout l’historique de chat ? (les tokens restent inchangés)",
+    // CHANGÉ : packs FAQ 500k / 1,2M / 3M + bonus 50 %
     faqHtml: `
       <p><strong>Quelle IA utilise Philomène ?</strong><br/>Philomène I.A. est propulsée par <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Comment fonctionnent les tokens ?</strong><br/>Chaque question + réponse consomment des tokens selon leur longueur. Le diamant 💎 affiche votre solde.</p>
-      <p><strong>Packs disponibles :</strong><br/>💎 1 000 000 → 5 € • 💎 2 000 000 → 10 € • 💎 4 000 000 → 20 €<br/>🎁 Premier achat : <strong>+50 %</strong>.</p>
+      <p><strong>Packs disponibles :</strong><br/>
+        💎 <strong>500 000</strong> tokens → <strong>5 €</strong><br/>
+        💎 <strong>1 200 000</strong> tokens → <strong>10 €</strong><br/>
+        💎 <strong>3 000 000</strong> tokens → <strong>20 €</strong><br/>
+        🎁 <strong>Premier achat : +50 % offerts</strong>.
+      </p>
       <p><strong>Abonnement ?</strong> Non.</p>
       <p><strong>Confidentialité :</strong> vos échanges restent privés.</p>`
   },
@@ -65,7 +78,12 @@ const I18N = {
     faqHtml: `
       <p><strong>Which AI?</strong> <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Tokens:</strong> Q+A consume tokens. 💎 shows your balance.</p>
-      <p><strong>Packs:</strong> 1,000,000 → €5 • 2,000,000 → €10 • 4,000,000 → €20 • 🎁 First purchase: <strong>+50%</strong>.</p>
+      <p><strong>Packs:</strong><br/>
+        💎 <strong>500,000</strong> tokens → <strong>€5</strong><br/>
+        💎 <strong>1,200,000</strong> tokens → <strong>€10</strong><br/>
+        💎 <strong>3,000,000</strong> tokens → <strong>€20</strong><br/>
+        🎁 <strong>First purchase: +50% bonus</strong>.
+      </p>
       <p><strong>Subscription?</strong> No.</p>
       <p><strong>Privacy:</strong> your chats stay private.</p>`
   },
@@ -81,7 +99,12 @@ const I18N = {
     faqHtml: `
       <p><strong>Welke AI?</strong> <strong>GPT-5 Thinking</strong>.</p>
       <p><strong>Tokens:</strong> vraag + antwoord verbruiken tokens. 💎 toont saldo.</p>
-      <p><strong>Pakketten:</strong> 1.000.000 → €5 • 2.000.000 → €10 • 4.000.000 → €20 • 🎁 Eerste aankoop: <strong>+50%</strong>.</p>
+      <p><strong>Pakketten:</strong><br/>
+        💎 <strong>500.000</strong> tokens → <strong>€5</strong><br/>
+        💎 <strong>1.200.000</strong> tokens → <strong>€10</strong><br/>
+        💎 <strong>3.000.000</strong> tokens → <strong>€20</strong><br/>
+        🎁 <strong>Eerste aankoop: +50% bonus</strong>.
+      </p>
       <p><strong>Abonnement?</strong> Nee.</p>
       <p><strong>Privacy:</strong> gesprekken blijven privé.</p>`
   }
@@ -150,7 +173,7 @@ if (!Array.isArray(conversation) || conversation.length === 0) {
   pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam;
   pickFile.textContent    = T.file; sheetClose.textContent = T.close;
 
-  // + bouton Effacer l’historique (ajout dynamiquement au menu)
+  // + bouton Effacer l’historique
   const clearBtn = document.createElement("button");
   clearBtn.id = "clearHistory";
   clearBtn.className = "dropdown__item";
@@ -211,7 +234,6 @@ function handleClearHistory(){
   messagesBox.innerHTML = "";
   addBubble(T.welcome, "bot");
   saveConversation();
-  // tokens intacts
 }
 
 /* ====== MENU ====== */
@@ -322,6 +344,20 @@ let chosenPack = 5;
 let PAYMENTS_ENABLED = true;         // défaut : on suppose actif (pour compat)
 let PAYPAL_CLIENT_ID = "__TON_CLIENT_ID__"; // remplacé si /config répond
 
+// Mets à jour les libellés des boutons packs dans la modale (si le HTML a des textes obsolètes)
+function refreshPackButtonsLabels(){
+  const container = document.querySelector(".packsRow");
+  if (!container) return;
+  container.querySelectorAll(".pill[data-pack]").forEach(btn=>{
+    const val = Number(btn.dataset.pack);
+    const cfg = PACKS[val];
+    if (!cfg) return;
+    // Affiche 500 000 / 1 200 000 / 3 000 000 en FR, etc.
+    const formatted = cfg.tokens.toLocaleString(LANG==="fr"?"fr-FR":LANG==="nl"?"nl-NL":"en-US");
+    btn.textContent = `${val}€ • ${formatted}`;
+  });
+}
+
 // Essaye de charger la config publique
 (async function initPaymentsConfig(){
   try{
@@ -332,7 +368,6 @@ let PAYPAL_CLIENT_ID = "__TON_CLIENT_ID__"; // remplacé si /config répond
       if(cfg.paypalClientId) PAYPAL_CLIENT_ID = String(cfg.paypalClientId);
     }
   }catch(_){}
-  // Affichage / masquage du bouton Acheter selon l’état
   if(!PAYMENTS_ENABLED && btnBuy){ btnBuy.style.display = "none"; }
 })();
 
@@ -340,6 +375,7 @@ if(btnBuy && payModal){
   btnBuy.onclick = ()=>{
     if(!PAYMENTS_ENABLED){ pop(LANG==="fr"?"Le paiement est temporairement désactivé.":"Payments are temporarily disabled.","Paiement"); return; }
     payModal.showModal();
+    refreshPackButtonsLabels();             // <-- met à jour l’affichage packs
     renderPayPal(chosenPack);
   };
   payClose.onclick = ()=> payModal.close();
@@ -363,7 +399,7 @@ async function renderPayPal(pack){
   if(!PAYMENTS_ENABLED) return;
   await ensurePayPalSDK();
 
-  const amount = pack===5?"5.00":pack===10?"10.00":"20.00";
+  const amount = PACKS[pack]?.amount || "5.00";
   const box=document.getElementById("paypal-buttons");
   if(!box) return;
   box.innerHTML="";
@@ -377,7 +413,8 @@ async function renderPayPal(pack){
       try{
         await actions.order.capture();
 
-        const baseTokens = pack===5?1_000_000:pack===10?2_000_000:4_000_000;
+        // CHANGÉ : on crédite selon PACKS (500k / 1,2M / 3M)
+        const baseTokens = PACKS[pack]?.tokens || 500_000;
         const FIRST_FLAG="philo_first_purchase_done";
         const isFirst=!localStorage.getItem(FIRST_FLAG);
         const bonus=isFirst?Math.floor(baseTokens*0.5):0; // +50% 1er achat
@@ -397,7 +434,7 @@ async function renderPayPal(pack){
           ,"bot"
         );
 
-        // (optionnel) notifier ton backend d’un achat
+        // (optionnel) notifier ton backend
         // try{ await fetch("/payments/notify", {method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ userId, pack, amount, credited })}); }catch(_){}
 
         payModal.close();
