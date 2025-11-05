@@ -1,12 +1,15 @@
 <!-- scripts.js -->
 /* =========================
-   Philomène I.A. — scripts.js (clean + mémoire + clear)
+   Philomène I.A. — scripts.js (clean + mémoire + clear + PayPal dynamique)
    ========================= */
 
 /* ====== CONFIG ====== */
 const API_URL = "https://api.philomeneia.com/ask";
 const FALLBACK_URL = "/ask";
 const VERSION = "version 1.3";
+
+/* Optionnel : endpoint de config publique renvoyant { paymentsEnabled: boolean, paypalClientId: string } */
+const PUBLIC_CONFIG_URL = "/config";
 
 /* ====== DOM ====== */
 const chat         = document.getElementById("chat");
@@ -147,7 +150,7 @@ if (!Array.isArray(conversation) || conversation.length === 0) {
   pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam;
   pickFile.textContent    = T.file; sheetClose.textContent = T.close;
 
-  // + bouton Effacer l’historique (ajouté dynamiquement au menu)
+  // + bouton Effacer l’historique (ajout dynamiquement au menu)
   const clearBtn = document.createElement("button");
   clearBtn.id = "clearHistory";
   clearBtn.className = "dropdown__item";
@@ -162,9 +165,7 @@ function saveConversation() {
   localStorage.setItem(LS_CONV, JSON.stringify(trimmed));
 }
 function renderConversation(list){
-  for (const m of list) {
-    addBubble(m.content, m.role === "user" ? "user" : "bot");
-  }
+  for (const m of list) addBubble(m.content, m.role === "user" ? "user" : "bot");
 }
 function addBubble(text, who="bot"){
   const wrap = document.createElement("div");
@@ -210,7 +211,7 @@ function handleClearHistory(){
   messagesBox.innerHTML = "";
   addBubble(T.welcome, "bot");
   saveConversation();
-  // on garde les tokens intacts
+  // tokens intacts
 }
 
 /* ====== MENU ====== */
@@ -313,44 +314,108 @@ async function sendMessage(){
 sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }});
 
-/* ====== PAYPAL (client-side prêt) ====== */
+/* ====== PAYPAL (dynamique) ====== */
 const payModal = document.getElementById("payModal");
 const payClose = document.getElementById("payClose");
 let chosenPack = 5;
+
+let PAYMENTS_ENABLED = true;         // défaut : on suppose actif (pour compat)
+let PAYPAL_CLIENT_ID = "__TON_CLIENT_ID__"; // remplacé si /config répond
+
+// Essaye de charger la config publique
+(async function initPaymentsConfig(){
+  try{
+    const r = await fetch(PUBLIC_CONFIG_URL, { method:"GET" });
+    if(r.ok){
+      const cfg = await r.json();
+      if(typeof cfg.paymentsEnabled === "boolean") PAYMENTS_ENABLED = cfg.paymentsEnabled;
+      if(cfg.paypalClientId) PAYPAL_CLIENT_ID = String(cfg.paypalClientId);
+    }
+  }catch(_){}
+  // Affichage / masquage du bouton Acheter selon l’état
+  if(!PAYMENTS_ENABLED && btnBuy){ btnBuy.style.display = "none"; }
+})();
+
 if(btnBuy && payModal){
-  btnBuy.onclick = ()=>{ payModal.showModal(); renderPayPal(chosenPack); };
+  btnBuy.onclick = ()=>{
+    if(!PAYMENTS_ENABLED){ pop(LANG==="fr"?"Le paiement est temporairement désactivé.":"Payments are temporarily disabled.","Paiement"); return; }
+    payModal.showModal();
+    renderPayPal(chosenPack);
+  };
   payClose.onclick = ()=> payModal.close();
-  document.addEventListener("click",(e)=>{ const b=e.target.closest(".packsRow .pill"); if(!b) return; chosenPack=Number(b.dataset.pack); renderPayPal(chosenPack); });
+  document.addEventListener("click",(e)=>{
+    const b=e.target.closest(".packsRow .pill"); if(!b) return;
+    chosenPack=Number(b.dataset.pack);
+    renderPayPal(chosenPack);
+  });
 }
+
+async function ensurePayPalSDK(){
+  if(document.getElementById("paypal-sdk")) return;
+  const s=document.createElement("script");
+  s.id="paypal-sdk";
+  s.src=`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(PAYPAL_CLIENT_ID)}&currency=EUR`;
+  document.body.appendChild(s);
+  await new Promise(r=> s.onload=r);
+}
+
 async function renderPayPal(pack){
-  if(!document.getElementById("paypal-sdk")){
-    const s=document.createElement("script"); s.id="paypal-sdk";
-    s.src="https://www.paypal.com/sdk/js?client-id=__TON_CLIENT_ID__&currency=EUR";
-    document.body.appendChild(s); await new Promise(r=> s.onload=r);
-  }
+  if(!PAYMENTS_ENABLED) return;
+  await ensurePayPalSDK();
+
   const amount = pack===5?"5.00":pack===10?"10.00":"20.00";
-  const box=document.getElementById("paypal-buttons"); if(!box) return; box.innerHTML="";
+  const box=document.getElementById("paypal-buttons");
+  if(!box) return;
+  box.innerHTML="";
+
   window.paypal.Buttons({
     style:{ layout:"horizontal", height:45 },
-    createOrder:(data,actions)=> actions.order.create({ purchase_units:[{ amount:{ currency_code:"EUR", value:amount } }] }),
+    createOrder:(data,actions)=> actions.order.create({
+      purchase_units:[{ amount:{ currency_code:"EUR", value:amount } }]
+    }),
     onApprove: async (data,actions)=>{
       try{
         await actions.order.capture();
+
         const baseTokens = pack===5?1_000_000:pack===10?2_000_000:4_000_000;
         const FIRST_FLAG="philo_first_purchase_done";
         const isFirst=!localStorage.getItem(FIRST_FLAG);
-        const bonus=isFirst?Math.floor(baseTokens*0.5):0; if(isFirst) localStorage.setItem(FIRST_FLAG,"1");
+        const bonus=isFirst?Math.floor(baseTokens*0.5):0; // +50% 1er achat
+        if(isFirst) localStorage.setItem(FIRST_FLAG,"1");
+
         const credited=baseTokens+bonus;
-        tokenBalance += credited; localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI();
-        addBubble(LANG==="fr"?`✅ Paiement confirmé (${amount}€). +${credited.toLocaleString("fr-FR")} tokens crédités.`:
-                 LANG==="nl"?`✅ Betaling bevestigd (${amount}€). +${credited.toLocaleString("fr-FR")} tokens toegevoegd.`:
-                              `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added.`,"bot");
+        tokenBalance += credited;
+        localStorage.setItem(LS_TOKENS, tokenBalance);
+        updateTokenUI();
+
+        addBubble(
+          LANG==="fr"
+            ? `✅ Paiement confirmé (€${amount}). +${credited.toLocaleString("fr-FR")} tokens crédités${isFirst?" (+50% 1er achat)":""}.`
+            : LANG==="nl"
+              ? `✅ Betaling bevestigd (€${amount}). +${credited.toLocaleString("fr-FR")} tokens toegevoegd${isFirst?" (+50% eerste aankoop)":""}.`
+              : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added${isFirst?" (+50% first purchase)":""}.`
+          ,"bot"
+        );
+
+        // (optionnel) notifier ton backend d’un achat
+        // try{ await fetch("/payments/notify", {method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ userId, pack, amount, credited })}); }catch(_){}
+
         payModal.close();
       }catch(err){
-        addBubble(LANG==="fr"?"❌ Erreur lors de la capture du paiement.":LANG==="nl"?"❌ Fout bij betalingsverwerking.":"❌ Payment capture error.","bot");
+        addBubble(
+          LANG==="fr"?"❌ Erreur lors de la capture du paiement."
+          :LANG==="nl"?"❌ Fout bij betalingsverwerking."
+          :"❌ Payment capture error.",
+          "bot"
+        );
       }
     },
-    onError:()=>{ addBubble(LANG==="fr"?"❌ Paiement refusé/annulé.":LANG==="nl"?"❌ Betaling geweigerd/geannuleerd.":"❌ Payment failed/cancelled.","bot"); }
+    onError:()=> addBubble(
+      LANG==="fr"?"❌ Paiement refusé/annulé."
+      :LANG==="nl"?"❌ Betaling geweigerd/geannuleerd."
+      :"❌ Payment failed/cancelled.",
+      "bot"
+    )
   }).render("#paypal-buttons");
 }
 
