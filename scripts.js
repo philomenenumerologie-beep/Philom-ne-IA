@@ -1,33 +1,33 @@
 /* ===== CONFIG ===== */
-const API_URL = "https://api.philomeneia.com/ask";   // backend
-const FALLBACK_URL = "/ask";                         // secours si API_URL vide
-const VERSION = "version 1.3";                       // affiché sous le header
+const API_URL = "https://api.philomeneia.com/ask";
+const FALLBACK_URL = "/ask";
+const VERSION = "version 1.3";
 
 /* ===== Sélecteurs ===== */
-const chat        = document.getElementById("chat");
+const chat = document.getElementById("chat");
 const messagesBox = document.getElementById("messages");
-const input       = document.getElementById("userInput");
-const sendBtn     = document.getElementById("sendBtn");
-const plusBtn     = document.getElementById("plusBtn");
-const sheet       = document.getElementById("attachSheet");
-const sheetClose  = document.getElementById("closeSheet");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const plusBtn = document.getElementById("plusBtn");
+const sheet = document.getElementById("attachSheet");
+const sheetClose = document.getElementById("closeSheet");
 const pickLibrary = document.getElementById("pickLibrary");
-const takePhoto   = document.getElementById("takePhoto");
-const pickFile    = document.getElementById("pickFile");
+const takePhoto = document.getElementById("takePhoto");
+const pickFile = document.getElementById("pickFile");
 const imgLibraryInput = document.getElementById("imgLibraryInput");
-const imgCameraInput  = document.getElementById("imgCameraInput");
-const docInput        = document.getElementById("docInput");
-const micBtn     = document.getElementById("micBtn");
+const imgCameraInput = document.getElementById("imgCameraInput");
+const docInput = document.getElementById("docInput");
+const micBtn = document.getElementById("micBtn");
 const tokenCountEl = document.getElementById("tokenCount");
-const btnMenu    = document.getElementById("btnMenu");
-const dropdown   = document.getElementById("menuDropdown");
-const toggleTheme= document.getElementById("toggleTheme");
-const openFaq    = document.getElementById("openFaq");
-const btnLogin   = document.getElementById("btnLogin");
-const btnBuy     = document.getElementById("btnBuy");
+const btnMenu = document.getElementById("btnMenu");
+const dropdown = document.getElementById("menuDropdown");
+const toggleTheme = document.getElementById("toggleTheme");
+const openFaq = document.getElementById("openFaq");
+const btnLogin = document.getElementById("btnLogin");
+const btnBuy = document.getElementById("btnBuy");
 document.getElementById("appVersion").textContent = VERSION;
 
-/* ===== I18N (FR / EN / NL) ===== */
+/* ===== I18N ===== */
 const I18N = {
   fr:{welcome:"Bonjour 👋 Je suis Philomène I.A., propulsée par GPT-5 Thinking.",
       login:"Connexion",buy:"Acheter",menuTheme:"🌗 Mode jour / nuit",menuFaq:"❓ F.A.Q.",
@@ -83,19 +83,16 @@ function applyI18N(){
 }
 applyI18N();
 
-/* ===== État conversation & tokens ===== */
-const LS_USER   = "philo_user_id";
+/* ===== État & tokens ===== */
+const LS_USER = "philo_user_id";
 const LS_TOKENS = "philo_tokens_balance";
 let userId = localStorage.getItem(LS_USER);
 if (!userId) { userId = "guest_" + Math.random().toString(36).slice(2,10); localStorage.setItem(LS_USER,userId); }
-
 let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
-if (!Number.isFinite(tokenBalance)) { tokenBalance = 2000; localStorage.setItem(LS_TOKENS, tokenBalance); } // 2 000 gratuits invités
+if (!Number.isFinite(tokenBalance)) { tokenBalance = 2000; localStorage.setItem(LS_TOKENS, tokenBalance); }
 updateTokenUI();
-
 const conversation = [{ role:"assistant", content:T.welcome }];
 
-/* ===== Utilitaires UI ===== */
 function addBubble(text, who="bot"){
   const wrap = document.createElement("div");
   wrap.className = `bubble ${who}`;
@@ -146,7 +143,7 @@ pickLibrary.addEventListener("click", ()=> imgLibraryInput.click());
 takePhoto  .addEventListener("click", ()=> imgCameraInput.click());
 pickFile   .addEventListener("click", ()=> docInput.click());
 
-/* ===== Image -> analyse via backend ===== */
+/* ===== Image -> backend ===== */
 async function uploadImageToAnalyze(file){
   if(!file) return;
   addBubble(`${LANG==="fr"?"📎 Fichier reçu":"📎 Bestand ontvangen"} : ${file.name}`,"user");
@@ -174,7 +171,7 @@ imgLibraryInput.onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
 imgCameraInput .onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
 docInput       .onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
 
-/* ===== Micro (Web Speech API si dispo) ===== */
+/* ===== Micro ===== */
 let recognition = null;
 if("webkitSpeechRecognition" in window){
   const R = window.webkitSpeechRecognition;
@@ -187,7 +184,7 @@ micBtn.addEventListener("click", ()=> recognition ? recognition.start() :
   pop(LANG==="fr"?"Le micro n’est pas supporté par ce navigateur.":LANG==="nl"?"Microfoon niet ondersteund door deze browser.":"Micro is not supported by this browser.","Micro")
 );
 
-/* ===== Envoi message (décompte réel) ===== */
+/* ===== Chat ===== */
 async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
@@ -218,10 +215,10 @@ async function sendMessage(){
 sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }});
 
-/* ===== PAYPAL STANDARD (préparé) ===== */
+/* ===== PayPal (client-only) ===== */
 const payModal = document.getElementById("payModal");
 const payClose = document.getElementById("payClose");
-let chosenPack = 5; // 5|10|20
+let chosenPack = 5;
 if(btnBuy && payModal){
   btnBuy.onclick = ()=>{ payModal.showModal(); renderPayPal(chosenPack); };
   payClose.onclick = ()=> payModal.close();
@@ -260,7 +257,7 @@ async function renderPayPal(pack){
   }).render("#paypal-buttons");
 }
 
-/* ===== Connexion avec Clerk (bloc unique & bonus) ===== */
+/* ===== Clerk (connexion + bonus unique par user) ===== */
 const LS_SIGNUP_BONUS = "philo_signup_bonus_claimed_by_user";
 function giveSigninBonusFor(userId){
   const key = `${LS_SIGNUP_BONUS}:${userId}`;
