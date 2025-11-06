@@ -1,42 +1,76 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PayPal – Test Sandbox</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fff;
+      color: #111;
+      margin: 2rem;
+      text-align: center;
+    }
+    h1 {
+      color: #000;
+      margin-bottom: 1rem;
+    }
+    #status {
+      background: #111;
+      color: #0f0;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 15px;
+      text-align: left;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 1.5rem auto;
+      overflow-x: auto;
+    }
+  </style>
 </head>
 <body>
   <h1>Test PayPal (Sandbox)</h1>
 
   <div id="paypal-button-container"></div>
-  <pre id="status" style="background:#111;color:#0f0;padding:10px"></pre>
+  <pre id="status"></pre>
 
-  <!-- SDK PayPal : SANDBOX (client-id sandbox requis) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_SANDBOX_CLIENT_ID&currency=EUR&intent=capture&components=buttons"></script>
+  <!-- SDK PayPal : identifiant sandbox -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AUayMzldVJfLsemZ8ZaO4M0SROpjObdy1rIDF8HfCymYzeoohXkjSZ2dnGBrQ-8mJzHKomA9uS53EBx&currency=EUR&intent=capture&components=buttons"></script>
 
   <script>
-    const log = (m)=> document.getElementById('status').textContent += m + "\n";
+    const log = (msg) => {
+      const statusBox = document.getElementById('status');
+      statusBox.textContent += msg + "\n";
+      console.log(msg);
+    };
 
-    if (!window.paypal) {
-      log("❌ SDK non chargé");
-    } else {
-      log("✅ SDK chargé");
+    window.addEventListener("load", () => {
+      if (!window.paypal) {
+        log("❌ SDK non chargé — vérifie le Client ID ou les bloqueurs de scripts.");
+        return;
+      }
+
+      log("✅ SDK chargé, rendu des boutons PayPal…");
+
       paypal.Buttons({
         style: { layout: "horizontal", height: 45 },
-        createOrder: (data, actions) => actions.order.create({
-          purchase_units: [{ amount: { currency_code: "EUR", value: "5.00" } }]
-        }),
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{ amount: { currency_code: "EUR", value: "5.00" } }]
+          });
+        },
         onApprove: async (data, actions) => {
           await actions.order.capture();
-          log("✅ Paiement capturé (SANDBOX).");
+          log("✅ Paiement capturé avec succès (mode SANDBOX).");
         },
         onError: (err) => {
           console.error(err);
-          log("❌ onError: " + (err && err.message || err));
+          log("❌ Erreur PayPal : " + (err?.message || err));
         }
       }).render("#paypal-button-container");
-      log("Boutons rendus.");
-    }
+    });
   </script>
 </body>
 </html>
