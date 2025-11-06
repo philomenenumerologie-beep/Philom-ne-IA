@@ -11,6 +11,9 @@ const VERSION = "version 1.3";
 const API_BASE = API_URL.replace(/\/ask$/, "");
 const PUBLIC_CONFIG_URL = `${API_BASE}/config`;
 
+/* ====== CONFIG RUNTIME (vient de /config) ====== */
+let CFG = { freeAnon: 2000, freeAfterSignup: 3000 };
+
 /* ====== DOM ====== */
 const chat         = document.getElementById("chat");
 const messagesBox  = document.getElementById("messages");
@@ -133,10 +136,10 @@ if (!userId) {
   localStorage.setItem(LS_USER, userId);
 }
 
-// tokens (2000 invités au premier accès)
+// tokens (init provisoire = CFG.freeAnon, corrigé après /config)
 let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
-if (!Number.isFinite(tokenBalance)) {
-  tokenBalance = 2000;
+if (!Number.isFinite(tokenBalance) || tokenBalance <= 0) {
+  tokenBalance = CFG.freeAnon;
   localStorage.setItem(LS_TOKENS, tokenBalance);
 }
 updateTokenUI();
@@ -378,12 +381,22 @@ const configReady = new Promise(r => (_resolveConfig = r));
     const r = await fetch(PUBLIC_CONFIG_URL, { method:"GET", cache:"no-store" });
     if(r.ok){
       const cfg = await r.json();
+      CFG.freeAnon = Number(cfg.freeAnon) || CFG.freeAnon;
+      CFG.freeAfterSignup = Number(cfg.freeAfterSignup) || CFG.freeAfterSignup;
       if(typeof cfg.paymentsEnabled === "boolean") PAYMENTS_ENABLED = cfg.paymentsEnabled;
       if(cfg.paypalClientId) PAYPAL_CLIENT_ID = String(cfg.paypalClientId).trim().replace(/\s+/g,"");
     }
   }catch(_){}
   if(!PAYMENTS_ENABLED && btnBuy){ btnBuy.style.display = "none"; }
   _resolveConfig(true);
+
+  // (re)calage du solde après lecture de /config
+  let current = Number(localStorage.getItem(LS_TOKENS));
+  if (!Number.isFinite(current) || current <= 0) {
+    tokenBalance = CFG.freeAnon;
+    localStorage.setItem(LS_TOKENS, tokenBalance);
+    updateTokenUI();
+  }
 })();
 
 if(btnBuy && payModal){
@@ -397,13 +410,8 @@ if(btnBuy && payModal){
 }
 
 async function ensurePayPalSDK(){
-  // déjà présent ?
   if (window.paypal) return;
-
-  // retire un ancien script potentiellement cassé
   document.querySelectorAll('script#paypal-sdk,script[src*="paypal.com/sdk/js"]').forEach(s => s.remove());
-
-  // injecte proprement
   if (!PAYPAL_CLIENT_ID) throw new Error("ClientId PayPal manquant");
   const s = document.createElement("script");
   s.id = "paypal-sdk";
@@ -417,7 +425,6 @@ async function ensurePayPalSDK(){
   document.head.appendChild(s);
   await loaded;
 
-  // garde-fou (exposition de window.paypal)
   for (let i=0;i<20 && !window.paypal;i++) {
     await new Promise(r => setTimeout(r, 50));
   }
@@ -502,12 +509,12 @@ async function renderPayPal(pack){
 function giveSigninBonusFor(uid){
   const key = `${LS_SIGNUP_BONUS}:${uid}`;
   if(!localStorage.getItem(key)){
-    const bonus = 3000; // +3000 une seule fois par userId
-    tokenBalance += bonus;
+    const target = CFG.freeAfterSignup;                 // ex. 3000 depuis /config
+    if (tokenBalance < target) tokenBalance = target;   // on fixe un palier mini après signup
     localStorage.setItem(LS_TOKENS, tokenBalance);
     localStorage.setItem(key,"1");
     updateTokenUI();
-    addBubble(`🎉 +${bonus.toLocaleString("fr-FR")} tokens offerts (inscription)`, "bot");
+    addBubble(`🎉 ${target.toLocaleString("fr-FR")} tokens crédités (inscription)`, "bot");
   }
 }
 function resetConversationUI(){
@@ -559,9 +566,13 @@ async function initClerkOnce(timeoutMs=15000){
 
     if(user && session){
       await Clerk.signOut();
-      // repasse en invité et remet un chat propre
+      // repasse en invité et remet un chat propre + crédits visiteur
       const guest = "guest_" + Math.random().toString(36).slice(2,10);
       switchUser(guest);
+      tokenBalance = CFG.freeAnon;                  // reset au quota visiteur
+      localStorage.setItem(LS_TOKENS, tokenBalance);
+      updateTokenUI();
+
       addBubble("👋 Déconnecté.", "bot");
       btnLogin.textContent = T.login;
       return;
