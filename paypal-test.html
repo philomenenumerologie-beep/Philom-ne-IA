@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><meta charset="utf-8"><title>Test PayPal Sandbox</title></head>
+<head>
+  <meta charset="utf-8">
+  <title>Test PayPal Sandbox</title>
+</head>
 <body>
   <h1>Test paiement PayPal (Sandbox)</h1>
   <div id="paypal-button-container"></div>
 
-  <script src="https://www.paypal.com/sdk/js?client-id=TON_CLIENT_ID_SANDBOX&currency=EUR"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AYKv43OevYuJ6fGQPBRgpjd3oRBVpcpKTtPMwFStWW1xLG52QpA8LZNWYOKrphrJH38ij_3EfpYasSH7&currency=EUR"></script>
   <script>
     paypal.Buttons({
-      // 1) Création d'une commande de test à 5,90 €
-      createOrder: (data, actions) => actions.order.create({
-        purchase_units: [{ amount: { value: '5.90', currency_code: 'EUR' } }]
-      }),
-      // 2) Capture immédiate du paiement (sandbox)
-      onApprove: (data, actions) =>
-        actions.order.capture().then(details => {
-          alert('Paiement réussi (SANDBOX) : ' + details.payer.name.given_name);
-          console.log('Détails:', details);
-        }),
-      onError: (err) => { console.error(err); alert('Erreur PayPal (sandbox)'); }
+      createOrder: (data, actions) => {
+        return actions.order.create({
+          purchase_units: [{ amount: { value: '5.90' } }]
+        });
+      },
+      onApprove: (data, actions) => {
+        return actions.order.capture().then(details => {
+          alert('Paiement réussi : ' + details.payer.name.given_name);
+        });
+      }
     }).render('#paypal-button-container');
   </script>
 </body>
