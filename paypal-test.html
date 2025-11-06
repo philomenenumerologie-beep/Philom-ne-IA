@@ -11,8 +11,8 @@
 
   <div id="paypal-button-container"></div>
 
-  <!-- SDK PayPal officiel (mode sandbox activé ici) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=AYKv43OevYuJ6fGQPBRgpjd3oRBVpcpKTpMwFStWW1xLG52QpA8LZNWYOKrphrJH38ij_3EfpYasSH7&currency=EUR&intent=capture"></script>
+  <!-- SDK PayPal Sandbox -->
+  <script src="https://www.sandbox.paypal.com/sdk/js?client-id=AYKv43OevYuJ6fGQPBRgpjd3oRBVpcpKTpMwFStWW1xLG52QpA8LZNWYOKrphrJH38ij_3EfpYasSH7&currency=EUR&intent=capture"></script>
 
   <script>
     paypal.Buttons({
@@ -31,11 +31,11 @@
       },
       onApprove: function(data, actions) {
         return actions.order.capture().then(function(details) {
-          alert('Paiement réussi pour : ' + details.payer.name.given_name);
+          alert('✅ Paiement fictif réussi pour : ' + details.payer.name.given_name);
         });
       },
       onError: function(err) {
-        console.error('Erreur PayPal :', err);
+        console.error('❌ Erreur PayPal :', err);
         alert('Une erreur est survenue. Consulte la console pour plus de détails.');
       }
     }).render('#paypal-button-container');
