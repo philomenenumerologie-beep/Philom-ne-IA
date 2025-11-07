@@ -1,57 +1,43 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Test PayPal (Sandbox)</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
-      background: #fff;
-    }
-    #status {
-      background: #000;
-      color: #0f0;
-      padding: 10px;
-      margin-top: 20px;
-      border-radius: 6px;
-      display: inline-block;
-    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:24px}
+    h1{font-size:28px;margin:0 0 16px}
+    #status{background:#111;color:#0f0;padding:10px;border-radius:8px}
   </style>
 </head>
 <body>
   <h1>Test PayPal (Sandbox)</h1>
-
   <div id="paypal-button-container"></div>
-  <pre id="status"></pre>
+  <pre id="status">⏳ Chargement…</pre>
 
-  <!-- SDK PayPal Sandbox -->
-  <script src="https://www.paypal.com/sdk/js?client-id=AZv2A9s_5XeknErHbHiqVZUOzTqAzPw2GWXGVcc3&currency=EUR&intent=capture&components=buttons"></script>
+  <!-- SDK PayPal SANDBOX : remplace le client-id ci-dessous -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_SANDBOX_CLIENT_ID&currency=EUR&intent=capture&components=buttons"></script>
 
   <script>
-    const log = (m) => document.getElementById("status").textContent += m + "\n";
+    const log = (m) => (document.getElementById("status").textContent += "\n" + m);
 
+    // 1) SDK chargé ?
     if (!window.paypal) {
-      log("❌ SDK non chargé — vérifie le Client ID ou les bloqueurs de script");
+      log("❌ SDK non chargé — vérifie le Client ID sandbox, le réseau ou un bloqueur de scripts.");
     } else {
-      log("✅ SDK chargé correctement !");
+      log("✅ SDK chargé");
       paypal.Buttons({
         style: { layout: "horizontal", height: 45 },
         createOrder: (data, actions) => actions.order.create({
           purchase_units: [{ amount: { currency_code: "EUR", value: "5.00" } }]
         }),
         onApprove: async (data, actions) => {
-          await actions.order.capture();
-          log("✅ Paiement capturé avec succès (SANDBOX).");
+          try { await actions.order.capture(); log("✅ Paiement capturé (SANDBOX)."); }
+          catch (e) { console.error(e); log("❌ Capture error: " + e.message); }
         },
-        onError: (err) => {
-          console.error(err);
-          log("❌ Erreur PayPal : " + (err.message || err));
-        }
+        onError: (err) => { console.error(err); log("❌ onError: " + (err && err.message || err)); }
       }).render("#paypal-button-container");
-      log("Boutons PayPal rendus !");
+      log("🧩 Boutons rendus.");
     }
   </script>
 </body>
