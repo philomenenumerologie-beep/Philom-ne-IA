@@ -1,5 +1,6 @@
 /* =========================
-   Philomène I.A. — scripts.js (fix PayPal + config dynamique)
+   Philomène I.A. — scripts.js
+   Paiements PayPal + config dynamique
    ========================= */
 
 /* ====== CONFIG ====== */
@@ -134,7 +135,10 @@ const LS_CONV  = "philo_conversation";
 const MAX_CONV = 100;
 
 let userId = localStorage.getItem(LS_USER);
-if (!userId) { userId = "guest_" + Math.random().toString(36).slice(2,10); localStorage.setItem(LS_USER, userId); }
+if (!userId) {
+  userId = "guest_" + Math.random().toString(36).slice(2,10);
+  localStorage.setItem(LS_USER, userId);
+}
 
 // tokens init (sera recalé après /config)
 let tokenBalance = Number(localStorage.getItem(LS_TOKENS));
@@ -142,7 +146,9 @@ if (!Number.isFinite(tokenBalance) || tokenBalance <= 0) {
   tokenBalance = CFG.freeAnon;
   localStorage.setItem(LS_TOKENS, tokenBalance);
 }
-function updateTokenUI(){ if(tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR"); }
+function updateTokenUI(){
+  if(tokenCountEl) tokenCountEl.textContent = tokenBalance.toLocaleString("fr-FR");
+}
 updateTokenUI();
 
 function safeParse(j,f){ try{ return JSON.parse(j); } catch { return f; } }
@@ -151,65 +157,170 @@ if (!Array.isArray(conversation) || conversation.length === 0) {
   conversation = [{ role: "assistant", content: T.welcome }];
   saveConversation();
 }
-(function(){ if(conversation?.length){ const w=document.querySelector("#chat > .bubble.bot"); if(w) w.remove(); messagesBox.innerHTML=""; renderConversation(conversation); }})();
+(function(){
+  if(conversation?.length){
+    const w=document.querySelector("#chat > .bubble.bot");
+    if(w) w.remove();
+    messagesBox.innerHTML="";
+    renderConversation(conversation);
+  }
+})();
 
 (function i18n(){
-  btnLogin.textContent = T.login; btnBuy.textContent = T.buy;
-  toggleTheme.textContent = T.menuTheme; openFaq.textContent = T.menuFaq;
-  input.placeholder = T.inputPh; document.querySelector(".sheet__title").textContent = T.sheetTitle;
-  pickLibrary.textContent = T.lib; takePhoto.textContent = T.cam; pickFile.textContent = T.file; sheetClose.textContent = T.close;
+  btnLogin.textContent = T.login;
+  btnBuy.textContent = T.buy;
+  toggleTheme.textContent = T.menuTheme;
+  openFaq.textContent = T.menuFaq;
+  input.placeholder = T.inputPh;
+  document.querySelector(".sheet__title").textContent = T.sheetTitle;
+  pickLibrary.textContent = T.lib;
+  takePhoto.textContent = T.cam;
+  pickFile.textContent = T.file;
+  sheetClose.textContent = T.close;
   const clearBtn = document.createElement("button");
-  clearBtn.id = "clearHistory"; clearBtn.className = "dropdown__item"; clearBtn.textContent = T.menuClear;
-  dropdown.appendChild(clearBtn); clearBtn.addEventListener("click", handleClearHistory);
+  clearBtn.id = "clearHistory";
+  clearBtn.className = "dropdown__item";
+  clearBtn.textContent = T.menuClear;
+  dropdown.appendChild(clearBtn);
+  clearBtn.addEventListener("click", handleClearHistory);
 })();
 
 /* ====== HELPERS ====== */
-function saveConversation(){ const trimmed=conversation.slice(-MAX_CONV); localStorage.setItem(LS_CONV, JSON.stringify(trimmed)); }
-function renderConversation(list){ for(const m of list) addBubble(m.content, m.role==="user"?"user":"bot"); }
-function addBubble(text, who="bot"){ const wrap=document.createElement("div"); wrap.className=`bubble ${who}`; wrap.innerHTML=`<div class="bubble__content"></div>`; wrap.querySelector(".bubble__content").textContent=text; messagesBox.appendChild(wrap); requestAnimationFrame(()=> (chat.scrollTop = chat.scrollHeight)); }
-function setTyping(on){ if(on){ addBubble("…","bot"); return; } const kids = messagesBox.querySelectorAll(".bubble.bot .bubble__content"); for(let i=kids.length-1;i>=0;i--){ if(kids[i].textContent==="…"){ kids[i].closest(".bubble").remove(); break; } } }
-function pop(html, title="Info"){ const modal=document.getElementById("modal"); document.getElementById("modalTitle").textContent=title; document.getElementById("modalBody").innerHTML=html; modal.showModal(); }
+function saveConversation(){
+  const trimmed=conversation.slice(-MAX_CONV);
+  localStorage.setItem(LS_CONV, JSON.stringify(trimmed));
+}
+function renderConversation(list){
+  for(const m of list) addBubble(m.content, m.role==="user"?"user":"bot");
+}
+function addBubble(text, who="bot"){
+  const wrap=document.createElement("div");
+  wrap.className=`bubble ${who}`;
+  wrap.innerHTML=`<div class="bubble__content"></div>`;
+  wrap.querySelector(".bubble__content").textContent=text;
+  messagesBox.appendChild(wrap);
+  requestAnimationFrame(()=> (chat.scrollTop = chat.scrollHeight));
+}
+function setTyping(on){
+  if(on){
+    addBubble("…","bot");
+    return;
+  }
+  const kids = messagesBox.querySelectorAll(".bubble.bot .bubble__content");
+  for(let i=kids.length-1;i>=0;i--){
+    if(kids[i].textContent==="…"){
+      kids[i].closest(".bubble").remove();
+      break;
+    }
+  }
+}
+function pop(html, title="Info"){
+  const modal=document.getElementById("modal");
+  document.getElementById("modalTitle").textContent=title;
+  document.getElementById("modalBody").innerHTML=html;
+  modal.showModal();
+}
 document.getElementById("modalClose").onclick=()=>document.getElementById("modal").close();
-function spendTokensReal(usage){ const used=Math.max(0, Number(usage?.total_tokens)||0); if(used>0){ tokenBalance=Math.max(0, tokenBalance-used); localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI(); } }
-function spendEstimateByText(str){ const est=Math.ceil((str||"").length/4); tokenBalance=Math.max(0, tokenBalance-est); localStorage.setItem(LS_TOKENS, tokenBalance); updateTokenUI(); }
+function spendTokensReal(usage){
+  const used=Math.max(0, Number(usage?.total_tokens)||0);
+  if(used>0){
+    tokenBalance=Math.max(0, tokenBalance-used);
+    localStorage.setItem(LS_TOKENS, tokenBalance);
+    updateTokenUI();
+  }
+}
+function spendEstimateByText(str){
+  const est=Math.ceil((str||"").length/4);
+  tokenBalance=Math.max(0, tokenBalance-est);
+  localStorage.setItem(LS_TOKENS, tokenBalance);
+  updateTokenUI();
+}
 
 /* ====== Effacer l’historique ====== */
-function handleClearHistory(){ const msg=T.confirmClear||"Clear history?"; if(!confirm(msg)) return; resetConversationUI(); }
+function handleClearHistory(){
+  const msg=T.confirmClear||"Clear history?";
+  if(!confirm(msg)) return;
+  resetConversationUI();
+}
 
 /* ====== MENU ====== */
-btnMenu.addEventListener("click",()=> dropdown.hidden = !dropdown.hidden);
-document.addEventListener("click",(e)=>{ if(!dropdown.hidden){ const w=e.target.closest("#menuDropdown")||e.target.closest("#btnMenu"); if(!w) dropdown.hidden=true; }});
-toggleTheme.addEventListener("click",()=>{ const b=document.body; const isLight=b.classList.toggle("theme-light"); if(isLight) b.classList.remove("theme-dark"); else b.classList.add("theme-dark"); dropdown.hidden=true; });
-openFaq.addEventListener("click",()=>{ dropdown.hidden=true; pop(T.faqHtml, T.faqTitle); });
+btnMenu.addEventListener("click",()=> {
+  dropdown.hidden = !dropdown.hidden;
+});
+document.addEventListener("click",(e)=>{
+  if(!dropdown.hidden){
+    const w=e.target.closest("#menuDropdown")||e.target.closest("#btnMenu");
+    if(!w) dropdown.hidden=true;
+  }
+});
+toggleTheme.addEventListener("click",()=>{
+  const b=document.body;
+  const isLight=b.classList.toggle("theme-light");
+  if(isLight) b.classList.remove("theme-dark");
+  else b.classList.add("theme-dark");
+  dropdown.hidden=true;
+});
+openFaq.addEventListener("click",()=>{
+  dropdown.hidden=true;
+  pop(T.faqHtml, T.faqTitle);
+});
 
 /* ====== SHEET / Upload image ====== */
-const openSheet=()=> sheet.hidden=false, closeSheet=()=> sheet.hidden=true;
-plusBtn.addEventListener("click",openSheet); sheetClose.addEventListener("click",closeSheet);
+const openSheet=()=> sheet.hidden=false;
+const closeSheet=()=> sheet.hidden=true;
+plusBtn.addEventListener("click",openSheet);
+sheetClose.addEventListener("click",closeSheet);
 pickLibrary.addEventListener("click",()=> imgLibraryInput.click());
 takePhoto  .addEventListener("click",()=> imgCameraInput.click());
 pickFile   .addEventListener("click",()=> docInput.click());
 
 async function uploadImageToAnalyze(file){
   if(!file) return;
-  addBubble(`${LANG==="fr"?"📎 Fichier reçu":LANG==="nl"?"📎 Bestand ontvangen":"📎 File received"} : ${file.name}`,"user");
+  addBubble(
+    `${LANG==="fr"?"📎 Fichier reçu":LANG==="nl"?"📎 Bestand ontvangen":"📎 File received"} : ${file.name}`,
+    "user"
+  );
   setTyping(true);
   const urlBase = API_URL || FALLBACK_URL;
-  const url = urlBase.includes("/ask") ? urlBase.replace("/ask","/analyze-image") : urlBase + "/analyze-image";
+  const url = urlBase.includes("/ask")
+    ? urlBase.replace("/ask","/analyze-image")
+    : urlBase + "/analyze-image";
   const fd = new FormData();
   fd.append("image", file);
   fd.append("userId", userId);
-  fd.append("prompt", LANG==="fr"?"Analyse cette image.":LANG==="nl"?"Analyseer deze afbeelding.":"Analyze this image.");
+  fd.append(
+    "prompt",
+    LANG==="fr"
+      ? "Analyse cette image."
+      : LANG==="nl"
+      ? "Analyseer deze afbeelding."
+      : "Analyze this image."
+  );
   try{
     const resp = await fetch(url,{ method:"POST", body:fd });
     const data = await resp.json();
     setTyping(false);
-    const answer = data?.answer || (LANG==="fr"?"Je n’ai rien détecté.":LANG==="nl"?"Niets gedetecteerd.":"Nothing detected.");
+    const answer = data?.answer || (
+      LANG==="fr"
+        ? "Je n’ai rien détecté."
+        : LANG==="nl"
+        ? "Niets gedetecteerd."
+        : "Nothing detected."
+    );
     addBubble(answer,"bot");
     if(data?.usage?.total_tokens) spendTokensReal(data.usage);
-    conversation.push({ role:"assistant", content: answer }); saveConversation();
+    conversation.push({ role:"assistant", content: answer });
+    saveConversation();
   }catch{
     setTyping(false);
-    addBubble(LANG==="fr"?"Erreur d’analyse d’image.":LANG==="nl"?"Fout bij afbeeldingsanalyse.":"Image analysis error.","bot");
+    addBubble(
+      LANG==="fr"
+        ? "Erreur d’analyse d’image."
+        : LANG==="nl"
+        ? "Fout bij afbeeldingsanalyse."
+        : "Image analysis error.",
+      "bot"
+    );
   }
 }
 imgLibraryInput.onchange = e=> uploadImageToAnalyze(e.target.files?.[0]);
@@ -225,8 +336,16 @@ if("webkitSpeechRecognition" in window){
   recognition.interimResults=false;
   recognition.onresult=(e)=>{ input.value = e.results[0][0].transcript; };
 }
-micBtn.addEventListener("click", ()=> recognition ? recognition.start() :
-  pop(LANG==="fr"?"Le micro n’est pas supporté par ce navigateur.":LANG==="nl"?"Microfoon niet ondersteund door deze browser.":"Micro is not supported by this browser.","Micro")
+micBtn.addEventListener("click", ()=> recognition
+  ? recognition.start()
+  : pop(
+      LANG==="fr"
+        ? "Le micro n’est pas supporté par ce navigateur."
+        : LANG==="nl"
+        ? "Microfoon niet ondersteund door deze browser."
+        : "Micro is not supported by this browser.",
+      "Micro"
+    )
 );
 
 /* ====== CHAT ====== */
@@ -235,11 +354,14 @@ async function openPayUI(){
   refreshPackButtonsLabels?.();
   await configReady;              // attendre la config avant PayPal
   if(!PAYPAL_CLIENT_ID){
-    addBubble(LANG==="fr"
-      ? "⚠️ Paiement indisponible : identifiant PayPal absent côté serveur (/config)."
-      : LANG==="nl"
-      ? "⚠️ Betaling niet beschikbaar: PayPal-ID ontbreekt (/config)."
-      : "⚠️ Payment unavailable: missing PayPal client ID from /config.", "bot");
+    addBubble(
+      LANG==="fr"
+        ? "⚠️ Paiement indisponible : identifiant PayPal absent côté serveur (/config)."
+        : LANG==="nl"
+        ? "⚠️ Betaling niet beschikbaar: PayPal-ID ontbreekt (/config)."
+        : "⚠️ Payment unavailable: missing PayPal client ID from /config.",
+      "bot"
+    );
     return;
   }
   renderPayPal(chosenPack);
@@ -252,33 +374,70 @@ async function sendMessage(){
   if (tokenBalance <= 0) { openPayUI(); return; }
 
   addBubble(text,"user");
-  conversation.push({ role:"user", content:text }); saveConversation();
+  conversation.push({ role:"user", content:text });
+  saveConversation();
 
-  input.value=""; setTyping(true);
+  input.value="";
+  setTyping(true);
   const url = API_URL || FALLBACK_URL;
+
   try{
     let data;
     if(url===FALLBACK_URL){
       await new Promise(r=>setTimeout(r,400));
-      data = { answer: LANG==="fr"?"Bien reçu. Pose-moi la suite !":LANG==="nl"?"Begrepen. Stel je volgende vraag!":"Got it. Ask me more!", usage:{ total_tokens: Math.ceil(text.length/4)+20 } };
+      data = {
+        answer:
+          LANG==="fr"
+            ? "Bien reçu. Pose-moi la suite !"
+            : LANG==="nl"
+            ? "Begrepen. Stel je volgende vraag!"
+            : "Got it. Ask me more!",
+        usage:{ total_tokens: Math.ceil(text.length/4)+20 }
+      };
     }else{
-      const resp = await fetch(url,{ method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ userId, conversation }) });
+      const resp = await fetch(url,{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ userId, conversation })
+      });
       data = await resp.json();
     }
     setTyping(false);
-    const answer = data?.answer || data?.output || data?.text || (LANG==="fr"?"Réponse vide.":LANG==="nl"?"Leeg antwoord.":"Empty response.");
+    const answer =
+      data?.answer || data?.output || data?.text ||
+      (LANG==="fr"
+        ? "Réponse vide."
+        : LANG==="nl"
+        ? "Leeg antwoord."
+        : "Empty response.");
     addBubble(answer,"bot");
-    if(data?.usage && typeof data.usage.total_tokens==="number") spendTokensReal(data.usage);
-    else { spendEstimateByText(text); spendEstimateByText(answer); }
-
-    conversation.push({ role:"assistant", content:answer }); saveConversation();
+    if(data?.usage && typeof data.usage.total_tokens==="number"){
+      spendTokensReal(data.usage);
+    }else{
+      spendEstimateByText(text);
+      spendEstimateByText(answer);
+    }
+    conversation.push({ role:"assistant", content:answer });
+    saveConversation();
   }catch{
     setTyping(false);
-    addBubble(LANG==="fr"?"Erreur de connexion. Réessaie plus tard.":LANG==="nl"?"Verbindingsfout. Probeer later opnieuw.":"Connection error. Please try again later.","bot");
+    addBubble(
+      LANG==="fr"
+        ? "Erreur de connexion. Réessaie plus tard."
+        : LANG==="nl"
+        ? "Verbindingsfout. Probeer later opnieuw."
+        : "Connection error. Please try again later.",
+      "bot"
+    );
   }
 }
 sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }});
+input.addEventListener("keydown", (e)=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    sendMessage();
+  }
+});
 
 /* ====== PAYPAL (dynamique) ====== */
 const payModal = document.getElementById("payModal");
@@ -292,7 +451,9 @@ function refreshPackButtonsLabels(){
     const val = Number(btn.dataset.pack);
     const cfg = PACKS[val];
     if (!cfg) return;
-    const formatted = cfg.tokens.toLocaleString(LANG==="fr"?"fr-FR":LANG==="nl"?"nl-NL":"en-US");
+    const formatted = cfg.tokens.toLocaleString(
+      LANG==="fr"?"fr-FR":LANG==="nl"?"nl-NL":"en-US"
+    );
     btn.textContent = `${val}€ • ${formatted}`;
   });
 }
@@ -309,12 +470,25 @@ const configReady = new Promise(r => (_resolveConfig = r));
       CFG.freeAnon = Number(cfg.freeAnon) || CFG.freeAnon;
       CFG.freeAfterSignup = Number(cfg.freeAfterSignup) || CFG.freeAfterSignup;
       if(typeof cfg.paymentsEnabled === "boolean") PAYMENTS_ENABLED = cfg.paymentsEnabled;
-      if(cfg.paypalClientId) PAYPAL_CLIENT_ID = String(cfg.paypalClientId).trim().replace(/\s+/g,"");
-      if(cfg.mode) PAYPAL_MODE = String(cfg.mode).toLowerCase().includes("live") ? "live" : "sandbox";
-      console.log("[PayPal cfg]", {PAYPAL_MODE, PAYPAL_CLIENT_ID: (PAYPAL_CLIENT_ID||"").slice(0,12)+"…"});
+      if(cfg.paypalClientId)
+        PAYPAL_CLIENT_ID = String(cfg.paypalClientId).trim().replace(/\s+/g,"");
+      if(cfg.mode)
+        PAYPAL_MODE = String(cfg.mode)
+          .toLowerCase()
+          .includes("live") ? "live" : "sandbox";
+      console.log("[PayPal cfg]", {
+        PAYPAL_MODE,
+        PAYPAL_CLIENT_ID: (PAYPAL_CLIENT_ID||"").slice(0,12)+"…"
+      });
     }
-  }catch(e){ console.warn("Config fetch error", e); }
-  if(!PAYMENTS_ENABLED && btnBuy){ btnBuy.style.display = "none"; }
+  }catch(e){
+    console.warn("Config fetch error", e);
+  }
+
+  if(!PAYMENTS_ENABLED && btnBuy){
+    btnBuy.style.display = "none";
+  }
+
   _resolveConfig(true);
 
   // recalage du solde après /config
@@ -330,49 +504,57 @@ if(btnBuy && payModal){
   btnBuy.onclick = ()=> openPayUI();
   payClose.onclick = ()=> payModal.close();
   document.addEventListener("click",(e)=>{
-    const b=e.target.closest(".packsRow .pill"); if(!b) return;
+    const b=e.target.closest(".packsRow .pill");
+    if(!b) return;
     chosenPack=Number(b.dataset.pack);
     renderPayPal(chosenPack);
   });
 }
 
-async function ensurePayPalSDK(){
-  if (window.paypal) return; // déjà ok
+/* ====== PayPal SDK loader (corrigé) ====== */
+async function ensurePayPalSDK() {
+  if (window.paypal) return; // déjà chargé
 
-  // retirer tout reste éventuel
-  document.querySelectorAll('script#paypal-sdk,script[src*="paypal.com/sdk/js"]').forEach(s => s.remove());
+  // Supprime les anciens scripts PayPal éventuels
+  document
+    .querySelectorAll('script#paypal-sdk,script[src*="paypal.com/sdk/js"]')
+    .forEach(s => s.remove());
 
-  if (!PAYPAL_CLIENT_ID) throw new Error("ClientId PayPal manquant");
+  if (!PAYPAL_CLIENT_ID) {
+    throw new Error("ClientId PayPal manquant");
+  }
 
-  // SDK (force debug + cache-buster)
-  const qs = new URLSearchParams({
-    "client-id": PAYPAL_CLIENT_ID,
-    "currency": "EUR",
-    "intent": "capture",
-    "components": "buttons",
-    "commit": "true",
-    "debug": "true"
-  }).toString();
-
+  // URL officielle PayPal JS SDK
   const s = document.createElement("script");
   s.id = "paypal-sdk";
-  s.src = `https://www.paypal.com/sdk/js?${qs}&v=${Date.now()}`;
+  s.src =
+    "https://www.paypal.com/sdk/js"
+    + `?client-id=${encodeURIComponent(PAYPAL_CLIENT_ID)}`
+    + "&currency=EUR"
+    + "&intent=capture"
+    + "&components=buttons"
+    + "&commit=true";
   s.async = true;
 
   const loaded = new Promise((resolve, reject) => {
     s.onload = () => resolve(true);
-    s.onerror = () => reject(new Error("Échec de chargement du SDK PayPal"));
+    s.onerror = () =>
+      reject(new Error("Échec de chargement du SDK PayPal"));
   });
+
   document.head.appendChild(s);
   await loaded;
 
-  // garde-fou : attendre l’expo de window.paypal
-  for (let i=0;i<30 && !window.paypal;i++) {
+  // Vérifie que window.paypal existe bien
+  for (let i = 0; i < 40 && !window.paypal; i++) {
     await new Promise(r => setTimeout(r, 50));
   }
-  if (!window.paypal) throw new Error("PayPal SDK indisponible après onload");
+  if (!window.paypal) {
+    throw new Error("PayPal SDK indisponible après chargement");
+  }
 }
 
+/* ====== Rendu des boutons PayPal ====== */
 async function renderPayPal(pack){
   if(!PAYMENTS_ENABLED) return;
   if(!PAYPAL_CLIENT_ID) return;
@@ -380,7 +562,12 @@ async function renderPayPal(pack){
   try{
     await ensurePayPalSDK();
   }catch(e){
-    addBubble(LANG==="fr"?"❌ Impossible de charger PayPal SDK.":"❌ Unable to load PayPal SDK.","bot");
+    addBubble(
+      LANG==="fr"
+        ? "❌ Impossible de charger PayPal SDK."
+        : "❌ Unable to load PayPal SDK.",
+      "bot"
+    );
     console.error(e);
     return;
   }
@@ -394,7 +581,9 @@ async function renderPayPal(pack){
     window.paypal.Buttons({
       style:{ layout:"horizontal", height:45 },
       createOrder:(data,actions)=> actions.order.create({
-        purchase_units:[{ amount:{ currency_code:"EUR", value:amount } }]
+        purchase_units:[{
+          amount:{ currency_code:"EUR", value:amount }
+        }]
       }),
       onApprove: async (data,actions)=>{
         try{
@@ -415,18 +604,20 @@ async function renderPayPal(pack){
             LANG==="fr"
               ? `✅ Paiement confirmé (€${amount}). +${credited.toLocaleString("fr-FR")} tokens crédités${isFirst?" (+50% 1er achat)":""}.`
               : LANG==="nl"
-                ? `✅ Betaling bevestigd (€${amount}). +${credited.toLocaleString("fr-FR")} tokens toegevoegd${isFirst?" (+50% eerste aankoop)":""}.`
-                : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added${isFirst?" (+50% first purchase)":""}.`
-            ,"bot"
+              ? `✅ Betaling bevestigd (€${amount}). +${credited.toLocaleString("fr-FR")} tokens toegevoegd${isFirst?" (+50% eerste aankoop)":""}.`
+              : `✅ Payment confirmed (€${amount}). +${credited.toLocaleString("fr-FR")} tokens added${isFirst?" (+50% first purchase)":""}.`,
+            "bot"
           );
 
           payModal.close();
         }catch(err){
           console.error(err);
           addBubble(
-            LANG==="fr"?"❌ Erreur lors de la capture du paiement."
-            :LANG==="nl"?"❌ Fout bij betalingsverwerking."
-            :"❌ Payment capture error.",
+            LANG==="fr"
+              ? "❌ Erreur lors de la capture du paiement."
+              : LANG==="nl"
+              ? "❌ Fout bij betalingsverwerking."
+              : "❌ Payment capture error.",
             "bot"
           );
         }
@@ -434,9 +625,11 @@ async function renderPayPal(pack){
       onError: (err)=> {
         console.error("PayPal onError:", err);
         addBubble(
-          LANG==="fr"?"❌ Paiement refusé/annulé."
-          :LANG==="nl"?"❌ Betaling geweigerd/geannuleerd."
-          :"❌ Payment failed/cancelled.",
+          LANG==="fr"
+            ? "❌ Paiement refusé/annulé."
+            : LANG==="nl"
+            ? "❌ Betaling geweigerd/geannuleerd."
+            : "❌ Payment failed/cancelled.",
           "bot"
         );
       }
@@ -451,12 +644,15 @@ async function renderPayPal(pack){
 function giveSigninBonusFor(uid){
   const key = `${LS_SIGNUP_BONUS}:${uid}`;
   if(!localStorage.getItem(key)){
-    const target = CFG.freeAfterSignup;                 // ex. 3000 depuis /config
-    if (tokenBalance < target) tokenBalance = target;   // palier mini après signup
+    const target = CFG.freeAfterSignup;
+    if (tokenBalance < target) tokenBalance = target;
     localStorage.setItem(LS_TOKENS, tokenBalance);
     localStorage.setItem(key,"1");
     updateTokenUI();
-    addBubble(`🎉 ${target.toLocaleString("fr-FR")} tokens crédités (inscription)`, "bot");
+    addBubble(
+      `🎉 ${target.toLocaleString("fr-FR")} tokens crédités (inscription)`,
+      "bot"
+    );
   }
 }
 function resetConversationUI(){
@@ -469,14 +665,17 @@ function switchUser(newId){
   const prev = localStorage.getItem(LS_USER);
   if (prev !== newId) {
     localStorage.setItem(LS_USER, newId);
-    resetConversationUI(); // repart sur un chat propre
+    resetConversationUI();
   }
 }
 async function initClerkOnce(timeoutMs=15000){
   const start = Date.now();
   while(Date.now()-start < timeoutMs){
     if(window.Clerk){
-      try{ await window.Clerk.load(); return true; }catch{}
+      try{
+        await window.Clerk.load();
+        return true;
+      }catch{}
     }
     await new Promise(r=> setTimeout(r, 200));
   }
@@ -497,9 +696,14 @@ async function initClerkOnce(timeoutMs=15000){
     if(!window.Clerk || !window.Clerk.loaded){
       const ready = await initClerkOnce();
       if(!ready){
-        pop(LANG==="fr"?"Connexion momentanément indisponible. Réessaie dans quelques secondes."
-            :LANG==="nl"?"Inloggen tijdelijk niet beschikbaar. Probeer zo meteen opnieuw."
-            :"Sign-in temporarily unavailable. Please try again shortly.", "Connexion");
+        pop(
+          LANG==="fr"
+            ? "Connexion momentanément indisponible. Réessaie dans quelques secondes."
+            : LANG==="nl"
+            ? "Inloggen tijdelijk niet beschikbaar. Probeer zo meteen opnieuw."
+            : "Sign-in temporarily unavailable. Please try again shortly.",
+          "Connexion"
+        );
         return;
       }
     }
@@ -508,10 +712,10 @@ async function initClerkOnce(timeoutMs=15000){
 
     if(user && session){
       await Clerk.signOut();
-      // repasse en invité et remet un chat propre + crédits visiteur
+
       const guest = "guest_" + Math.random().toString(36).slice(2,10);
       switchUser(guest);
-      tokenBalance = CFG.freeAnon;                  // reset au quota visiteur
+      tokenBalance = CFG.freeAnon;
       localStorage.setItem(LS_TOKENS, tokenBalance);
       updateTokenUI();
 
@@ -525,7 +729,7 @@ async function initClerkOnce(timeoutMs=15000){
         await initClerkOnce();
         const u = Clerk.user;
         if(u?.id){
-          switchUser(u.id);       // reset conv si changement de compte
+          switchUser(u.id);
           giveSigninBonusFor(u.id);
         }
         addBubble("✅ Inscription réussie", "bot");
@@ -535,7 +739,7 @@ async function initClerkOnce(timeoutMs=15000){
         await initClerkOnce();
         const u = Clerk.user;
         if(u?.id){
-          switchUser(u.id);       // reset conv si changement de compte
+          switchUser(u.id);
           giveSigninBonusFor(u.id);
         }
         addBubble("✅ Connexion réussie", "bot");
@@ -546,5 +750,7 @@ async function initClerkOnce(timeoutMs=15000){
 })();
 
 /* ====== AUTO-SCROLL ====== */
-const io = new IntersectionObserver(()=>{ chat.scrollTop = chat.scrollHeight; });
+const io = new IntersectionObserver(()=>{
+  chat.scrollTop = chat.scrollHeight;
+});
 io.observe(document.getElementById("composer"));
