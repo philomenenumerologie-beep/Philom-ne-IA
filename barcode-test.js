@@ -40,6 +40,10 @@
       stream.getTracks().forEach((t) => t.stop());
       console.log("✅ Caméra autorisée par l'utilisateur.");
       setStatus("Caméra autorisée. Initialisation du scanner…", "ok");
+
+      // Attente obligatoire sur Safari
+      await new Promise((r) => setTimeout(r, 800));
+
       startScanner();
     } catch (err) {
       console.error("🚫 Caméra refusée :", err);
@@ -52,7 +56,7 @@
     scanning = true;
     lastCode = null;
     resetMessage();
-    setStatus("📷 Initialisation du scanner…", null);
+    setStatus("📷 Démarrage du flux vidéo…", null);
 
     Quagga.init(
       {
@@ -85,10 +89,14 @@
           scanning = false;
           return;
         }
-        Quagga.start();
-        setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
-        Quagga.offDetected(onDetected);
-        Quagga.onDetected(onDetected);
+
+        // Safari a parfois besoin d’un petit délai pour afficher le flux
+        setTimeout(() => {
+          Quagga.start();
+          setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
+          Quagga.offDetected(onDetected);
+          Quagga.onDetected(onDetected);
+        }, 600);
       }
     );
   }
@@ -125,7 +133,9 @@
         data.name,
         data.brand,
         data.quantity,
-        data.nutriscore ? `Nutri-Score ${data.nutriscore.toUpperCase()}` : null,
+        data.nutriscore
+          ? `Nutri-Score ${data.nutriscore.toUpperCase()}`
+          : null,
         data.nova ? `NOVA ${data.nova}` : null
       ].filter(Boolean);
 
