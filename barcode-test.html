@@ -11,6 +11,7 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background: #020817;
       color: #ffffff;
+      text-align: center;
     }
     h1 {
       font-size: 26px;
@@ -21,19 +22,23 @@
       margin-bottom: 16px;
       color: #cbd5f5;
     }
+
+    /* 🟩 Caméra sans zoom */
     #preview {
       width: 100%;
-      max-width: 600px;
-      aspect-ratio: 16 / 9;
+      max-width: 450px;
+      aspect-ratio: 4 / 3;
+      height: auto;
+      object-fit: contain;
       background: #000;
-      margin: 0 auto 12px;
-      position: relative;
-      overflow: hidden;
       border-radius: 12px;
       border: 1px solid #111827;
+      display: block;
+      margin: 0 auto 14px;
     }
+
     #status {
-      max-width: 600px;
+      max-width: 450px;
       margin: 0 auto 12px;
       padding: 10px 14px;
       border-radius: 10px;
@@ -42,8 +47,9 @@
     .ok { background:#065f46; color:#bbf7d0; }
     .err { background:#7f1d1d; color:#fee2e2; }
     .info{ background:#111827; color:#e5e7eb; }
+
     .buttons {
-      max-width: 600px;
+      max-width: 450px;
       margin: 0 auto 16px;
       display: flex;
       gap: 12px;
@@ -66,8 +72,9 @@
       color:#e5e7eb;
       border:1px solid #374151;
     }
+
     #result {
-      max-width: 600px;
+      max-width: 450px;
       margin: 0 auto;
       padding: 10px 14px 14px;
       border-radius: 10px;
@@ -92,26 +99,17 @@
 </head>
 <body>
   <h1>Test Scanner Code-barres 📷</h1>
-  <p>
-    Vérifie qu'on lit bien un code-barres avec la caméra,
-    sans toucher au reste de Philomène.
-  </p>
+  <p>Vérifie qu'on lit bien un code-barres avec la caméra, sans toucher au reste de Philomène.</p>
 
-  <!-- Zone vidéo -->
-  <div id="preview"></div>
+  <video id="preview" playsinline></video>
 
-  <!-- Messages d'état -->
-  <div id="status" class="info">
-    Prêt. Clique sur <strong>Démarrer</strong> pour lancer la caméra.
-  </div>
+  <div id="status" class="info">Prêt. Clique sur <strong>Démarrer</strong> pour lancer la caméra.</div>
 
-  <!-- Boutons -->
   <div class="buttons">
     <button id="startBtn">Démarrer</button>
     <button id="stopBtn">Arrêter</button>
   </div>
 
-  <!-- Résultat -->
   <div id="result">
     <div>Aucun produit scanné pour le moment.</div>
     <div id="codeValue"></div>
