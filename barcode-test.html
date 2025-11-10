@@ -1,27 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Test Scanner Code-barres</title>
+  <meta charset="UTF-8" />
+  <title>Test Scanner Code-barres 📷</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { background:#020817; color:#fff; font-family:system-ui, -apple-system, sans-serif; margin:0; padding:16px; }
-    h1 { font-size:20px; margin-bottom:8px; }
-    #video { width:100%; max-width:420px; background:#000; border-radius:8px; }
-    #result { margin-top:12px; padding:8px; background:#0f172a; border-radius:8px; font-size:14px; }
-    button { margin-top:10px; padding:8px 14px; border-radius:999px; border:none; background:#38bdf8; color:#020817; font-weight:600; }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #020816;
+      color: #fff;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    #preview {
+      width: 100%;
+      max-width: 600px;
+      height: 260px;
+      background: #000;
+      border-radius: 12px;
+      margin: 0 auto 12px;
+      object-fit: cover;
+    }
+    #status {
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #111827;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    .error { color: #f87171; }
+    .ok { color: #22c55e; }
+    .code { color: #38bdf8; word-break: break-all; }
+    .btn-row {
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 999px;
+      background: #38bdf8;
+      color: #020817;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button#stopBtn {
+      background: #111827;
+      color: #e5e7eb;
+      margin-left: 8px;
+    }
   </style>
+  <!-- Librairie ZXing (scanner) -->
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.2/umd/index.min.js"></script>
+  <!-- Ton script -->
+  <script src="barcode-test.js" defer></script>
 </head>
 <body>
   <h1>Test Scanner Code-barres 📷</h1>
-  <p>But : vérifier qu'on lit bien les codes-barres avec la caméra (sans casser Philomène).</p>
+  <p>Vérifie qu’on lit bien un code-barres avec la caméra, sans toucher au reste de Philomène.</p>
 
-  <video id="video" autoplay muted playsinline></video>
-  <div id="result">En attente de scan…</div>
-  <button id="stopBtn">Arrêter</button>
+  <video id="preview" playsinline></video>
 
-  <!-- Librairie scanner -->
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <script src="barcode-test.js"></script>
+  <div id="status" class="error">Initialisation…</div>
+
+  <div class="btn-row">
+    <button id="startBtn">Démarrer</button>
+    <button id="stopBtn">Arrêter</button>
+  </div>
 </body>
 </html>
