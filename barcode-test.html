@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Test Scanner Code-barres</title>
+  <style>
+    body { background:#020817; color:#fff; font-family:system-ui, -apple-system, sans-serif; margin:0; padding:16px; }
+    h1 { font-size:20px; margin-bottom:8px; }
+    #video { width:100%; max-width:420px; background:#000; border-radius:8px; }
+    #result { margin-top:12px; padding:8px; background:#0f172a; border-radius:8px; font-size:14px; }
+    button { margin-top:10px; padding:8px 14px; border-radius:999px; border:none; background:#38bdf8; color:#020817; font-weight:600; }
+  </style>
+</head>
+<body>
+  <h1>Test Scanner Code-barres 📷</h1>
+  <p>But : vérifier qu'on lit bien les codes-barres avec la caméra (sans casser Philomène).</p>
+
+  <video id="video" autoplay muted playsinline></video>
+  <div id="result">En attente de scan…</div>
+  <button id="stopBtn">Arrêter</button>
+
+  <!-- Librairie scanner -->
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <script src="barcode-test.js"></script>
+</body>
+</html>
