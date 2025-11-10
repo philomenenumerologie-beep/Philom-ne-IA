@@ -1,7 +1,4 @@
 // barcode-test.js
-// Test scanner code-barres + appel API Philomène
-// Place ce fichier à côté de barcode-test.html
-
 (function () {
   const preview      = document.getElementById("preview");
   const statusEl     = document.getElementById("status");
@@ -22,7 +19,6 @@
     if (type === "err") statusEl.classList.add("err");
   }
 
-  // Initialisation Quagga
   function initQuagga() {
     return new Promise((resolve, reject) => {
       if (isInit) return resolve();
@@ -37,17 +33,14 @@
           inputStream: {
             name: "Live",
             type: "LiveStream",
-            target: preview, // le <div id="preview">
+            target: preview,
             constraints: {
               facingMode: "environment",
               width: { min: 640 },
               height: { min: 480 }
             }
           },
-          locator: {
-            patchSize: "medium",
-            halfSample: true
-          },
+          locator: { patchSize: "medium", halfSample: true },
           decoder: {
             readers: [
               "ean_reader",
@@ -68,25 +61,16 @@
           }
           isInit = true;
           setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
-
-          // Callback une seule fois
           Quagga.onDetected(onDetected);
-
           resolve();
         }
       );
     });
   }
 
-  // Démarrer le scan
   async function startScan() {
     if (isRunning) return;
-
-    try {
-      await initQuagga();
-    } catch {
-      return;
-    }
+    try { await initQuagga(); } catch { return; }
 
     lastCode = null;
     isRunning = true;
@@ -103,25 +87,16 @@
     }
   }
 
-  // Arrêter le scan
   function stopScan() {
     if (!isRunning) return;
-    try {
-      Quagga.stop();
-    } catch (e) {
-      console.warn("Quagga stop error:", e);
-    }
+    try { Quagga.stop(); } catch {}
     isRunning = false;
     setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
   }
 
-  // Quand un code est détecté
   async function onDetected(result) {
     const code = result?.codeResult?.code;
-    if (!code) return;
-
-    // Évite de spammer avec le même code
-    if (code === lastCode) return;
+    if (!code || code === lastCode) return;
     lastCode = code;
 
     if (navigator.vibrate) navigator.vibrate(80);
@@ -130,13 +105,11 @@
     codeValueEl.textContent = code;
     setStatus("✅ Code détecté : " + code, "ok");
 
-    // 🔗 Appel à ton backend pour NutriScore & co
     try {
       const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
       const resp = await fetch(url);
 
       if (!resp.ok) {
-        console.warn("API barcode status:", resp.status);
         codeLabelEl.textContent =
           "Code lu. Impossible de récupérer les infos produit (erreur serveur).";
         return;
@@ -165,10 +138,8 @@
     }
   }
 
-  // Boutons
   startBtn.addEventListener("click", startScan);
   stopBtn.addEventListener("click", stopScan);
 
-  // Message au chargement
   setStatus("⏱️ Initialisation du scanner…", "");
 })();
