@@ -1,3 +1,10 @@
+const statusEl = document.getElementById("status");
+if (statusEl) {
+  statusEl.classList.add("ok");
+  statusEl.textContent = "✅ JS chargé (barcode-test.js). Clique sur Démarrer pour scanner.";
+} else {
+  alert("barcode-test.js est chargé, mais #status est introuvable.");
+}
 (() => {
   const video = document.getElementById("preview");
   const statusEl = document.getElementById("status");
