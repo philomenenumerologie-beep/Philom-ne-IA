@@ -18,23 +18,26 @@
       margin-bottom: 8px;
     }
     p {
-      margin-top: 0;
-      margin-bottom: 16px;
+      margin: 0 0 16px;
       color: #cbd5f5;
     }
 
-    /* 🟩 Caméra sans zoom */
+    /* Zone vidéo (conteneur, Quagga crée la <video> dedans) */
     #preview {
       width: 100%;
       max-width: 450px;
       aspect-ratio: 4 / 3;
-      height: auto;
-      object-fit: contain;
-      background: #000;
-      border-radius: 12px;
-      border: 1px solid #111827;
-      display: block;
       margin: 0 auto 14px;
+      border-radius: 12px;
+      background: #000;
+      border: 1px solid #111827;
+      overflow: hidden;
+      position: relative;
+    }
+    #preview video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
     }
 
     #status {
@@ -44,9 +47,9 @@
       border-radius: 10px;
       font-size: 15px;
     }
-    .ok { background:#065f46; color:#bbf7d0; }
-    .err { background:#7f1d1d; color:#fee2e2; }
-    .info{ background:#111827; color:#e5e7eb; }
+    .ok   { background:#065f46; color:#bbf7d0; }
+    .err  { background:#7f1d1d; color:#fee2e2; }
+    .info { background:#111827; color:#e5e7eb; }
 
     .buttons {
       max-width: 450px;
@@ -91,19 +94,19 @@
     }
   </style>
 
-  <!-- Librairie QuaggaJS (gratuite) -->
+  <!-- QuaggaJS -->
   <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
-
-  <!-- Ton script -->
   <script defer src="barcode-test.js"></script>
 </head>
 <body>
   <h1>Test Scanner Code-barres 📷</h1>
   <p>Vérifie qu'on lit bien un code-barres avec la caméra, sans toucher au reste de Philomène.</p>
 
-  <video id="preview" playsinline></video>
+  <div id="preview"></div>
 
-  <div id="status" class="info">Prêt. Clique sur <strong>Démarrer</strong> pour lancer la caméra.</div>
+  <div id="status" class="info">
+    Prêt. Clique sur <strong>Démarrer</strong> pour lancer la caméra.
+  </div>
 
   <div class="buttons">
     <button id="startBtn">Démarrer</button>
