@@ -1,166 +1,99 @@
-// --- Vérification initiale ---
+// barcode-test.js
+// Scanner code-barres avec QuaggaJS (gratuit, 100% côté navigateur)
+
+const previewEl = document.getElementById("preview");
 const statusEl = document.getElementById("status");
-const preview = document.getElementById("preview");
+const codeValueEl = document.getElementById("codeValue");
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
-const productInfoEl = document.getElementById("productInfo");
 
-let stream = null;
-let detector = null;
-let scanning = false;
+let isRunning = false;
 let lastCode = null;
 
-// --- Fonctions d'affichage ---
-function setStatusOk(msg) {
-  statusEl.classList.remove("err");
-  statusEl.classList.add("ok");
-  statusEl.textContent = msg;
-}
-function setStatusErr(msg) {
-  statusEl.classList.remove("ok");
-  statusEl.classList.add("err");
-  statusEl.textContent = msg;
-}
-function showProductLoading(code) {
-  productInfoEl.innerHTML = `
-    <div>📦 Code détecté : <strong>${code}</strong><br>
-    <span class="small">Recherche du produit dans OpenFoodFacts...</span></div>
-  `;
-}
-function showProductNotFound(code) {
-  productInfoEl.innerHTML = `
-    <div>❔ Aucun produit trouvé pour <strong>${code}</strong>.</div>
-  `;
-}
-function renderProduct(data, code) {
-  const p = data.product;
-  const name = p.product_name_fr || p.product_name || "Nom inconnu";
-  const brand = (p.brands || "").split(",")[0] || "Marque inconnue";
-  const img = p.image_front_small_url || p.image_url || "";
-  const nutri = p.nutriscore_grade
-    ? p.nutriscore_grade.toUpperCase()
-    : "Inconnu";
-  const kcal = p.nutriments?.["energy-kcal_100g"]
-    ? Math.round(p.nutriments["energy-kcal_100g"]) + " kcal / 100g"
-    : "Infos calories non dispo";
-
-  productInfoEl.innerHTML = `
-    <h2>${name}</h2>
-    <div class="product-row">
-      ${img ? `<img src="${img}" alt="Produit">` : ""}
-      <div>
-        <div>Marque : <strong>${brand}</strong></div>
-        <div class="nutri">NutriScore : <strong>${nutri}</strong></div>
-        <div class="small">${kcal}</div>
-        <div class="small">Source : OpenFoodFacts • ${code}</div>
-      </div>
-    </div>
-  `;
+function setStatus(text, type = "info") {
+  statusEl.textContent = text;
+  statusEl.className = type;
 }
 
-// --- OpenFoodFacts ---
-async function fetchProductFromOpenFoodFacts(code) {
-  try {
-    showProductLoading(code);
-    const urls = [
-      `https://world.openfoodfacts.org/api/v2/product/${code}.json`,
-      `https://world.openfoodfacts.org/api/v0/product/${code}.json`
-    ];
+function onDetected(result) {
+  const code = result?.codeResult?.code;
+  if (!code) return;
 
-    let data = null;
-    for (const url of urls) {
-      const res = await fetch(url);
-      if (res.ok) {
-        const json = await res.json();
-        if (json && json.product) {
-          data = json;
-          break;
-        }
-      }
-    }
+  // Évite de spammer le même code 50x
+  if (code === lastCode) return;
+  lastCode = code;
 
-    if (!data) return showProductNotFound(code);
-    renderProduct(data, code);
-  } catch (err) {
-    console.error(err);
-    productInfoEl.innerHTML = `<div>⚠️ Erreur lors de la récupération.</div>`;
-  }
+  setStatus("✅ Code détecté", "ok");
+  codeValueEl.textContent = code;
+
+  // Ici plus tard : requête NutriScore / OpenFoodFacts avec ce code
+  // pour afficher les infos produit dans Philomène.
 }
 
-// --- Scan caméra ---
-async function startScan() {
-  if (scanning) return;
+function startScanner() {
+  if (isRunning) return;
+  lastCode = null;
+  codeValueEl.textContent = "";
+  setStatus("⏳ Demande l'accès à la caméra...", "info");
 
-  if (!("BarcodeDetector" in window)) {
-    setStatusErr("Ton navigateur ne supporte pas BarcodeDetector.");
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setStatus("❌ Ton navigateur ne supporte pas la caméra (getUserMedia).", "err");
     return;
   }
 
-  try {
-    detector = new BarcodeDetector({
-      formats: ["ean_13", "ean_8", "code_128", "upc_a", "upc_e"]
-    });
-
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-      audio: false
-    });
-
-    const video = document.createElement("video");
-    video.autoplay = true;
-    video.playsInline = true;
-    video.srcObject = stream;
-    preview.innerHTML = "";
-    preview.appendChild(video);
-
-    scanning = true;
-    lastCode = null;
-    setStatusOk("📷 Scan en cours… vise un code-barres.");
-
-    const loop = async () => {
-      if (!scanning) return;
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        try {
-          const barcodes = await detector.detect(canvas);
-          if (barcodes.length > 0) {
-            const code = barcodes[0].rawValue.trim();
-            if (code && code !== lastCode) {
-              lastCode = code;
-              setStatusOk("✅ Code détecté : " + code);
-              fetchProductFromOpenFoodFacts(code);
-            }
-          }
-        } catch (e) {
-          console.warn("Erreur détection :", e);
+  // Config Quagga
+  Quagga.init(
+    {
+      inputStream: {
+        type: "LiveStream",
+        target: previewEl,
+        constraints: {
+          facingMode: "environment", // caméra arrière
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
+      },
+      decoder: {
+        readers: [
+          "ean_reader",
+          "ean_8_reader",
+          "upc_reader",
+          "upc_e_reader",
+          "code_128_reader"
+        ]
+      },
+      locate: true
+    },
+    function (err) {
+      if (err) {
+        console.error(err);
+        setStatus("❌ Erreur d'initialisation caméra / scanner.", "err");
+        return;
       }
-      requestAnimationFrame(loop);
-    };
-    loop();
-  } catch (err) {
-    console.error(err);
-    setStatusErr("❌ Erreur d'accès à la caméra.");
-  }
+      Quagga.start();
+      isRunning = true;
+      setStatus("📷 Scanner en cours... Vise un code-barres.", "info");
+    }
+  );
+
+  Quagga.offDetected(onDetected);
+  Quagga.onDetected(onDetected);
 }
 
-function stopScan() {
-  scanning = false;
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
+function stopScanner() {
+  if (!isRunning) {
+    setStatus("Scan arrêté. Clique sur Démarrer pour relancer.", "info");
+    return;
   }
-  preview.innerHTML = "";
-  setStatusErr("Scan arrêté. Clique sur Démarrer pour relancer.");
+  Quagga.stop();
+  isRunning = false;
+  setStatus("Scan arrêté. Clique sur Démarrer pour relancer.", "info");
 }
 
-// --- Boutons ---
-startBtn.addEventListener("click", startScan);
-stopBtn.addEventListener("click", stopScan);
+startBtn.addEventListener("click", startScanner);
+stopBtn.addEventListener("click", stopScanner);
 
-setStatusErr("⚡ Prêt. Clique sur Démarrer pour tester le scanner.");
+// Petit message si Quagga ne charge pas
+if (typeof Quagga === "undefined") {
+  setStatus("❌ QuaggaJS n'a pas été chargé (vérifie le script dans le HTML).", "err");
+}
