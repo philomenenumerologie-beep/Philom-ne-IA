@@ -10,10 +10,10 @@
       padding: 20px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background: #020817;
-      color: #f9fafb;
+      color: #ffffff;
     }
     h1 {
-      font-size: 24px;
+      font-size: 26px;
       margin-bottom: 8px;
     }
     p {
@@ -23,115 +23,98 @@
     }
     #preview {
       width: 100%;
-      max-width: 640px;
-      aspect-ratio: 4 / 3;
+      max-width: 600px;
+      aspect-ratio: 16 / 9;
       background: #000;
-      border-radius: 14px;
-      margin-bottom: 12px;
+      margin: 0 auto 12px;
+      position: relative;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #preview video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid #111827;
     }
     #status {
-      max-width: 640px;
+      max-width: 600px;
+      margin: 0 auto 12px;
       padding: 10px 14px;
       border-radius: 10px;
       font-size: 15px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
-    #status.ok {
-      background: #022c22;
-      color: #bbf7d0;
-    }
-    #status.err {
-      background: #450a0a;
-      color: #fecaca;
-    }
-    #buttons {
+    .ok { background:#065f46; color:#bbf7d0; }
+    .err { background:#7f1d1d; color:#fee2e2; }
+    .info{ background:#111827; color:#e5e7eb; }
+    .buttons {
+      max-width: 600px;
+      margin: 0 auto 16px;
       display: flex;
       gap: 12px;
-      margin-bottom: 18px;
     }
     button {
-      padding: 12px 22px;
+      flex: 1;
+      padding: 14px 18px;
       border-radius: 999px;
       border: none;
-      font-size: 16px;
-      cursor: pointer;
+      font-size: 17px;
       font-weight: 600;
+      cursor: pointer;
     }
     #startBtn {
-      background: #38bdf8;
-      color: #020817;
+      background:#22c55e;
+      color:#020817;
     }
     #stopBtn {
-      background: transparent;
-      color: #e5e7eb;
-      border: 1px solid #4b5563;
+      background:#111827;
+      color:#e5e7eb;
+      border:1px solid #374151;
     }
-    #productInfo {
-      max-width: 640px;
-      padding: 14px 14px 16px;
-      border-radius: 14px;
-      background: #020817;
-      border: 1px solid #111827;
-      color: #e5e7eb;
-    }
-    #productInfo h2 {
-      font-size: 18px;
-      margin: 0 0 6px;
-    }
-    #productInfo img {
-      max-width: 90px;
+    #result {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 10px 14px 14px;
       border-radius: 10px;
-      margin-right: 10px;
+      background:#020617;
+      border:1px solid #111827;
+      font-size: 15px;
+      color:#9ca3af;
     }
-    .product-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .nutri {
-      font-weight: 600;
-      margin-top: 4px;
-    }
-    .small {
-      font-size: 13px;
-      opacity: 0.8;
+    #codeValue {
+      font-size: 18px;
+      font-weight: 700;
+      color:#38bdf8;
+      word-break: break-all;
     }
   </style>
+
+  <!-- Librairie QuaggaJS (gratuite) -->
+  <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
+
+  <!-- Ton script -->
+  <script defer src="barcode-test.js"></script>
 </head>
 <body>
   <h1>Test Scanner Code-barres 📷</h1>
-  <p>Vérifie qu’on lit bien un code-barres avec la caméra, sans toucher au reste de Philomène.</p>
+  <p>
+    Vérifie qu'on lit bien un code-barres avec la caméra,
+    sans toucher au reste de Philomène.
+  </p>
 
-  <div id="preview">
-    <!-- la vidéo sera injectée ici -->
+  <!-- Zone vidéo -->
+  <div id="preview"></div>
+
+  <!-- Messages d'état -->
+  <div id="status" class="info">
+    Prêt. Clique sur <strong>Démarrer</strong> pour lancer la caméra.
   </div>
 
-  <div id="status" class="err">
-    ❌ En attente… clique sur <strong>Démarrer</strong> pour lancer le scan.
-  </div>
-
-  <div id="buttons">
+  <!-- Boutons -->
+  <div class="buttons">
     <button id="startBtn">Démarrer</button>
     <button id="stopBtn">Arrêter</button>
   </div>
 
-  <div id="productInfo" class="small">
-    Aucun produit scanné pour le moment.
+  <!-- Résultat -->
+  <div id="result">
+    <div>Aucun produit scanné pour le moment.</div>
+    <div id="codeValue"></div>
   </div>
-
-  <script src="barcode-test.js"></script>
 </body>
 </html>
