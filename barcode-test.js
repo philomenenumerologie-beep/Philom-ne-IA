@@ -1,87 +1,166 @@
+// --- Vérification initiale ---
 const statusEl = document.getElementById("status");
-if (statusEl) {
+const preview = document.getElementById("preview");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const productInfoEl = document.getElementById("productInfo");
+
+let stream = null;
+let detector = null;
+let scanning = false;
+let lastCode = null;
+
+// --- Fonctions d'affichage ---
+function setStatusOk(msg) {
+  statusEl.classList.remove("err");
   statusEl.classList.add("ok");
-  statusEl.textContent = "✅ JS chargé (barcode-test.js). Clique sur Démarrer pour scanner.";
-} else {
-  alert("barcode-test.js est chargé, mais #status est introuvable.");
+  statusEl.textContent = msg;
 }
-(() => {
-  const video = document.getElementById("preview");
-  const statusEl = document.getElementById("status");
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
+function setStatusErr(msg) {
+  statusEl.classList.remove("ok");
+  statusEl.classList.add("err");
+  statusEl.textContent = msg;
+}
+function showProductLoading(code) {
+  productInfoEl.innerHTML = `
+    <div>📦 Code détecté : <strong>${code}</strong><br>
+    <span class="small">Recherche du produit dans OpenFoodFacts...</span></div>
+  `;
+}
+function showProductNotFound(code) {
+  productInfoEl.innerHTML = `
+    <div>❔ Aucun produit trouvé pour <strong>${code}</strong>.</div>
+  `;
+}
+function renderProduct(data, code) {
+  const p = data.product;
+  const name = p.product_name_fr || p.product_name || "Nom inconnu";
+  const brand = (p.brands || "").split(",")[0] || "Marque inconnue";
+  const img = p.image_front_small_url || p.image_url || "";
+  const nutri = p.nutriscore_grade
+    ? p.nutriscore_grade.toUpperCase()
+    : "Inconnu";
+  const kcal = p.nutriments?.["energy-kcal_100g"]
+    ? Math.round(p.nutriments["energy-kcal_100g"]) + " kcal / 100g"
+    : "Infos calories non dispo";
 
-  if (!video || !statusEl) {
-    console.error("Éléments manquants dans la page.");
-    return;
-  }
+  productInfoEl.innerHTML = `
+    <h2>${name}</h2>
+    <div class="product-row">
+      ${img ? `<img src="${img}" alt="Produit">` : ""}
+      <div>
+        <div>Marque : <strong>${brand}</strong></div>
+        <div class="nutri">NutriScore : <strong>${nutri}</strong></div>
+        <div class="small">${kcal}</div>
+        <div class="small">Source : OpenFoodFacts • ${code}</div>
+      </div>
+    </div>
+  `;
+}
 
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    statusEl.textContent = "❌ getUserMedia non supporté sur ce navigateur.";
-    statusEl.className = "error";
-    return;
-  }
+// --- OpenFoodFacts ---
+async function fetchProductFromOpenFoodFacts(code) {
+  try {
+    showProductLoading(code);
+    const urls = [
+      `https://world.openfoodfacts.org/api/v2/product/${code}.json`,
+      `https://world.openfoodfacts.org/api/v0/product/${code}.json`
+    ];
 
-  const codeReader = new ZXing.BrowserMultiFormatReader();
-  let isRunning = false;
-
-  async function startScanner() {
-    if (isRunning) return;
-    isRunning = true;
-
-    try {
-      statusEl.textContent = "Demande l’autorisation de la caméra…";
-      statusEl.className = "";
-
-      const devices = await codeReader.listVideoInputDevices();
-      if (!devices || devices.length === 0) {
-        statusEl.textContent = "❌ Aucune caméra détectée.";
-        statusEl.className = "error";
-        isRunning = false;
-        return;
-      }
-
-      const deviceId = devices[0].deviceId;
-
-      await codeReader.decodeFromVideoDevice(
-        deviceId,
-        video,
-        (result, err) => {
-          if (result) {
-            const text = result.getText();
-            statusEl.innerHTML =
-              `✅ Code détecté : <span class="code">${text}</span>`;
-            statusEl.className = "ok";
-            console.log("Code-barres:", text);
-          } else if (err && !(err instanceof ZXing.NotFoundException)) {
-            console.warn("Erreur scan", err);
-          }
+    let data = null;
+    for (const url of urls) {
+      const res = await fetch(url);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.product) {
+          data = json;
+          break;
         }
-      );
-
-      statusEl.textContent = "📷 Scanne un code-barres devant la caméra…";
-      statusEl.className = "";
-    } catch (e) {
-      console.error(e);
-      statusEl.textContent = "❌ Erreur : " + (e.message || e.name || e);
-      statusEl.className = "error";
-      isRunning = false;
-      codeReader.reset();
+      }
     }
+
+    if (!data) return showProductNotFound(code);
+    renderProduct(data, code);
+  } catch (err) {
+    console.error(err);
+    productInfoEl.innerHTML = `<div>⚠️ Erreur lors de la récupération.</div>`;
+  }
+}
+
+// --- Scan caméra ---
+async function startScan() {
+  if (scanning) return;
+
+  if (!("BarcodeDetector" in window)) {
+    setStatusErr("Ton navigateur ne supporte pas BarcodeDetector.");
+    return;
   }
 
-  function stopScanner() {
-    if (!isRunning) return;
-    codeReader.reset();
-    isRunning = false;
-    statusEl.textContent = "Arrêté. Clique sur Démarrer pour relancer.";
-    statusEl.className = "";
+  try {
+    detector = new BarcodeDetector({
+      formats: ["ean_13", "ean_8", "code_128", "upc_a", "upc_e"]
+    });
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+      audio: false
+    });
+
+    const video = document.createElement("video");
+    video.autoplay = true;
+    video.playsInline = true;
+    video.srcObject = stream;
+    preview.innerHTML = "";
+    preview.appendChild(video);
+
+    scanning = true;
+    lastCode = null;
+    setStatusOk("📷 Scan en cours… vise un code-barres.");
+
+    const loop = async () => {
+      if (!scanning) return;
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        try {
+          const barcodes = await detector.detect(canvas);
+          if (barcodes.length > 0) {
+            const code = barcodes[0].rawValue.trim();
+            if (code && code !== lastCode) {
+              lastCode = code;
+              setStatusOk("✅ Code détecté : " + code);
+              fetchProductFromOpenFoodFacts(code);
+            }
+          }
+        } catch (e) {
+          console.warn("Erreur détection :", e);
+        }
+      }
+      requestAnimationFrame(loop);
+    };
+    loop();
+  } catch (err) {
+    console.error(err);
+    setStatusErr("❌ Erreur d'accès à la caméra.");
   }
+}
 
-  startBtn.addEventListener("click", startScanner);
-  stopBtn.addEventListener("click", stopScanner);
+function stopScan() {
+  scanning = false;
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+  preview.innerHTML = "";
+  setStatusErr("Scan arrêté. Clique sur Démarrer pour relancer.");
+}
 
-  // Lance automatiquement au chargement
-  window.addEventListener("load", startScanner);
-  window.addEventListener("pagehide", stopScanner);
-})();
+// --- Boutons ---
+startBtn.addEventListener("click", startScan);
+stopBtn.addEventListener("click", stopScan);
+
+setStatusErr("⚡ Prêt. Clique sur Démarrer pour tester le scanner.");
