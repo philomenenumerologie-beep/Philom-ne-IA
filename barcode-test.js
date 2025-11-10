@@ -1,150 +1,174 @@
-(function () {
-  const previewEl = document.getElementById("preview");
-  const statusEl = document.getElementById("status");
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
-  const codeValueBox = document.getElementById("codeValueBox");
-  const codeValueEl = document.getElementById("codeValue");
+// barcode-test.js
+// Test scanner code-barres + appel API Philomène
+// Place ce fichier à côté de barcode-test.html
 
-  let scanning = false;
-  let lastCode = null;
+(function () {
+  const preview      = document.getElementById("preview");
+  const statusEl     = document.getElementById("status");
+  const codeBox      = document.getElementById("codeValueBox");
+  const codeLabelEl  = codeBox.querySelector("span");
+  const codeValueEl  = document.getElementById("codeValue");
+  const startBtn     = document.getElementById("startBtn");
+  const stopBtn      = document.getElementById("stopBtn");
+
+  let isInit    = false;
+  let isRunning = false;
+  let lastCode  = null;
 
   function setStatus(msg, type) {
-    statusEl.textContent = msg;
-    statusEl.className = "";
-    if (type === "ok") statusEl.classList.add("ok");
+    statusEl.textContent = msg || "";
+    statusEl.classList.remove("ok", "err");
+    if (type === "ok")  statusEl.classList.add("ok");
     if (type === "err") statusEl.classList.add("err");
   }
 
-  function setMessage(html) {
-    codeValueBox.firstElementChild.innerHTML = html;
+  // Initialisation Quagga
+  function initQuagga() {
+    return new Promise((resolve, reject) => {
+      if (isInit) return resolve();
+
+      if (!window.Quagga) {
+        setStatus("❌ QuaggaJS introuvable (CDN).", "err");
+        return reject(new Error("Quagga manquant"));
+      }
+
+      Quagga.init(
+        {
+          inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: preview, // le <div id="preview">
+            constraints: {
+              facingMode: "environment",
+              width: { min: 640 },
+              height: { min: 480 }
+            }
+          },
+          locator: {
+            patchSize: "medium",
+            halfSample: true
+          },
+          decoder: {
+            readers: [
+              "ean_reader",
+              "ean_8_reader",
+              "upc_reader",
+              "upc_e_reader",
+              "code_128_reader"
+            ]
+          },
+          locate: true,
+          numOfWorkers: navigator.hardwareConcurrency || 2
+        },
+        (err) => {
+          if (err) {
+            console.error("Quagga init error:", err);
+            setStatus("❌ Erreur d'initialisation du scanner.", "err");
+            return reject(err);
+          }
+          isInit = true;
+          setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
+
+          // Callback une seule fois
+          Quagga.onDetected(onDetected);
+
+          resolve();
+        }
+      );
+    });
   }
 
-  function resetMessage() {
-    setMessage("Aucun produit scanné pour le moment.");
-    codeValueEl.textContent = "";
-  }
+  // Démarrer le scan
+  async function startScan() {
+    if (isRunning) return;
 
-  startBtn.addEventListener("click", requestCameraThenStart);
-  stopBtn.addEventListener("click", stopScanner);
-
-  setStatus("Prêt. Clique sur Démarrer et autorise la caméra.", "ok");
-  resetMessage();
-
-  async function requestCameraThenStart() {
     try {
-      setStatus("📷 Vérification de l'accès caméra…", null);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" }
-      });
-      stream.getTracks().forEach((t) => t.stop());
-      console.log("✅ Caméra autorisée par l'utilisateur.");
-      setStatus("Caméra autorisée. Initialisation du scanner…", "ok");
+      await initQuagga();
+    } catch {
+      return;
+    }
 
-      // Attente obligatoire sur Safari
-      await new Promise((r) => setTimeout(r, 800));
+    lastCode = null;
+    isRunning = true;
+    codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
+    codeValueEl.textContent = "";
+    setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
 
-      startScanner();
-    } catch (err) {
-      console.error("🚫 Caméra refusée :", err);
-      setStatus("⚠️ Accès caméra refusé. Vérifie dans les réglages Safari.", "err");
+    try {
+      Quagga.start();
+    } catch (e) {
+      console.error("Quagga start error:", e);
+      setStatus("❌ Impossible de démarrer la caméra.", "err");
+      isRunning = false;
     }
   }
 
-  function startScanner() {
-    if (scanning) return;
-    scanning = true;
-    lastCode = null;
-    resetMessage();
-    setStatus("📷 Démarrage du flux vidéo…", null);
-
-    Quagga.init(
-      {
-        inputStream: {
-          name: "Live",
-          type: "LiveStream",
-          target: previewEl,
-          constraints: {
-            facingMode: "environment",
-            width: { ideal: 640 },
-            height: { ideal: 480 }
-          }
-        },
-        decoder: {
-          readers: [
-            "ean_reader",
-            "ean_13_reader",
-            "ean_8_reader",
-            "upc_reader",
-            "upc_e_reader"
-          ]
-        },
-        locate: true,
-        numOfWorkers: 1
-      },
-      (err) => {
-        if (err) {
-          console.error("Erreur Quagga init:", err);
-          setStatus("❌ Erreur d'accès à la caméra.", "err");
-          scanning = false;
-          return;
-        }
-
-        // Safari a parfois besoin d’un petit délai pour afficher le flux
-        setTimeout(() => {
-          Quagga.start();
-          setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
-          Quagga.offDetected(onDetected);
-          Quagga.onDetected(onDetected);
-        }, 600);
-      }
-    );
-  }
-
-  function stopScanner() {
-    if (!scanning) return;
-    scanning = false;
+  // Arrêter le scan
+  function stopScan() {
+    if (!isRunning) return;
     try {
       Quagga.stop();
-    } catch {}
-    setStatus("Scan arrêté. Clique sur Démarrer pour relancer.", null);
+    } catch (e) {
+      console.warn("Quagga stop error:", e);
+    }
+    isRunning = false;
+    setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
   }
 
+  // Quand un code est détecté
   async function onDetected(result) {
-    const code = result?.codeResult?.code?.trim();
-    if (!code || code === lastCode) return;
+    const code = result?.codeResult?.code;
+    if (!code) return;
+
+    // Évite de spammer avec le même code
+    if (code === lastCode) return;
     lastCode = code;
 
-    console.log("✅ Code détecté :", code);
+    if (navigator.vibrate) navigator.vibrate(80);
+
+    codeLabelEl.textContent = "Code détecté :";
     codeValueEl.textContent = code;
     setStatus("✅ Code détecté : " + code, "ok");
-    setMessage("Je regarde ce que je trouve pour ce produit…");
 
+    // 🔗 Appel à ton backend pour NutriScore & co
     try {
-      const resp = await fetch(`/barcode?code=${encodeURIComponent(code)}`);
-      const data = await resp.json();
+      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
+      const resp = await fetch(url);
 
-      if (!data.found) {
-        setMessage(`Code <strong>${code}</strong> détecté, produit non trouvé.`);
+      if (!resp.ok) {
+        console.warn("API barcode status:", resp.status);
+        codeLabelEl.textContent =
+          "Code lu. Impossible de récupérer les infos produit (erreur serveur).";
         return;
       }
 
-      const infos = [
-        data.name,
-        data.brand,
-        data.quantity,
-        data.nutriscore
-          ? `Nutri-Score ${data.nutriscore.toUpperCase()}`
-          : null,
-        data.nova ? `NOVA ${data.nova}` : null
-      ].filter(Boolean);
+      const data = await resp.json();
 
-      setMessage(
-        `✅ <strong>${infos.join(" • ")}</strong><br><small>Code ${code}</small><br><br><em>Analyse test par Philomène.</em>`
-      );
-    } catch (err) {
-      console.error("Erreur produit :", err);
-      setStatus("⚠️ Erreur en récupérant le produit.", "err");
+      if (data && data.found) {
+        const name  = data.name || "Produit";
+        const brand = data.brand ? ` • ${data.brand}` : "";
+        const qte   = data.quantity ? ` • ${data.quantity}` : "";
+        const ns    = data.nutriscore
+          ? ` • NutriScore : ${String(data.nutriscore).toUpperCase()}`
+          : "";
+        const nova  = data.nova ? ` • Nova : ${data.nova}` : "";
+
+        codeLabelEl.textContent = `${name}${brand}${qte}${ns}${nova}`;
+      } else {
+        codeLabelEl.textContent =
+          "Code lu mais produit non trouvé dans la base. (Lecture OK ✅)";
+      }
+    } catch (e) {
+      console.error("Erreur appel API barcode:", e);
+      codeLabelEl.textContent =
+        "Code lu mais problème de connexion à l’API.";
     }
   }
+
+  // Boutons
+  startBtn.addEventListener("click", startScan);
+  stopBtn.addEventListener("click", stopScan);
+
+  // Message au chargement
+  setStatus("⏱️ Initialisation du scanner…", "");
 })();
