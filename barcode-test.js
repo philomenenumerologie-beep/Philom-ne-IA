@@ -1,5 +1,4 @@
-// barcode-test.js
-// Scanner code-barres avec QuaggaJS (gratuit, 100% côté navigateur)
+// Scanner code-barres avec QuaggaJS (gratuit, tout côté navigateur)
 
 const previewEl = document.getElementById("preview");
 const statusEl = document.getElementById("status");
@@ -17,17 +16,11 @@ function setStatus(text, type = "info") {
 
 function onDetected(result) {
   const code = result?.codeResult?.code;
-  if (!code) return;
-
-  // Évite de spammer le même code 50x
-  if (code === lastCode) return;
+  if (!code || code === lastCode) return;
   lastCode = code;
 
-  setStatus("✅ Code détecté", "ok");
+  setStatus("✅ Code détecté : " + code, "ok");
   codeValueEl.textContent = code;
-
-  // Ici plus tard : requête NutriScore / OpenFoodFacts avec ce code
-  // pour afficher les infos produit dans Philomène.
 }
 
 function startScanner() {
@@ -37,11 +30,10 @@ function startScanner() {
   setStatus("⏳ Demande l'accès à la caméra...", "info");
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    setStatus("❌ Ton navigateur ne supporte pas la caméra (getUserMedia).", "err");
+    setStatus("❌ Ton navigateur ne supporte pas la caméra.", "err");
     return;
   }
 
-  // Config Quagga
   Quagga.init(
     {
       inputStream: {
@@ -49,18 +41,12 @@ function startScanner() {
         target: previewEl,
         constraints: {
           facingMode: "environment", // caméra arrière
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          width: { ideal: 640 },
+          height: { ideal: 480 }
         }
       },
       decoder: {
-        readers: [
-          "ean_reader",
-          "ean_8_reader",
-          "upc_reader",
-          "upc_e_reader",
-          "code_128_reader"
-        ]
+        readers: ["ean_reader", "upc_reader", "code_128_reader"]
       },
       locate: true
     },
@@ -93,7 +79,6 @@ function stopScanner() {
 startBtn.addEventListener("click", startScanner);
 stopBtn.addEventListener("click", stopScanner);
 
-// Petit message si Quagga ne charge pas
 if (typeof Quagga === "undefined") {
-  setStatus("❌ QuaggaJS n'a pas été chargé (vérifie le script dans le HTML).", "err");
+  setStatus("❌ Erreur de chargement de QuaggaJS.", "err");
 }
