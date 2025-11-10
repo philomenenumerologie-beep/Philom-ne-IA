@@ -1,6 +1,3 @@
-// barcode-test.js
-// Test scanner + réponse produit façon Philomène.
-
 (function () {
   const previewEl = document.getElementById("preview");
   const statusEl = document.getElementById("status");
@@ -20,7 +17,6 @@
   }
 
   function setMessage(html) {
-    // zone texte principale dans le bloc du bas
     codeValueBox.firstElementChild.innerHTML = html;
   }
 
@@ -29,27 +25,34 @@
     codeValueEl.textContent = "";
   }
 
-  // --- Vérif Quagga ---
-  if (typeof Quagga === "undefined") {
-    setStatus("❌ QuaggaJS introuvable (librairie non chargée).", "err");
-    console.error("QuaggaJS non chargé !");
-    return;
-  }
-
-  // Boutons
-  startBtn.addEventListener("click", startScanner);
+  startBtn.addEventListener("click", requestCameraThenStart);
   stopBtn.addEventListener("click", stopScanner);
 
   setStatus("Prêt. Clique sur Démarrer et autorise la caméra.", "ok");
   resetMessage();
 
-  // --- Start ---
+  async function requestCameraThenStart() {
+    try {
+      setStatus("📷 Vérification de l'accès caméra…", null);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
+      stream.getTracks().forEach((t) => t.stop());
+      console.log("✅ Caméra autorisée par l'utilisateur.");
+      setStatus("Caméra autorisée. Initialisation du scanner…", "ok");
+      startScanner();
+    } catch (err) {
+      console.error("🚫 Caméra refusée :", err);
+      setStatus("⚠️ Accès caméra refusé. Vérifie dans les réglages Safari.", "err");
+    }
+  }
+
   function startScanner() {
     if (scanning) return;
     scanning = true;
     lastCode = null;
     resetMessage();
-    setStatus("📷 Demande l'accès à la caméra…", null);
+    setStatus("📷 Initialisation du scanner…", null);
 
     Quagga.init(
       {
@@ -72,118 +75,66 @@
             "upc_e_reader"
           ]
         },
-        locator: { patchSize: "medium", halfSample: true },
         locate: true,
         numOfWorkers: 1
       },
-      function (err) {
+      (err) => {
         if (err) {
           console.error("Erreur Quagga init:", err);
+          setStatus("❌ Erreur d'accès à la caméra.", "err");
           scanning = false;
-          setStatus("❌ Erreur d'accès caméra. Vérifie les permissions.", "err");
           return;
         }
         Quagga.start();
-        setStatus("📷 Scanner en cours… vise un code-barres.", "ok");
+        setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
+        Quagga.offDetected(onDetected);
+        Quagga.onDetected(onDetected);
       }
     );
-
-    Quagga.offDetected(onDetected);
-    Quagga.onDetected(onDetected);
   }
 
-  // --- Stop ---
   function stopScanner() {
     if (!scanning) return;
     scanning = false;
     try {
       Quagga.stop();
-    } catch (e) {
-      console.warn("Erreur à l'arrêt du scanner:", e);
-    }
+    } catch {}
     setStatus("Scan arrêté. Clique sur Démarrer pour relancer.", null);
   }
 
-  // --- Quand un code est trouvé ---
   async function onDetected(result) {
-    if (!result || !result.codeResult || !result.codeResult.code) return;
-    const code = (result.codeResult.code || "").trim();
+    const code = result?.codeResult?.code?.trim();
     if (!code || code === lastCode) return;
     lastCode = code;
 
     console.log("✅ Code détecté :", code);
-
     codeValueEl.textContent = code;
     setStatus("✅ Code détecté : " + code, "ok");
     setMessage("Je regarde ce que je trouve pour ce produit…");
 
     try {
       const resp = await fetch(`/barcode?code=${encodeURIComponent(code)}`);
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
       const data = await resp.json();
 
-      // Pas trouvé
       if (!data.found) {
-        setMessage(
-          `Code <strong>${code}</strong> détecté, ` +
-            `mais je n’ai pas trouvé ce produit dans la base.`
-        );
+        setMessage(`Code <strong>${code}</strong> détecté, produit non trouvé.`);
         return;
       }
 
-      // Construit une "réponse Philomène"
-      const name = data.name || "Produit inconnu";
-      const brand = data.brand ? ` (${data.brand})` : "";
-      const qty = data.quantity ? ` — ${data.quantity}` : "";
-      const nutri =
-        data.nutriscore
-          ? `Nutri-Score : <strong>${String(
-              data.nutriscore
-            ).toUpperCase()}</strong>`
-          : null;
-      const nova = data.nova ? `NOVA : <strong>${data.nova}</strong>` : null;
-      const eco = data.eco_score
-        ? `Éco-score : <strong>${String(
-            data.eco_score
-          ).toUpperCase()}</strong>`
-        : null;
+      const infos = [
+        data.name,
+        data.brand,
+        data.quantity,
+        data.nutriscore ? `Nutri-Score ${data.nutriscore.toUpperCase()}` : null,
+        data.nova ? `NOVA ${data.nova}` : null
+      ].filter(Boolean);
 
-      // Phrase principale
-      let html =
-        `✅ <strong>${name}</strong>${brand}${qty}<br>` +
-        `<small>Code-barres : ${code}</small>`;
-
-      const details = [nutri, nova, eco].filter(Boolean);
-      if (details.length) {
-        html += `<br>${details.join(" • ")}`;
-      }
-
-      // Style "Philomène"
-      html += `<br><br><em>Analyse test par Philomène. Dans la vraie app, je pourrai te dire si c’est un bon choix pour ta santé, ton budget, etc.</em>`;
-
-      setMessage(html);
-    } catch (err) {
-      console.error("Erreur /barcode :", err);
-      setStatus(
-        "⚠️ Code lu, mais erreur en récupérant les infos produit.",
-        "err"
-      );
       setMessage(
-        `Code détecté : <strong>${code}</strong>, mais je n’ai pas réussi à joindre le serveur produit.`
+        `✅ <strong>${infos.join(" • ")}</strong><br><small>Code ${code}</small><br><br><em>Analyse test par Philomène.</em>`
       );
+    } catch (err) {
+      console.error("Erreur produit :", err);
+      setStatus("⚠️ Erreur en récupérant le produit.", "err");
     }
-  }
-
-  // Petit check silencieux des permissions (debug)
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: "environment" } })
-      .then((stream) => {
-        console.log("✅ Caméra accessible (test rapide).");
-        stream.getTracks().forEach((t) => t.stop());
-      })
-      .catch((err) => {
-        console.warn("🚫 Caméra bloquée (test rapide):", err.name);
-      });
   }
 })();
