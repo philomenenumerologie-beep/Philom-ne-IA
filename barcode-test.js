@@ -1,57 +1,80 @@
-// barcode-test.js
-// Test simple : lire un code-barres avec la caméra et l'afficher.
+(() => {
+  const video = document.getElementById("preview");
+  const statusEl = document.getElementById("status");
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
 
-const video = document.getElementById("video");
-const resultBox = document.getElementById("result");
-const stopBtn = document.getElementById("stopBtn");
+  if (!video || !statusEl) {
+    console.error("Éléments manquants dans la page.");
+    return;
+  }
 
-let codeReader = null;
-let activeStream = null;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    statusEl.textContent = "❌ getUserMedia non supporté sur ce navigateur.";
+    statusEl.className = "error";
+    return;
+  }
 
-async function startScanner() {
-  try {
-    codeReader = new ZXing.BrowserMultiFormatReader();
+  const codeReader = new ZXing.BrowserMultiFormatReader();
+  let isRunning = false;
 
-    const devices = await ZXing.BrowserMultiFormatReader.listVideoInputDevices();
-    const deviceId = (devices[0] && devices[0].deviceId) || null;
+  async function startScanner() {
+    if (isRunning) return;
+    isRunning = true;
 
-    const constraints = {
-      video: deviceId ? { deviceId: { exact: deviceId } } : { facingMode: "environment" }
-    };
+    try {
+      statusEl.textContent = "Demande l’autorisation de la caméra…";
+      statusEl.className = "";
 
-    activeStream = await navigator.mediaDevices.getUserMedia(constraints);
-    video.srcObject = activeStream;
-
-    codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
-      if (result) {
-        const text = result.getText();
-        resultBox.textContent = `✅ Code détecté : ${text}`;
-        console.log("Barcode:", text);
+      const devices = await codeReader.listVideoInputDevices();
+      if (!devices || devices.length === 0) {
+        statusEl.textContent = "❌ Aucune caméra détectée.";
+        statusEl.className = "error";
+        isRunning = false;
+        return;
       }
-      // err silencieux = pas de code sur cette frame, normal
-    });
-  } catch (err) {
-    console.error(err);
-    resultBox.textContent = "❌ Erreur accès caméra ou scanner.";
-  }
-}
 
-function stopScanner() {
-  if (codeReader) {
+      const deviceId = devices[0].deviceId;
+
+      await codeReader.decodeFromVideoDevice(
+        deviceId,
+        video,
+        (result, err) => {
+          if (result) {
+            const text = result.getText();
+            statusEl.innerHTML =
+              `✅ Code détecté : <span class="code">${text}</span>`;
+            statusEl.className = "ok";
+            console.log("Code-barres:", text);
+          } else if (err && !(err instanceof ZXing.NotFoundException)) {
+            console.warn("Erreur scan", err);
+          }
+        }
+      );
+
+      statusEl.textContent = "📷 Scanne un code-barres devant la caméra…";
+      statusEl.className = "";
+    } catch (e) {
+      console.error(e);
+      statusEl.textContent = "❌ Erreur : " + (e.message || e.name || e);
+      statusEl.className = "error";
+      isRunning = false;
+      codeReader.reset();
+    }
+  }
+
+  function stopScanner() {
+    if (!isRunning) return;
     codeReader.reset();
-    codeReader = null;
+    isRunning = false;
+    statusEl.textContent = "Arrêté. Clique sur Démarrer pour relancer.";
+    statusEl.className = "";
   }
-  if (activeStream) {
-    activeStream.getTracks().forEach(t => t.stop());
-    activeStream = null;
-  }
-  resultBox.textContent = "Scan arrêté.";
-}
 
-stopBtn.addEventListener("click", stopScanner);
+  startBtn.addEventListener("click", startScanner);
+  stopBtn.addEventListener("click", stopScanner);
 
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  startScanner();
-} else {
-  resultBox.textContent = "❌ Caméra non supportée sur ce navigateur.";
-}
+  // Lance automatiquement au chargement
+  window.addEventListener("load", startScanner);
+  window.addEventListener("pagehide", stopScanner);
+})();
