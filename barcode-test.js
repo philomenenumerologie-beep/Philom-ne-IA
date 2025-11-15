@@ -1,4 +1,6 @@
 // barcode-test.js
+// Version avec filtre EAN-13 + plusieurs lectures consécutives
+
 (function () {
   const preview      = document.getElementById("preview");
   const statusEl     = document.getElementById("status");
@@ -11,6 +13,11 @@
   let isInit    = false;
   let isRunning = false;
   let lastCode  = null;
+
+  // Pour filtrer les faux positifs :
+  let pendingCode  = null;
+  let pendingCount = 0;
+  const REQUIRED_SAME_READS = 3; // nb de lectures identiques avant validation
 
   function setStatus(msg, type) {
     statusEl.textContent = msg || "";
@@ -36,22 +43,17 @@
             target: preview,
             constraints: {
               facingMode: "environment",
-              width:  { min: 640 },
-              height: { min: 480 },
-            },
+              width: { min: 640 },
+              height: { min: 480 }
+            }
           },
           locator: { patchSize: "medium", halfSample: true },
           decoder: {
-            readers: [
-              "ean_reader",
-              "ean_8_reader",
-              "upc_reader",
-              "upc_e_reader",
-              "code_128_reader",
-            ],
+            // 🔒 On se concentre sur les codes EAN-13 de supermarché
+            readers: ["ean_reader"]
           },
           locate: true,
-          numOfWorkers: navigator.hardwareConcurrency || 2,
+          numOfWorkers: navigator.hardwareConcurrency || 2
         },
         (err) => {
           if (err) {
@@ -59,11 +61,8 @@
             setStatus("❌ Erreur d'initialisation du scanner.", "err");
             return reject(err);
           }
-
           isInit = true;
           setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
-
-          // On (re)branche le listener ici
           Quagga.onDetected(onDetected);
           resolve();
         }
@@ -73,14 +72,12 @@
 
   async function startScan() {
     if (isRunning) return;
-
-    try {
-      await initQuagga();
-    } catch {
-      return;
-    }
+    try { await initQuagga(); } catch { return; }
 
     lastCode = null;
+    pendingCode = null;
+    pendingCount = 0;
+
     isRunning = true;
     codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
     codeValueEl.textContent = "";
@@ -96,36 +93,51 @@
   }
 
   function stopScan() {
-    if (!isRunning && !isInit) return;
-
-    try {
-      // On coupe le flux + le listener
-      if (window.Quagga) {
-        Quagga.stop();
-        Quagga.offDetected(onDetected);
-      }
-    } catch (e) {
-      console.warn("Erreur lors de l'arrêt du scanner:", e);
-    }
-
+    if (!isRunning) return;
+    try { Quagga.stop(); } catch {}
     isRunning = false;
-    isInit    = false; // 🔑 pour forcer une vraie ré-init au prochain “Démarrer”
     setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
   }
 
   async function onDetected(result) {
     const code = result?.codeResult?.code;
-    if (!code || code === lastCode) return;
-    lastCode = code;
+
+    if (!code) return;
+
+    // 1️⃣ On ne garde que les codes composés uniquement de chiffres
+    if (!/^\d+$/.test(code)) return;
+
+    // 2️⃣ On ignore les codes trop courts (souvent des faux positifs)
+    if (code.length < 12 || code.length > 14) return;
+
+    // 3️⃣ On attend plusieurs lectures identiques avant de valider
+    if (code !== pendingCode) {
+      pendingCode  = code;
+      pendingCount = 1;
+      return; // on attend encore
+    } else {
+      pendingCount++;
+      if (pendingCount < REQUIRED_SAME_READS) {
+        return; // pas encore assez de confirmations
+      }
+      // assez de confirmations : on “valide” le code
+      pendingCount = 0;
+    }
+
+    // Normalisation simple : on garde tel quel (OpenFoodFacts accepte)
+    const finalCode = code;
+
+    if (finalCode === lastCode) return;
+    lastCode = finalCode;
 
     if (navigator.vibrate) navigator.vibrate(80);
 
     codeLabelEl.textContent = "Code détecté :";
-    codeValueEl.textContent = code;
-    setStatus("✅ Code détecté : " + code, "ok");
+    codeValueEl.textContent = finalCode;
+    setStatus("✅ Code détecté : " + finalCode, "ok");
 
     try {
-      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
+      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(finalCode);
       const resp = await fetch(url);
 
       if (!resp.ok) {
