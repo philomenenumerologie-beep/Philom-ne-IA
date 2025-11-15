@@ -1,12 +1,13 @@
 // barcode-test.js
 (function () {
-  const preview      = document.getElementById("preview");
-  const statusEl     = document.getElementById("status");
-  const codeBox      = document.getElementById("codeValueBox");
-  const codeLabelEl  = codeBox.querySelector("span");
-  const codeValueEl  = document.getElementById("codeValue");
-  const startBtn     = document.getElementById("startBtn");
-  const stopBtn      = document.getElementById("stopBtn");
+  const preview        = document.getElementById("preview");
+  const previewWrapper = document.getElementById("previewWrapper");
+  const statusEl       = document.getElementById("status");
+  const codeBox        = document.getElementById("codeValueBox");
+  const codeLabelEl    = codeBox.querySelector("span");
+  const codeValueEl    = document.getElementById("codeValue");
+  const startBtn       = document.getElementById("startBtn");
+  const stopBtn        = document.getElementById("stopBtn");
 
   let isInit    = false;
   let isRunning = false;
@@ -19,12 +20,23 @@
     if (type === "err") statusEl.classList.add("err");
   }
 
+  function setScanningUI(on) {
+    if (!previewWrapper) return;
+    if (on) {
+      previewWrapper.classList.add("is-scanning");
+      startBtn.classList.add("disabled");
+    } else {
+      previewWrapper.classList.remove("is-scanning");
+      startBtn.classList.remove("disabled");
+    }
+  }
+
   function initQuagga() {
     return new Promise((resolve, reject) => {
       if (isInit) return resolve();
 
       if (!window.Quagga) {
-        setStatus("❌ QuaggaJS introuvable (CDN).", "err");
+        setStatus("QuaggaJS introuvable (CDN).", "err");
         return reject(new Error("Quagga manquant"));
       }
 
@@ -56,11 +68,11 @@
         (err) => {
           if (err) {
             console.error("Quagga init error:", err);
-            setStatus("❌ Erreur d'initialisation du scanner.", "err");
+            setStatus("Erreur d'initialisation du scanner.", "err");
             return reject(err);
           }
           isInit = true;
-          setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
+          setStatus("Scanner prêt. Clique sur « Démarrer » pour lancer la caméra.", "ok");
           Quagga.onDetected(onDetected);
           resolve();
         }
@@ -71,6 +83,7 @@
   async function startScan() {
     if (isRunning) return;
 
+    // si Safari a bloqué la caméra avant, on garde le message clair
     try {
       await initQuagga();
     } catch {
@@ -79,24 +92,35 @@
 
     lastCode = null;
     isRunning = true;
-    codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
+    codeLabelEl.textContent = "Scanner en cours… vise un code-barres net.";
     codeValueEl.textContent = "";
-    setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
+    setStatus("Caméra en cours d’activation…", "ok");
+    setScanningUI(true);
 
     try {
       Quagga.start();
+      setStatus("Scanner en cours… vise un code-barres net.", "ok");
     } catch (e) {
       console.error("Quagga start error:", e);
-      setStatus("❌ Impossible de démarrer la caméra. Ferme puis rouvre la page.", "err");
       isRunning = false;
+      setScanningUI(false);
+      setStatus(
+        "Impossible de démarrer la caméra. Ferme puis rouvre la page (ou vérifie l’autorisation caméra).",
+        "err"
+      );
     }
   }
 
   function stopScan() {
     if (!isRunning) return;
-    try { Quagga.stop(); } catch {}
+    try {
+      Quagga.stop();
+    } catch (e) {
+      console.warn("Erreur Quagga.stop()", e);
+    }
     isRunning = false;
-    setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
+    setScanningUI(false);
+    setStatus("Scan arrêté. Clique sur « Démarrer » pour relancer.", "");
   }
 
   async function onDetected(result) {
@@ -104,14 +128,14 @@
     if (!code || code === lastCode) return;
     lastCode = code;
 
-    if (navigator.vibrate) navigator.vibrate(80);
+    if (navigator.vibrate) navigator.vibrate(60);
 
     codeLabelEl.textContent = "Code détecté :";
     codeValueEl.textContent = code;
-    setStatus("✅ Code détecté : " + code, "ok");
+    setStatus("Code détecté, récupération des infos produit…", "ok");
 
     try {
-      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
+      const url  = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
       const resp = await fetch(url);
 
       if (!resp.ok) {
@@ -131,7 +155,10 @@
           : "";
         const nova  = data.nova ? ` • Nova : ${data.nova}` : "";
 
-        codeLabelEl.textContent = `${name}${brand}${qte}${ns}${nova}`;
+        // Mise en forme "premium"
+        codeLabelEl.innerHTML = `
+          <span class="product-line-main">${name}${brand}${qte}${ns}${nova}</span>
+        `;
       } else {
         codeLabelEl.textContent =
           "Code lu mais produit non trouvé dans la base. (Lecture OK ✅)";
@@ -146,5 +173,6 @@
   startBtn.addEventListener("click", startScan);
   stopBtn.addEventListener("click", stopScan);
 
-  setStatus("⏱️ Initialisation du scanner…", "");
+  // message initial
+  setStatus("Initialisation du scanner…", "");
 })();
