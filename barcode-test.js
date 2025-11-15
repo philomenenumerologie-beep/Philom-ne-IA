@@ -1,5 +1,7 @@
 // barcode-test.js
-// Version avec filtre EAN-13 + plusieurs lectures consécutives
+// Test scanner code-barres + appel API Philomène
+// - Lecture EAN-13 / EAN-8 (avec vérification du chiffre de contrôle)
+// - Gestion propre du START / STOP pour iOS Safari
 
 (function () {
   const preview      = document.getElementById("preview");
@@ -14,11 +16,9 @@
   let isRunning = false;
   let lastCode  = null;
 
-  // Pour filtrer les faux positifs :
-  let pendingCode  = null;
-  let pendingCount = 0;
-  const REQUIRED_SAME_READS = 3; // nb de lectures identiques avant validation
-
+  // -------------------------------
+  // Helpers affichage
+  // -------------------------------
   function setStatus(msg, type) {
     statusEl.textContent = msg || "";
     statusEl.classList.remove("ok", "err");
@@ -26,6 +26,73 @@
     if (type === "err") statusEl.classList.add("err");
   }
 
+  // -------------------------------
+  // Vérification EAN (anti faux positifs)
+  // -------------------------------
+  function isValidEAN13(code) {
+    if (!/^\d{13}$/.test(code)) return false;
+    const digits = code.split("").map((c) => parseInt(c, 10));
+    let sum = 0;
+    // 12 premiers chiffres
+    for (let i = 0; i < 12; i++) {
+      sum += digits[i] * (i % 2 === 0 ? 1 : 3);
+    }
+    const check = (10 - (sum % 10)) % 10;
+    return check === digits[12];
+  }
+
+  function isValidEAN8(code) {
+    if (!/^\d{8}$/.test(code)) return false;
+    const digits = code.split("").map((c) => parseInt(c, 10));
+    let sum = 0;
+    // 7 premiers chiffres
+    for (let i = 0; i < 7; i++) {
+      sum += digits[i] * (i % 2 === 0 ? 3 : 1);
+    }
+    const check = (10 - (sum % 10)) % 10;
+    return check === digits[7];
+  }
+
+  function isValidBarcode(code) {
+    if (!code) return false;
+    if (/^\d{13}$/.test(code)) return isValidEAN13(code);
+    if (/^\d{8}$/.test(code))  return isValidEAN8(code);
+    return false; // on ignore les autres longueurs
+  }
+
+  // -------------------------------
+  // Fix iOS Safari : reset caméra
+  // -------------------------------
+  function forceCameraReset() {
+    // Track actif géré par Quagga
+    try {
+      const track =
+        window?.Quagga?.cameraAccess?.getActiveTrack?.() ||
+        window?.Quagga?._cameraAccess?.getActiveTrack?.();
+      if (track) {
+        try { track.stop(); } catch (e) {}
+      }
+    } catch (e) {
+      console.warn("Erreur forceCameraReset (track):", e);
+    }
+
+    // Flux vidéo dans le DOM (Safari garde parfois un stream zombie)
+    try {
+      const video = preview.querySelector("video");
+      if (video && video.srcObject) {
+        try {
+          video.srcObject.getTracks().forEach((t) => t.stop());
+        } catch (e) {}
+        video.srcObject = null;
+      }
+    } catch (e) {
+      console.warn("Erreur forceCameraReset (video):", e);
+    }
+  }
+
+  // -------------------------------
+  // Initialisation Quagga
+  // -------------------------------
   function initQuagga() {
     return new Promise((resolve, reject) => {
       if (isInit) return resolve();
@@ -44,16 +111,22 @@
             constraints: {
               facingMode: "environment",
               width: { min: 640 },
-              height: { min: 480 }
-            }
+              height: { min: 480 },
+            },
           },
           locator: { patchSize: "medium", halfSample: true },
           decoder: {
-            // 🔒 On se concentre sur les codes EAN-13 de supermarché
-            readers: ["ean_reader"]
+            readers: [
+              "ean_reader",     // EAN-13 (codes produits Europe)
+              "ean_8_reader",   // EAN-8
+              // on garde les autres en commentaire pour le moment
+              // "upc_reader",
+              // "upc_e_reader",
+              // "code_128_reader"
+            ],
           },
           locate: true,
-          numOfWorkers: navigator.hardwareConcurrency || 2
+          numOfWorkers: navigator.hardwareConcurrency || 2,
         },
         (err) => {
           if (err) {
@@ -70,15 +143,23 @@
     });
   }
 
+  // -------------------------------
+  // Démarrer le scan
+  // -------------------------------
   async function startScan() {
     if (isRunning) return;
-    try { await initQuagga(); } catch { return; }
 
-    lastCode = null;
-    pendingCode = null;
-    pendingCount = 0;
+    // IMPORTANT : corrige le bug iOS quand on relance après un stop
+    forceCameraReset();
 
-    isRunning = true;
+    try {
+      await initQuagga();
+    } catch {
+      return;
+    }
+
+    lastCode   = null;
+    isRunning  = true;
     codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
     codeValueEl.textContent = "";
     setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
@@ -92,55 +173,62 @@
     }
   }
 
+  // -------------------------------
+  // Arrêter le scan
+  // -------------------------------
   function stopScan() {
     if (!isRunning) return;
-    try { Quagga.stop(); } catch {}
+
+    try {
+      Quagga.stop();
+    } catch (e) {
+      console.warn("Quagga stop error:", e);
+    }
+
+    // On s'assure que la caméra est bien libérée
+    forceCameraReset();
+
     isRunning = false;
     setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
   }
 
+  // -------------------------------
+  // Quand un code est détecté
+  // -------------------------------
   async function onDetected(result) {
-    const code = result?.codeResult?.code;
+    const rawCode = result?.codeResult?.code;
+    if (!rawCode) return;
 
-    if (!code) return;
+    // Nettoyage basique
+    const code = String(rawCode).trim();
 
-    // 1️⃣ On ne garde que les codes composés uniquement de chiffres
-    if (!/^\d+$/.test(code)) return;
+    // Anti-spam : même code répété en boucle → on ignore
+    if (code === lastCode) return;
 
-    // 2️⃣ On ignore les codes trop courts (souvent des faux positifs)
-    if (code.length < 12 || code.length > 14) return;
-
-    // 3️⃣ On attend plusieurs lectures identiques avant de valider
-    if (code !== pendingCode) {
-      pendingCode  = code;
-      pendingCount = 1;
-      return; // on attend encore
-    } else {
-      pendingCount++;
-      if (pendingCount < REQUIRED_SAME_READS) {
-        return; // pas encore assez de confirmations
-      }
-      // assez de confirmations : on “valide” le code
-      pendingCount = 0;
+    // Filtre anti faux positifs : uniquement EAN-13 / EAN-8 valides
+    if (!isValidBarcode(code)) {
+      console.log("Code rejeté (non EAN valide) :", code);
+      return;
     }
 
-    // Normalisation simple : on garde tel quel (OpenFoodFacts accepte)
-    const finalCode = code;
-
-    if (finalCode === lastCode) return;
-    lastCode = finalCode;
+    lastCode = code;
 
     if (navigator.vibrate) navigator.vibrate(80);
 
     codeLabelEl.textContent = "Code détecté :";
-    codeValueEl.textContent = finalCode;
-    setStatus("✅ Code détecté : " + finalCode, "ok");
+    codeValueEl.textContent = code;
+    setStatus("✅ Code détecté : " + code, "ok");
 
+    // Appel de ton backend Philomène
     try {
-      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(finalCode);
+      const url =
+        "https://api.philomeneia.com/barcode?code=" +
+        encodeURIComponent(code);
+
       const resp = await fetch(url);
 
       if (!resp.ok) {
+        console.error("Erreur HTTP API /barcode:", resp.status);
         codeLabelEl.textContent =
           "Code lu. Impossible de récupérer les infos produit (erreur serveur).";
         return;
@@ -169,8 +257,12 @@
     }
   }
 
+  // -------------------------------
+  // Events boutons
+  // -------------------------------
   startBtn.addEventListener("click", startScan);
   stopBtn.addEventListener("click", stopScan);
 
+  // Message initial
   setStatus("⏱️ Initialisation du scanner…", "");
 })();
