@@ -8,14 +8,15 @@
   const startBtn     = document.getElementById("startBtn");
   const stopBtn      = document.getElementById("stopBtn");
 
-  let isInit    = false;
+  let isInit = false;
   let isRunning = false;
-  let lastCode  = null;
+  let lastCode = null;
+  let detectCount = {}; // compteur par code
 
   function setStatus(msg, type) {
     statusEl.textContent = msg || "";
     statusEl.classList.remove("ok", "err");
-    if (type === "ok")  statusEl.classList.add("ok");
+    if (type === "ok") statusEl.classList.add("ok");
     if (type === "err") statusEl.classList.add("err");
   }
 
@@ -24,7 +25,7 @@
       if (isInit) return resolve();
 
       if (!window.Quagga) {
-        setStatus("❌ QuaggaJS introuvable (CDN).", "err");
+        setStatus("❌ QuaggaJS introuvable.", "err");
         return reject(new Error("Quagga manquant"));
       }
 
@@ -36,29 +37,38 @@
             target: preview,
             constraints: {
               facingMode: "environment",
-              width: { min: 640 },
-              height: { min: 480 }
+              width: 1280,
+              height: 720
             }
           },
-          locator: { patchSize: "medium", halfSample: true },
+
+          locator: {
+            patchSize: "large", // 🔥 beaucoup plus fiable
+            halfSample: false
+          },
+
           decoder: {
             readers: [
-              "ean_reader",
+              "ean_reader",       // EAN-13
               "ean_8_reader",
               "upc_reader",
               "upc_e_reader",
               "code_128_reader"
             ]
           },
+
+          frequency: 10, // 🔥 augmente la précision
           locate: true,
-          numOfWorkers: navigator.hardwareConcurrency || 2
+          numOfWorkers: 4
         },
+
         (err) => {
           if (err) {
-            console.error("Quagga init error:", err);
+            console.error(err);
             setStatus("❌ Erreur d'initialisation du scanner.", "err");
             return reject(err);
           }
+
           isInit = true;
           setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
           Quagga.onDetected(onDetected);
@@ -73,15 +83,17 @@
     try { await initQuagga(); } catch { return; }
 
     lastCode = null;
+    detectCount = {};
     isRunning = true;
-    codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
+
+    codeLabelEl.textContent = "Aucun produit scanné.";
     codeValueEl.textContent = "";
-    setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
+    setStatus("📷 Scanner en cours…", "ok");
 
     try {
       Quagga.start();
     } catch (e) {
-      console.error("Quagga start error:", e);
+      console.error(e);
       setStatus("❌ Impossible de démarrer la caméra.", "err");
       isRunning = false;
     }
@@ -91,12 +103,18 @@
     if (!isRunning) return;
     try { Quagga.stop(); } catch {}
     isRunning = false;
-    setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
+    setStatus("⏹️ Scan arrêté.", "");
   }
 
   async function onDetected(result) {
     const code = result?.codeResult?.code;
-    if (!code || code === lastCode) return;
+    if (!code) return;
+
+    // 🔥 Nouvelle logique : code accepté seulement après 3 détections identiques
+    detectCount[code] = (detectCount[code] || 0) + 1;
+
+    if (detectCount[code] < 3) return; // attend confirmation
+    if (code === lastCode) return; 
     lastCode = code;
 
     if (navigator.vibrate) navigator.vibrate(80);
@@ -106,35 +124,26 @@
     setStatus("✅ Code détecté : " + code, "ok");
 
     try {
-      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
-      const resp = await fetch(url);
+      const resp = await fetch(
+        "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code)
+      );
 
       if (!resp.ok) {
-        codeLabelEl.textContent =
-          "Code lu. Impossible de récupérer les infos produit (erreur serveur).";
+        codeLabelEl.textContent = "🟡 Code lu, mais erreur serveur.";
         return;
       }
 
       const data = await resp.json();
 
       if (data && data.found) {
-        const name  = data.name || "Produit";
-        const brand = data.brand ? ` • ${data.brand}` : "";
-        const qte   = data.quantity ? ` • ${data.quantity}` : "";
-        const ns    = data.nutriscore
-          ? ` • NutriScore : ${String(data.nutriscore).toUpperCase()}`
-          : "";
-        const nova  = data.nova ? ` • Nova : ${data.nova}` : "";
-
-        codeLabelEl.textContent = `${name}${brand}${qte}${ns}${nova}`;
-      } else {
         codeLabelEl.textContent =
-          "Code lu mais produit non trouvé dans la base. (Lecture OK ✅)";
+          `${data.name || "Produit"} • ${data.brand || ""} • ${data.quantity || ""} • NutriScore: ${data.nutriscore?.toUpperCase() || "?"}`;
+      } else {
+        codeLabelEl.textContent = "Aucun produit trouvé (base OFF).";
       }
     } catch (e) {
-      console.error("Erreur appel API barcode:", e);
-      codeLabelEl.textContent =
-        "Code lu mais problème de connexion à l’API.";
+      console.error(e);
+      codeLabelEl.textContent = "Erreur API.";
     }
   }
 
