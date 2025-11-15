@@ -1,162 +1,69 @@
-// barcode-test.js
-(function () {
-  const preview      = document.getElementById("preview");
-  const statusEl     = document.getElementById("status");
-  const codeBox      = document.getElementById("codeValueBox");
-  const codeLabelEl  = codeBox.querySelector("span");
-  const codeValueEl  = document.getElementById("codeValue");
-  const startBtn     = document.getElementById("startBtn");
-  const stopBtn      = document.getElementById("stopBtn");
+let stream = null;
+let barcodeDetector = null;
+let scanning = false;
 
-  let isInit    = false;
-  let isRunning = false;
-  let lastCode  = null;
+async function startCamera() {
+    try {
+        stopCamera(); // sécurité pour éviter doublon
 
-  function setStatus(msg, type) {
-    statusEl.textContent = msg || "";
-    statusEl.classList.remove("ok", "err");
-    if (type === "ok")  statusEl.classList.add("ok");
-    if (type === "err") statusEl.classList.add("err");
-  }
-
-  // Vérif navigateur
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    setStatus("❌ Ce navigateur ne permet pas l'accès à la caméra.", "err");
-    startBtn.disabled = true;
-  } else {
-    setStatus("⏱️ Initialisation du scanner…", "");
-  }
-
-  function initQuagga() {
-    return new Promise((resolve, reject) => {
-      if (isInit) return resolve();
-
-      if (!window.Quagga) {
-        setStatus("❌ QuaggaJS introuvable (CDN).", "err");
-        return reject(new Error("Quagga manquant"));
-      }
-
-      Quagga.init(
-        {
-          inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: preview,
-            constraints: {
-              facingMode: "environment",
-              width: { min: 640 },
-              height: { min: 480 }
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: "environment"
             }
-          },
-          locator: { patchSize: "medium", halfSample: true },
-          decoder: {
-            readers: [
-              "ean_reader",
-              "ean_8_reader",
-              "upc_reader",
-              "upc_e_reader",
-              "code_128_reader"
-            ]
-          },
-          locate: true,
-          numOfWorkers: navigator.hardwareConcurrency || 2
-        },
-        (err) => {
-          if (err) {
-            console.error("Quagga init error:", err);
-            setStatus("❌ Erreur d'initialisation du scanner.", "err");
-            return reject(err);
-          }
-          isInit = true;
-          setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
-          Quagga.onDetected(onDetected);
-          resolve();
-        }
-      );
+        });
+
+        const video = document.getElementById("video");
+        video.srcObject = stream;
+        await video.play();
+
+        scanning = true;
+        detectLoop();
+
+    } catch (error) {
+        console.error("Camera Error:", error);
+        showError("Impossible de démarrer la caméra. Ferme puis rouvre la page.");
+    }
+}
+
+function stopCamera() {
+    scanning = false;
+
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+
+    const video = document.getElementById("video");
+    video.srcObject = null;
+}
+
+async function detectLoop() {
+    const video = document.getElementById("video");
+
+    barcodeDetector = new BarcodeDetector({
+        formats: ["ean_13", "ean_8", "code_128"]
     });
-  }
 
-  async function startScan() {
-    if (isRunning) return;
-    try {
-      await initQuagga();
-    } catch {
-      return;
+    while (scanning) {
+        try {
+            const codes = await barcodeDetector.detect(video);
+            if (codes.length > 0) {
+                handleDetected(codes[0].rawValue);
+                stopCamera(); // ← essentiel pour iPhone
+                break;
+            }
+        } catch (err) {
+            console.error("Detect error:", err);
+        }
+
+        await new Promise(r => setTimeout(r, 100));
     }
+}
 
-    lastCode = null;
-    isRunning = true;
-    codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
-    codeValueEl.textContent = "";
-    setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
+function handleDetected(code) {
+    document.getElementById("result").innerText = code;
+}
 
-    try {
-      Quagga.start();
-    } catch (e) {
-      console.error("Quagga start error:", e);
-      setStatus("❌ Impossible de démarrer la caméra. Ferme puis rouvre la page.", "err");
-      isRunning = false;
-    }
-  }
-
-  function stopScan() {
-    if (!isRunning) {
-      setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
-      return;
-    }
-    try {
-      Quagga.stop();
-    } catch (e) {
-      console.warn("Quagga stop error:", e);
-    }
-    isRunning = false;
-    setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
-  }
-
-  async function onDetected(result) {
-    const code = result?.codeResult?.code;
-    if (!code || code === lastCode) return;
-    lastCode = code;
-
-    if (navigator.vibrate) navigator.vibrate(80);
-
-    codeLabelEl.textContent = "Code détecté :";
-    codeValueEl.textContent = code;
-    setStatus("✅ Code détecté : " + code, "ok");
-
-    try {
-      const url = "https://api.philomeneia.com/barcode?code=" + encodeURIComponent(code);
-      const resp = await fetch(url);
-
-      if (!resp.ok) {
-        codeLabelEl.textContent =
-          "Code lu. Impossible de récupérer les infos produit (erreur serveur).";
-        return;
-      }
-
-      const data = await resp.json();
-
-      if (data && data.found) {
-        const name  = data.name || "Produit";
-        const brand = data.brand ? ` • ${data.brand}` : "";
-        const qte   = data.quantity ? ` • ${data.quantity}` : "";
-        const ns    = data.nutriscore
-          ? ` • NutriScore : ${String(data.nutriscore).toUpperCase()}`
-          : "";
-        const nova  = data.nova ? ` • Nova : ${data.nova}` : "";
-
-        codeLabelEl.textContent = `${name}${brand}${qte}${ns}${nova}`;
-      } else {
-        codeLabelEl.textContent =
-          "Code lu mais produit non trouvé dans la base. (Lecture OK ✅)";
-      }
-    } catch (e) {
-      console.error("Erreur appel API barcode:", e);
-      codeLabelEl.textContent =
-        "Code lu mais problème de connexion à l’API.";
-    }
-  }
-
-  startBtn.addEventListener("click", startScan);
-  stopBtn.addEventListener("click", stopScan);
-})();
+function showError(msg) {
+    document.getElementById("error").innerText = msg;
+}
