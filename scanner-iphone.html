@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Scanner iPhone (BarcodeDetector) 📷</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #020814;
+      color: #f5f5f5;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    p {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #c9d1d9;
+    }
+    #previewWrapper {
+      margin: 0 auto 12px;
+      max-width: 640px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+    }
+    #status {
+      margin: 0 auto 12px;
+      max-width: 640px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #111827;
+      color: #e5e7eb;
+    }
+    #status.ok { background:#065f46; color:#bbf7d0; }
+    #status.err { background:#7f1d1d; color:#fee2e2; }
+
+    #buttons {
+      margin: 0 auto 14px;
+      max-width: 640px;
+      display: flex;
+      gap: 12px;
+    }
+    button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #startBtn {
+      background: #22c55e;
+      color: #020817;
+    }
+    #stopBtn {
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    #codeValueBox {
+      margin: 0 auto;
+      max-width: 640px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #020817;
+      border: 1px solid #111827;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+    #codeValue {
+      color: #22c55e;
+      font-weight: 600;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Scanner iPhone 📷</h1>
+  <p>
+    Scanner basé sur l’API <strong>BarcodeDetector</strong>, optimisé pour iPhone.<br>
+    Objectif : lecture plus rapide et plus fiable que Quagga.
+  </p>
+
+  <div id="previewWrapper">
+    <video id="video" playsinline muted></video>
+  </div>
+
+  <div id="status">Chargement du scanner…</div>
+
+  <div id="buttons">
+    <button id="startBtn">Démarrer</button>
+    <button id="stopBtn">Arrêter</button>
+  </div>
+
+  <div id="codeValueBox">
+    <span>Aucun produit scanné pour le moment.</span>
+    <div id="codeValue"></div>
+  </div>
+
+  <!-- Ton script de scanner -->
+  <script src="scanner-iphone.js"></script>
+</body>
+</html>
