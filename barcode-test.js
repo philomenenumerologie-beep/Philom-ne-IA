@@ -1,268 +1,117 @@
-// barcode-test.js
-// Test scanner code-barres + appel API Philomène
-// - Lecture EAN-13 / EAN-8 (avec vérification du chiffre de contrôle)
-// - Gestion propre du START / STOP pour iOS Safari
+let quaggaRunning = false;
 
-(function () {
-  const preview      = document.getElementById("preview");
-  const statusEl     = document.getElementById("status");
-  const codeBox      = document.getElementById("codeValueBox");
-  const codeLabelEl  = codeBox.querySelector("span");
-  const codeValueEl  = document.getElementById("codeValue");
-  const startBtn     = document.getElementById("startBtn");
-  const stopBtn      = document.getElementById("stopBtn");
+function setStatus(msg, ok = null) {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.className = "";
+  if (ok === true) el.classList.add("ok");
+  if (ok === false) el.classList.add("err");
+}
 
-  let isInit    = false;
-  let isRunning = false;
-  let lastCode  = null;
+function resetVideoElement() {
+  const preview = document.getElementById("preview");
+  const newVideo = preview.cloneNode(true);
+  preview.parentNode.replaceChild(newVideo, preview);
+}
 
-  // -------------------------------
-  // Helpers affichage
-  // -------------------------------
-  function setStatus(msg, type) {
-    statusEl.textContent = msg || "";
-    statusEl.classList.remove("ok", "err");
-    if (type === "ok")  statusEl.classList.add("ok");
-    if (type === "err") statusEl.classList.add("err");
-  }
+async function startScanner() {
+  if (quaggaRunning) return;
 
-  // -------------------------------
-  // Vérification EAN (anti faux positifs)
-  // -------------------------------
-  function isValidEAN13(code) {
-    if (!/^\d{13}$/.test(code)) return false;
-    const digits = code.split("").map((c) => parseInt(c, 10));
-    let sum = 0;
-    // 12 premiers chiffres
-    for (let i = 0; i < 12; i++) {
-      sum += digits[i] * (i % 2 === 0 ? 1 : 3);
-    }
-    const check = (10 - (sum % 10)) % 10;
-    return check === digits[12];
-  }
+  setStatus("Initialisation…");
 
-  function isValidEAN8(code) {
-    if (!/^\d{8}$/.test(code)) return false;
-    const digits = code.split("").map((c) => parseInt(c, 10));
-    let sum = 0;
-    // 7 premiers chiffres
-    for (let i = 0; i < 7; i++) {
-      sum += digits[i] * (i % 2 === 0 ? 3 : 1);
-    }
-    const check = (10 - (sum % 10)) % 10;
-    return check === digits[7];
-  }
+  resetVideoElement(); // IMPORTANT POUR SAFARI
 
-  function isValidBarcode(code) {
-    if (!code) return false;
-    if (/^\d{13}$/.test(code)) return isValidEAN13(code);
-    if (/^\d{8}$/.test(code))  return isValidEAN8(code);
-    return false; // on ignore les autres longueurs
-  }
-
-  // -------------------------------
-  // Fix iOS Safari : reset caméra
-  // -------------------------------
-  function forceCameraReset() {
-    // Track actif géré par Quagga
-    try {
-      const track =
-        window?.Quagga?.cameraAccess?.getActiveTrack?.() ||
-        window?.Quagga?._cameraAccess?.getActiveTrack?.();
-      if (track) {
-        try { track.stop(); } catch (e) {}
+  Quagga.init({
+    inputStream: {
+      name: "Live",
+      type: "LiveStream",
+      target: document.querySelector("#preview"),
+      constraints: {
+        facingMode: "environment",
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
       }
-    } catch (e) {
-      console.warn("Erreur forceCameraReset (track):", e);
+    },
+    locator: { patchSize: "medium", halfSample: true },
+    numOfWorkers: navigator.hardwareConcurrency || 2,
+    decoder: {
+      readers: ["ean_reader"]  // EAN13
     }
-
-    // Flux vidéo dans le DOM (Safari garde parfois un stream zombie)
-    try {
-      const video = preview.querySelector("video");
-      if (video && video.srcObject) {
-        try {
-          video.srcObject.getTracks().forEach((t) => t.stop());
-        } catch (e) {}
-        video.srcObject = null;
-      }
-    } catch (e) {
-      console.warn("Erreur forceCameraReset (video):", e);
-    }
-  }
-
-  // -------------------------------
-  // Initialisation Quagga
-  // -------------------------------
-  function initQuagga() {
-    return new Promise((resolve, reject) => {
-      if (isInit) return resolve();
-
-      if (!window.Quagga) {
-        setStatus("❌ QuaggaJS introuvable (CDN).", "err");
-        return reject(new Error("Quagga manquant"));
-      }
-
-      Quagga.init(
-        {
-          inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: preview,
-            constraints: {
-              facingMode: "environment",
-              width: { min: 640 },
-              height: { min: 480 },
-            },
-          },
-          locator: { patchSize: "medium", halfSample: true },
-          decoder: {
-            readers: [
-              "ean_reader",     // EAN-13 (codes produits Europe)
-              "ean_8_reader",   // EAN-8
-              // on garde les autres en commentaire pour le moment
-              // "upc_reader",
-              // "upc_e_reader",
-              // "code_128_reader"
-            ],
-          },
-          locate: true,
-          numOfWorkers: navigator.hardwareConcurrency || 2,
-        },
-        (err) => {
-          if (err) {
-            console.error("Quagga init error:", err);
-            setStatus("❌ Erreur d'initialisation du scanner.", "err");
-            return reject(err);
-          }
-          isInit = true;
-          setStatus("✅ Scanner prêt. Clique sur Démarrer.", "ok");
-          Quagga.onDetected(onDetected);
-          resolve();
-        }
-      );
-    });
-  }
-
-  // -------------------------------
-  // Démarrer le scan
-  // -------------------------------
-  async function startScan() {
-    if (isRunning) return;
-
-    // IMPORTANT : corrige le bug iOS quand on relance après un stop
-    forceCameraReset();
-
-    try {
-      await initQuagga();
-    } catch {
+  }, err => {
+    if (err) {
+      console.error(err);
+      setStatus("Impossible de démarrer la caméra.", false);
+      quaggaRunning = false;
       return;
     }
 
-    lastCode   = null;
-    isRunning  = true;
-    codeLabelEl.textContent = "Aucun produit scanné pour le moment.";
-    codeValueEl.textContent = "";
-    setStatus("📷 Scanner en cours… vise un code-barres net.", "ok");
+    Quagga.start();
+    quaggaRunning = true;
+    setStatus("📷 Scanner en cours…");
+  });
 
-    try {
-      Quagga.start();
-    } catch (e) {
-      console.error("Quagga start error:", e);
-      setStatus("❌ Impossible de démarrer la caméra.", "err");
-      isRunning = false;
-    }
+  Quagga.onDetected(onCodeDetected);
+}
+
+async function stopScanner() {
+  if (!quaggaRunning) return;
+  quaggaRunning = false;
+
+  Quagga.stop();
+
+  // Libérer complètement la caméra (fix Safari)
+  const tracks = (await navigator.mediaDevices.getUserMedia({ video: true })).getVideoTracks();
+  tracks.forEach(t => t.stop());
+
+  setStatus("🛑 Scan arrêté. Clique sur Démarrer pour relancer.");
+}
+
+function onCodeDetected(result) {
+  if (!result || !result.codeResult) return;
+
+  let code = result.codeResult.code;
+
+  // Si Quagga renvoie 8 chiffres → tentative de correction EAN13
+  if (code.length === 8) {
+    console.log("Code EAN8 détecté → non supporté par OFF.");
+    displayProductError(code);
+    return;
   }
 
-  // -------------------------------
-  // Arrêter le scan
-  // -------------------------------
-  function stopScan() {
-    if (!isRunning) return;
+  fetchProductData(code);
+}
 
-    try {
-      Quagga.stop();
-    } catch (e) {
-      console.warn("Quagga stop error:", e);
-    }
+async function fetchProductData(code) {
+  setStatus(`Code détecté : ${code}`, true);
 
-    // On s'assure que la caméra est bien libérée
-    forceCameraReset();
+  try {
+    const res = await fetch(`https://api.philomeneia.com/scan/${code}`);
+    const data = await res.json();
 
-    isRunning = false;
-    setStatus("⏹️ Scan arrêté. Clique sur Démarrer pour relancer.", "");
-  }
+    const box = document.getElementById("codeValueBox");
 
-  // -------------------------------
-  // Quand un code est détecté
-  // -------------------------------
-  async function onDetected(result) {
-    const rawCode = result?.codeResult?.code;
-    if (!rawCode) return;
-
-    // Nettoyage basique
-    const code = String(rawCode).trim();
-
-    // Anti-spam : même code répété en boucle → on ignore
-    if (code === lastCode) return;
-
-    // Filtre anti faux positifs : uniquement EAN-13 / EAN-8 valides
-    if (!isValidBarcode(code)) {
-      console.log("Code rejeté (non EAN valide) :", code);
+    if (!data.found) {
+      box.innerHTML = `<p>Code lu, mais introuvable dans la base.</p><div id="codeValue">${code}</div>`;
       return;
     }
 
-    lastCode = code;
-
-    if (navigator.vibrate) navigator.vibrate(80);
-
-    codeLabelEl.textContent = "Code détecté :";
-    codeValueEl.textContent = code;
-    setStatus("✅ Code détecté : " + code, "ok");
-
-    // Appel de ton backend Philomène
-    try {
-      const url =
-        "https://api.philomeneia.com/barcode?code=" +
-        encodeURIComponent(code);
-
-      const resp = await fetch(url);
-
-      if (!resp.ok) {
-        console.error("Erreur HTTP API /barcode:", resp.status);
-        codeLabelEl.textContent =
-          "Code lu. Impossible de récupérer les infos produit (erreur serveur).";
-        return;
-      }
-
-      const data = await resp.json();
-
-      if (data && data.found) {
-        const name  = data.name || "Produit";
-        const brand = data.brand ? ` • ${data.brand}` : "";
-        const qte   = data.quantity ? ` • ${data.quantity}` : "";
-        const ns    = data.nutriscore
-          ? ` • NutriScore : ${String(data.nutriscore).toUpperCase()}`
-          : "";
-        const nova  = data.nova ? ` • Nova : ${data.nova}` : "";
-
-        codeLabelEl.textContent = `${name}${brand}${qte}${ns}${nova}`;
-      } else {
-        codeLabelEl.textContent =
-          "Code lu mais produit non trouvé dans la base. (Lecture OK ✅)";
-      }
-    } catch (e) {
-      console.error("Erreur appel API barcode:", e);
-      codeLabelEl.textContent =
-        "Code lu mais problème de connexion à l’API.";
-    }
+    box.innerHTML = `
+      <p>${data.name} • ${data.brand} • ${data.quantity} • NutriScore : ${data.nutriscore} • Nova : ${data.nova}</p>
+      <div id="codeValue">${code}</div>
+    `;
+  } catch (e) {
+    console.error("Erreur serveur", e);
+    displayProductError(code);
   }
+}
 
-  // -------------------------------
-  // Events boutons
-  // -------------------------------
-  startBtn.addEventListener("click", startScan);
-  stopBtn.addEventListener("click", stopScan);
+function displayProductError(code) {
+  document.getElementById("codeValueBox").innerHTML = `
+    <p>Code lu. Impossible de récupérer les infos produit (erreur serveur).</p>
+    <div id="codeValue">${code}</div>
+  `;
+}
 
-  // Message initial
-  setStatus("⏱️ Initialisation du scanner…", "");
-})();
+// Boutons
+document.getElementById("startBtn").addEventListener("click", startScanner);
+document.getElementById("stopBtn").addEventListener("click", stopScanner);
