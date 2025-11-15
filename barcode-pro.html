@@ -1,115 +1,115 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Test Scanner Pro (ZXing) 📷</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scanner Pro (ZXing) 📷</title>
+
+  <script src="https://unpkg.com/@zxing/browser@latest"></script>
+
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #020814;
-      color: #f5f5f5;
-    }
-    h1 { font-size: 24px; margin-bottom: 8px; }
-    p  { margin-top: 0; margin-bottom: 16px; color: #c9d1d9; }
-
-    #previewWrapper {
-      margin: 0 auto 12px;
-      max-width: 640px;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #000;
-    }
-    #preview {
-      width: 100%;
-      height: 260px;
-      object-fit: cover;
-      background: #000;
-    }
-
-    #status {
-      margin: 0 auto 12px;
-      max-width: 640px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 14px;
-      background: #111827;
-      color: #e5e7eb;
-    }
-    #status.ok  { background:#065f46; color:#bbf7d0; }
-    #status.err { background:#7f1d1d; color:#fee2e2; }
-
-    #buttons {
-      margin: 0 auto 14px;
-      max-width: 640px;
-      display: flex;
-      gap: 12px;
-    }
+    body { background:#020814; color:#fff; font-family:system-ui; padding:20px; }
+    h1 { font-size:24px; }
+    video { width:100%; max-width:650px; border-radius:16px; background:#000; }
+    #status { margin-top:10px; padding:10px; border-radius:8px; }
+    .ok { background:#065f46; color:#bbf7d0; }
+    .err { background:#7f1d1d; color:#fee2e2; }
     button {
-      flex: 1;
-      padding: 14px;
-      border-radius: 999px;
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+      padding:14px; border-radius:999px; margin:10px 5px; border:none;
+      font-size:16px; font-weight:600;
     }
-    #startBtn {
-      background: #22c55e;
-      color: #020817;
-    }
-    #stopBtn {
-      background: #111827;
-      color: #e5e7eb;
-    }
-
-    #codeValueBox {
-      margin: 0 auto;
-      max-width: 640px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: #020817;
-      border: 1px solid #111827;
-      font-size: 14px;
-      color: #9ca3af;
-    }
-    #codeValue {
-      color: #22c55e;
-      font-weight: 600;
-      word-break: break-all;
-    }
+    #start { background:#22c55e; color:#020817; }
+    #stop { background:#111827; color:#e5e7eb; }
+    #result { margin-top:12px; font-size:16px; }
+    #code { color:#22c55e; font-size:18px; font-weight:700; }
   </style>
 </head>
 <body>
-  <h1>Test Scanner Pro (ZXing) 📷</h1>
-  <p>
-    Scanner de code-barres nouvelle génération (ZXing).  
-    Objectif : lecture plus rapide et plus fiable.
-  </p>
 
-  <div id="previewWrapper">
-    <!-- ⚠️ ICI c’est un <video> (et plus un <div>) -->
-    <video id="preview" playsinline></video>
-  </div>
+<h1>Scanner Pro (ZXing) 📷</h1>
+<p>Scanner nouvelle génération basé sur ZXing. Fiable & rapide sur iPhone.</p>
 
-  <div id="status">Chargement du scanner…</div>
+<video id="video" autoplay playsinline></video>
 
-  <div id="buttons">
-    <button id="startBtn">Démarrer</button>
-    <button id="stopBtn">Arrêter</button>
-  </div>
+<div id="status" class="err">En attente…</div>
 
-  <div id="codeValueBox">
-    <span>Aucun produit scanné pour le moment.</span>
-    <div id="codeValue"></div>
-  </div>
+<button id="start">Démarrer</button>
+<button id="stop">Arrêter</button>
 
-  <!-- 📦 Librairie ZXing (scanner pro) -->
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
+<div id="result">
+  <span>Aucun produit scanné pour le moment.</span><br>
+  <span id="code"></span>
+</div>
 
-  <!-- Ton script local -->
-  <script src="barcode-pro.js"></script>
+<script>
+  const video = document.getElementById("video");
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  const codeSpan = document.getElementById("code");
+
+  let controls = null;
+
+  function setStatus(msg, ok = false) {
+    status.textContent = msg;
+    status.className = ok ? "ok" : "err";
+  }
+
+  async function startScan() {
+    try {
+      const codeReader = new ZXingBrowser.BrowserMultiFormatReader();
+
+      controls = await ZXingBrowser.BrowserMultiFormatReader.decodeFromVideoDevice(
+        undefined, // caméra arrière
+        video,
+        (result, err) => {
+          if (result) {
+            const code = result.text;
+            setStatus("Code détecté : " + code, true);
+            codeSpan.textContent = code;
+            searchProduct(code);
+          }
+        }
+      );
+
+      setStatus("📷 Scanner actif. Scanne un code-barres.", true);
+    } catch (e) {
+      setStatus("❌ Impossible de démarrer la caméra.", false);
+      console.error(e);
+    }
+  }
+
+  function stopScan() {
+    if (controls) controls.stop();
+    setStatus("⏹️ Scan arrêté.");
+  }
+
+  async function searchProduct(code) {
+    try {
+      const resp = await fetch("https://api.philomeneia.com/barcode?code=" + code);
+      if (!resp.ok) {
+        result.innerHTML = "Code OK mais erreur API.<br><span id='code'>" + code + "</span>";
+        return;
+      }
+
+      const data = await resp.json();
+      if (!data.found) {
+        result.innerHTML = "Produit non trouvé.<br><span id='code'>" + code + "</span>";
+        return;
+      }
+
+      // Produit trouvé
+      result.innerHTML =
+        `${data.name || ""} • ${data.brand || ""} • ${data.quantity || ""}` +
+        `<br>NutriScore : ${data.nutriscore || "?"} • Nova : ${data.nova || "?"}<br>` +
+        `<span id='code'>${code}</span>`;
+    } catch (e) {
+      result.innerHTML = "Erreur API.<br><span id='code'>" + code + "</span>";
+    }
+  }
+
+  document.getElementById("start").onclick = startScan;
+  document.getElementById("stop").onclick = stopScan;
+</script>
+
 </body>
 </html>
