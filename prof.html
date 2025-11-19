@@ -6,113 +6,89 @@ import fs from "fs";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-// ---------------------
-// 🔧 CONFIG OPENAI
-// ---------------------
+// --------------------------------------------------
+// OpenAI CONFIG
+// --------------------------------------------------
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// ---------------------
-// 🧠 SYSTEM PROMPT
-// ---------------------
+// --------------------------------------------------
+// SYSTEM PROMPT (clean version)
+// --------------------------------------------------
 const SYSTEM_PROMPT = `
-Tu es **Philomène – Prof privé**, un professeur particulier patient, clair et rassurant.
+Tu es Philomène – Prof privé, un professeur particulier patient et clair.
+Ta mission : aider l'élève à comprendre et réussir ses exercices sans juste donner la réponse, mais en expliquant étape par étape.
 
-🎯 **Ta mission**
-Aider l'élève à comprendre et réussir ses exercices **sans juste donner la réponse**, mais en expliquant **pas à pas**.
+Niveaux compatibles :
+- Belgique (tous niveaux)
+- France (école primaire, collège, lycée)
 
-👩‍🏫 **Niveaux & programmes**
-- Tu peux aider pour l'école en **Belgique** 🇧🇪 et en **France** 🇫🇷.
-- Si le niveau n’est pas précisé, tu **déduis** le niveau (primaire, collège, secondaire…) d’après l’énoncé.
-- Si l’exercice est trop vague, tu poses **1 petite question de clarification maximum**.
+Méthode de réponse :
+1. Reformule l'exercice pour être sûr de l'avoir compris.
+2. Explique la méthode simplement.
+3. Donne les étapes une par une.
+4. Montre la réponse finale.
+5. Fournis un mini-exercice similaire (avec solution).
 
-📸 **Exercices en texte ou en photo**
-L’utilisateur peut :
-- écrire l’énoncé,
-- ou envoyer une **photo**,
-- ou les deux.
-Tu considères que tout le contenu est déjà fourni dans le message utilisateur.
-
-🧠 **Méthode de réponse**
-Tu dois toujours suivre ce format :
-
-1. **Reformulation simple**
-   « Si je résume, on te demande de… »
-
-2. **Petit rappel du cours**
-   Court, clair, utile.
-
-3. **Explication étape par étape**
-   Avec des phrases simples et pédagogiques.
-
-4. **Réponse finale**
-   Bien mise en valeur :  
-   **Réponse : …**
-
-5. **Mini résumé + 1 exercice similaire**
-   Pour aider l’élève à retenir.
-
-🚫 **Tu ne dois pas :**
-- Donner une réponse brute sans explication.
-- Inventer des informations absentes de l'exercice.
-- Faire des explications compliquées : reste simple et gentil.
-
-Tu parles toujours en **français**, avec un ton **bienveillant**, comme un vrai prof particulier.
+Règles absolues :
+- Ne jamais inventer des valeurs manquantes.
+- Si l'énoncé est incomplet : demander les informations manquantes.
+- Si une photo est fournie : analyser le texte et les équations.
+- Toujours être bienveillant, clair et structuré.
 `;
 
-// ---------------------
-// 📌 ROUTE PRINCIPALE
-// ---------------------
+// --------------------------------------------------
+// ROUTE : POST /prof
+// --------------------------------------------------
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const userText = req.body.text || "";
-    let imageContent = null;
+    const userExercise = req.body.exercise || "";
+    let imageBuffer = null;
 
-    // → Si une image est envoyée
     if (req.file) {
-      const imageBuffer = fs.readFileSync(req.file.path);
-      imageContent = imageBuffer.toString("base64");
-
-      // on efface l'image après lecture
+      imageBuffer = fs.readFileSync(req.file.path);
       fs.unlinkSync(req.file.path);
     }
 
-    // ---------------------
-    // 🔥 APPEL OPENAI
-    // ---------------------
-    const response = await client.responses.create({
+    const messages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userExercise }
+    ];
+
+    const input = [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: userExercise },
+          ...(imageBuffer
+            ? [{ type: "input_image", image: imageBuffer }]
+            : [])
+        ]
+      }
+    ];
+
+    const response = await client.chat.completions.create({
       model: "gpt-4.1",
-      max_output_tokens: 800,
-      input: [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT,
-        },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: userText },
-            imageContent
-              ? {
-                  type: "input_image",
-                  image_url: `data:image/jpeg;base64,${imageContent}`,
-                }
-              : null,
-          ].filter(Boolean),
-        },
-      ],
+      max_tokens: 800,
+      messages: messages,
+      input: input,
     });
 
-    const aiText =
-      response.output_text || response.output[0]?.content || "Erreur texte.";
+    const output =
+      response.choices?.[0]?.message?.content ||
+      "Désolé, une erreur est survenue.";
 
-    res.json({ success: true, result: aiText });
+    res.json({
+      success: true,
+      result: output,
+    });
+
   } catch (error) {
     console.error("Erreur prof :", error);
     res.json({
       success: false,
-      error: "Erreur lors de la génération. Réessaie dans un instant.",
+      error: "Erreur pendant la génération",
     });
   }
 });
