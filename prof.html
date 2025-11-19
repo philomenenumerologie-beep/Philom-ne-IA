@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prof privé – Philomène</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            philobg: '#0d0d16',
+            philocard: '#111827',
+            philopurple: '#a855f7',
+            philopink: '#ec4899',
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="bg-philobg text-slate-100 min-h-screen">
+  <div class="max-w-xl mx-auto px-4 pb-10 pt-6">
+    <!-- Retour -->
+    <a href="/" class="inline-flex items-center text-sm text-slate-300 hover:text-white mb-6">
+      <span class="mr-2">←</span> Retour à Philomène
+    </a>
+
+    <!-- Titre / intro -->
+    <header class="mb-6">
+      <h1 class="text-2xl font-bold mb-2">
+        👩‍🏫 Prof privé – Aide aux devoirs
+      </h1>
+      <p class="text-slate-300 text-sm leading-relaxed">
+        Envoie l’énoncé de ton exercice (en texte ou en photo) et Philomène
+        t’explique <span class="font-semibold">étape par étape</span>, sans
+        juste donner la réponse. Ça marche pour la Belgique 🇧🇪 comme pour la France 🇫🇷.
+      </p>
+    </header>
+
+    <!-- Carte formulaire -->
+    <main class="bg-philocard/80 rounded-2xl shadow-lg border border-slate-800/70 p-4 sm:p-6 space-y-6">
+      <form id="prof-form" class="space-y-5">
+        <!-- Zone texte -->
+        <div>
+          <label for="question" class="block text-sm font-medium mb-1">
+            ✏️ L’énoncé de ton exercice
+          </label>
+          <textarea
+            id="question"
+            name="question"
+            rows="5"
+            class="w-full rounded-xl bg-black/40 border border-slate-700 focus:border-philopurple focus:ring-philopurple text-sm px-3 py-2 outline-none resize-y"
+            placeholder="Ex : Résous ce problème, explique-moi bien les étapes..."
+          ></textarea>
+          <p class="mt-1 text-xs text-slate-400">
+            Tu peux simplement décrire l’exercice, ou copier-coller l’énoncé.
+          </p>
+        </div>
+
+        <!-- Upload image -->
+        <div>
+          <label class="block text-sm font-medium mb-1">
+            📸 Ou ajoute une photo de l’exercice (facultatif)
+          </label>
+          <input
+            id="image"
+            name="image"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            class="w-full text-sm text-slate-200 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-slate-700 file:text-slate-100 hover:file:bg-slate-600"
+          />
+          <p class="mt-1 text-xs text-slate-400">
+            Photo claire de la feuille ou du tableau. Philomène lit le texte et les équations.
+          </p>
+        </div>
+
+        <!-- Message info -->
+        <div class="rounded-xl bg-black/30 border border-slate-700 px-3 py-2">
+          <p class="text-xs text-slate-300">
+            Tu peux envoyer <span class="font-semibold">juste du texte, juste une photo, ou les deux</span>.
+            Philomène s’adapte au niveau (primaire, collège, secondaire...).
+          </p>
+        </div>
+
+        <!-- Bouton -->
+        <div>
+          <button
+            id="submit-btn"
+            type="submit"
+            class="w-full inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-philopurple to-philopink px-4 py-3 text-sm font-semibold shadow-md hover:opacity-95 active:scale-[0.99] transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <span id="submit-label">🎓 Demander l’aide du prof</span>
+          </button>
+        </div>
+
+        <!-- Statut -->
+        <p id="status" class="text-xs text-slate-300 min-h-[1.25rem]"></p>
+      </form>
+
+      <!-- Résultat -->
+      <section
+        id="result-card"
+        class="hidden mt-2 rounded-2xl border border-philopurple/60 bg-black/40 px-4 py-3 sm:px-5 sm:py-4"
+      >
+        <h2 class="text-sm font-semibold mb-2 flex items-center">
+          📘 Explication de l’exercice
+        </h2>
+        <div
+          id="result-content"
+          class="text-sm whitespace-pre-wrap leading-relaxed text-slate-100"
+        ></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const form = document.getElementById('prof-form');
+    const questionInput = document.getElementById('question');
+    const imageInput = document.getElementById('image');
+    const statusEl = document.getElementById('status');
+    const resultCard = document.getElementById('result-card');
+    const resultContent = document.getElementById('result-content');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitLabel = document.getElementById('submit-label');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const question = questionInput.value.trim();
+      const file = imageInput.files[0];
+
+      // Vérif minimum : au moins un des deux
+      if (!question && !file) {
+        statusEl.textContent =
+          '❗ Ajoute au moins un énoncé ou une photo pour que le prof puisse t’aider.';
+        return;
+      }
+
+      // Reset affichage
+      statusEl.textContent = '⏳ Philomène réfléchit sur ton exercice...';
+      resultCard.classList.add('hidden');
+      resultContent.textContent = '';
+      submitBtn.disabled = true;
+      submitLabel.textContent = '⏳ Analyse en cours...';
+
+      try {
+        const formData = new FormData();
+        if (question) formData.append('question', question);
+        if (file) formData.append('image', file);
+
+        const response = await fetch('/api/prof', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Réponse serveur non valide');
+        }
+
+        const data = await response.json();
+
+        // On s’attend à data.answer (texte déjà prêt à afficher)
+        const answer =
+          data.answer ||
+          "Je n'ai pas reçu de réponse détaillée du prof. Réessaie dans un instant.";
+
+        resultContent.textContent = answer;
+        resultCard.classList.remove('hidden');
+        statusEl.textContent =
+          '✅ Voilà l’explication. Tu peux poser une autre question si quelque chose n’est pas clair.';
+      } catch (error) {
+        console.error(error);
+        statusEl.textContent =
+          '❌ Erreur pendant la génération. Vérifie ta connexion et réessaie.';
+      } finally {
+        submitBtn.disabled = false;
+        submitLabel.textContent = '🎓 Demander l’aide du prof';
+      }
+    });
+  </script>
+</body>
+</html>
