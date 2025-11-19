@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Philomène I.A. – Documents officiels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b0b10;
+      --panel:#141420;
+      --panel2:#181828;
+      --accent:#7A4DFF;
+      --accent2:#9F7BFF;
+      --text:#EAEAF2;
+      --text-dim:#A9A9C0;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      padding:16px;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background: radial-gradient(circle at top, #1b1b2b 0, #050509 45%, #020308 100%);
+      color:var(--text);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    header{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    h1{
+      margin:0;
+      font-size:22px;
+    }
+    .tagline{
+      margin:0;
+      color:var(--text-dim);
+      font-size:14px;
+    }
+    main{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .card{
+      background:linear-gradient(135deg, rgba(20,20,32,.96), rgba(20,20,40,.98));
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 18px 40px rgba(0,0,0,.55);
+      padding:14px;
+    }
+    label{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+      color:var(--text-dim);
+    }
+    select, input, textarea{
+      width:100%;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:var(--panel2);
+      padding:9px 10px;
+      color:var(--text);
+      font-size:15px;
+      outline:none;
+    }
+    select:focus, input:focus, textarea:focus{
+      border-color:var(--accent2);
+      box-shadow:0 0 0 1px rgba(122,77,255,.4);
+    }
+    textarea{
+      min-height:80px;
+      resize:vertical;
+    }
+    .row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .row > div{
+      flex:1;
+      min-width:130px;
+    }
+    .hint{
+      font-size:12px;
+      color:var(--text-dim);
+      margin-top:4px;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      align-items:center;
+    }
+    button{
+      border-radius:999px;
+      border:0;
+      padding:10px 16px;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    #btnGenerate{
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff;
+      box-shadow:0 10px 24px rgba(122,77,255,.45);
+    }
+    #btnCopy{
+      background:var(--panel2);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    #status{
+      font-size:13px;
+      color:var(--text-dim);
+    }
+    #status.ok{ color:#6CF29A; }
+    #status.err{ color:#f97373; }
+
+    #output{
+      min-height:220px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,"Liberation Mono","Courier New", monospace;
+      white-space:pre-wrap;
+    }
+    footer{
+      font-size:12px;
+      color:var(--text-dim);
+      text-align:center;
+      margin-top:4px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📄 Philomène – Documents officiels</h1>
+    <p class="tagline">
+      Génère des lettres propres et prêtes à envoyer (attestation, résiliation, autorisation, etc.).
+    </p>
+  </header>
+
+  <main>
+    <!-- FORMULAIRE -->
+    <section class="card">
+      <div style="margin-bottom:10px">
+        <label for="docType">Type de document à générer</label>
+        <select id="docType">
+          <option value="attestation">Attestation sur l’honneur</option>
+          <option value="resiliation">Lettre de résiliation (contrat, abonnement…)</option>
+          <option value="autorisation_parentale">Autorisation parentale</option>
+          <option value="lettre_ecole">Lettre pour l’école (retard, absence, demande)</option>
+          <option value="lettre_employeur">Lettre à l’employeur (demande, info, arrêt…)</option>
+          <option value="contestation_amende">Contestation d’amende</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="yourName">Ton nom complet</label>
+          <input id="yourName" type="text" placeholder="Prénom NOM" />
+        </div>
+        <div>
+          <label for="cityDate">Lieu + date</label>
+          <input id="cityDate" type="text" placeholder="Ville, le 12/11/2025" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <div>
+          <label for="address">Ton adresse</label>
+          <input id="address" type="text" placeholder="Rue, n°, code postal, ville" />
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <label for="recipient">Destinataire</label>
+        <input id="recipient" type="text" placeholder="Nom du destinataire, organisme, adresse…" />
+      </div>
+
+      <div style="margin-top:8px">
+        <label for="details">Explique ta situation (le plus clairement possible)</label>
+        <textarea id="details" placeholder="Exemple : Je souhaite résilier mon abonnement internet chez X car…"></textarea>
+        <div class="hint">
+          Plus tu expliques ta situation, plus la lettre sera précise et utile.
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="btnGenerate">✨ Générer la lettre</button>
+        <button id="btnCopy" type="button">📋 Copier le texte</button>
+        <span id="status"></span>
+      </div>
+    </section>
+
+    <!-- RÉSULTAT -->
+    <section class="card">
+      <label for="output">Lettre générée</label>
+      <textarea id="output" placeholder="Ta lettre apparaîtra ici…"></textarea>
+    </section>
+  </main>
+
+  <footer>
+    Philomène I.A. – Générateur de documents officiels (bêta).
+  </footer>
+
+  <script>
+    // ⚠️ IMPORTANT : pour les tests SEULEMENT.
+    // Mets ici ta clé OpenAI (celle que tu utilises déjà pour tes tests perso).
+    const OPENAI_API_KEY = "TA_CLE_OPENAI_ICI"; // ← à remplacer
+
+    const docTypeEl   = document.getElementById("docType");
+    const nameEl      = document.getElementById("yourName");
+    const cityDateEl  = document.getElementById("cityDate");
+    const addressEl   = document.getElementById("address");
+    const recipientEl = document.getElementById("recipient");
+    const detailsEl   = document.getElementById("details");
+    const outEl       = document.getElementById("output");
+    const statusEl    = document.getElementById("status");
+    const btnGen      = document.getElementById("btnGenerate");
+    const btnCopy     = document.getElementById("btnCopy");
+
+    function setStatus(msg, type){
+      statusEl.textContent = msg || "";
+      statusEl.className = "";
+      if(type) statusEl.classList.add(type);
+    }
+
+    function buildInstruction(type){
+      switch(type){
+        case "attestation":
+          return "Rédige une attestation sur l’honneur simple, claire et polie.";
+        case "resiliation":
+          return "Rédige une lettre de résiliation claire, avec date de prise d’effet et références si possible.";
+        case "autorisation_parentale":
+          return "Rédige une autorisation parentale officielle, avec formule adaptée.";
+        case "lettre_ecole":
+          return "Rédige une lettre destinée à une école (direction / enseignant), ton poli, clair et rassurant.";
+        case "lettre_employeur":
+          return "Rédige une lettre adressée à un employeur (ou RH), ton professionnel mais humain.";
+        case "contestation_amende":
+          return "Rédige une lettre de contestation d’amende, argumentée, polie et factuelle.";
+        default:
+          return "Rédige une lettre administrative claire et polie.";
+      }
+    }
+
+    async function generateLetter(){
+      const type      = docTypeEl.value;
+      const yourName  = nameEl.value.trim();
+      const cityDate  = cityDateEl.value.trim();
+      const address   = addressEl.value.trim();
+      const recipient = recipientEl.value.trim();
+      const details   = detailsEl.value.trim();
+
+      if(!yourName || !recipient || !details){
+        setStatus("Merci de remplir au minimum ton nom, le destinataire et la situation.", "err");
+        return;
+      }
+      if(!OPENAI_API_KEY || OPENAI_API_KEY === "TA_CLE_OPENAI_ICI"){
+        setStatus("⚠️ Clé OpenAI manquante dans le code (OPENAI_API_KEY).", "err");
+        return;
+      }
+
+      const instruction = buildInstruction(type);
+
+      const userPrompt =
+        `Type de document : ${type}\n\n` +
+        `Nom complet : ${yourName}\n` +
+        (address ? `Adresse : ${address}\n` : "") +
+        (cityDate ? `Lieu + date : ${cityDate}\n` : "") +
+        (recipient ? `Destinataire : ${recipient}\n` : "") +
+        `\nSituation détaillée :\n${details}\n\n` +
+        "Génère une lettre complète en français, avec mise en forme classique " +
+        "(adresse de l’expéditeur, destinataire, objet si utile, corps du texte, formule de politesse, signature).";
+
+      setStatus("⏳ Génération en cours…", "");
+      btnGen.disabled = true;
+
+      try{
+        const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer " + OPENAI_API_KEY
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content:
+                  "Tu es Philomène I.A., une assistante personnelle française. " +
+                  "Tu rédiges des lettres administratives claires, sans blabla inutile, " +
+                  "avec une mise en forme correcte et un ton poli."
+              },
+              { role:"user", content: instruction + "\n\n" + userPrompt }
+            ],
+            temperature: 0.4,
+          })
+        });
+
+        if(!resp.ok){
+          const errText = await resp.text();
+          console.error("OpenAI error:", resp.status, errText);
+          setStatus("❌ Erreur OpenAI (" + resp.status + "). Vérifie la clé ou réessaie.", "err");
+          return;
+        }
+
+        const data = await resp.json();
+        const text = data?.choices?.[0]?.message?.content?.trim() || "";
+        if(!text){
+          setStatus("Réponse vide reçue. Réessaie.", "err");
+          return;
+        }
+
+        outEl.value = text;
+        setStatus("✅ Lettre générée. Tu peux la relire, modifier ou copier.", "ok");
+      }catch(e){
+        console.error(e);
+        setStatus("❌ Erreur de connexion à l’API. Vérifie ton réseau.", "err");
+      }finally{
+        btnGen.disabled = false;
+      }
+    }
+
+    function copyOutput(){
+      if(!outEl.value.trim()){
+        setStatus("Rien à copier pour l’instant.", "err");
+        return;
+      }
+      outEl.select();
+      try{
+        document.execCommand("copy");
+        setStatus("📋 Lettre copiée dans le presse-papier.", "ok");
+      }catch{
+        setStatus("Impossible de copier automatiquement. Sélectionne le texte à la main.", "err");
+      }
+    }
+
+    btnGen.addEventListener("click", generateLetter);
+    btnCopy.addEventListener("click", copyOutput);
+  </script>
+</body>
+</html>
