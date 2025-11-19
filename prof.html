@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prof Privé – Philomène</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body { background-color: #0d0d16; }
+    textarea { background: #111122; border: 1px solid #333; }
+  </style>
+</head>
+
+<body class="text-white">
+
+  <div class="max-w-xl mx-auto p-5">
+
+    <!-- RETOUR -->
+    <a href="/" class="text-sm text-gray-300 hover:text-white">← Retour à Philomène</a>
+
+    <h1 class="mt-5 text-2xl font-bold">🎓 Prof Privé – Aide aux devoirs</h1>
+    <p class="mt-2 text-gray-400">
+      Envoie l’énoncé de ton exercice (texte ou photo).  
+      Philomène t'explique <strong>étape par étape</strong>, avec méthode et pédagogie.  
+      Belgique 🇧🇪 & France 🇫🇷.
+    </p>
+
+    <!-- FORMULAIRE -->
+    <form id="profForm" class="mt-6 space-y-4">
+
+      <!-- TEXTE -->
+      <div>
+        <label class="block mb-1 text-sm">✏️ L’énoncé de l’exercice</label>
+        <textarea
+          id="exercise"
+          rows="4"
+          placeholder="Exemples :
+- Explique-moi le théorème de Pythagore
+- Résous : 3x + 5 = 20
+- Analyse ce texte…
+"
+          class="w-full p-3 rounded-md"
+        ></textarea>
+      </div>
+
+      <!-- IMAGE -->
+      <div>
+        <label class="block mb-1 text-sm">📸 Ajoute une photo (optionnel)</label>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          class="w-full bg-[#111122] p-2 rounded-md border border-gray-700"
+        />
+      </div>
+
+      <!-- BOUTON -->
+      <button
+        type="submit"
+        id="submitBtn"
+        class="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 font-semibold"
+      >
+        📚 Demander l’aide du prof
+      </button>
+
+      <p id="loading" class="text-center text-gray-400 hidden">⏳ Philomène réfléchit...</p>
+    </form>
+
+    <!-- RÉPONSE -->
+    <div id="responseBox" class="mt-6 p-4 border border-purple-700 rounded-lg hidden">
+      <h2 class="font-semibold mb-2">📘 Réponse du Prof :</h2>
+      <pre id="responseText" class="whitespace-pre-line"></pre>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const form = document.getElementById("profForm");
+    const loading = document.getElementById("loading");
+    const responseBox = document.getElementById("responseBox");
+    const responseText = document.getElementById("responseText");
+    const submitBtn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      loading.classList.remove("hidden");
+      submitBtn.disabled = true;
+
+      const exercise = document.getElementById("exercise").value.trim();
+      const imageFile = document.getElementById("image").files[0];
+
+      const formData = new FormData();
+      formData.append("exercise", exercise);
+      if (imageFile) formData.append("image", imageFile);
+
+      try {
+        const res = await fetch("/prof", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        loading.classList.add("hidden");
+        submitBtn.disabled = false;
+
+        if (data.success) {
+          responseText.textContent = data.answer;
+          responseBox.classList.remove("hidden");
+        } else {
+          responseText.textContent = "❌ Erreur : " + (data.error || "Impossible de générer la réponse.");
+          responseBox.classList.remove("hidden");
+        }
+      } catch (err) {
+        loading.classList.add("hidden");
+        submitBtn.disabled = false;
+
+        responseText.textContent = "❌ Erreur de connexion.";
+        responseBox.classList.remove("hidden");
+      }
+    });
+  </script>
+
+</body>
+</html>
