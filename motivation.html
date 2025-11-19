@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lettre de motivation - Philomène</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0d0d16] text-white">
+
+  <div class="max-w-xl mx-auto p-4">
+
+    <!-- Retour -->
+    <a href="/" class="text-sm text-purple-300">← Retour à Philomène</a>
+
+    <h1 class="text-2xl font-bold mt-4">✉️ Générateur de lettre de motivation</h1>
+    <p class="text-gray-300 text-sm mt-2">
+      Remplis les infos ci-dessous et Philomène va générer une lettre claire, professionnelle et personnalisée.
+    </p>
+
+    <!-- FORMULAIRE -->
+    <div class="mt-6 space-y-4">
+
+      <div>
+        <label class="text-sm">Ton nom complet</label>
+        <input id="nom" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Prénom NOM" />
+      </div>
+
+      <div>
+        <label class="text-sm">Poste visé</label>
+        <input id="poste" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Ex : Cariste, vendeur, éducateur..." />
+      </div>
+
+      <div>
+        <label class="text-sm">Entreprise (facultatif)</label>
+        <input id="entreprise" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Ex : Carrefour, Action..." />
+      </div>
+
+      <div>
+        <label class="text-sm">Ville / Région</label>
+        <input id="ville" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Ex : Lille, Bruxelles, Liège..." />
+      </div>
+
+      <div>
+        <label class="text-sm">Tes expériences</label>
+        <textarea id="exp" rows="2" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Ex : 3 ans cariste, 2 ans vendeur..."></textarea>
+      </div>
+
+      <div>
+        <label class="text-sm">Tes compétences / qualités</label>
+        <textarea id="comp" rows="2" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Ex : sérieux, ponctuel, motivé..."></textarea>
+      </div>
+
+      <div>
+        <label class="text-sm">Tes motivations</label>
+        <textarea id="motiv" rows="2" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Pourquoi tu veux ce poste ?"></textarea>
+      </div>
+
+      <div>
+        <label class="text-sm">Disponibilité (facultatif)</label>
+        <input id="dispo" class="w-full px-3 py-2 rounded bg-[#1a1a27]" placeholder="Ex : immédiate" />
+      </div>
+
+    </div>
+
+    <!-- Boutons -->
+    <div class="mt-6 space-y-3">
+
+      <button onclick="generateClassic()" class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-semibold">
+        ✨ Générer la lettre classique
+      </button>
+
+      <button onclick="generateShort()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold">
+        ⚡ Lettre courte
+      </button>
+
+      <button onclick="generatePremium()" class="w-full bg-pink-600 hover:bg-pink-700 py-3 rounded-lg font-semibold">
+        💼 Lettre premium
+      </button>
+    </div>
+
+    <!-- Résultat -->
+    <div id="result" class="mt-8 hidden p-4 bg-[#11111c] rounded-lg border border-purple-700"></div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    function val(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function display(text) {
+      const box = document.getElementById("result");
+      box.innerHTML = "<pre class='whitespace-pre-wrap text-gray-200'>" + text + "</pre>";
+      box.classList.remove("hidden");
+    }
+
+    function generateClassic() {
+      const txt = `
+Objet : Candidature au poste de ${val("poste")}
+
+Madame, Monsieur,
+
+Actuellement à la recherche d’une nouvelle opportunité, je vous propose ma candidature pour le poste de **${val("poste")}** au sein ${val("entreprise") ? "de votre entreprise **" + val("entreprise") + "**" : "de votre structure"}.
+
+Fort(e) d’une expérience de **${val("exp")}**, j’ai pu développer les compétences suivantes : **${val("comp")}**.
+
+Motivé(e) par ${val("motiv")}, je suis convaincu(e) de pouvoir apporter une réelle contribution à votre équipe à **${val("ville")}**.
+
+${val("dispo") ? "Disponibilité : **" + val("dispo") + "**" : ""}
+
+Cordialement,  
+**${val("nom")}**
+`;
+      display(txt);
+    }
+
+    function generateShort() {
+      const txt = `
+Bonjour,
+
+Je vous propose ma candidature pour le poste de **${val("poste")}**.
+
+Expériences : ${val("exp")}  
+Compétences : ${val("comp")}  
+Motivation : ${val("motiv")}
+
+Points forts :  
+- Sérieux  
+- Adaptation rapide  
+- Professionnel  
+
+${val("dispo") ? "Disponibilité : **" + val("dispo") + "**" : ""}
+
+Cordialement,  
+**${val("nom")}**
+`;
+      display(txt);
+    }
+
+    function generatePremium() {
+      const txt = `
+Objet : Candidature – ${val("poste")}
+
+Madame, Monsieur,
+
+Avec plusieurs expériences telles que **${val("exp")}**, j’ai développé une véritable expertise : **${val("comp")}**. Aujourd’hui, je souhaite rejoindre **${val("entreprise")}** car ${val("motiv")}.
+
+Mon parcours m’a appris la rigueur, l’efficacité et l’adaptation.  
+Je suis convaincu(e) que mon profil peut contribuer à vos objectifs à **${val("ville")}**.
+
+${val("dispo") ? "Disponibilité : **" + val("dispo") + "**" : ""}
+
+Cordialement,  
+**${val("nom")}**
+`;
+      display(txt);
+    }
+  </script>
+
+</body>
+</html>
