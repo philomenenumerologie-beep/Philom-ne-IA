@@ -4,7 +4,8 @@
    ========================= */
 
 /* ====== CONFIG ====== */
-const API_URL = "https://api.philomeneia.com/ask";
+const API_URL = "https://philo-backend-by2c.onrender.com/ask";
+
 const FALLBACK_URL = "/ask";
 const VERSION = "version 1.3";
 
