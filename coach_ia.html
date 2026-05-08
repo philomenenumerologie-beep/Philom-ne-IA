@@ -148,35 +148,30 @@ border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
 color: #fff; font-size: 13px; cursor: pointer;
 }
 
-/* SCHEMA */
+/* SCHEMA PRO */
 .schema-wrap {
 margin-top: 12px;
-background: rgba(0,40,0,0.8);
-border: 1px solid rgba(46,160,67,0.4);
 border-radius: 12px; overflow: hidden;
+border: 1px solid rgba(255,255,255,0.2);
 }
 .schema-header {
 padding: 8px 12px;
-background: rgba(46,160,67,0.15);
-border-bottom: 1px solid rgba(46,160,67,0.2);
+background: rgba(0,0,0,0.5);
 font-size: 11px; color: #4ade80;
 text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
 }
 .schema-desc {
-padding: 6px 12px;
-font-size: 12px; color: #c8e6c8;
+padding: 5px 12px 8px;
+background: rgba(0,0,0,0.4);
+font-size: 12px; color: #c8e6c8; font-style: italic;
 }
-.schema-svg-container { padding: 8px; }
-.schema-svg-container svg { width: 100%; display: block; border-radius: 8px; }
-
-/* Legende */
+.schema-svg-box svg { width: 100%; display: block; }
 .schema-legend {
-display: flex; gap: 12px; padding: 6px 12px 10px;
-font-size: 11px; color: rgba(255,255,255,0.6); flex-wrap: wrap;
+display: flex; gap: 12px; padding: 6px 12px 8px;
+background: rgba(0,0,0,0.4);
+font-size: 10px; color: rgba(255,255,255,0.6); flex-wrap: wrap;
 }
 .legend-item { display: flex; align-items: center; gap: 4px; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-.legend-line { width: 20px; height: 2px; }
 
 .typing { display:flex; gap:4px; padding:12px 14px; }
 .typing span {
@@ -227,8 +222,6 @@ cursor: pointer; flex-shrink: 0;
     <rect x="90" y="600" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
     <rect x="140" y="645" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
     <rect x="160" y="676" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-    <circle cx="200" cy="130" r="3" fill="rgba(255,255,255,0.25)"/>
-    <circle cx="200" cy="570" r="3" fill="rgba(255,255,255,0.25)"/>
   </svg>
 </div>
 <div id="overlay"></div>
@@ -294,109 +287,123 @@ let userId = "coach_" + (localStorage.getItem("coach_user_id") || Math.random().
 localStorage.setItem("coach_user_id", userId.replace("coach_",""));
 let isLoading = false;
 
-// ===== GENERATEUR DE SCHEMA SVG =====
-function buildSchema(schema) {
+// ===== SCHEMA SVG PRO =====
+function buildProSchema(schema) {
   if (!schema) return null;
 
-  const W = 300, H = 200;
+  const W = 320, H = 220;
+  const FIELD_GREEN = "#2d6a2d";
+  const FIELD_GREEN2 = "#347a34";
+  const LINE_COLOR = "rgba(255,255,255,0.7)";
+  const PLAYER_COLOR = "#cc2200";
+  const PLAYER_STROKE = "#ffffff";
+  const PLOT_COLOR = "#f0a500";
+  const BALL_PATH = "#111111";
+  const MOVE_PATH = "#cc2200";
 
-  function px(pct) { return pct * W / 100; }
-  function py(pct) { return pct * H / 100; }
+  function px(p) { return 10 + p * (W-20) / 100; }
+  function py(p) { return 10 + p * (H-20) / 100; }
 
-  const PLAYER_COLOR = "#2ea043";
-  const PLOT_COLOR = "#f0d080";
-  const BALL_COLOR = "#ffffff";
-  const MOVE_COLOR = "#4ade80";
-  const ARROW_COLOR = "#ffffff";
+  let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">';
 
-  let defs = '<defs>';
-  defs += '<marker id="arrowBall" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="' + BALL_COLOR + '" opacity="0.9"/></marker>';
-  defs += '<marker id="arrowMove" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="' + MOVE_COLOR + '"/></marker>';
-  defs += '</defs>';
+  // Fond terrain rayé
+  svg += '<defs>';
+  svg += '<pattern id="grass" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">';
+  svg += '<rect width="40" height="40" fill="' + FIELD_GREEN + '"/>';
+  svg += '<rect width="40" height="20" fill="' + FIELD_GREEN2 + '"/>';
+  svg += '</pattern>';
+  // Marqueur flèche noire (ballon)
+  svg += '<marker id="mBall" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">';
+  svg += '<path d="M0,0 L10,5 L0,10 Z" fill="' + BALL_PATH + '"/>';
+  svg += '</marker>';
+  // Marqueur flèche rouge (joueur)
+  svg += '<marker id="mMove" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">';
+  svg += '<path d="M0,0 L10,5 L0,10 Z" fill="' + MOVE_PATH + '"/>';
+  svg += '</marker>';
+  svg += '</defs>';
 
-  let elements = [];
-  elements.push('<rect width="' + W + '" height="' + H + '" fill="#1a4a1a" rx="8"/>');
-  elements.push('<rect x="8" y="8" width="' + (W-16) + '" height="' + (H-16) + '" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" rx="4"/>');
+  svg += '<rect width="' + W + '" height="' + H + '" fill="url(#grass)"/>';
+  svg += '<rect x="5" y="5" width="' + (W-10) + '" height="' + (H-10) + '" fill="none" stroke="' + LINE_COLOR + '" stroke-width="1.5" rx="3"/>';
 
-  // Construire un index des positions
-  const posIndex = {};
-  if (schema.players) {
-    schema.players.forEach(p => { posIndex[p.id] = [px(p.x), py(p.y)]; });
-  }
-  if (schema.plots) {
-    schema.plots.forEach((p, i) => { posIndex["plot_" + i] = [px(p.x), py(p.y)]; });
-  }
-
-  // But
+  // But si présent
   if (schema.goal) {
     const gx = px(schema.goal.x);
     const gy = py(schema.goal.y);
-    elements.push('<rect x="' + (gx-20) + '" y="' + (gy-5) + '" width="40" height="10" fill="none" stroke="white" stroke-width="2" rx="2"/>');
-    elements.push('<text x="' + gx + '" y="' + (gy+20) + '" text-anchor="middle" font-size="9" fill="white" opacity="0.7">BUT</text>');
+    svg += '<rect x="' + (gx-22) + '" y="' + (gy-6) + '" width="44" height="12" fill="none" stroke="white" stroke-width="2" rx="1"/>';
+    svg += '<text x="' + gx + '" y="' + (gy+22) + '" text-anchor="middle" font-size="8" fill="white" font-weight="bold">BUT</text>';
   }
 
-  // Trajectoires ballon (pointillés blancs)
+  // Index positions
+  const pos = {};
+  if (schema.players) schema.players.forEach(p => { pos[p.id] = [px(p.x), py(p.y)]; });
+  if (schema.plots) schema.plots.forEach((p,i) => { pos["plot_"+i] = [px(p.x), py(p.y)]; });
+
+  // Trajectoires ballon — pointillés noirs épais
   if (schema.ball_paths) {
     schema.ball_paths.forEach(path => {
-      const from = posIndex[path.from];
-      const to = posIndex[path.to];
-      if (!from || !to) return;
-      const style = path.style === "solid" ? "" : "stroke-dasharray='6,4'";
-      elements.push('<line x1="' + from[0] + '" y1="' + from[1] + '" x2="' + to[0] + '" y2="' + to[1] + '" stroke="' + BALL_COLOR + '" stroke-width="1.5" ' + style + ' marker-end="url(#arrowBall)" opacity="0.85"/>');
+      const f = pos[path.from], t = pos[path.to];
+      if (!f || !t) return;
+      svg += '<line x1="' + f[0] + '" y1="' + f[1] + '" x2="' + t[0] + '" y2="' + t[1] + '"';
+      svg += ' stroke="' + BALL_PATH + '" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#mBall)"/>';
     });
   }
 
-  // Deplacements joueurs (traits verts pleins)
+  // Déplacements joueurs — traits rouges pleins
   if (schema.player_paths) {
     schema.player_paths.forEach(path => {
-      const from = posIndex[path.from];
-      const to = posIndex[path.to];
-      if (!from || !to) return;
-      elements.push('<line x1="' + from[0] + '" y1="' + from[1] + '" x2="' + to[0] + '" y2="' + to[1] + '" stroke="' + MOVE_COLOR + '" stroke-width="2" marker-end="url(#arrowMove)"/>');
+      const f = pos[path.from], t = pos[path.to];
+      if (!f || !t) return;
+      svg += '<line x1="' + f[0] + '" y1="' + f[1] + '" x2="' + t[0] + '" y2="' + t[1] + '"';
+      svg += ' stroke="' + MOVE_PATH + '" stroke-width="2" marker-end="url(#mMove)"/>';
     });
   }
 
-  // Plots (carrés jaunes)
+  // Plots — triangles orange
   if (schema.plots) {
     schema.plots.forEach(p => {
       const x = px(p.x), y = py(p.y);
-      elements.push('<rect x="' + (x-5) + '" y="' + (y-5) + '" width="10" height="10" fill="' + PLOT_COLOR + '" rx="2"/>');
+      svg += '<polygon points="' + x + ',' + (y-7) + ' ' + (x-5) + ',' + (y+4) + ' ' + (x+5) + ',' + (y+4) + '"';
+      svg += ' fill="' + PLOT_COLOR + '" stroke="white" stroke-width="0.5"/>';
     });
   }
 
-  // Joueurs (cercles verts avec numero)
+  // Joueurs — cercles rouges avec lettre
   if (schema.players) {
     schema.players.forEach(p => {
       const x = px(p.x), y = py(p.y);
-      elements.push('<circle cx="' + x + '" cy="' + y + '" r="13" fill="' + PLAYER_COLOR + '" stroke="white" stroke-width="1.5"/>');
-      elements.push('<text x="' + x + '" y="' + (y+4) + '" text-anchor="middle" font-size="9" font-weight="bold" fill="white">' + p.id + '</text>');
+      svg += '<circle cx="' + x + '" cy="' + y + '" r="10" fill="' + PLAYER_COLOR + '" stroke="' + PLAYER_STROKE + '" stroke-width="1.5"/>';
+      svg += '<text x="' + x + '" y="' + (y+4) + '" text-anchor="middle" font-size="9" font-weight="bold" fill="white">' + p.id + '</text>';
     });
   }
 
   // Distance
   if (schema.distance) {
-    elements.push('<text x="' + (W/2) + '" y="' + (H-6) + '" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)">' + schema.distance + '</text>');
+    svg += '<rect x="5" y="' + (H-18) + '" width="' + (W-10) + '" height="14" fill="rgba(0,0,0,0.5)" rx="2"/>';
+    svg += '<text x="' + (W/2) + '" y="' + (H-8) + '" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.9)">' + schema.distance + '</text>';
   }
 
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' + defs + elements.join("") + '</svg>';
+  svg += '</svg>';
+  return svg;
 }
 
-function renderSchemaBlock(schema) {
+function renderSchema(schema) {
   if (!schema) return "";
-  const svgHtml = buildSchema(schema);
+  const svgHtml = buildProSchema(schema);
   if (!svgHtml) return "";
 
-  return '<div class="schema-wrap">' +
-    '<div class="schema-header">📐 Schéma de l\'exercice</div>' +
-    (schema.description ? '<div class="schema-desc">' + schema.description + '</div>' : '') +
-    '<div class="schema-svg-container">' + svgHtml + '</div>' +
-    '<div class="schema-legend">' +
-      '<div class="legend-item"><div class="legend-dot" style="background:#2ea043"></div> Joueur</div>' +
-      '<div class="legend-item"><div class="legend-dot" style="background:#f0d080;border-radius:2px"></div> Plot</div>' +
-      '<div class="legend-item"><div class="legend-line" style="background:white;opacity:0.7"></div> Ballon</div>' +
-      '<div class="legend-item"><div class="legend-line" style="background:#4ade80"></div> Déplacement</div>' +
-    '</div>' +
-  '</div>';
+  let html = '<div class="schema-wrap">';
+  html += '<div class="schema-header">📐 Schéma de l\'exercice</div>';
+  if (schema.description) {
+    html += '<div class="schema-desc">' + schema.description + '</div>';
+  }
+  html += '<div class="schema-svg-box">' + svgHtml + '</div>';
+  html += '<div class="schema-legend">';
+  html += '<div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#cc2200" stroke="white" stroke-width="1"/></svg> Joueur</div>';
+  html += '<div class="legend-item"><svg width="14" height="14"><polygon points="7,1 2,12 12,12" fill="#f0a500" stroke="white" stroke-width="0.5"/></svg> Plot</div>';
+  html += '<div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#111" stroke-width="2.5" stroke-dasharray="5,3"/></svg> Ballon</div>';
+  html += '<div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#cc2200" stroke-width="2"/></svg> Déplacement</div>';
+  html += '</div></div>';
+  return html;
 }
 
 // ===== LOGIN =====
@@ -409,8 +416,8 @@ function useDemoKey() { clubKeyInput.value = "DEMO-CLUB-0000"; }
 
 async function tryLogin() {
   const key = clubKeyInput.value.trim().toUpperCase();
-  if (!key) { loginError.textContent = "Entrez votre clé."; loginError.style.display = "block"; return; }
-  loginBtn.textContent = "Vérification…";
+  if (!key) { loginError.textContent = "Entrez votre cle."; loginError.style.display = "block"; return; }
+  loginBtn.textContent = "Verification...";
   loginBtn.disabled = true;
   loginError.style.display = "none";
   try {
@@ -421,9 +428,9 @@ async function tryLogin() {
     });
     const data = await resp.json();
     if (!resp.ok) {
-      loginError.textContent = data.error || "Clé invalide.";
+      loginError.textContent = data.error || "Cle invalide.";
       loginError.style.display = "block";
-      loginBtn.textContent = "Accéder ⚽";
+      loginBtn.textContent = "Acceder";
       loginBtn.disabled = false;
       return;
     }
@@ -431,11 +438,11 @@ async function tryLogin() {
     localStorage.setItem("coach_club_key", clubKey);
     loginScreen.style.display = "none";
     if (data.club) document.getElementById("clubName").textContent = data.club;
-    addBotMsg("Bonjour coach ! 👋 Je suis votre assistant " + categorie + ".\n\nDites-moi ce que vous voulez travailler — je prépare la séance complète avec schémas !", null, true);
+    addBotMsg("Bonjour coach ! Je suis votre assistant " + categorie + ".\n\nDites-moi ce que vous voulez travailler et j'adapte la seance complete avec schemas !", null, true);
   } catch {
     loginError.textContent = "Erreur de connexion.";
     loginError.style.display = "block";
-    loginBtn.textContent = "Accéder ⚽";
+    loginBtn.textContent = "Acceder";
     loginBtn.disabled = false;
   }
 }
@@ -448,7 +455,7 @@ function selectCat(el, cat) {
   document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
   el.classList.add("active");
   categorie = cat;
-  addBotMsg("Catégorie : " + cat + " ⚽ Je m'adapte !", null, false);
+  addBotMsg("Categorie : " + cat + " Je m'adapte !", null, false);
 }
 
 // ===== CHAT =====
@@ -463,18 +470,18 @@ function addBotMsg(text, schema, withActions) {
   bubble.textContent = text;
 
   if (schema) {
-    bubble.insertAdjacentHTML("beforeend", renderSchemaBlock(schema));
+    bubble.insertAdjacentHTML("beforeend", renderSchema(schema));
   }
 
   if (withActions) {
     const actions = document.createElement("div");
     actions.className = "quick-actions";
     actions.innerHTML =
-      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs 1h\')">🏃 Dribble</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance passe en triangle 10 joueurs 45min\')">⚡ Passe</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">🎯 Tir</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">🛡️ Pressing</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Redige message WhatsApp convocation match samedi 10h\')">📢 Parents</button>';
+      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs 1h\')">Dribble</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance passe en triangle 10 joueurs 45min\')">Passe</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">Tir</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">Pressing</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Redige message WhatsApp convocation match samedi 10h\')">Parents</button>';
     bubble.appendChild(actions);
   }
 
@@ -527,14 +534,14 @@ async function sendMessage(text) {
     const data = await resp.json();
     setTyping(false);
     if (!resp.ok) {
-      addBotMsg("🔒 " + (data.error || "Erreur."), null, false);
+      addBotMsg("Erreur : " + (data.error || "Probleme de connexion."), null, false);
       if (resp.status === 401) {
         localStorage.removeItem("coach_club_key");
         clubKey = "";
         setTimeout(() => loginScreen.style.display = "flex", 2000);
       }
     } else {
-      addBotMsg(data.answer || "Pas de réponse.", data.schema || null, false);
+      addBotMsg(data.answer || "Pas de reponse.", data.schema || null, false);
     }
   } catch {
     setTyping(false);
