@@ -8,9 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --green-dark: #1a4a1a;
-  --green-mid: #1e5c1e;
-  --green-light: #226622;
   --green-bright: #2ea043;
   --green2: #3fb950;
   --green-glow: rgba(46,160,67,0.3);
@@ -18,9 +15,8 @@
   --text: #e6edf3;
   --dim: #a0b0a0;
   --surface: rgba(10,20,10,0.82);
-  --surface2: rgba(15,30,15,0.88);
+  --surface2: rgba(0,20,0,0.92);
   --border: rgba(255,255,255,0.12);
-  --user-bg: rgba(20,50,20,0.9);
 }
 
 - { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,108 +31,59 @@ overflow: hidden;
 position: relative;
 }
 
-/* ===== TERRAIN DE FOOT EN FOND ===== */
 #pitch {
-position: fixed;
-inset: 0;
-z-index: 0;
-overflow: hidden;
+position: fixed; inset: 0; z-index: 0; overflow: hidden;
 }
-
 .pitch-bg {
-width: 100%;
-height: 100%;
-background: repeating-linear-gradient(
-180deg,
-#1a4a1a 0px,
-#1a4a1a 40px,
-#1e5c1e 40px,
-#1e5c1e 80px
-);
+width: 100%; height: 100%;
+background: repeating-linear-gradient(180deg, #1a4a1a 0px, #1a4a1a 40px, #1e5c1e 40px, #1e5c1e 80px);
 }
+.pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+#overlay { position: fixed; inset: 0; z-index: 1; background: rgba(0,10,0,0.45); }
 
-.pitch-svg {
-position: absolute;
-inset: 0;
-width: 100%;
-height: 100%;
-}
-
-/* Overlay sombre pour lisibilité */
-#overlay {
-position: fixed;
-inset: 0;
-z-index: 1;
-background: rgba(0,10,0,0.45);
-}
-
-/* ÉCRAN DE CONNEXION */
+/* LOGIN */
 #loginScreen {
-position: fixed;
-inset: 0;
-z-index: 100;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 24px;
+position: fixed; inset: 0; z-index: 100;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center; padding: 24px;
 }
-
 .login-card {
 background: rgba(255,255,255,0.12);
 border: 1px solid rgba(255,255,255,0.3);
-border-radius: 20px;
-padding: 28px 24px;
-width: 100%;
-max-width: 380px;
+border-radius: 20px; padding: 28px 24px;
+width: 100%; max-width: 380px;
 box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 backdrop-filter: blur(20px);
 }
-
 .login-logo { text-align: center; margin-bottom: 24px; }
 .login-ball { font-size: 48px; display: block; margin-bottom: 8px; }
 .login-title {
 font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 28px; font-weight: 800;
-color: #ffffff;
+font-size: 28px; font-weight: 800; color: #fff;
 text-transform: uppercase; letter-spacing: 0.05em;
-text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 .login-sub { font-size: 13px; color: #c8e6c8; margin-top: 4px; }
-.login-label {
-display: block; font-size: 13px; color: #c8e6c8;
-margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em;
-}
+.login-label { display: block; font-size: 13px; color: #c8e6c8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
 .login-input {
-width: 100%;
-background: rgba(255,255,255,0.15);
-border: 1px solid rgba(255,255,255,0.3);
-border-radius: 12px;
-padding: 14px 16px;
-color: #ffffff;
--webkit-text-fill-color: #ffffff;
+width: 100%; background: rgba(255,255,255,0.15);
+border: 1px solid rgba(255,255,255,0.3); border-radius: 12px;
+padding: 14px 16px; color: #fff; -webkit-text-fill-color: #fff;
 font-size: 16px; font-family: ‘DM Sans’, sans-serif;
-outline: none; text-transform: uppercase; letter-spacing: 0.1em;
-margin-bottom: 16px;
+outline: none; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
 }
-.login-input:focus { border-color: var(–green-bright); }
 .login-input::placeholder { text-transform: none; letter-spacing: 0; color: rgba(255,255,255,0.5); }
 .login-btn {
-width: 100%; padding: 14px;
-background: var(–green-bright);
-border: none; border-radius: 12px;
-color: #fff; font-size: 16px; font-weight: 600;
-font-family: ‘DM Sans’, sans-serif; cursor: pointer;
-box-shadow: 0 4px 16px var(–green-glow);
+width: 100%; padding: 14px; background: var(–green-bright);
+border: none; border-radius: 12px; color: #fff;
+font-size: 16px; font-weight: 600; font-family: ‘DM Sans’, sans-serif;
+cursor: pointer; box-shadow: 0 4px 16px var(–green-glow);
 }
 .login-error {
 margin-top: 12px; padding: 10px 14px;
-background: rgba(248,81,73,0.1);
-border: 1px solid rgba(248,81,73,0.3);
-border-radius: 10px; color: #f85149;
-font-size: 13px; text-align: center; display: none;
+background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3);
+border-radius: 10px; color: #f85149; font-size: 13px; text-align: center; display: none;
 }
-.login-demo { margin-top: 16px; text-align: center; font-size: 12px; color: var(–dim); }
+.login-demo { margin-top: 16px; text-align: center; font-size: 12px; color: #c8e6c8; }
 .login-demo span { color: var(–green2); cursor: pointer; text-decoration: underline; }
 
 /* TOPBAR */
@@ -152,15 +99,14 @@ box-shadow: 0 4px 20px rgba(0,0,0,0.6);
 .logo-area { display: flex; align-items: center; gap: 12px; }
 .ball-icon {
 width: 40px; height: 40px; border-radius: 50%;
-background: rgba(0,0,0,0.4);
-border: 1.5px solid var(–green-bright);
+background: rgba(0,0,0,0.4); border: 1.5px solid var(–green-bright);
 display: flex; align-items: center; justify-content: center;
 font-size: 20px; box-shadow: 0 0 14px var(–green-glow);
 }
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
 font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 18px; font-weight: 800; color: #ffffff;
+font-size: 18px; font-weight: 800; color: #fff;
 letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1;
 text-shadow: 0 0 10px rgba(46,160,67,0.8);
 }
@@ -177,83 +123,69 @@ animation: pulse 2s infinite;
 #catBar {
 position: relative; z-index: 9;
 display: flex; gap: 8px; padding: 10px 14px;
-background: rgba(5,15,5,0.75);
-backdrop-filter: blur(8px);
+background: rgba(5,15,5,0.75); backdrop-filter: blur(8px);
 border-bottom: 1px solid rgba(255,255,255,0.08);
 overflow-x: auto; scrollbar-width: none;
 }
 #catBar::-webkit-scrollbar { display: none; }
 .cat-chip {
 padding: 6px 14px; border-radius: 20px;
-background: rgba(255,255,255,0.08);
-border: 1px solid rgba(255,255,255,0.15);
-color: var(–dim);
-font-family: ‘Barlow Condensed’, sans-serif;
+background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+color: var(–dim); font-family: ‘Barlow Condensed’, sans-serif;
 font-size: 14px; font-weight: 600; letter-spacing: 0.05em;
 cursor: pointer; white-space: nowrap; transition: all 0.2s;
 }
-.cat-chip:hover { border-color: var(–green-bright); color: var(–green2); }
-.cat-chip.active {
-background: var(–green-bright); border-color: var(–green-bright);
-color: #fff; box-shadow: 0 0 10px var(–green-glow);
-}
+.cat-chip.active { background: var(–green-bright); border-color: var(–green-bright); color: #fff; }
 
 /* CHAT */
-#chat {
-flex: 1; overflow-y: auto;
-padding: 16px 14px 120px;
-position: relative; z-index: 2;
-}
+#chat { flex: 1; overflow-y: auto; padding: 16px 14px 120px; position: relative; z-index: 2; }
 #chat::-webkit-scrollbar { width: 3px; }
 #chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-.bubble-wrap {
-display: flex; margin-bottom: 14px;
-animation: fadeUp 0.3s ease;
-}
+.bubble-wrap { display: flex; margin-bottom: 14px; animation: fadeUp 0.3s ease; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
 
 .avatar {
 width: 30px; height: 30px; border-radius: 50%;
-background: rgba(0,0,0,0.5);
-border: 1px solid var(–green-bright);
+background: rgba(0,0,0,0.5); border: 1px solid var(–green-bright);
 display: flex; align-items: center; justify-content: center;
 flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 14px;
 }
 .bubble {
-max-width: min(78%, 340px);
-padding: 11px 14px; border-radius: 16px;
-font-size: 14px; line-height: 1.6; white-space: pre-wrap;
+max-width: min(85%, 360px); padding: 11px 14px; border-radius: 16px;
+font-size: 14px; line-height: 1.6;
 }
 .bubble.bot {
-background: rgba(0,20,0,0.92);
-border: 1px solid rgba(46,160,67,0.25);
-border-top-left-radius: 4px;
-backdrop-filter: blur(8px);
-color: #ffffff;
--webkit-text-fill-color: #ffffff;
+background: rgba(0,20,0,0.92); border: 1px solid rgba(46,160,67,0.25);
+border-top-left-radius: 4px; backdrop-filter: blur(8px);
+color: #fff; -webkit-text-fill-color: #fff;
 }
 .bubble.user {
-background: var(–user-bg);
-border: 1px solid rgba(46,160,67,0.3);
-border-top-right-radius: 4px;
-color: #ffffff;
--webkit-text-fill-color: #ffffff;
-backdrop-filter: blur(8px);
+background: rgba(20,50,20,0.9); border: 1px solid rgba(46,160,67,0.3);
+border-top-right-radius: 4px; color: #fff; -webkit-text-fill-color: #fff;
 }
 
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .qa-btn {
-padding: 8px 14px;
-background: rgba(255,255,255,0.08);
-border: 1px solid rgba(255,255,255,0.15);
-border-radius: 20px; color: var(–text);
-font-size: 13px; cursor: pointer;
-font-family: ‘DM Sans’, sans-serif; transition: all 0.2s;
+padding: 8px 14px; background: rgba(255,255,255,0.08);
+border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+color: #fff; font-size: 13px; cursor: pointer; font-family: ‘DM Sans’, sans-serif;
 }
-.qa-btn:hover { border-color: var(–green-bright); color: var(–green2); }
+
+/* SCHÉMA */
+.schema-container {
+margin-top: 12px;
+background: rgba(0,40,0,0.7);
+border: 1px solid rgba(46,160,67,0.4);
+border-radius: 12px; padding: 10px;
+}
+.schema-title {
+font-size: 11px; color: #4ade80; text-transform: uppercase;
+letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 600;
+}
+.schema-svg { width: 100%; display: block; border-radius: 8px; }
 
 .typing { display:flex; gap:4px; padding:12px 14px; }
 .typing span {
@@ -272,17 +204,15 @@ background: linear-gradient(to top, rgba(5,15,5,0.95) 70%, transparent);
 }
 .composer-inner {
 display: flex; align-items: center; gap: 8px;
-background: var(–surface2);
-border: 1px solid rgba(255,255,255,0.12);
-border-radius: 22px; padding: 8px 12px;
-backdrop-filter: blur(10px);
+background: var(–surface2); border: 1px solid rgba(255,255,255,0.12);
+border-radius: 22px; padding: 8px 12px; backdrop-filter: blur(10px);
 }
 #userInput {
 flex: 1; background: transparent; border: none; outline: none;
-color: #ffffff; font-size: 15px; font-family: ‘DM Sans’, sans-serif;
--webkit-text-fill-color: #ffffff;
+color: #fff; -webkit-text-fill-color: #fff;
+font-size: 15px; font-family: ‘DM Sans’, sans-serif;
 }
-#userInput::placeholder { color: var(–dim); }
+#userInput::placeholder { color: var(–dim); -webkit-text-fill-color: var(–dim); }
 .send-btn {
 width: 38px; height: 38px; border-radius: 50%;
 background: var(–green-bright); border: none; color: #fff;
@@ -294,50 +224,26 @@ cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
 </head>
 <body>
 
-<!-- TERRAIN DE FOOT -->
-
 <div id="pitch">
   <div class="pitch-bg"></div>
   <svg class="pitch-svg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <!-- Bordure terrain -->
     <rect x="20" y="20" width="360" height="660" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
-    <!-- Ligne médiane -->
     <line x1="20" y1="350" x2="380" y2="350" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
-    <!-- Cercle central -->
     <circle cx="200" cy="350" r="60" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
     <circle cx="200" cy="350" r="3" fill="rgba(255,255,255,0.3)"/>
-    <!-- Surface de réparation haut -->
     <rect x="90" y="20" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <!-- Petit surface haut -->
     <rect x="140" y="20" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <!-- But haut -->
     <rect x="160" y="12" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-    <!-- Arc surface haut -->
-    <path d="M 90 100 Q 200 140 310 100" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-    <!-- Surface de réparation bas -->
     <rect x="90" y="600" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <!-- Petit surface bas -->
     <rect x="140" y="645" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <!-- But bas -->
     <rect x="160" y="676" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-    <!-- Arc surface bas -->
-    <path d="M 90 600 Q 200 560 310 600" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-    <!-- Points de penalty -->
     <circle cx="200" cy="130" r="3" fill="rgba(255,255,255,0.25)"/>
     <circle cx="200" cy="570" r="3" fill="rgba(255,255,255,0.25)"/>
-    <!-- Coins -->
-    <path d="M 20 20 Q 35 20 35 35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <path d="M 380 20 Q 365 20 365 35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <path d="M 20 680 Q 35 680 35 665" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <path d="M 380 680 Q 365 680 365 665" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
   </svg>
 </div>
-
-<!-- Overlay -->
-
 <div id="overlay"></div>
 
-<!-- ÉCRAN DE CONNEXION -->
+<!-- LOGIN -->
 
 <div id="loginScreen">
   <div class="login-card">
@@ -370,21 +276,17 @@ cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
 <!-- CATEGORIES -->
 
 <div id="catBar">
-  <div class="cat-chip" onclick="selectCat(this,'U6/U7')">U6 / U7</div>
-  <div class="cat-chip active" onclick="selectCat(this,'U8/U9')">U8 / U9</div>
-  <div class="cat-chip" onclick="selectCat(this,'U10/U11')">U10 / U11</div>
-  <div class="cat-chip" onclick="selectCat(this,'U12/U13')">U12 / U13</div>
-  <div class="cat-chip" onclick="selectCat(this,'U14/U15')">U14 / U15</div>
-  <div class="cat-chip" onclick="selectCat(this,'U16/U17')">U16 / U17</div>
+  <div class="cat-chip" onclick="selectCat(this,'U6/U7')">U6/U7</div>
+  <div class="cat-chip active" onclick="selectCat(this,'U8/U9')">U8/U9</div>
+  <div class="cat-chip" onclick="selectCat(this,'U10/U11')">U10/U11</div>
+  <div class="cat-chip" onclick="selectCat(this,'U12/U13')">U12/U13</div>
+  <div class="cat-chip" onclick="selectCat(this,'U14/U15')">U14/U15</div>
+  <div class="cat-chip" onclick="selectCat(this,'U16/U17')">U16/U17</div>
   <div class="cat-chip" onclick="selectCat(this,'U18')">U18</div>
   <div class="cat-chip" onclick="selectCat(this,'Seniors')">Seniors</div>
 </div>
 
-<!-- CHAT -->
-
 <div id="chat"><div id="messages"></div></div>
-
-<!-- COMPOSER -->
 
 <div id="composer">
   <div class="composer-inner">
@@ -408,6 +310,140 @@ let userId = "coach_" + (localStorage.getItem("coach_user_id") || Math.random().
 localStorage.setItem("coach_user_id", userId.replace("coach_",""));
 let isLoading = false;
 
+// ===== SCHÉMAS SVG =====
+function generateSchema(type, players, distance) {
+  const W = 280, H = 200;
+  const cx = W/2, cy = H/2;
+  const d = distance || 7;
+  const px = d * 12; // pixels par mètre
+
+  let elements = [];
+
+  // Fond terrain
+  elements.push('<rect width="' + W + '" height="' + H + '" fill="#1a4a1a" rx="8"/>');
+  elements.push('<rect x="10" y="10" width="' + (W-20) + '" height="' + (H-20) + '" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" rx="4"/>');
+
+  const plotColor = "#f0d080";
+  const playerColor = "#2ea043";
+  const arrowColor = "#4ade80";
+  const distColor = "#ffffff";
+
+  function plot(x, y) {
+    return '<rect x="' + (x-5) + '" y="' + (y-5) + '" width="10" height="10" fill="' + plotColor + '" rx="2"/>';
+  }
+  function player(x, y, num) {
+    return '<circle cx="' + x + '" cy="' + y + '" r="12" fill="' + playerColor + '" stroke="#fff" stroke-width="1.5"/>' +
+           '<text x="' + x + '" y="' + (y+4) + '" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">' + num + '</text>';
+  }
+  function arrow(x1, y1, x2, y2) {
+    const dx = x2-x1, dy = y2-y1;
+    const len = Math.sqrt(dx*dx+dy*dy);
+    const mx = x1+dx*0.7, my = y1+dy*0.7;
+    return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + mx + '" y2="' + my + '" stroke="' + arrowColor + '" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr)"/>';
+  }
+  function distLabel(x, y, text) {
+    return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="9" fill="' + distColor + '" opacity="0.8">' + text + '</text>';
+  }
+
+  const defs = '<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="' + arrowColor + '"/></marker></defs>';
+  elements.push(defs);
+
+  if (type === "triangle") {
+    const p1 = [cx, 40];
+    const p2 = [cx - px*0.866, cy + px*0.5];
+    const p3 = [cx + px*0.866, cy + px*0.5];
+    elements.push(plot(p1[0], p1[1]));
+    elements.push(plot(p2[0], p2[1]));
+    elements.push(plot(p3[0], p3[1]));
+    elements.push(player(p1[0], p1[1], "J1"));
+    elements.push(player(p2[0], p2[1], "J2"));
+    elements.push(player(p3[0], p3[1], "J3"));
+    elements.push(arrow(p1[0], p1[1]+14, p2[0], p2[1]-14));
+    elements.push(arrow(p2[0]+10, p2[1]-5, p3[0]-10, p3[1]-5));
+    elements.push(arrow(p3[0], p3[1]-14, p1[0], p1[1]+14));
+    elements.push(distLabel(cx, cy + px*0.5 + 20, d + "m entre les plots"));
+
+  } else if (type === "ligne") {
+    const spacing = Math.min(px, 50);
+    const nb = Math.min(players || 4, 5);
+    const startX = cx - (nb-1)*spacing/2;
+    for (let i = 0; i < nb; i++) {
+      const x = startX + i*spacing;
+      elements.push(plot(x, cy - 20));
+      elements.push(player(x, cy + 20, "J"+(i+1)));
+      if (i > 0) elements.push(arrow(startX+(i-1)*spacing+12, cy+20, x-12, cy+20));
+    }
+    elements.push(distLabel(cx, cy + 55, d + "m entre joueurs"));
+
+  } else if (type === "carre") {
+    const half = Math.min(px*0.6, 70);
+    const corners = [
+      [cx-half, cy-half], [cx+half, cy-half],
+      [cx+half, cy+half], [cx-half, cy+half]
+    ];
+    corners.forEach((c, i) => {
+      elements.push(plot(c[0], c[1]));
+      elements.push(player(c[0], c[1], "J"+(i+1)));
+    });
+    elements.push(arrow(corners[0][0]+12, corners[0][1], corners[1][0]-12, corners[1][1]));
+    elements.push(arrow(corners[1][0], corners[1][1]+12, corners[2][0], corners[2][1]-12));
+    elements.push(arrow(corners[2][0]-12, corners[2][1], corners[3][0]+12, corners[3][1]));
+    elements.push(arrow(corners[3][0], corners[3][1]-12, corners[0][0], corners[0][1]+12));
+    elements.push(distLabel(cx, cy+half+22, d + "m de côté"));
+
+  } else if (type === "slalom") {
+    const nbPlots = 5;
+    const espacement = Math.min(px*0.5, 35);
+    const startY = 40;
+    for (let i = 0; i < nbPlots; i++) {
+      const x = i % 2 === 0 ? cx - 20 : cx + 20;
+      elements.push(plot(x, startY + i*espacement));
+    }
+    elements.push(player(cx, H-30, "J1"));
+    elements.push('<path d="M' + cx + ' ' + (H-42) + ' Q' + (cx+20) + ' ' + (startY+4*espacement) + ' ' + (cx-20) + ' ' + (startY+3*espacement) + ' Q' + (cx+20) + ' ' + (startY+2*espacement) + ' ' + (cx-20) + ' ' + (startY+espacement) + ' Q' + (cx+20) + ' ' + (startY) + ' ' + cx + ' ' + startY + '" fill="none" stroke="' + arrowColor + '" stroke-width="2" stroke-dasharray="5,3"/>');
+    elements.push(distLabel(cx+50, cy, d + "m"));
+
+  } else {
+    // Défaut : rondo
+    const r = Math.min(px*0.7, 65);
+    const nb = Math.min(players || 4, 6);
+    for (let i = 0; i < nb; i++) {
+      const angle = (i/nb)*Math.PI*2 - Math.PI/2;
+      const x = cx + r*Math.cos(angle);
+      const y = cy + r*Math.sin(angle);
+      elements.push(player(x, y, "J"+(i+1)));
+    }
+    elements.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="5,5"/>');
+    elements.push(distLabel(cx, H-15, "Rayon " + d + "m"));
+  }
+
+  return '<svg class="schema-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' + elements.join("") + '</svg>';
+}
+
+function detectSchema(text) {
+  const t = text.toLowerCase();
+  let type = "rondo";
+  let distance = 7;
+  let players = 4;
+
+  if (t.includes("triangle")) type = "triangle";
+  else if (t.includes("slalom")) type = "slalom";
+  else if (t.includes("carré") || t.includes("carre") || t.includes("carré")) type = "carre";
+  else if (t.includes("ligne") || t.includes("file")) type = "ligne";
+  else if (t.includes("rondo") || t.includes("possession")) type = "rondo";
+
+  const mMatch = t.match(/(\d+)\s*m[èe]tre/);
+  const mShort = t.match(/(\d+)\s*m\b/);
+  if (mMatch) distance = parseInt(mMatch[1]);
+  else if (mShort) distance = parseInt(mShort[1]);
+
+  const jMatch = t.match(/(\d+)\s*joueur/);
+  if (jMatch) players = parseInt(jMatch[1]);
+
+  return { type, distance, players };
+}
+
+// ===== LOGIN =====
 const loginScreen = document.getElementById("loginScreen");
 const loginBtn = document.getElementById("loginBtn");
 const clubKeyInput = document.getElementById("clubKeyInput");
@@ -417,7 +453,7 @@ function useDemoKey() { clubKeyInput.value = "DEMO-CLUB-0000"; }
 
 async function tryLogin() {
   const key = clubKeyInput.value.trim().toUpperCase();
-  if (!key) { showError("Entrez votre clé d'accès club."); return; }
+  if (!key) { showLoginError("Entrez votre clé."); return; }
   loginBtn.textContent = "Vérification…";
   loginBtn.disabled = true;
   loginError.style.display = "none";
@@ -429,7 +465,7 @@ async function tryLogin() {
     });
     const data = await resp.json();
     if (!resp.ok) {
-      showError(data.error || "Clé invalide.");
+      showLoginError(data.error || "Clé invalide.");
       loginBtn.textContent = "Accéder ⚽";
       loginBtn.disabled = false;
       return;
@@ -438,19 +474,15 @@ async function tryLogin() {
     localStorage.setItem("coach_club_key", clubKey);
     loginScreen.style.display = "none";
     if (data.club) document.getElementById("clubName").textContent = data.club;
-    addBotMsg("Bonjour coach ! 👋 Je suis votre assistant " + categorie + ".\n\nDites-moi ce que vous voulez travailler et j'adapte la séance complète !", true);
-  } catch (err) {
-    showError("Erreur de connexion. Vérifiez votre réseau.");
+    addBotMsg("Bonjour coach ! 👋 Je suis votre assistant " + categorie + ".\n\nDites-moi ce que vous voulez travailler et j'adapte la séance complète avec schémas !", true);
+  } catch {
+    showLoginError("Erreur de connexion.");
     loginBtn.textContent = "Accéder ⚽";
     loginBtn.disabled = false;
   }
 }
 
-function showError(msg) {
-  loginError.textContent = msg;
-  loginError.style.display = "block";
-}
-
+function showLoginError(msg) { loginError.textContent = msg; loginError.style.display = "block"; }
 loginBtn.addEventListener("click", tryLogin);
 clubKeyInput.addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
 if (clubKey) { clubKeyInput.value = clubKey; tryLogin(); }
@@ -459,9 +491,10 @@ function selectCat(el, cat) {
   document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
   el.classList.add("active");
   categorie = cat;
-  addBotMsg("Catégorie changée : " + cat + " ⚽ Je m'adapte !");
+  addBotMsg("Catégorie : " + cat + " ⚽ Je m'adapte !");
 }
 
+// ===== CHAT =====
 const chat = document.getElementById("chat");
 const messages = document.getElementById("messages");
 
@@ -470,20 +503,58 @@ function addBotMsg(text, withActions) {
   wrap.className = "bubble-wrap bot";
   const bubble = document.createElement("div");
   bubble.className = "bubble bot";
+  bubble.style.whiteSpace = "pre-wrap";
   bubble.textContent = text;
+
   if (withActions) {
     const actions = document.createElement("div");
     actions.className = "quick-actions";
-    actions.innerHTML = `
-      <button class="qa-btn" onclick="sendMessage('Seance dribble, 12 joueurs U8, 1h')">🏃 Dribble</button>
-      <button class="qa-btn" onclick="sendMessage('Seance passe, 10 joueurs, 45min')">⚡ Passe</button>
-      <button class="qa-btn" onclick="sendMessage('Seance tir au but, 14 joueurs, 1h')">🎯 Tir</button>
-      <button class="qa-btn" onclick="sendMessage('Seance pressing collectif, 1h')">🛡️ Pressing</button>
-      <button class="qa-btn" onclick="sendMessage('Redige un message WhatsApp convocation match samedi 10h')">📢 Parents</button>
-    `;
+    actions.innerHTML =
+      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs U8 1h\')">🏃 Dribble</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance passe triangle 10 joueurs 45min\')">⚡ Passe</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">🎯 Tir</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">🛡️ Pressing</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Redige message WhatsApp convocation match samedi 10h\')">📢 Parents</button>';
     bubble.appendChild(actions);
   }
-  wrap.innerHTML = '<div class="avatar">⚽</div>';
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "⚽";
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  messages.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addBotMsgWithSchema(text) {
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap bot";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+  bubble.style.whiteSpace = "pre-wrap";
+  bubble.textContent = text;
+
+  // Détecter si la réponse contient des exercices
+  const hasExercise = text.toLowerCase().includes("exercice") ||
+                      text.toLowerCase().includes("triangle") ||
+                      text.toLowerCase().includes("slalom") ||
+                      text.toLowerCase().includes("rondo") ||
+                      text.toLowerCase().includes("carré") ||
+                      text.toLowerCase().includes("échauffement");
+
+  if (hasExercise) {
+    const schema = detectSchema(text);
+    const schemaDiv = document.createElement("div");
+    schemaDiv.className = "schema-container";
+    schemaDiv.innerHTML = '<div class="schema-title">📐 Schéma de l\'exercice</div>' + generateSchema(schema.type, schema.players, schema.distance);
+    bubble.appendChild(schemaDiv);
+  }
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "⚽";
+  wrap.appendChild(avatar);
   wrap.appendChild(bubble);
   messages.appendChild(wrap);
   chat.scrollTop = chat.scrollHeight;
@@ -492,7 +563,10 @@ function addBotMsg(text, withActions) {
 function addUserMsg(text) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap user";
-  wrap.innerHTML = '<div class="bubble user">' + text + '</div>';
+  const bubble = document.createElement("div");
+  bubble.className = "bubble user";
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
   messages.appendChild(wrap);
   chat.scrollTop = chat.scrollHeight;
 }
@@ -533,25 +607,22 @@ async function sendMessage(text) {
         setTimeout(() => loginScreen.style.display = "flex", 2000);
       }
     } else {
-      addBotMsg(data.answer || "Pas de réponse.");
+      addBotMsgWithSchema(data.answer || "Pas de réponse.");
     }
-  } catch (err) {
+  } catch {
     setTyping(false);
-    addBotMsg("Erreur de connexion. Vérifie ton réseau.");
+    addBotMsg("Erreur de connexion.");
   }
   isLoading = false;
 }
 
 const userInput = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-
-sendBtn.addEventListener("click", () => {
+document.getElementById("sendBtn").addEventListener("click", () => {
   const text = userInput.value.trim();
   if (!text) return;
   userInput.value = "";
   sendMessage(text);
 });
-
 userInput.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     const text = userInput.value.trim();
