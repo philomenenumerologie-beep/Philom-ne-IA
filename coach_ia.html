@@ -438,7 +438,8 @@ async function tryLogin() {
     localStorage.setItem("coach_club_key", clubKey);
     loginScreen.style.display = "none";
     if (data.club) document.getElementById("clubName").textContent = data.club;
-    addBotMsg("Bonjour coach ! Je suis votre assistant " + categorie + ".\n\nDites-moi ce que vous voulez travailler et j'adapte la seance complete avec schemas !", null, true);
+    addBotMsg("Bonjour coach ! Je suis Coach IA, votre assistant football.\n\nChoisissez votre categorie en haut et dites-moi ce que vous voulez travailler !", null, true);
+
   } catch {
     loginError.textContent = "Erreur de connexion.";
     loginError.style.display = "block";
