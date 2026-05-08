@@ -8,40 +8,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg: #0d1117;
-  --surface: #161b22;
-  --surface2: #1c2128;
-  --border: rgba(255,255,255,0.08);
-  --text: #e6edf3;
-  --dim: #7d8590;
-  --green: #2ea043;
+  --green-dark: #1a4a1a;
+  --green-mid: #1e5c1e;
+  --green-light: #226622;
+  --green-bright: #2ea043;
   --green2: #3fb950;
   --green-glow: rgba(46,160,67,0.3);
-  --user-bg: #1f2d1f;
+  --white: #ffffff;
+  --text: #e6edf3;
+  --dim: #a0b0a0;
+  --surface: rgba(10,20,10,0.82);
+  --surface2: rgba(15,30,15,0.88);
+  --border: rgba(255,255,255,0.12);
+  --user-bg: rgba(20,50,20,0.9);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+height: 100vh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+position: relative;
 }
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(46,160,67,0.06) 0%, transparent 60%);
-  pointer-events: none;
+
+/* ===== TERRAIN DE FOOT EN FOND ===== */
+#pitch {
+position: fixed;
+inset: 0;
+z-index: 0;
+overflow: hidden;
+}
+
+.pitch-bg {
+width: 100%;
+height: 100%;
+background: repeating-linear-gradient(
+180deg,
+#1a4a1a 0px,
+#1a4a1a 40px,
+#1e5c1e 40px,
+#1e5c1e 80px
+);
+}
+
+.pitch-svg {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+}
+
+/* Overlay sombre pour lisibilité */
+#overlay {
+position: fixed;
+inset: 0;
+z-index: 1;
+background: rgba(0,10,0,0.45);
 }
 
 /* ÉCRAN DE CONNEXION */
 #loginScreen {
 position: fixed;
 inset: 0;
-background: var(–bg);
 z-index: 100;
 display: flex;
 flex-direction: column;
@@ -49,156 +81,116 @@ align-items: center;
 justify-content: center;
 padding: 24px;
 }
+
 .login-card {
-background: var(–surface);
-border: 1px solid var(–border);
+background: rgba(10,25,10,0.92);
+border: 1px solid rgba(255,255,255,0.15);
 border-radius: 20px;
 padding: 28px 24px;
 width: 100%;
 max-width: 380px;
-box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+backdrop-filter: blur(10px);
 }
-.login-logo {
-text-align: center;
-margin-bottom: 24px;
-}
+
+.login-logo { text-align: center; margin-bottom: 24px; }
 .login-ball { font-size: 48px; display: block; margin-bottom: 8px; }
 .login-title {
 font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 28px;
-font-weight: 800;
-color: var(–text);
-text-transform: uppercase;
-letter-spacing: 0.05em;
+font-size: 28px; font-weight: 800;
+color: var(–white);
+text-transform: uppercase; letter-spacing: 0.05em;
 }
 .login-sub { font-size: 13px; color: var(–dim); margin-top: 4px; }
 .login-label {
-display: block;
-font-size: 13px;
-color: var(–dim);
-margin-bottom: 8px;
-text-transform: uppercase;
-letter-spacing: 0.08em;
+display: block; font-size: 13px; color: var(–dim);
+margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em;
 }
 .login-input {
 width: 100%;
-background: var(–surface2);
+background: rgba(255,255,255,0.08);
 border: 1px solid var(–border);
 border-radius: 12px;
 padding: 14px 16px;
-color: var(–text);
-font-size: 16px;
-font-family: ‘DM Sans’, sans-serif;
-outline: none;
-text-transform: uppercase;
-letter-spacing: 0.1em;
+color: var(–white);
+font-size: 16px; font-family: ‘DM Sans’, sans-serif;
+outline: none; text-transform: uppercase; letter-spacing: 0.1em;
 margin-bottom: 16px;
 }
-.login-input:focus { border-color: var(–green); }
+.login-input:focus { border-color: var(–green-bright); }
 .login-input::placeholder { text-transform: none; letter-spacing: 0; color: var(–dim); }
 .login-btn {
-width: 100%;
-padding: 14px;
-background: var(–green);
-border: none;
-border-radius: 12px;
-color: #fff;
-font-size: 16px;
-font-weight: 600;
-font-family: ‘DM Sans’, sans-serif;
-cursor: pointer;
+width: 100%; padding: 14px;
+background: var(–green-bright);
+border: none; border-radius: 12px;
+color: #fff; font-size: 16px; font-weight: 600;
+font-family: ‘DM Sans’, sans-serif; cursor: pointer;
 box-shadow: 0 4px 16px var(–green-glow);
 }
-.login-btn:active { opacity: 0.85; }
 .login-error {
-margin-top: 12px;
-padding: 10px 14px;
+margin-top: 12px; padding: 10px 14px;
 background: rgba(248,81,73,0.1);
 border: 1px solid rgba(248,81,73,0.3);
-border-radius: 10px;
-color: #f85149;
-font-size: 13px;
-text-align: center;
-display: none;
+border-radius: 10px; color: #f85149;
+font-size: 13px; text-align: center; display: none;
 }
-.login-demo {
-margin-top: 16px;
-text-align: center;
-font-size: 12px;
-color: var(–dim);
-}
-.login-demo span {
-color: var(–green2);
-cursor: pointer;
-text-decoration: underline;
-}
+.login-demo { margin-top: 16px; text-align: center; font-size: 12px; color: var(–dim); }
+.login-demo span { color: var(–green2); cursor: pointer; text-decoration: underline; }
 
 /* TOPBAR */
 #topbar {
-position: relative;
-z-index: 10;
-display: flex;
-align-items: center;
-justify-content: space-between;
+position: relative; z-index: 10;
+display: flex; align-items: center; justify-content: space-between;
 padding: 12px 16px;
-background: rgba(13,17,23,0.95);
+background: rgba(5,15,5,0.88);
 backdrop-filter: blur(12px);
-border-bottom: 1px solid var(–border);
+border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .logo-area { display: flex; align-items: center; gap: 12px; }
 .ball-icon {
-width: 40px; height: 40px;
-border-radius: 50%;
-background: linear-gradient(135deg, #1a2a1a, #0d1a0d);
-border: 1.5px solid var(–green);
+width: 40px; height: 40px; border-radius: 50%;
+background: rgba(0,0,0,0.4);
+border: 1.5px solid var(–green-bright);
 display: flex; align-items: center; justify-content: center;
-font-size: 20px;
-box-shadow: 0 0 14px var(–green-glow);
+font-size: 20px; box-shadow: 0 0 14px var(–green-glow);
 }
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
 font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 16px; font-weight: 800;
-color: var(–text);
-letter-spacing: 0.05em;
-text-transform: uppercase;
-line-height: 1.1;
+font-size: 16px; font-weight: 800; color: var(–white);
+letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.1;
 }
 .logo-sub { font-size: 11px; color: var(–green2); letter-spacing: 0.08em; text-transform: uppercase; }
 .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(–dim); }
 .dot-green {
 width: 7px; height: 7px; border-radius: 50%;
-background: var(–green2);
-box-shadow: 0 0 6px var(–green2);
+background: var(–green2); box-shadow: 0 0 6px var(–green2);
 animation: pulse 2s infinite;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-#clubName { font-size: 11px; color: var(–green2); font-weight: 500; }
 
 /* CATEGORIES */
 #catBar {
 position: relative; z-index: 9;
-display: flex; gap: 8px;
-padding: 10px 14px;
-background: var(–surface);
-border-bottom: 1px solid var(–border);
+display: flex; gap: 8px; padding: 10px 14px;
+background: rgba(5,15,5,0.75);
+backdrop-filter: blur(8px);
+border-bottom: 1px solid rgba(255,255,255,0.08);
 overflow-x: auto; scrollbar-width: none;
 }
 #catBar::-webkit-scrollbar { display: none; }
 .cat-chip {
 padding: 6px 14px; border-radius: 20px;
-background: var(–surface2);
-border: 1px solid var(–border);
+background: rgba(255,255,255,0.08);
+border: 1px solid rgba(255,255,255,0.15);
 color: var(–dim);
 font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 14px; font-weight: 600;
-letter-spacing: 0.05em;
-cursor: pointer; white-space: nowrap;
-transition: all 0.2s;
+font-size: 14px; font-weight: 600; letter-spacing: 0.05em;
+cursor: pointer; white-space: nowrap; transition: all 0.2s;
 }
-.cat-chip:hover { border-color: var(–green); color: var(–green2); }
+.cat-chip:hover { border-color: var(–green-bright); color: var(–green2); }
 .cat-chip.active {
-background: var(–green); border-color: var(–green);
+background: var(–green-bright); border-color: var(–green-bright);
 color: #fff; box-shadow: 0 0 10px var(–green-glow);
 }
 
@@ -206,7 +198,7 @@ color: #fff; box-shadow: 0 0 10px var(–green-glow);
 #chat {
 flex: 1; overflow-y: auto;
 padding: 16px 14px 120px;
-position: relative; z-index: 1;
+position: relative; z-index: 2;
 }
 #chat::-webkit-scrollbar { width: 3px; }
 #chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
@@ -221,8 +213,8 @@ animation: fadeUp 0.3s ease;
 
 .avatar {
 width: 30px; height: 30px; border-radius: 50%;
-background: linear-gradient(135deg, #1a2a1a, #0d1a0d);
-border: 1px solid var(–green);
+background: rgba(0,0,0,0.5);
+border: 1px solid var(–green-bright);
 display: flex; align-items: center; justify-content: center;
 flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 14px;
 }
@@ -232,25 +224,30 @@ padding: 11px 14px; border-radius: 16px;
 font-size: 14px; line-height: 1.6; white-space: pre-wrap;
 }
 .bubble.bot {
-background: var(–surface2); border: 1px solid var(–border);
+background: var(–surface2);
+border: 1px solid rgba(255,255,255,0.1);
 border-top-left-radius: 4px;
+backdrop-filter: blur(8px);
 }
 .bubble.user {
-background: var(–user-bg); border: 1px solid rgba(46,160,67,0.2);
-border-top-right-radius: 4px; color: #c8e6c8;
+background: var(–user-bg);
+border: 1px solid rgba(46,160,67,0.3);
+border-top-right-radius: 4px;
+color: #c8e6c8;
+backdrop-filter: blur(8px);
 }
 
-/* Quick actions */
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .qa-btn {
-padding: 8px 14px; background: var(–surface2);
-border: 1px solid var(–border); border-radius: 20px;
-color: var(–text); font-size: 13px; cursor: pointer;
+padding: 8px 14px;
+background: rgba(255,255,255,0.08);
+border: 1px solid rgba(255,255,255,0.15);
+border-radius: 20px; color: var(–text);
+font-size: 13px; cursor: pointer;
 font-family: ‘DM Sans’, sans-serif; transition: all 0.2s;
 }
-.qa-btn:hover { border-color: var(–green); color: var(–green2); }
+.qa-btn:hover { border-color: var(–green-bright); color: var(–green2); }
 
-/* Typing */
 .typing { display:flex; gap:4px; padding:12px 14px; }
 .typing span {
 width:6px; height:6px; border-radius:50%; background:var(–dim);
@@ -264,13 +261,14 @@ animation: bounce 1.2s infinite;
 #composer {
 position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
 padding: 10px 12px 18px;
-background: linear-gradient(to top, rgba(13,17,23,1) 70%, transparent);
+background: linear-gradient(to top, rgba(5,15,5,0.95) 70%, transparent);
 }
 .composer-inner {
 display: flex; align-items: center; gap: 8px;
 background: var(–surface2);
-border: 1px solid rgba(255,255,255,0.1);
+border: 1px solid rgba(255,255,255,0.12);
 border-radius: 22px; padding: 8px 12px;
+backdrop-filter: blur(10px);
 }
 #userInput {
 flex: 1; background: transparent; border: none; outline: none;
@@ -279,14 +277,57 @@ color: var(–text); font-size: 15px; font-family: ‘DM Sans’, sans-serif;
 #userInput::placeholder { color: var(–dim); }
 .send-btn {
 width: 38px; height: 38px; border-radius: 50%;
-background: var(–green); border: none; color: #fff; font-size: 16px;
-display: flex; align-items: center; justify-content: center;
+background: var(–green-bright); border: none; color: #fff;
+font-size: 16px; display: flex; align-items: center; justify-content: center;
 cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
 }
 </style>
 
 </head>
 <body>
+
+<!-- TERRAIN DE FOOT -->
+
+<div id="pitch">
+  <div class="pitch-bg"></div>
+  <svg class="pitch-svg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bordure terrain -->
+    <rect x="20" y="20" width="360" height="660" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+    <!-- Ligne médiane -->
+    <line x1="20" y1="350" x2="380" y2="350" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+    <!-- Cercle central -->
+    <circle cx="200" cy="350" r="60" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+    <circle cx="200" cy="350" r="3" fill="rgba(255,255,255,0.3)"/>
+    <!-- Surface de réparation haut -->
+    <rect x="90" y="20" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <!-- Petit surface haut -->
+    <rect x="140" y="20" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <!-- But haut -->
+    <rect x="160" y="12" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    <!-- Arc surface haut -->
+    <path d="M 90 100 Q 200 140 310 100" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+    <!-- Surface de réparation bas -->
+    <rect x="90" y="600" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <!-- Petit surface bas -->
+    <rect x="140" y="645" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <!-- But bas -->
+    <rect x="160" y="676" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    <!-- Arc surface bas -->
+    <path d="M 90 600 Q 200 560 310 600" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+    <!-- Points de penalty -->
+    <circle cx="200" cy="130" r="3" fill="rgba(255,255,255,0.25)"/>
+    <circle cx="200" cy="570" r="3" fill="rgba(255,255,255,0.25)"/>
+    <!-- Coins -->
+    <path d="M 20 20 Q 35 20 35 35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <path d="M 380 20 Q 365 20 365 35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <path d="M 20 680 Q 35 680 35 665" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <path d="M 380 680 Q 365 680 365 665" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<!-- Overlay -->
+
+<div id="overlay"></div>
 
 <!-- ÉCRAN DE CONNEXION -->
 
@@ -301,9 +342,7 @@ cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
     <input class="login-input" id="clubKeyInput" type="text" placeholder="Ex: FC-TOURCOING-X7K2" autocomplete="off"/>
     <button class="login-btn" id="loginBtn">Accéder ⚽</button>
     <div class="login-error" id="loginError"></div>
-    <div class="login-demo">
-      Mode démo : <span onclick="useDemoKey()">DEMO-CLUB-0000</span>
-    </div>
+    <div class="login-demo">Mode démo : <span onclick="useDemoKey()">DEMO-CLUB-0000</span></div>
   </div>
 </div>
 
@@ -317,10 +356,7 @@ cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
       <span class="logo-sub" id="clubName">Assistant Football</span>
     </div>
   </div>
-  <div class="status">
-    <div class="dot-green"></div>
-    En ligne
-  </div>
+  <div class="status"><div class="dot-green"></div>En ligne</div>
 </header>
 
 <!-- CATEGORIES -->
@@ -336,9 +372,7 @@ cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
 
 <!-- CHAT -->
 
-<div id="chat">
-  <div id="messages"></div>
-</div>
+<div id="chat"><div id="messages"></div></div>
 
 <!-- COMPOSER -->
 
@@ -350,15 +384,9 @@ cursor: pointer; box-shadow: 0 4px 12px var(–green-glow); flex-shrink: 0;
 </div>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
 const API_BASE = "https://philo-backend-by2c.onrender.com";
-const COACH_URL = `${API_BASE}/coach`;
+const COACH_URL = API_BASE + "/coach";
 
-// ============================================================
-// ÉTAT
-// ============================================================
 let clubKey = localStorage.getItem("coach_club_key") || "";
 let deviceId = localStorage.getItem("coach_device_id");
 if (!deviceId) {
@@ -370,62 +398,37 @@ let userId = "coach_" + (localStorage.getItem("coach_user_id") || Math.random().
 localStorage.setItem("coach_user_id", userId.replace("coach_",""));
 let isLoading = false;
 
-// ============================================================
-// CONNEXION
-// ============================================================
 const loginScreen = document.getElementById("loginScreen");
 const loginBtn = document.getElementById("loginBtn");
 const clubKeyInput = document.getElementById("clubKeyInput");
 const loginError = document.getElementById("loginError");
 
-function useDemoKey() {
-  clubKeyInput.value = "DEMO-CLUB-0000";
-}
+function useDemoKey() { clubKeyInput.value = "DEMO-CLUB-0000"; }
 
 async function tryLogin() {
   const key = clubKeyInput.value.trim().toUpperCase();
-  if (!key) {
-    showError("Entrez votre clé d'accès club.");
-    return;
-  }
-
+  if (!key) { showError("Entrez votre clé d'accès club."); return; }
   loginBtn.textContent = "Vérification…";
   loginBtn.disabled = true;
   loginError.style.display = "none";
-
   try {
     const resp = await fetch(COACH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: "Bonjour",
-        userId,
-        categorie,
-        clubKey: key,
-        deviceId
-      })
+      body: JSON.stringify({ message: "Bonjour", userId, categorie, clubKey: key, deviceId })
     });
-
     const data = await resp.json();
-
     if (!resp.ok) {
       showError(data.error || "Clé invalide.");
       loginBtn.textContent = "Accéder ⚽";
       loginBtn.disabled = false;
       return;
     }
-
-    // Connexion réussie
     clubKey = key;
     localStorage.setItem("coach_club_key", clubKey);
     loginScreen.style.display = "none";
-
-    if (data.club) {
-      document.getElementById("clubName").textContent = data.club;
-    }
-
-    addBubble(`Bonjour coach ! 👋 Je suis votre assistant ${categorie}.\n\nDites-moi ce que vous voulez travailler et j'adapte la séance complète !`, "bot", true);
-
+    if (data.club) document.getElementById("clubName").textContent = data.club;
+    addBotMsg("Bonjour coach ! 👋 Je suis votre assistant " + categorie + ".\n\nDites-moi ce que vous voulez travailler et j'adapte la séance complète !", true);
   } catch (err) {
     showError("Erreur de connexion. Vérifiez votre réseau.");
     loginBtn.textContent = "Accéder ⚽";
@@ -440,56 +443,48 @@ function showError(msg) {
 
 loginBtn.addEventListener("click", tryLogin);
 clubKeyInput.addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
+if (clubKey) { clubKeyInput.value = clubKey; tryLogin(); }
 
-// Si clé déjà en mémoire, on passe directement
-if (clubKey) {
-  clubKeyInput.value = clubKey;
-  tryLogin();
-}
-
-// ============================================================
-// CATÉGORIES
-// ============================================================
 function selectCat(el, cat) {
   document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
   el.classList.add("active");
   categorie = cat;
-  addBubble(`Catégorie changée : ${cat} ⚽ Je m'adapte !`, "bot");
+  addBotMsg("Catégorie changée : " + cat + " ⚽ Je m'adapte !");
 }
 
-// ============================================================
-// CHAT UI
-// ============================================================
 const chat = document.getElementById("chat");
 const messages = document.getElementById("messages");
 
-function addBubble(text, who = "bot", withActions = false) {
+function addBotMsg(text, withActions) {
   const wrap = document.createElement("div");
-  wrap.className = `bubble-wrap ${who}`;
-
-  if (who === "bot") {
-    wrap.innerHTML = `<div class="avatar">⚽</div><div class="bubble bot"></div>`;
-    wrap.querySelector(".bubble").textContent = text;
-
-    if (withActions) {
-      const actions = document.createElement("div");
-      actions.className = "quick-actions";
-      actions.innerHTML = `
-        <button class="qa-btn" onclick="quickSend('Séance dribble, 12 joueurs U8, 1h')">🏃 Dribble</button>
-        <button class="qa-btn" onclick="quickSend('Séance passe, 10 joueurs, 45min')">⚡ Passe</button>
-        <button class="qa-btn" onclick="quickSend('Séance tir au but, 14 joueurs, 1h')">🎯 Tir</button>
-        <button class="qa-btn" onclick="quickSend('Séance pressing collectif, 1h')">🛡️ Pressing</button>
-        <button class="qa-btn" onclick="quickSend('Rédige un message WhatsApp pour convoquer les joueurs samedi à 10h au stade')">📢 Parents</button>
-      `;
-      wrap.querySelector(".bubble").appendChild(actions);
-    }
-  } else {
-    wrap.innerHTML = `<div class="bubble user"></div>`;
-    wrap.querySelector(".bubble").textContent = text;
+  wrap.className = "bubble-wrap bot";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+  bubble.textContent = text;
+  if (withActions) {
+    const actions = document.createElement("div");
+    actions.className = "quick-actions";
+    actions.innerHTML = `
+      <button class="qa-btn" onclick="sendMessage('Seance dribble, 12 joueurs U8, 1h')">🏃 Dribble</button>
+      <button class="qa-btn" onclick="sendMessage('Seance passe, 10 joueurs, 45min')">⚡ Passe</button>
+      <button class="qa-btn" onclick="sendMessage('Seance tir au but, 14 joueurs, 1h')">🎯 Tir</button>
+      <button class="qa-btn" onclick="sendMessage('Seance pressing collectif, 1h')">🛡️ Pressing</button>
+      <button class="qa-btn" onclick="sendMessage('Redige un message WhatsApp convocation match samedi 10h')">📢 Parents</button>
+    `;
+    bubble.appendChild(actions);
   }
-
+  wrap.innerHTML = '<div class="avatar">⚽</div>';
+  wrap.appendChild(bubble);
   messages.appendChild(wrap);
-  requestAnimationFrame(() => chat.scrollTop = chat.scrollHeight);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap user";
+  wrap.innerHTML = '<div class="bubble user">' + text + '</div>';
+  messages.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
 }
 
 function setTyping(on) {
@@ -497,62 +492,44 @@ function setTyping(on) {
     const wrap = document.createElement("div");
     wrap.className = "bubble-wrap bot";
     wrap.id = "typingIndicator";
-    wrap.innerHTML = `<div class="avatar">⚽</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>`;
+    wrap.innerHTML = '<div class="avatar">⚽</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
     messages.appendChild(wrap);
     chat.scrollTop = chat.scrollHeight;
   } else {
-    document.getElementById("typingIndicator")?.remove();
+    const t = document.getElementById("typingIndicator");
+    if (t) t.remove();
   }
 }
 
-// ============================================================
-// ENVOI MESSAGE
-// ============================================================
 async function sendMessage(text) {
   if (!text || isLoading) return;
   if (!clubKey) { loginScreen.style.display = "flex"; return; }
-
-  addBubble(text, "user");
+  addUserMsg(text);
   isLoading = true;
   setTyping(true);
-
   try {
     const resp = await fetch(COACH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text, userId, categorie, clubKey, deviceId })
     });
-
     const data = await resp.json();
     setTyping(false);
-
     if (!resp.ok) {
-      // Abonnement expiré ou limite atteinte
-      if (resp.status === 403) {
-        addBubble(`🔒 ${data.error}`, "bot");
-        // Effacer la clé si invalide
-        if (data.error.includes("invalide")) {
-          localStorage.removeItem("coach_club_key");
-          clubKey = "";
-          setTimeout(() => loginScreen.style.display = "flex", 2000);
-        }
-      } else {
-        addBubble("Erreur. Réessaie.", "bot");
+      addBotMsg("🔒 " + (data.error || "Erreur."));
+      if (resp.status === 401 || (data.error && data.error.includes("invalide"))) {
+        localStorage.removeItem("coach_club_key");
+        clubKey = "";
+        setTimeout(() => loginScreen.style.display = "flex", 2000);
       }
     } else {
-      addBubble(data.answer || "Pas de réponse.", "bot");
+      addBotMsg(data.answer || "Pas de réponse.");
     }
   } catch (err) {
     setTyping(false);
-    addBubble("Erreur de connexion. Vérifie ton réseau.", "bot");
-    console.error(err);
+    addBotMsg("Erreur de connexion. Vérifie ton réseau.");
   }
-
   isLoading = false;
-}
-
-function quickSend(text) {
-  sendMessage(text);
 }
 
 const userInput = document.getElementById("userInput");
