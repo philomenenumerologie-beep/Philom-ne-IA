@@ -83,14 +83,14 @@ padding: 24px;
 }
 
 .login-card {
-background: rgba(10,25,10,0.92);
-border: 1px solid rgba(255,255,255,0.15);
+background: rgba(255,255,255,0.12);
+border: 1px solid rgba(255,255,255,0.3);
 border-radius: 20px;
 padding: 28px 24px;
 width: 100%;
 max-width: 380px;
-box-shadow: 0 20px 40px rgba(0,0,0,0.7);
-backdrop-filter: blur(10px);
+box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+backdrop-filter: blur(20px);
 }
 
 .login-logo { text-align: center; margin-bottom: 24px; }
@@ -98,27 +98,29 @@ backdrop-filter: blur(10px);
 .login-title {
 font-family: ‘Barlow Condensed’, sans-serif;
 font-size: 28px; font-weight: 800;
-color: var(–white);
+color: #ffffff;
 text-transform: uppercase; letter-spacing: 0.05em;
+text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
-.login-sub { font-size: 13px; color: var(–dim); margin-top: 4px; }
+.login-sub { font-size: 13px; color: #c8e6c8; margin-top: 4px; }
 .login-label {
-display: block; font-size: 13px; color: var(–dim);
+display: block; font-size: 13px; color: #c8e6c8;
 margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em;
 }
 .login-input {
 width: 100%;
-background: rgba(255,255,255,0.08);
-border: 1px solid var(–border);
+background: rgba(255,255,255,0.15);
+border: 1px solid rgba(255,255,255,0.3);
 border-radius: 12px;
 padding: 14px 16px;
-color: var(–white);
+color: #ffffff;
+-webkit-text-fill-color: #ffffff;
 font-size: 16px; font-family: ‘DM Sans’, sans-serif;
 outline: none; text-transform: uppercase; letter-spacing: 0.1em;
 margin-bottom: 16px;
 }
 .login-input:focus { border-color: var(–green-bright); }
-.login-input::placeholder { text-transform: none; letter-spacing: 0; color: var(–dim); }
+.login-input::placeholder { text-transform: none; letter-spacing: 0; color: rgba(255,255,255,0.5); }
 .login-btn {
 width: 100%; padding: 14px;
 background: var(–green-bright);
@@ -142,9 +144,10 @@ font-size: 13px; text-align: center; display: none;
 position: relative; z-index: 10;
 display: flex; align-items: center; justify-content: space-between;
 padding: 12px 16px;
-background: rgba(5,15,5,0.88);
+background: linear-gradient(135deg, rgba(0,40,0,0.98), rgba(0,70,0,0.98));
 backdrop-filter: blur(12px);
-border-bottom: 1px solid rgba(255,255,255,0.1);
+border-bottom: 2px solid rgba(46,160,67,0.6);
+box-shadow: 0 4px 20px rgba(0,0,0,0.6);
 }
 .logo-area { display: flex; align-items: center; gap: 12px; }
 .ball-icon {
@@ -157,10 +160,11 @@ font-size: 20px; box-shadow: 0 0 14px var(–green-glow);
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
 font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 16px; font-weight: 800; color: var(–white);
-letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.1;
+font-size: 18px; font-weight: 800; color: #ffffff;
+letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1;
+text-shadow: 0 0 10px rgba(46,160,67,0.8);
 }
-.logo-sub { font-size: 11px; color: var(–green2); letter-spacing: 0.08em; text-transform: uppercase; }
+.logo-sub { font-size: 12px; color: #4ade80; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
 .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(–dim); }
 .dot-green {
 width: 7px; height: 7px; border-radius: 50%;
@@ -224,10 +228,12 @@ padding: 11px 14px; border-radius: 16px;
 font-size: 14px; line-height: 1.6; white-space: pre-wrap;
 }
 .bubble.bot {
-background: var(–surface2);
-border: 1px solid rgba(255,255,255,0.1);
+background: rgba(0,20,0,0.92);
+border: 1px solid rgba(46,160,67,0.25);
 border-top-left-radius: 4px;
 backdrop-filter: blur(8px);
+color: #ffffff;
+-webkit-text-fill-color: #ffffff;
 }
 .bubble.user {
 background: var(–user-bg);
