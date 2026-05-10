@@ -369,6 +369,8 @@ cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(–red-glow);
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
 const API_BASE = "https://philo-backend-by2c.onrender.com";
 const COACH_URL = API_BASE + "/coach";
@@ -603,7 +605,7 @@ function addBotMsgPrepa(text, withActions) {
       '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe seniors\')">⏱️ Mini Cooper</button>' +
       '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine\')">📋 Programme</button>' +
       '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression équipe ce mois\')">📈 Progression</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Générer tableau Excel résultats\')">📊 Tableau Excel</button>';
+      '<button class="qa-btn" onclick="exportExcel()">📊 Télécharger Excel</button>';
     bubble.appendChild(actions);
   }
   const avatar = document.createElement("div");
@@ -624,6 +626,43 @@ function addUserMsgPrepa(text) {
   wrap.appendChild(bubble);
   messagesPrepa.appendChild(wrap);
   chatPrepa.scrollTop = chatPrepa.scrollHeight;
+}
+
+// ===== EXPORT EXCEL =====
+function exportExcel() {
+  // Récupère tout le texte des bulles de la prépa
+  const bubbles = document.querySelectorAll("#messagesPrepa .bubble.bot");
+  let lastTable = null;
+
+  bubbles.forEach(bubble => {
+    const text = bubble.textContent;
+    // Cherche les lignes avec | qui forment un tableau
+    const lines = text.split("\n").filter(l => l.includes("|") && !l.match(/^[-|]+$/));
+    if (lines.length > 1) lastTable = lines;
+  });
+
+  if (!lastTable || lastTable.length < 2) {
+    alert("Aucun tableau trouvé ! Demandez d'abord un test ou un rapport.");
+    return;
+  }
+
+  // Parse le tableau
+  const rows = lastTable.map(line =>
+    line.split("|").map(cell => cell.trim()).filter(cell => cell !== "")
+  ).filter(row => row.length > 0);
+
+  // Crée le workbook Excel
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // Style largeur colonnes
+  ws["!cols"] = rows[0].map(() => ({ wch: 20 }));
+
+  XLSX.utils.book_append_sheet(wb, ws, "Résultats");
+
+  // Télécharge
+  const date = new Date().toLocaleDateString("fr-FR").replace(/\//g, "-");
+  XLSX.writeFile(wb, "RT_Mouscron_Resultats_" + date + ".xlsx");
 }
 
 // ===== SEND =====
