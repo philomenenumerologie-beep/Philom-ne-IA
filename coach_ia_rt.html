@@ -491,7 +491,8 @@ async function tryLogin() {
   loginBtn.disabled = true;
   loginError.style.display = "none";
   try {
-    const resp = await fetch(COACH_URL, {
+    const resp = await fetch(API_BASE + "/prepa", {
+
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: "Bonjour", userId, categorie, clubKey: key, deviceId })
