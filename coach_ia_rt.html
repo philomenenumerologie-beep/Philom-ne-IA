@@ -491,8 +491,7 @@ async function tryLogin() {
   loginBtn.disabled = true;
   loginError.style.display = "none";
   try {
-    const resp = await fetch(API_BASE + "/prepa", {
-
+    const resp = await fetch(COACH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: "Bonjour", userId, categorie, clubKey: key, deviceId })
@@ -660,12 +659,11 @@ async function sendMessagePrepa(text) {
   addUserMsgPrepa(text);
   isLoading = true;
   setTyping(true);
-  const prepaMessage = "[PREPARATION PHYSIQUE RT MOUSCRON] " + text;
   try {
-    const resp = await fetch(COACH_URL, {
+    const resp = await fetch(API_BASE + "/prepa", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: prepaMessage, userId: userId + "_prepa", categorie, clubKey, deviceId })
+      body: JSON.stringify({ message: text, userId: userId + "_prepa", categorie, clubKey, deviceId })
     });
     const data = await resp.json();
     setTyping(false);
