@@ -94,43 +94,23 @@ body::before { content: ''; position: fixed; inset: 0; z-index: 0; background: r
 <script>
 const API_BASE = "https://philo-backend-by2c.onrender.com";
 const WHATSAPP_NUM = "33617123910";
+const SYSTEM_PROMPT = "Tu es Philomène I.A., l'assistante commerciale de Philomène IA. Tu crées des assistants IA personnalisés pour les professionnels : artisans (24 euros/mois), clubs de sport (5 a 39 euros/mois selon la taille), coiffeurs et estheticiennes (24 euros/mois), soignants (24 euros/mois). IMPORTANT : Tu ne reponds QUE aux questions sur les services de Philomene IA. Tu ne fais JAMAIS le travail d un coach, d un conseiller general ou d un assistant IA classique. Si on te demande ce qu un coach sportif fait, tu expliques ce que TON assistant IA Coach fait pour un club. Si on te demande ce que Philomene peut faire, tu donnes des exemples concrets et courts selon le metier. Tu invites toujours a choisir son metier pour voir le devis. Reponds en 3-4 phrases max, en francais, de facon simple et rassurante.";
+
 let etape = "accueil";
 let profil = {};
 let isLoading = false;
 
-const SF = [
-  "Séances complètes selon la catégorie",
-  "Schémas d'exercices automatiques",
-  "Rédaction des messages aux parents",
-  "Préparation physique des joueurs",
-  "Accessible depuis votre téléphone",
-  "Personnalisée aux couleurs du club"
-];
+const SF = ["Seances completes selon la categorie","Schemas d exercices automatiques","Redaction des messages aux parents","Preparation physique des joueurs","Accessible depuis votre telephone","Personnalisee aux couleurs du club"];
 
 const TARIFS = {
-  artisan: {
-    nom:"Assistant Artisan", emoji:"🔧",
-    desc:"Philomène répond à vos clients 24h/24, génère des devis avec analyse photo, gère les urgences et rédige vos messages.",
-    features:["Devis automatiques avec estimation matériaux","Analyse de photos de chantier","Bouton urgence pour vos clients","Réponses automatiques 24h/24","Rédaction de mails et messages","Personnalisée à votre nom et couleurs"],
-    mensuel:"24", annuel:"240", install:"99"
-  },
-  sport_solo: { nom:"Coach IA Solo — 1 coach", emoji:"🏃", desc:"Philomène génère vos séances complètes en quelques secondes, avec schémas d'exercices et rédaction des messages aux parents.", features:SF, mensuel:"5", annuel:"50", install:"49" },
-  sport_mini: { nom:"Coach IA Mini Club — jusqu'à 5 coachs", emoji:"⚽", desc:"Philomène assiste jusqu'à 5 coachs de votre club avec séances complètes, schémas et communication parents.", features:SF, mensuel:"9", annuel:"90", install:"69" },
-  sport_club: { nom:"Coach IA Club — jusqu'à 10 coachs", emoji:"🏆", desc:"Philomène assiste tous vos coachs — séances, schémas, prépa physique et communication avec les familles.", features:SF, mensuel:"15", annuel:"150", install:"99" },
-  sport_pro: { nom:"Coach IA Club Pro — jusqu'à 20 coachs", emoji:"🥇", desc:"Philomène pour les grands clubs — jusqu'à 20 coachs connectés, toutes catégories, prépa physique complète.", features:SF, mensuel:"25", annuel:"250", install:"99" },
-  sport_max: { nom:"Coach IA Club Max — Illimité", emoji:"🌟", desc:"Philomène pour les clubs ambitieux — coachs illimités, toutes fonctionnalités, support prioritaire.", features:["Coachs illimités","Séances complètes toutes catégories","Schémas d'exercices automatiques","Préparation physique et suivi","Rédaction des messages aux parents","Support prioritaire WhatsApp"], mensuel:"39", annuel:"390", install:"149" },
-  beaute: {
-    nom:"Assistant Beauté", emoji:"✂️",
-    desc:"Philomène répond aux demandes de rendez-vous, donne vos tarifs et conseille vos clients automatiquement.",
-    features:["Réponses aux demandes de RDV 24h/24","Tarifs et services automatiques","Conseils coupe ou tatouage par photo","Rédaction de messages clients","Zéro message sans réponse","Personnalisée à votre salon"],
-    mensuel:"24", annuel:"240", install:"99"
-  },
-  autre: {
-    nom:"Assistant Personnalisé", emoji:"✨",
-    desc:"Philomène s'adapte à votre activité — elle répond à vos clients, gère les questions répétitives et vous libère du temps.",
-    features:["Entièrement personnalisée à votre métier","Répond aux clients 24h/24","Gère les questions répétitives","Rédige vos messages et devis","Disponible sur votre site ou lien","Configuration complète incluse"],
-    mensuel:"24", annuel:"240", install:"99"
-  }
+  artisan: { nom:"Assistant Artisan", emoji:"🔧", desc:"Philomene repond a vos clients 24h/24, genere des devis avec analyse photo, gere les urgences et redige vos messages.", features:["Devis automatiques avec estimation materiaux","Analyse de photos de chantier","Bouton urgence pour vos clients","Reponses automatiques 24h/24","Redaction de mails et messages","Personnalisee a votre nom et couleurs"], mensuel:"24", annuel:"240", install:"99" },
+  sport_solo: { nom:"Coach IA Solo — 1 coach", emoji:"🏃", desc:"Philomene genere vos seances completes en quelques secondes, avec schemas d exercices et redaction des messages aux parents.", features:SF, mensuel:"5", annuel:"50", install:"49" },
+  sport_mini: { nom:"Coach IA Mini Club — jusqu a 5 coachs", emoji:"⚽", desc:"Philomene assiste jusqu a 5 coachs de votre club avec seances completes, schemas et communication parents.", features:SF, mensuel:"9", annuel:"90", install:"69" },
+  sport_club: { nom:"Coach IA Club — jusqu a 10 coachs", emoji:"🏆", desc:"Philomene assiste tous vos coachs — seances, schemas, prepa physique et communication avec les familles.", features:SF, mensuel:"15", annuel:"150", install:"99" },
+  sport_pro: { nom:"Coach IA Club Pro — jusqu a 20 coachs", emoji:"🥇", desc:"Philomene pour les grands clubs — jusqu a 20 coachs connectes, toutes categories, prepa physique complete.", features:SF, mensuel:"25", annuel:"250", install:"99" },
+  sport_max: { nom:"Coach IA Club Max — Illimite", emoji:"🌟", desc:"Philomene pour les clubs ambitieux — coachs illimites, toutes fonctionnalites, support prioritaire.", features:["Coachs illimites","Seances completes toutes categories","Schemas d exercices automatiques","Preparation physique et suivi","Redaction des messages aux parents","Support prioritaire WhatsApp"], mensuel:"39", annuel:"390", install:"149" },
+  beaute: { nom:"Assistant Beaute", emoji:"✂️", desc:"Philomene repond aux demandes de rendez-vous, donne vos tarifs et conseille vos clients automatiquement.", features:["Reponses aux demandes de RDV 24h/24","Tarifs et services automatiques","Conseils coupe ou tatouage par photo","Redaction de messages clients","Zero message sans reponse","Personnalisee a votre salon"], mensuel:"24", annuel:"240", install:"99" },
+  autre: { nom:"Assistant Personnalise", emoji:"✨", desc:"Philomene s adapte a votre activite — elle repond a vos clients, gere les questions repetitives et vous libere du temps.", features:["Entierement personnalisee a votre metier","Repond aux clients 24h/24","Gere les questions repetitives","Redige vos messages et devis","Disponible sur votre site ou lien","Configuration complete incluse"], mensuel:"24", annuel:"240", install:"99" }
 };
 
 setTimeout(function() {
@@ -167,12 +147,12 @@ function addDevisCard(key) {
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
   var av = document.createElement("div"); av.className = "avatar"; av.textContent = "✨";
   var bbl = document.createElement("div"); bbl.className = "bubble bot"; bbl.textContent = "Voici exactement ce que je peux faire pour vous 👇";
-  var msg = "Bonjour ! Je viens du site Philomène I.A.\n\n";
-  msg += "Je suis intéressé(e) par : " + t.emoji + " " + t.nom + "\n";
+  var msg = "Bonjour ! Je viens du site Philomene I.A.\n\n";
+  msg += "Je suis interesse(e) par : " + t.emoji + " " + t.nom + "\n";
   if (profil.sport) msg += "Sport : " + profil.sport + "\n";
-  if (profil.metier) msg += "Métier : " + profil.metier + "\n";
-  if (profil.detail) msg += "Détail : " + profil.detail + "\n";
-  msg += "\nPouvez-vous me contacter ? Merci 😊";
+  if (profil.metier) msg += "Metier : " + profil.metier + "\n";
+  if (profil.detail) msg += "Detail : " + profil.detail + "\n";
+  msg += "\nPouvez-vous me contacter ? Merci !";
   var card = document.createElement("div"); card.className = "devis-card";
   card.innerHTML =
     '<div class="devis-nom">' + t.emoji + ' ' + t.nom + '</div>' +
@@ -182,8 +162,8 @@ function addDevisCard(key) {
     '<div class="devis-prix"><div class="prix-label">Mensuel</div><div class="prix-val">' + t.mensuel + '€</div><div class="prix-unit">/ mois</div></div>' +
     '<div class="devis-prix"><div class="prix-label">Annuel</div><div class="prix-val">' + t.annuel + '€</div><div class="prix-unit">/ an • 2 mois offerts</div></div>' +
     '</div>' +
-    '<div class="devis-install">Installation unique : <strong>' + t.install + '€</strong> — configuration complète incluse</div>' +
-    '<a class="whatsapp-btn" href="https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent(msg) + '" target="_blank">💬 Je veux mon assistant Philomène !</a>';
+    '<div class="devis-install">Installation unique : <strong>' + t.install + '€</strong> — configuration complete incluse</div>' +
+    '<a class="whatsapp-btn" href="https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent(msg) + '" target="_blank">💬 Je veux mon assistant Philomene !</a>';
   bbl.appendChild(card); wrap.appendChild(av); wrap.appendChild(bbl);
   document.getElementById("messages").appendChild(wrap); scrollDown();
 }
@@ -270,7 +250,7 @@ async function handleChoice(value, label) {
 
   } else if (etape === "sport_formule") {
     etape = "fin";
-    addBotMsg("Excellent choix ! Voici votre formule Coach IA pour votre club de " + profil.sport + " :");
+    addBotMsg("Excellent choix ! Voici votre formule Coach IA pour votre club de " + (profil.sport || "sport") + " :");
     await sleep(600); addDevisCard(value);
 
   } else if (etape === "artisan_metier") {
@@ -311,13 +291,18 @@ async function handleUserInput(text) {
   isLoading = true; setTyping(true);
   try {
     var resp = await fetch(API_BASE + "/ask", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ conversation:[
-        { role:"system", content:"Tu es Philomène I.A., une assistante commerciale chaleureuse et élégante. Tu crées des assistants IA personnalisés pour les professionnels à des prix accessibles : de 5 à 39 euros par mois pour les clubs de sport, 24 euros par mois pour les artisans et autres. Tu réponds uniquement aux questions sur tes services de façon concise et rassurante." },
-        { role:"user", content:text }
-      ], userId:"philo_vitrine_" + Date.now() })
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        conversation: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: text }
+        ],
+        userId: "philo_vitrine_" + Date.now()
+      })
     });
-    var data = await resp.json(); setTyping(false);
+    var data = await resp.json();
+    setTyping(false);
     addBotMsg(data.answer || "Dites-moi quel est votre métier et je vous montre comment je peux vous aider 😊");
   } catch(e) {
     setTyping(false);
@@ -328,12 +313,16 @@ async function handleUserInput(text) {
 
 document.getElementById("sendBtn").addEventListener("click", function() {
   var text = document.getElementById("userInput").value.trim();
-  if (!text) return; document.getElementById("userInput").value = ""; handleUserInput(text);
+  if (!text) return;
+  document.getElementById("userInput").value = "";
+  handleUserInput(text);
 });
 document.getElementById("userInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     var text = e.target.value.trim();
-    if (!text) return; e.target.value = ""; handleUserInput(text);
+    if (!text) return;
+    e.target.value = "";
+    handleUserInput(text);
   }
 });
 </script>
