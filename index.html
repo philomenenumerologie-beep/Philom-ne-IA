@@ -1,156 +1,675 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Philomène I.A.</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Philomène I.A. — Votre Assistante IA Personnelle</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --cream: #f5f0e8;
+  --ink: #1a1410;
+  --purple: #4a1d96;
+  --purple2: #7c3aed;
+  --gold: #b8860b;
+  --gold2: #d4a017;
+  --rose: #9f1239;
+  --surface: rgba(245,240,232,0.06);
+  --border: rgba(245,240,232,0.12);
+  --dim: rgba(245,240,232,0.45);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <!-- ✅ Clerk (Connexion) : version correcte pour ton domaine -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_live_Y2xlcmsucGhpbG9tZW5laWEuY29tJA"
-    src="https://clerk.philomeneia.com/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
-  </script>
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: #0d0a14;
+color: var(–cream);
+height: 100vh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+position: relative;
+}
+
+/* ATMOSPHERE */
+body::before {
+content: ‘’;
+position: fixed; inset: 0; z-index: 0;
+background:
+radial-gradient(ellipse 80% 60% at 15% 10%, rgba(74,29,150,0.25) 0%, transparent 60%),
+radial-gradient(ellipse 60% 80% at 85% 90%, rgba(159,18,57,0.15) 0%, transparent 60%),
+radial-gradient(ellipse 100% 50% at 50% 50%, rgba(184,134,11,0.04) 0%, transparent 70%);
+pointer-events: none;
+}
+
+/* GRAIN */
+body::after {
+content: ‘’;
+position: fixed; inset: 0; z-index: 1;
+opacity: 0.025;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’/%3E%3C/svg%3E”);
+pointer-events: none;
+}
+
+/* SPLASH */
+#splash {
+position: fixed; inset: 0; z-index: 200;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+background: #0d0a14;
+transition: opacity 0.8s ease;
+}
+#splash.hidden { opacity: 0; pointer-events: none; }
+.splash-eyebrow {
+font-family: ‘DM Sans’, sans-serif;
+font-size: 10px; letter-spacing: 0.4em;
+text-transform: uppercase; color: var(–dim);
+margin-bottom: 20px;
+animation: fadeSlideUp 0.8s ease 0.2s both;
+}
+.splash-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: clamp(52px, 15vw, 88px);
+font-weight: 300; color: var(–cream);
+letter-spacing: 0.08em;
+line-height: 1;
+animation: fadeSlideUp 0.8s ease 0.4s both;
+}
+.splash-title span {
+background: linear-gradient(135deg, var(–gold2), var(–cream), var(–gold));
+-webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.splash-line {
+width: 1px; height: 60px;
+background: linear-gradient(180deg, transparent, var(–gold2), transparent);
+margin: 24px auto;
+animation: fadeSlideUp 0.8s ease 0.6s both;
+}
+.splash-sub {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 16px; font-style: italic;
+color: var(–dim); letter-spacing: 0.05em;
+animation: fadeSlideUp 0.8s ease 0.8s both;
+}
+@keyframes fadeSlideUp {
+from { opacity: 0; transform: translateY(16px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* TOPBAR */
+#topbar {
+position: relative; z-index: 10;
+display: flex; align-items: center; justify-content: space-between;
+padding: 14px 18px;
+border-bottom: 1px solid var(–border);
+background: rgba(13,10,20,0.8);
+backdrop-filter: blur(20px);
+}
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.logo-gem {
+width: 36px; height: 36px;
+background: linear-gradient(135deg, var(–purple), var(–rose));
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-size: 18px;
+box-shadow: 0 0 20px rgba(124,58,237,0.3);
+}
+.logo-text {}
+.logo-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px; font-weight: 600;
+background: linear-gradient(135deg, var(–gold2), var(–cream));
+-webkit-background-clip: text; -webkit-text-fill-color: transparent;
+letter-spacing: 0.05em;
+}
+.logo-sub { font-size: 9px; color: var(–dim); letter-spacing: 0.15em; text-transform: uppercase; }
+.status { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(–dim); }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* CHAT */
+#chat {
+flex: 1; overflow-y: auto; position: relative; z-index: 2;
+padding: 20px 14px 130px;
+scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+.bubble-wrap { display: flex; margin-bottom: 14px; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.bubble-wrap.bot { justify-content: flex-start; }
+.bubble-wrap.user { justify-content: flex-end; }
+
+.avatar {
+width: 32px; height: 32px; border-radius: 50%;
+background: linear-gradient(135deg, var(–purple), var(–rose));
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0; margin-right: 10px; margin-top: 3px;
+font-size: 15px;
+box-shadow: 0 0 14px rgba(124,58,237,0.25);
+}
+
+.bubble {
+max-width: min(84%, 380px);
+padding: 13px 16px; font-size: 14px; line-height: 1.7;
+white-space: pre-wrap;
+}
+.bubble.bot {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 18px; border-top-left-radius: 4px;
+color: var(–cream);
+}
+.bubble.user {
+background: linear-gradient(135deg, var(–purple), var(–purple2));
+border-radius: 18px; border-top-right-radius: 4px;
+color: #fff;
+}
+
+/* CHOICES */
+.choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.choice-btn {
+padding: 9px 14px;
+background: rgba(74,29,150,0.12);
+border: 1px solid rgba(124,58,237,0.25);
+border-radius: 10px; color: #c4b5fd;
+font-size: 13px; cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.15s; text-align: left;
+line-height: 1.4;
+}
+.choice-btn:active { background: rgba(124,58,237,0.25); transform: scale(0.98); }
+
+/* DEVIS CARD */
+.devis-card {
+background: linear-gradient(135deg, rgba(74,29,150,0.15), rgba(184,134,11,0.08));
+border: 1px solid rgba(212,160,23,0.25);
+border-radius: 16px; padding: 16px; margin-top: 12px;
+}
+.devis-nom {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px; font-weight: 600;
+color: var(–gold2); margin-bottom: 4px;
+}
+.devis-desc { font-size: 12px; color: var(–dim); margin-bottom: 14px; line-height: 1.5; }
+.devis-features { margin-bottom: 14px; }
+.devis-feature {
+display: flex; align-items: flex-start; gap: 8px;
+font-size: 13px; padding: 5px 0;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+color: var(–cream);
+}
+.devis-feature:last-child { border-bottom: none; }
+.check { color: #4ade80; flex-shrink: 0; font-size: 12px; margin-top: 2px; }
+.devis-prix-wrap { display: flex; gap: 10px; margin-bottom: 10px; }
+.devis-prix {
+flex: 1; text-align: center;
+background: rgba(0,0,0,0.3); border-radius: 10px;
+padding: 10px 8px;
+border: 1px solid rgba(255,255,255,0.08);
+}
+.prix-label { font-size: 10px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.prix-val { font-family: ‘Cormorant Garamond’, serif; font-size: 22px; font-weight: 600; color: var(–gold2); }
+.prix-unit { font-size: 10px; color: var(–dim); }
+.devis-install {
+text-align: center; font-size: 12px; color: var(–dim);
+margin-bottom: 12px; padding: 8px;
+background: rgba(255,255,255,0.04); border-radius: 8px;
+}
+.devis-install strong { color: var(–cream); }
+.whatsapp-btn {
+display: flex; align-items: center; justify-content: center; gap: 10px;
+width: 100%; padding: 13px;
+background: linear-gradient(135deg, #128C7E, #25D366);
+border: none; border-radius: 12px; color: #fff;
+font-size: 15px; font-weight: 700;
+cursor: pointer; font-family: ‘DM Sans’, sans-serif;
+box-shadow: 0 4px 16px rgba(37,211,102,0.25);
+text-decoration: none;
+}
+
+/* TYPING */
+.typing { display:flex; gap:5px; padding:14px 16px; }
+.typing span {
+width:6px; height:6px; border-radius:50%;
+background: var(–purple2); animation: bounce 1.2s infinite;
+}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+/* COMPOSER */
+#composer {
+position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+padding: 10px 14px 22px;
+background: linear-gradient(to top, rgba(13,10,20,0.98) 75%, transparent);
+}
+.composer-inner {
+display: flex; align-items: center; gap: 10px;
+background: rgba(255,255,255,0.06);
+border: 1px solid rgba(124,58,237,0.25);
+border-radius: 14px; padding: 10px 14px;
+backdrop-filter: blur(10px);
+}
+#userInput {
+flex: 1; background: transparent; border: none; outline: none;
+color: var(–cream); font-size: 15px;
+font-family: ‘DM Sans’, sans-serif;
+}
+#userInput::placeholder { color: var(–dim); }
+.send-btn {
+width: 42px; height: 42px; border-radius: 10px;
+background: linear-gradient(135deg, var(–purple), var(–purple2));
+border: none; color: #fff; font-size: 18px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; flex-shrink: 0;
+box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+}
+</style>
+
 </head>
+<body>
 
-<body class="theme-dark">
-  <!-- Topbar -->
-  <header id="topbar" role="banner">
-    <div class="topbar__left">
-      <button id="btnLogin" class="chip" aria-label="Se connecter">Connexion</button>
-      <button id="btnBuy" class="chip" aria-label="Acheter des tokens">Acheter</button>
+<!-- SPLASH -->
+
+<div id="splash">
+  <div class="splash-eyebrow">Assistants IA Personnalisés</div>
+  <div class="splash-title"><span>Philomène</span></div>
+  <div class="splash-line"></div>
+  <div class="splash-sub">Votre assistante intelligente, disponible 24h/24</div>
+</div>
+
+<!-- TOPBAR -->
+
+<header id="topbar">
+  <div class="logo-area">
+    <div class="logo-gem">✨</div>
+    <div class="logo-text">
+      <div class="logo-name">Philomène I.A.</div>
+      <div class="logo-sub">Assistants IA pour Professionnels</div>
     </div>
-
-    <div class="topbar__right">
-      <div id="tokenBadge" class="gem" aria-live="polite">
-        <span class="gem__icon" aria-hidden="true">💎</span>
-        <span id="tokenCount">2 945</span>
-      </div>
-      <button id="btnMenu" class="chip icon" aria-haspopup="true" aria-expanded="false">≡</button>
-    </div>
-
-    <nav id="menuDropdown" class="dropdown" hidden>
-      <button id="toggleTheme" class="dropdown__item">🌗 Mode jour / nuit</button>
-      <button id="openFaq" class="dropdown__item">❓ F.A.Q.</button>
-    </nav>
-  </header>
-
-  <div id="versionLine" aria-live="polite">
-    <span class="dot dot--on" aria-hidden="true"></span>
-    <span>Philomène I.A. — <strong id="appVersion">version 1.3</strong></span>
   </div>
+  <div class="status"><div class="dot"></div>En ligne</div>
+</header>
 
-  <main id="chat" role="main">
-    <!-- 🟣 Message d’accueil mis à jour -->
-    <div class="bubble bot">
-      <div class="bubble__content">
-        <p style="margin:0 0 8px 0;">Je suis <strong>Philomène, ton assistant personnel</strong>. Voici ce que nous pouvons faire <strong>ensemble</strong> :</p>
-        <ul style="margin:0;padding-left:18px;line-height:1.45">
-          <li>🗣️ Répondre à tes questions, rédiger, corriger, résumer.</li>
-          <li>📰 <strong>Actu importante en direct</strong> (à venir très vite).</li>
-          <li>📷 Analyser des images et te donner des explications.</li>
-          <li>🏷️ <strong>Scanner un code-barres</strong> (bêta) pour retrouver Nutri-Score et infos produit.</li>
-          <li>💰 Packs de tokens simples, pas d’abonnement.</li>
-          <li>🔒 Tes échanges restent privés entre toi et moi.</li>
-        </ul>
-        <p style="margin:10px 0 0 0;color:var(--text-dim)">Tu peux commencer à écrire en bas, ou m’envoyer une image.</p>
-      </div>
-    </div>
+<!-- CHAT -->
 
-    <div id="messages" aria-live="polite"></div>
-  </main>
+<div id="chat"><div id="messages"></div></div>
 
-  <footer id="composer">
-    <button id="plusBtn" class="fab" aria-label="Joindre">+</button>
+<!-- COMPOSER -->
 
-    <div class="inputWrap">
-      <input id="userInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" />
-      <button id="micBtn" class="iconBtn" aria-label="Parler">🎤</button>
-    </div>
+<div id="composer">
+  <div class="composer-inner">
+    <input id="userInput" placeholder="Répondez ou posez une question…" type="text"/>
+    <button class="send-btn" id="sendBtn">➤</button>
+  </div>
+</div>
 
-    <button id="sendBtn" class="sendBtn" aria-label="Envoyer">➤</button>
+<script>
+const API_BASE = "https://philo-backend-by2c.onrender.com";
+const WHATSAPP_NUM = "33617123910";
 
-    <div id="attachSheet" class="sheet" hidden>
-      <div class="sheet__title">Joindre…</div>
-      <div class="sheet__row">
-        <button id="pickLibrary" class="pill">📷 Photothèque</button>
-        <button id="takePhoto" class="pill">📸 Prendre une photo</button>
-        <button id="pickFile" class="pill">🗂️ Choisir un fichier</button>
-        <button id="closeSheet" class="pill pill--ghost">Fermer</button>
-      </div>
-      <input id="imgLibraryInput" type="file" accept="image/*" hidden />
-      <input id="imgCameraInput" type="file" accept="image/*" capture="environment" hidden />
-      <input id="docInput" type="file" hidden />
-    </div>
-  </footer>
+let etape = "accueil";
+let profil = {};
+let isLoading = false;
 
-  <dialog id="modal" class="modal" aria-modal="true">
-    <div class="modal__card">
-      <div id="modalTitle" class="modal__title">Titre</div>
-      <div id="modalBody" class="modal__body">Contenu…</div>
-      <div class="modal__actions">
-        <button id="modalClose" class="pill pill--ghost">Fermer</button>
-      </div>
-    </div>
-  </dialog>
+const TARIFS = {
+  artisan: {
+    nom: "Assistant Artisan",
+    emoji: "🔧",
+    desc: "Philomène répond à vos clients 24h/24, génère des devis automatiques avec analyse photo, gère les urgences et rédige vos messages.",
+    features: [
+      "Devis automatiques avec estimation matériaux",
+      "Analyse de photos de chantier",
+      "Bouton urgence pour vos clients",
+      "Réponses automatiques 24h/24",
+      "Rédaction de mails et messages",
+      "Personnalisée à votre nom et couleurs"
+    ],
+    mensuel: "24", annuel: "240", install: "99"
+  },
+  sport_solo: {
+    nom: "Coach IA Solo",
+    emoji: "⚽",
+    desc: "Philomène génère vos séances complètes en quelques secondes, avec schémas d'exercices et messages automatiques aux parents.",
+    features: [
+      "Séances complètes selon la catégorie",
+      "Schémas d'exercices automatiques",
+      "Messages WhatsApp aux parents",
+      "Préparation physique des joueurs",
+      "Accessible depuis votre téléphone",
+      "Personnalisée aux couleurs du club"
+    ],
+    mensuel: "19", annuel: "190", install: "79"
+  },
+  sport_club: {
+    nom: "Club Sport — jusqu'à 10 coachs",
+    emoji: "🏆",
+    desc: "Philomène assiste tous vos coachs — séances, schémas, préparation physique et communication avec les familles.",
+    features: [
+      "Jusqu'à 10 coachs connectés",
+      "Séances complètes toutes catégories",
+      "Schémas d'exercices automatiques",
+      "Préparation physique et suivi",
+      "Messages aux parents automatiques",
+      "Personnalisée aux couleurs du club"
+    ],
+    mensuel: "29", annuel: "290", install: "99"
+  },
+  beaute: {
+    nom: "Assistant Beauté",
+    emoji: "✂️",
+    desc: "Philomène répond aux demandes de rendez-vous, donne vos tarifs et conseille vos clients automatiquement.",
+    features: [
+      "Réponses aux demandes de RDV 24h/24",
+      "Tarifs et services automatiques",
+      "Conseils coupe ou tatouage par photo",
+      "Rédaction de messages clients",
+      "Zéro message WhatsApp sans réponse",
+      "Personnalisée à votre salon"
+    ],
+    mensuel: "24", annuel: "240", install: "99"
+  },
+  autre: {
+    nom: "Assistant Personnalisé",
+    emoji: "✨",
+    desc: "Philomène s'adapte à votre activité — elle répond à vos clients, gère les questions répétitives et vous libère du temps.",
+    features: [
+      "Entièrement personnalisée à votre métier",
+      "Répond aux clients 24h/24",
+      "Gère les questions répétitives",
+      "Rédige vos messages et devis",
+      "Disponible sur votre site ou lien",
+      "Configuration complète incluse"
+    ],
+    mensuel: "24", annuel: "240", install: "99"
+  }
+};
 
-  <dialog id="faqModal" class="modal" data-kind="faq" aria-modal="true">
-    <div class="modal__card">
-      <div class="modal__title">💬 Foire aux questions</div>
-      <div class="modal__body">
-        <p><strong>Quelle IA utilise Philomène ?</strong><br>Philomène I.A. fonctionne avec un modèle avancé de conversation.</p>
-        <p><strong>Comment fonctionnent les tokens ?</strong><br>Chaque échange consomme des tokens selon la longueur du message.</p>
-        <p><strong>Packs disponibles</strong><br>
-          💎 <strong>1 000 000</strong> tokens → <strong>5 €</strong><br>
-          💎 <strong>2 000 000</strong> tokens → <strong>10 €</strong><br>
-          💎 <strong>4 000 000</strong> tokens → <strong>20 €</strong><br>
-          🎁 <strong>Premier achat : +50 % offerts</strong>
-        </p>
-        <p><strong>Abonnement ?</strong><br>Non, vous payez uniquement ce que vous consommez.</p>
-      </div>
-      <div class="modal__actions">
-        <button id="faqClose" class="pill pill--ghost">Fermer</button>
-      </div>
-    </div>
-  </dialog>
+// ===== SPLASH =====
+setTimeout(() => {
+  document.getElementById("splash").classList.add("hidden");
+  setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    init();
+  }, 800);
+}, 2800);
 
-  <dialog id="payModal" class="modal" aria-modal="true">
-    <div class="modal__card">
-      <div class="modal__title">Acheter des tokens</div>
-      <div class="modal__body">
-        <div class="packsRow" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-          <button class="pill" data-pack="5">5€ • 1M</button>
-          <button class="pill" data-pack="10">10€ • 2M</button>
-          <button class="pill" data-pack="20">20€ • 4M</button>
-        </div>
-        <div id="paypal-buttons" style="margin:8px 0 4px 0"></div>
-        <div style="margin-top:6px;color:var(--text-dim);font-size:14px">
-          🎁 Premier achat : <strong>+50%</strong> de tokens offerts.
-        </div>
-      </div>
-      <div class="modal__actions">
-        <button id="payClose" class="pill pill--ghost">Fermer</button>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- ❌ Enlevé : mention “Propulsé par GPT-5” -->
-  <!-- <div id="techFooter">…</div> -->
-
-  <script src="scripts.js" defer></script>
-
-  <!-- ✅ Script pour ouvrir la fenêtre Clerk -->
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      await window.Clerk.load({
-        publishableKey: "pk_live_Y2xlcmsucGhpbG9tZW5laWEuY29tJA",
-      });
-      document.getElementById("btnLogin").addEventListener("click", () => {
-        window.Clerk.openSignIn();
-      });
+// ===== MESSAGES =====
+function addBotMsg(text, choices) {
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap bot";
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "✨";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+  bubble.textContent = text;
+  if (choices && choices.length) {
+    const div = document.createElement("div");
+    div.className = "choices";
+    choices.forEach(c => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.textContent = c.label;
+      btn.onclick = () => { btn.disabled = true; handleChoice(c.value, c.label); };
+      div.appendChild(btn);
     });
-  </script>
+    bubble.appendChild(div);
+  }
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  document.getElementById("messages").appendChild(wrap);
+  scrollDown();
+}
+
+function addUserMsg(text) {
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap user";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble user";
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+  document.getElementById("messages").appendChild(wrap);
+  scrollDown();
+}
+
+function addDevisCard(key) {
+  const t = TARIFS[key];
+  if (!t) return;
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap bot";
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "✨";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+  bubble.textContent = "Voici exactement ce que je peux faire pour vous 👇";
+
+  const msg = buildWhatsAppMsg(t);
+
+  const card = document.createElement("div");
+  card.className = "devis-card";
+  card.innerHTML =
+    '<div class="devis-nom">' + t.emoji + ' ' + t.nom + '</div>' +
+    '<div class="devis-desc">' + t.desc + '</div>' +
+    '<div class="devis-features">' +
+    t.features.map(f => '<div class="devis-feature"><span class="check">✓</span><span>' + f + '</span></div>').join("") +
+    '</div>' +
+    '<div class="devis-prix-wrap">' +
+    '<div class="devis-prix"><div class="prix-label">Mensuel</div><div class="prix-val">' + t.mensuel + '€</div><div class="prix-unit">/ mois</div></div>' +
+    '<div class="devis-prix"><div class="prix-label">Annuel</div><div class="prix-val">' + t.annuel + '€</div><div class="prix-unit">/ an</div></div>' +
+    '</div>' +
+    '<div class="devis-install">Installation unique : <strong>' + t.install + '€</strong> — configuration complète incluse</div>' +
+    '<a class="whatsapp-btn" href="https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent(msg) + '" target="_blank">💬 Je veux mon assistant Philomène !</a>';
+
+  bubble.appendChild(card);
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  document.getElementById("messages").appendChild(wrap);
+  scrollDown();
+}
+
+function buildWhatsAppMsg(t) {
+  let msg = "Bonjour ! Je viens du site Philomène I.A.\n\n";
+  msg += "Je suis intéressé(e) par : " + t.emoji + " " + t.nom + "\n";
+  if (profil.prenom) msg += "Mon prénom : " + profil.prenom + "\n";
+  if (profil.metier) msg += "Mon métier : " + profil.metier + "\n";
+  if (profil.detail) msg += "Détail : " + profil.detail + "\n";
+  msg += "\nPouvez-vous me contacter ? Merci ! 😊";
+  return msg;
+}
+
+function setTyping(on) {
+  if (on) {
+    const wrap = document.createElement("div");
+    wrap.className = "bubble-wrap bot";
+    wrap.id = "typing";
+    wrap.innerHTML = '<div class="avatar">✨</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+    document.getElementById("messages").appendChild(wrap);
+    scrollDown();
+  } else {
+    const t = document.getElementById("typing");
+    if (t) t.remove();
+  }
+}
+
+function scrollDown() {
+  setTimeout(() => {
+    const chat = document.getElementById("chat");
+    chat.scrollTop = chat.scrollHeight;
+  }, 100);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ===== FLUX =====
+async function init() {
+  await sleep(400);
+  addBotMsg("Bonjour ! 👋 Je suis Philomène.\n\nJe crée des assistants IA personnalisés pour les professionnels — disponibles 24h/24 pour répondre à vos clients.\n\nVous exercez quel métier ?", [
+    { label: "🔧 Artisan — plombier, électricien, menuisier...", value: "artisan" },
+    { label: "⚽ Coach sportif ou club", value: "sport" },
+    { label: "✂️ Coiffeur, tatoueur, esthéticienne", value: "beaute" },
+    { label: "🏥 Santé — kiné, infirmière, ostéo...", value: "sante" },
+    { label: "🏢 Autre activité", value: "autre" }
+  ]);
+  etape = "accueil";
+}
+
+async function handleChoice(value, label) {
+  addUserMsg(label);
+  setTyping(true);
+  await sleep(900);
+  setTyping(false);
+
+  if (etape === "accueil") {
+    profil.type = value;
+
+    if (value === "artisan") {
+      etape = "artisan_metier";
+      addBotMsg("Quel est votre métier ?", [
+        { label: "🔧 Plombier", value: "Plombier" },
+        { label: "⚡ Électricien", value: "Électricien" },
+        { label: "🪵 Menuisier / Charpentier", value: "Menuisier" },
+        { label: "🎨 Peintre / Carreleur", value: "Peintre" },
+        { label: "🏠 Multi-services", value: "Artisan multi-services" },
+        { label: "Autre métier", value: "Artisan" }
+      ]);
+
+    } else if (value === "sport") {
+      etape = "sport_type";
+      addBotMsg("Vous êtes coach seul ou vous représentez un club ?", [
+        { label: "🏃 Coach seul", value: "sport_solo" },
+        { label: "🏆 Club avec plusieurs coachs", value: "sport_club" }
+      ]);
+
+    } else if (value === "beaute") {
+      etape = "beaute_type";
+      addBotMsg("Quelle est votre activité ?", [
+        { label: "💇 Salon de coiffure", value: "Coiffeur" },
+        { label: "🎨 Tatoueur / Piercing", value: "Tatoueur" },
+        { label: "💅 Esthéticienne / Nail art", value: "Esthéticienne" },
+        { label: "💈 Barbier", value: "Barbier" }
+      ]);
+
+    } else if (value === "sante") {
+      etape = "sante_type";
+      addBotMsg("Quelle est votre spécialité ?", [
+        { label: "🏥 Infirmière libérale", value: "Infirmière libérale" },
+        { label: "💆 Kinésithérapeute", value: "Kinésithérapeute" },
+        { label: "🦴 Ostéopathe", value: "Ostéopathe" },
+        { label: "🥗 Naturopathe / Coach nutrition", value: "Naturopathe" }
+      ]);
+
+    } else if (value === "autre") {
+      etape = "autre_libre";
+      addBotMsg("Décrivez-moi votre activité en quelques mots 😊");
+    }
+
+  } else if (etape === "artisan_metier") {
+    profil.metier = value;
+    etape = "artisan_probleme";
+    addBotMsg("Quel est votre plus grand problème au quotidien ?", [
+      { label: "📞 Trop d'appels pendant le travail", value: "appels" },
+      { label: "⏰ Pas le temps de répondre aux clients", value: "temps" },
+      { label: "💰 Faire des devis prend trop de temps", value: "devis" },
+      { label: "😴 Les clients écrivent en dehors des heures", value: "heures" }
+    ]);
+
+  } else if (etape === "artisan_probleme") {
+    profil.probleme = value;
+    etape = "devis";
+    addBotMsg("Je comprends parfaitement — c'est exactement pour ça que j'existe ! 💜\n\nEn tant que " + profil.metier + ", voici ce que Philomène fera pour vous :");
+    await sleep(600);
+    addDevisCard("artisan");
+
+  } else if (etape === "sport_type") {
+    profil.sport = value;
+    etape = "sport_discipline";
+    addBotMsg("Quel sport pratiquez-vous ?", [
+      { label: "⚽ Football", value: "Football" },
+      { label: "🥊 Boxe / Arts martiaux", value: "Boxe" },
+      { label: "🏀 Basketball / Handball", value: "Basketball" },
+      { label: "🎾 Tennis / Padel", value: "Tennis" },
+      { label: "🏊 Natation / Athlétisme", value: "Athlétisme" },
+      { label: "Autre sport", value: "Sport" }
+    ]);
+
+  } else if (etape === "sport_discipline") {
+    profil.discipline = value;
+    etape = "devis";
+    const key = profil.sport === "sport_solo" ? "sport_solo" : "sport_club";
+    addBotMsg("Parfait ! Voici ce que Philomène peut faire pour votre club de " + value + " :");
+    await sleep(600);
+    addDevisCard(key);
+
+  } else if (etape === "beaute_type" || etape === "sante_type") {
+    profil.metier = value;
+    etape = "devis";
+    const key = etape === "sante_type" ? "autre" : "beaute";
+    addBotMsg("En tant que " + value + ", voici comment Philomène peut vous aider :");
+    await sleep(600);
+    addDevisCard(etape === "sante_type" ? "autre" : "beaute");
+  }
+}
+
+async function handleUserInput(text) {
+  if (!text.trim() || isLoading) return;
+  addUserMsg(text);
+
+  if (etape === "autre_libre") {
+    profil.detail = text;
+    etape = "devis";
+    setTyping(true);
+    await sleep(1200);
+    setTyping(false);
+    addBotMsg("Très bien ! Voici comment Philomène peut s'adapter à votre activité :");
+    await sleep(500);
+    addDevisCard("autre");
+    return;
+  }
+
+  // Question libre → IA répond
+  isLoading = true;
+  setTyping(true);
+  try {
+    const resp = await fetch(API_BASE + "/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        conversation: [
+          { role: "system", content: "Tu es Philomène I.A., une assistante commerciale élégante et chaleureuse. Tu crées des assistants IA personnalisés pour les professionnels (artisans, clubs de sport, coiffeurs, soignants) à des prix accessibles : 19€ à 29€/mois. Tu réponds uniquement aux questions sur tes services. Tu es concise, rassurante, et tu invites toujours le visiteur à découvrir son assistant personnalisé. Si on te demande autre chose, tu ramènes gentiment vers la présentation de tes services." },
+          { role: "user", content: text }
+        ],
+        userId: "philo_vitrine_" + Date.now()
+      })
+    });
+    const data = await resp.json();
+    setTyping(false);
+    addBotMsg(data.answer || "Je suis là pour vous présenter votre assistant personnalisé ! Dites-moi quel est votre métier 😊");
+  } catch {
+    setTyping(false);
+    addBotMsg("Une question ? Dites-moi quel est votre métier et je vous montre exactement comment je peux vous aider 😊");
+  }
+  isLoading = false;
+}
+
+// EVENTS
+document.getElementById("sendBtn").addEventListener("click", () => {
+  const text = document.getElementById("userInput").value.trim();
+  if (!text) return;
+  document.getElementById("userInput").value = "";
+  handleUserInput(text);
+});
+document.getElementById("userInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    const text = e.target.value.trim();
+    if (!text) return;
+    e.target.value = "";
+    handleUserInput(text);
+  }
+});
+</script>
+
 </body>
 </html>
