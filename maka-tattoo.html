@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Maka Tattoo — Assistante IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07070d;
+  --surface2: #161625;
+  --border: rgba(255,255,255,0.07);
+  --text: #e8e4f0;
+  --dim: #7777a0;
+  --gold: #c9a84c;
+  --gold2: #f0d080;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+body::before { content: ''; position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse 60% 50% at 15% 10%, rgba(155,107,255,0.07) 0%, transparent 60%), radial-gradient(ellipse 50% 60% at 85% 90%, rgba(201,168,76,0.05) 0%, transparent 60%); pointer-events: none; }
+
+#splash { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(–bg); transition: opacity 0.8s ease; }
+#splash.gone { opacity: 0; pointer-events: none; }
+.splash-icon { font-size: 56px; margin-bottom: 20px; animation: up 0.7s ease 0.2s both; filter: drop-shadow(0 0 20px rgba(201,168,76,0.4)); }
+.splash-name { font-family: ‘Cinzel’, serif; font-size: 42px; font-weight: 700; color: var(–gold); letter-spacing: 0.12em; text-transform: uppercase; animation: up 0.7s ease 0.5s both; }
+.splash-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(–gold), transparent); margin: 18px auto; animation: up 0.7s ease 0.7s both; }
+.splash-sub { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(–dim); animation: up 0.7s ease 0.9s both; }
+@keyframes up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+#topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; background: rgba(7,7,13,0.95); border-bottom: 1px solid rgba(201,168,76,0.2); }
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.logo-icon { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #1a1a2e, #2a1a4a); border: 1.5px solid var(–gold); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 16px rgba(201,168,76,0.25); }
+.logo-name { font-family: ‘Cinzel’, serif; font-size: 15px; font-weight: 700; color: var(–gold); letter-spacing: 0.06em; }
+.logo-sub { font-size: 10px; color: var(–dim); letter-spacing: 0.1em; text-transform: uppercase; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+#chat { flex: 1; overflow-y: auto; padding: 20px 15px 130px; position: relative; z-index: 1; }
+.bubble-wrap { display: flex; margin-bottom: 14px; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.bubble-wrap.bot { justify-content: flex-start; }
+.bubble-wrap.user { justify-content: flex-end; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #1a1a2e, #2a1a4a); border: 1px solid var(–gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px; margin-top: 2px; font-size: 16px; }
+.bubble { max-width: min(82%, 360px); padding: 12px 15px; border-radius: 18px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
+.bubble.bot { background: var(–surface2); border: 1px solid var(–border); border-top-left-radius: 4px; color: var(–text); }
+.bubble.user { background: linear-gradient(135deg, #2a1a4a, #1a0a3a); border: 1px solid rgba(155,107,255,0.2); border-top-right-radius: 4px; color: #ddd8f8; }
+
+.quick-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.qa-btn { padding: 7px 12px; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius: 20px; color: var(–gold); font-size: 12px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; }
+
+.devis-card { background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04)); border: 1px solid rgba(201,168,76,0.25); border-radius: 14px; padding: 14px; margin-top: 10px; }
+.devis-title { font-family: ‘Cinzel’, serif; font-size: 13px; color: var(–gold); margin-bottom: 10px; letter-spacing: 0.05em; }
+.devis-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(–dim); }
+.devis-row span:last-child { color: var(–text); font-weight: 500; }
+.devis-total { display: flex; justify-content: space-between; margin-top: 10px; font-size: 16px; font-weight: 600; }
+.devis-total span:last-child { color: var(–gold); }
+.rdv-btn { display: block; width: 100%; margin-top: 12px; padding: 11px; text-align: center; background: linear-gradient(135deg, var(–gold), var(–gold2)); color: #1a1000; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: ‘DM Sans’, sans-serif; text-decoration: none; }
+
+.typing { display:flex; gap:4px; padding:12px 14px; }
+.typing span { width:6px; height:6px; border-radius:50%; background: var(–dim); animation: bounce 1.2s infinite; }
+.typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+#composer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 10px 14px 22px; background: linear-gradient(to top, rgba(7,7,13,0.98) 75%, transparent); }
+.composer-inner { display: flex; align-items: center; gap: 10px; background: var(–surface2); border: 1px solid rgba(201,168,76,0.2); border-radius: 14px; padding: 10px 14px; }
+#userInput { flex: 1; background: transparent; border: none; outline: none; color: var(–text); font-size: 15px; font-family: ‘DM Sans’, sans-serif; caret-color: var(–gold); }
+#userInput::placeholder { color: var(–dim); }
+.send-btn { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(–gold), var(–gold2)); border: none; color: #1a1000; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+
+#watermark { position: fixed; bottom: 84px; right: 16px; font-size: 9px; color: rgba(255,255,255,0.12); letter-spacing: 0.08em; z-index: 5; }
+</style>
+
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-icon">🖤</div>
+  <div class="splash-name">Maka Tattoo</div>
+  <div class="splash-line"></div>
+  <div class="splash-sub">Assistante IA • Disponible 24h/24</div>
+</div>
+
+<header id="topbar">
+  <div class="logo-area">
+    <div class="logo-icon">🖤</div>
+    <div>
+      <div class="logo-name">MAKA TATTOO</div>
+      <div class="logo-sub">Assistante IA • 24h/24</div>
+    </div>
+  </div>
+  <div class="status-dot"></div>
+</header>
+
+<div id="chat"><div id="messages"></div></div>
+
+<div id="composer">
+  <div class="composer-inner">
+    <input id="userInput" placeholder="Posez votre question…" type="text"/>
+    <button class="send-btn" id="sendBtn">➤</button>
+  </div>
+</div>
+
+<div id="watermark">Propulsé par Philomène IA</div>
+
+<script>
+const API_BASE = "https://philo-backend-by2c.onrender.com";
+const WHATSAPP_NUM = "33617123910";
+const SYSTEM_PROMPT = "Tu es l'assistante IA de Maka Tattoo, un salon de tatouage professionnel. Tu reponds aux questions des clients de facon chaleureuse, precise et professionnelle.\n\nTARIFS PAR TAILLE (prix indicatifs) :\n- Tres petit (moins de 4cm) : a partir de 80 euros\n- Petit (4-8cm) : 80 a 150 euros\n- Moyen (8-15cm) : 150 a 300 euros\n- Grand (15-25cm) : 300 a 600 euros\n- Tres grand / piece complete (plus de 25cm) : 600 euros et plus\n- Tarif horaire : 100 a 150 euros par heure selon complexite\n\nFACTEURS QUI INFLUENCENT LE PRIX :\n- Style : minimaliste (moins cher), geometrique, mandala, japonais, realiste (plus cher)\n- Couleurs : noir et gris moins cher que couleur\n- Emplacement : zones sensibles (cotes, nuque, mains) = majoration\n- Complexite des details\n\nSOINS APRES TATOUAGE :\n- Garder le film protecteur 2-4h puis retirer delicatement\n- Laver 2-3 fois par jour avec savon doux pH neutre, eau tiede\n- Appliquer creme cicatrisante fine couche (baume tatoueur, Bepanthen, beurre kariti)\n- NE PAS gratter ni arracher les croutes\n- Eviter soleil, piscine, mer, sauna pendant 3-4 semaines\n- Cicatrisation surface : 3-4 semaines. Complete : 2-6 mois\n- SPF 50+ obligatoire apres cicatrisation\n\nFAQ FREQUENTES :\n- Douleur ? Oui selon la zone. Cotes, mains, nuque = plus douloureux. Bras, cuisses = plus supportable.\n- Duree ? Selon la taille : 1h a plusieurs heures. Grandes pieces = plusieurs seances.\n- Apporter son propre dessin ? Oui, Maka peut aussi creer un design sur mesure.\n- Retouches incluses ? Oui, une retouche de controle incluse 1-2 mois apres.\n- Grossesse ? Non, deconseille pendant la grossesse.\n- Age minimum ? 18 ans.\n- Preparation ? Bien manger avant, peau hydratee, eviter alcool 24h avant.\n\nPour les devis precis, invite toujours le client a envoyer une photo de son projet par WhatsApp. Sois concise (3-5 phrases max), chaleureuse, professionnelle. Reponds en francais.";
+
+let isLoading = false;
+let userId = "maka_" + (localStorage.getItem("maka_uid") || Math.random().toString(36).slice(2,10));
+localStorage.setItem("maka_uid", userId.replace("maka_",""));
+
+setTimeout(function() {
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function() { document.getElementById("splash").style.display = "none"; init(); }, 800);
+}, 2800);
+
+function addBotMsg(text, withActions, devis) {
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
+  var av = document.createElement("div"); av.className = "avatar"; av.textContent = "🖤";
+  var bbl = document.createElement("div"); bbl.className = "bubble bot"; bbl.textContent = text;
+  if (devis) {
+    var card = document.createElement("div"); card.className = "devis-card";
+    card.innerHTML =
+      '<div class="devis-title">✦ Estimation indicative</div>' +
+      '<div class="devis-row"><span>Style</span><span>' + devis.style + '</span></div>' +
+      '<div class="devis-row"><span>Taille estimée</span><span>' + devis.taille + '</span></div>' +
+      '<div class="devis-row"><span>Durée estimée</span><span>' + devis.duree + '</span></div>' +
+      '<div class="devis-total"><span>Fourchette</span><span>' + devis.prix + '</span></div>' +
+      '<a class="rdv-btn" href="https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent("Bonjour Maka ! Je suis intéressé(e) par un tatouage. Je vous envoie mon projet 📸") + '" target="_blank">📸 Envoyer mon projet sur WhatsApp</a>';
+    bbl.appendChild(card);
+  }
+  if (withActions) {
+    var qa = document.createElement("div"); qa.className = "quick-actions";
+    qa.innerHTML =
+      '<button class="qa-btn" onclick="sendMsg(\'Combien coûte un tatouage ?\')">💰 Tarifs</button>' +
+      '<button class="qa-btn" onclick="sendMsg(\'Comment soigner mon tatouage ?\')">🩹 Soins</button>' +
+      '<button class="qa-btn" onclick="sendMsg(\'Est-ce que ça fait mal ?\')">😬 Douleur</button>' +
+      '<button class="qa-btn" onclick="sendMsg(\'Vous faites quels styles ?\')">🎨 Styles</button>' +
+      '<button class="qa-btn" onclick="sendMsg(\'Comment prendre rendez-vous ?\')">📅 RDV</button>';
+    bbl.appendChild(qa);
+  }
+  wrap.appendChild(av); wrap.appendChild(bbl);
+  document.getElementById("messages").appendChild(wrap);
+  setTimeout(function(){ document.getElementById("chat").scrollTop = 99999; }, 100);
+}
+
+function addUserMsg(text) {
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
+  var bbl = document.createElement("div"); bbl.className = "bubble user"; bbl.textContent = text;
+  wrap.appendChild(bbl); document.getElementById("messages").appendChild(wrap);
+  setTimeout(function(){ document.getElementById("chat").scrollTop = 99999; }, 100);
+}
+
+function setTyping(on) {
+  if (on) {
+    var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot"; wrap.id = "typing";
+    wrap.innerHTML = '<div class="avatar">🖤</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+    document.getElementById("messages").appendChild(wrap);
+    setTimeout(function(){ document.getElementById("chat").scrollTop = 99999; }, 100);
+  } else { var t = document.getElementById("typing"); if (t) t.remove(); }
+}
+
+function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
+
+async function init() {
+  await sleep(400);
+  addBotMsg("Bonjour ! 👋 Je suis l'assistante de Maka Tattoo.\n\nJe peux vous aider avec les tarifs, les styles, les soins après tatouage et les demandes de RDV.\n\nQue puis-je faire pour vous ? 🖤", true);
+}
+
+async function sendMsg(text) {
+  if (!text || isLoading) return;
+  addUserMsg(text); isLoading = true; setTyping(true);
+  try {
+    var resp = await fetch(API_BASE + "/maka", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        message: text,
+        userId: userId,
+        systemPrompt: SYSTEM_PROMPT
+      })
+    });
+    var data = await resp.json();
+    setTyping(false);
+    var answer = data.answer || "Je suis là pour vous aider ! Posez-moi votre question 🖤";
+
+    var devis = null;
+    var lower = text.toLowerCase();
+    if ((lower.includes("combien") || lower.includes("prix") || lower.includes("tarif") || lower.includes("devis")) &&
+        (lower.includes("cm") || lower.includes("petit") || lower.includes("grand") || lower.includes("moyen") || lower.includes("bras") || lower.includes("dos") || lower.includes("cheville"))) {
+      if (lower.includes("petit") || lower.includes("4") || lower.includes("5") || lower.includes("6") || lower.includes("7") || lower.includes("8")) {
+        devis = { style:"À préciser", taille:"Petit (4-8cm)", duree:"1h environ", prix:"80€ – 150€" };
+      } else if (lower.includes("grand") || lower.includes("dos") || lower.includes("manche")) {
+        devis = { style:"À préciser", taille:"Grand (15cm+)", duree:"3h et plus", prix:"300€ – 600€+" };
+      } else if (lower.includes("moyen") || lower.includes("bras") || lower.includes("cuisse")) {
+        devis = { style:"À préciser", taille:"Moyen (8-15cm)", duree:"1h30 – 3h", prix:"150€ – 300€" };
+      }
+    }
+
+    addBotMsg(answer, false, devis);
+  } catch(e) {
+    setTyping(false);
+    addBotMsg("Une erreur s'est produite. Vous pouvez contacter Maka directement sur WhatsApp 🖤");
+  }
+  isLoading = false;
+}
+
+document.getElementById("sendBtn").addEventListener("click", function() {
+  var text = document.getElementById("userInput").value.trim();
+  if (!text) return; document.getElementById("userInput").value = ""; sendMsg(text);
+});
+document.getElementById("userInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") { var text = e.target.value.trim(); if (!text) return; e.target.value = ""; sendMsg(text); }
+});
+</script>
+
+</body>
+</html>
