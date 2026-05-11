@@ -127,15 +127,9 @@ let etape = "accueil";
 let profil = {};
 let isLoading = false;
 
-const SPORT_FEATURES = ["Séances complètes selon la catégorie","Schémas d'exercices automatiques","Messages WhatsApp aux parents","Préparation physique des joueurs","Accessible depuis votre téléphone","Personnalisée aux couleurs du club"];
 
-const TARIFS = {
-  artisan: { nom:"Assistant Artisan", emoji:"🔧", desc:"Philomène répond à vos clients 24h/24, génère des devis avec analyse photo, gère les urgences et rédige vos messages.", features:["Devis automatiques avec estimation matériaux","Analyse de photos de chantier","Bouton urgence pour vos clients","Réponses automatiques 24h/24","Rédaction de mails et messages","Personnalisée à votre nom et couleurs"], mensuel:"24", annuel:"240", install:"99" },
-  sport_solo: { nom:"Coach IA Solo — 1 coach", emoji:"🏃", desc:"Philomène génère vos séances complètes en quelques secondes, avec schémas d'exercices et messages automatiques aux parents.", features:SPORT_FEATURES, mensuel:"5", annuel:"50", install:"49" },
-  sport_mini: { nom:"Coach IA Mini Club — 5 coachs", emoji:"⚽", desc:"Philomène assiste jusqu'à 5 coachs de votre club avec séances, schémas et communication parents.", features:SPORT_FEATURES, mensuel:"9", annuel:"90", install:"69" },
-  sport_club: { nom:"Coach IA Club — 10 coachs", emoji:"🏆", desc:"Philomène assiste tous vos coachs — séances, schémas, prépa physique et communication avec les familles.", features:SPORT_FEATURES, mensuel:"15", annuel:"150", install:"99" },
-  sport_pro: { nom:"Coach IA Club Pro — 20 coachs", emoji:"🥇", desc:"Philomène pour les grands clubs — jusqu'à 20 coachs connectés, toutes catégories, prépa physique complète.", features:SPORT_FEATURES, mensuel:"25", annuel:"250", install:"99" },
-  sport_max: { nom:"Coach IA Club Max — Illimité", emoji:"🌟", desc:"Philomène pour les clubs ambitieux — coachs illimités, toutes fonctionnalités, support prioritaire.", features:["Coachs illimités","Séances complètes toutes catégories","Schémas d'exercices automatiques","Préparation physique et suivi","Messages aux parents automatiques","Support prioritaire WhatsApp"], mensuel:"39", annuel:"390", install:"149" },
+
+
   beaute: { nom:"Assistant Beauté", emoji:"✂️", desc:"Philomène répond aux demandes de rendez-vous, donne vos tarifs et conseille vos clients automatiquement.", features:["Réponses aux demandes de RDV 24h/24","Tarifs et services automatiques","Conseils coupe ou tatouage par photo","Rédaction de messages clients","Zéro message WhatsApp sans réponse","Personnalisée à votre salon"], mensuel:"24", annuel:"240", install:"99" },
   autre: { nom:"Assistant Personnalisé", emoji:"✨", desc:"Philomène s'adapte à votre activité — elle répond à vos clients, gère les questions répétitives et vous libère du temps.", features:["Entièrement personnalisée à votre métier","Répond aux clients 24h/24","Gère les questions répétitives","Rédige vos messages et devis","Disponible sur votre site ou lien","Configuration complète incluse"], mensuel:"24", annuel:"240", install:"99" }
 };
@@ -255,7 +249,7 @@ async function handleChoice(value, label) {
     addBotMsg("Je comprends parfaitement — c'est exactement pour ça que j'existe ! 💜\n\nEn tant que " + profil.metier + ", voici ce que Philomène fera pour vous :");
     await sleep(600); addDevisCard("artisan");
   } else if (etape === "sport_formule") {
-    profil.metier = value; etape = "fin";
+    profil.metier = TARIFS[value] ? TARIFS[value].nom : value; etape = "fin";
     addBotMsg("Excellent choix ! Voici votre formule Coach IA :");
     await sleep(600); addDevisCard(value);
   } else if (etape === "beaute_fin") {
