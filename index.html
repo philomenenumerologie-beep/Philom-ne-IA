@@ -290,15 +290,13 @@ async function handleUserInput(text) {
   }
   isLoading = true; setTyping(true);
   try {
-    var resp = await fetch(API_BASE + "/ask", {
+    var resp = await fetch(API_BASE + "/vitrine", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        conversation: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: text }
-        ],
-        userId: "philo_vitrine_" + Date.now()
+        message: text,
+        userId: "vitrine_" + Date.now(),
+        systemPrompt: SYSTEM_PROMPT
       })
     });
     var data = await resp.json();
