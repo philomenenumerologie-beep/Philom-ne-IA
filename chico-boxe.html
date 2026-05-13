@@ -21,17 +21,19 @@
   --border: rgba(201,168,76,0.2);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
+html, body {
   font-family: 'DM Sans', sans-serif;
   background: var(--black);
   color: var(--text);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
   overflow: hidden;
 }
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
 
-/* BACKGROUND */
 body::before {
 content: ‘’;
 position: fixed;
@@ -43,43 +45,79 @@ pointer-events: none;
 z-index: 0;
 }
 
-/* SPLASH SCREEN */
+/* ===== SPLASH ===== */
 #splash {
 position: fixed; inset: 0; z-index: 999;
-background: var(–black);
+background: #000;
 display: flex; flex-direction: column;
 align-items: center; justify-content: center;
-animation: splashOut 0.5s ease 2.5s forwards;
+gap: 0;
+/* Visible immédiatement, disparaît après 3s */
+opacity: 1;
+animation: splashOut 0.6s ease 3s forwards;
 }
+/* Cacher tout le reste pendant le splash */
+#topbar, #modeBar, #discBar, #sectionCoach, #sectionPrepa, #sectionPoids {
+animation: showApp 0s ease 3s both;
+}
+@keyframes showApp { from { visibility: hidden; } to { visibility: visible; } }
 @keyframes splashOut { to { opacity: 0; pointer-events: none; } }
-.splash-name {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 72px; color: var(–gold);
-letter-spacing: 0.2em;
-text-shadow: 0 0 40px rgba(201,168,76,0.6), 0 0 80px rgba(201,168,76,0.3);
-animation: nameIn 0.6s ease 0.3s both;
-}
-@keyframes nameIn { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+
 .splash-gloves {
-font-size: 60px; margin-bottom: 16px;
-animation: gloveIn 0.5s ease 0.1s both;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 28px;
+animation: glovesIn 1s ease 0.3s both;
+}
+.glove-left {
+font-size: 72px;
+display: inline-block;
+transform: scaleX(-1);
+animation: gloveLeft 1s ease 0.6s both;
 filter: drop-shadow(0 0 20px rgba(201,168,76,0.5));
 }
-@keyframes gloveIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
-.splash-sub {
-font-family: ‘Oswald’, sans-serif;
-font-size: 14px; color: var(–dim);
-letter-spacing: 0.3em; text-transform: uppercase;
-margin-top: 8px;
-animation: nameIn 0.6s ease 0.8s both;
+.glove-right {
+font-size: 72px;
+display: inline-block;
+animation: gloveRight 1s ease 0.6s both;
+filter: drop-shadow(0 0 20px rgba(201,168,76,0.5));
 }
-.splash-line {
-width: 120px; height: 2px;
-background: linear-gradient(90deg, transparent, var(–gold), transparent);
-margin: 16px auto;
-animation: nameIn 0.6s ease 0.6s both;
+@keyframes gloveLeft {
+from { transform: scaleX(-1) translateX(60px); opacity: 0; }
+to   { transform: scaleX(-1) translateX(0);    opacity: 1; }
+}
+@keyframes gloveRight {
+from { transform: translateX(-60px); opacity: 0; }
+to   { transform: translateX(0);     opacity: 1; }
 }
 
+.splash-name {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 80px;
+color: var(–gold);
+letter-spacing: 0.25em;
+text-shadow: 0 0 40px rgba(201,168,76,0.7), 0 0 80px rgba(201,168,76,0.3);
+animation: fadeUp 0.6s ease 1.2s both;
+}
+.splash-line {
+width: 140px; height: 2px;
+background: linear-gradient(90deg, transparent, var(–gold), transparent);
+margin: 12px auto;
+animation: fadeUp 0.6s ease 1.4s both;
+}
+.splash-sub {
+font-family: ‘Oswald’, sans-serif;
+font-size: 13px; color: var(–dim);
+letter-spacing: 0.3em; text-transform: uppercase;
+animation: fadeUp 0.6s ease 1.6s both;
+}
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(10px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== TOPBAR ===== */
 #topbar {
 position: relative; z-index: 10;
 display: flex; align-items: center; justify-content: space-between;
@@ -87,14 +125,10 @@ padding: 12px 16px;
 background: linear-gradient(180deg, #0f0f0f, #0a0a0a);
 border-bottom: 2px solid var(–gold);
 box-shadow: 0 4px 30px rgba(0,0,0,0.8), 0 2px 0 rgba(201,168,76,0.3);
+flex-shrink: 0;
 }
 .logo-area { display: flex; align-items: center; gap: 12px; }
-.logo-icon {
-width: 48px; height: 48px;
-display: flex; align-items: center; justify-content: center;
-font-size: 28px;
-filter: drop-shadow(0 0 8px rgba(201,168,76,0.5));
-}
+.logo-icon { font-size: 28px; filter: drop-shadow(0 0 8px rgba(201,168,76,0.5)); }
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
 font-family: ‘Bebas Neue’, sans-serif;
@@ -107,12 +141,13 @@ text-shadow: 0 0 20px rgba(201,168,76,0.4);
 .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* TABS */
+/* ===== TABS ===== */
 #modeBar {
 position: relative; z-index: 9;
 display: flex;
 background: var(–dark);
 border-bottom: 1px solid rgba(201,168,76,0.15);
+flex-shrink: 0;
 }
 .mode-tab {
 flex: 1; padding: 10px 6px; text-align: center;
@@ -125,13 +160,14 @@ transition: all 0.2s;
 }
 .mode-tab.active { color: var(–gold); border-bottom-color: var(–gold); }
 
-/* DISCIPLINE BAR */
+/* ===== DISCIPLINE BAR ===== */
 #discBar {
 position: relative; z-index: 9;
 display: flex; gap: 8px; padding: 8px 12px;
 background: rgba(10,10,10,0.9);
 border-bottom: 1px solid rgba(201,168,76,0.1);
 overflow-x: auto; scrollbar-width: none;
+flex-shrink: 0;
 }
 #discBar::-webkit-scrollbar { display: none; }
 .disc-chip {
@@ -145,25 +181,23 @@ cursor: pointer; white-space: nowrap;
 letter-spacing: 0.05em;
 transition: all 0.15s;
 }
-.disc-chip.active {
-background: var(–gold); border-color: var(–gold);
-color: var(–black);
-}
+.disc-chip.active { background: var(–gold); border-color: var(–gold); color: var(–black); }
 
-/* SECTIONS */
-#sectionCoach { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-#sectionPrepa { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-#sectionPoids { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+/* ===== SECTIONS ===== */
+#sectionCoach { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#sectionPrepa { display: none; flex-direction: column; flex: 1; min-height: 0; }
+#sectionPoids { display: none; flex: 1; overflow-y: auto; padding: 16px 14px 100px; position: relative; z-index: 2; }
 
-/* CHAT */
+/* ===== CHAT ===== */
 #chat, #chatPrepa {
-flex: 1; overflow-y: auto;
-padding: 14px 12px 120px;
+flex: 1;
+overflow-y: auto;
+padding: 14px 12px 14px;
 position: relative; z-index: 2;
+-webkit-overflow-scrolling: touch;
 }
 
 .bubble-wrap { display: flex; margin-bottom: 12px; animation: fadeUp 0.3s ease; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
 
@@ -204,9 +238,8 @@ font-family: ‘Oswald’, sans-serif;
 font-weight: 400; letter-spacing: 0.05em;
 transition: all 0.15s;
 }
-.qa-btn:hover { background: rgba(201,168,76,0.15); }
+.qa-btn:active { background: rgba(201,168,76,0.25); }
 
-/* TYPING */
 .typing { display:flex; gap:4px; padding:12px 14px; }
 .typing span {
 width:6px; height:6px; border-radius:50%;
@@ -216,33 +249,34 @@ background: var(–gold); animation: bounce 1.2s infinite;
 .typing span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
-/* PROGRAMME CARD */
-.prog-card {
-background: rgba(201,168,76,0.05);
-border: 1px solid rgba(201,168,76,0.2);
-border-radius: 6px; padding: 12px; margin-top: 10px;
+/* ===== COMPOSER ===== */
+#composer {
+flex-shrink: 0;
+padding: 10px 12px 16px;
+background: linear-gradient(to top, rgba(10,10,10,0.98) 75%, transparent);
+position: relative; z-index: 10;
 }
-.prog-title {
-font-family: ‘Oswald’, sans-serif;
-font-size: 11px; font-weight: 600;
-color: var(–gold); text-transform: uppercase;
-letter-spacing: 0.1em; margin-bottom: 10px;
+.composer-inner {
+display: flex; align-items: center; gap: 10px;
+background: var(–surface2);
+border: 1px solid rgba(201,168,76,0.3);
+border-radius: 12px; padding: 10px 14px;
 }
-.prog-item {
-display: flex; gap: 10px; padding: 7px 0;
-border-bottom: 1px solid rgba(201,168,76,0.08);
-font-size: 13px;
+.composer-input {
+flex: 1; background: transparent; border: none; outline: none;
+color: var(–text); font-size: 16px;
+font-family: ‘DM Sans’, sans-serif;
 }
-.prog-num {
-width: 22px; height: 22px; border-radius: 2px;
-background: var(–gold); color: var(–black);
-display: flex; align-items: center; justify-content: center;
-font-size: 11px; font-weight: 700; flex-shrink: 0;
-font-family: ‘Oswald’, sans-serif;
+.composer-input::placeholder { color: #555; }
+.send-btn {
+width: 42px; height: 42px; border-radius: 10px;
+background: var(–gold); border: none; color: var(–black);
+font-size: 18px; display: flex; align-items: center; justify-content: center;
+cursor: pointer; flex-shrink: 0; font-weight: 900;
+box-shadow: 0 4px 12px rgba(201,168,76,0.3);
 }
 
-/* POIDS TRACKER */
-#sectionPoids { overflow-y: auto; padding: 16px 14px 100px; position: relative; z-index: 2; }
+/* ===== POIDS ===== */
 .poids-header {
 font-family: ‘Bebas Neue’, sans-serif;
 font-size: 28px; color: var(–gold); letter-spacing: 0.1em;
@@ -305,32 +339,6 @@ margin-bottom: 10px;
 .diff-neg { color: #4ade80; }
 .diff-pos { color: var(–red2); }
 .histo-empty { padding: 20px; text-align: center; color: var(–dim); font-size: 13px; }
-
-#composer {
-position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-padding: 10px 12px 22px;
-background: linear-gradient(to top, rgba(10,10,10,0.98) 75%, transparent);
-}
-.composer-inner {
-display: flex; align-items: center; gap: 10px;
-background: var(–surface2);
-border: 1px solid rgba(201,168,76,0.3);
-border-radius: 12px; padding: 10px 14px;
-}
-.composer-input {
-flex: 1; background: transparent; border: none; outline: none;
-color: var(–text); font-size: 16px;
-font-family: ‘DM Sans’, sans-serif;
-}
-.composer-input::placeholder { color: #555; }
-.send-btn {
-width: 50px; height: 50px; border-radius: 12px;
-background: var(–gold); border: none; color: var(–black);
-font-size: 22px; display: flex; align-items: center; justify-content: center;
-cursor: pointer; flex-shrink: 0;
-font-weight: 900;
-box-shadow: 0 4px 12px rgba(201,168,76,0.3);
-}
 </style>
 
 </head>
@@ -339,7 +347,10 @@ box-shadow: 0 4px 12px rgba(201,168,76,0.3);
 <!-- SPLASH -->
 
 <div id="splash">
-  <div class="splash-gloves">🥊</div>
+  <div class="splash-gloves">
+    <span class="glove-left">🥊</span>
+    <span class="glove-right">🥊</span>
+  </div>
   <div class="splash-name">CHICO</div>
   <div class="splash-line"></div>
   <div class="splash-sub">Coach Boxe IA • Toutes disciplines</div>
@@ -375,7 +386,6 @@ box-shadow: 0 4px 12px rgba(201,168,76,0.3);
   <div class="disc-chip" onclick="selectDisc(this,'Kick Boxing')">⚡ Kick Boxing</div>
   <div class="disc-chip" onclick="selectDisc(this,'MMA')">🏆 MMA</div>
   <div class="disc-chip" onclick="selectDisc(this,'Grappling')">🤼 Grappling</div>
-  <div class="disc-chip" onclick="selectDisc(this,'Boxe Pieds-Poings')">🦶 Pieds-Poings</div>
   <div class="disc-chip" onclick="selectDisc(this,'K1')">🔥 K1</div>
 </div>
 
@@ -383,12 +393,26 @@ box-shadow: 0 4px 12px rgba(201,168,76,0.3);
 
 <div id="sectionCoach">
   <div id="chat"><div id="messages"></div></div>
+  <div id="composer">
+    <div class="composer-inner">
+      <input class="composer-input" id="userInput" placeholder="Ex: séance uppercuts 45min…" type="text"/>
+      <button class="send-btn" id="sendBtn">➤</button>
+    </div>
+  </div>
 </div>
 
 <!-- SECTION PRÉPA PHYSIQUE -->
 
 <div id="sectionPrepa">
   <div id="chatPrepa"><div id="messagesPrepa"></div></div>
+  <div id="composerPrepa">
+    <div style="padding:10px 12px 16px; background: linear-gradient(to top, rgba(10,10,10,0.98) 75%, transparent);">
+      <div class="composer-inner">
+        <input class="composer-input" id="userInputPrepa" placeholder="Ex: programme cardio boxe, renfo épaules…" type="text"/>
+        <button class="send-btn" id="sendBtnPrepa">➤</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SECTION POIDS -->
@@ -396,7 +420,6 @@ box-shadow: 0 4px 12px rgba(201,168,76,0.3);
 <div id="sectionPoids">
   <div class="poids-header">SUIVI DU POIDS</div>
   <div class="poids-sub">Suivez votre évolution semaine par semaine</div>
-
   <div class="poids-form">
     <div class="poids-row">
       <div style="flex:1">
@@ -410,7 +433,6 @@ box-shadow: 0 4px 12px rgba(201,168,76,0.3);
     </div>
     <button class="poids-btn" onclick="ajouterPoids()">+ Enregistrer</button>
   </div>
-
   <div class="objectif-bar" id="objectifBar" style="display:none">
     <div class="obj-title">📊 Progression vers l'objectif</div>
     <div class="obj-stats">
@@ -440,19 +462,9 @@ box-shadow: 0 4px 12px rgba(201,168,76,0.3);
       </div>
     </div>
   </div>
-
   <div class="historique">
     <div class="histo-header">📅 Historique</div>
     <div id="histoList"><div class="histo-empty">Aucune entrée — commencez à enregistrer votre poids !</div></div>
-  </div>
-</div>
-
-<!-- COMPOSER (masqué pour poids) -->
-
-<div id="composer">
-  <div class="composer-inner">
-    <input class="composer-input" id="userInput" placeholder="Ex: séance uppercuts 45min, programme semaine…" type="text"/>
-    <button class="send-btn" id="sendBtn">➤</button>
   </div>
 </div>
 
@@ -461,31 +473,39 @@ const API_BASE = "https://philo-backend-by2c.onrender.com";
 let discipline = "Boxe Anglaise";
 let currentMode = "coach";
 let isLoading = false;
-let userId = "boxe_" + (localStorage.getItem("boxe_uid") || Math.random().toString(36).slice(2,10));
-localStorage.setItem("boxe_uid", userId.replace("boxe_",""));
 
-// Poids data
-let poidsData = JSON.parse(localStorage.getItem("boxe_poids") || "[]");
-let objectifPoids = parseFloat(localStorage.getItem("boxe_objectif") || "0");
+const UID_KEY = "chico_uid";
+let userId = localStorage.getItem(UID_KEY);
+if (!userId) {
+  userId = "chico_" + Math.random().toString(36).slice(2,10);
+  localStorage.setItem(UID_KEY, userId);
+}
+
+// Historique conversations
+let histCoach = [];
+let histPrepa = [];
+
+// Poids persistant
+let poidsData = JSON.parse(localStorage.getItem("chico_poids") || "[]");
+let objectifPoids = parseFloat(localStorage.getItem("chico_objectif") || "0");
 
 // ===== MODE SWITCH =====
 function switchMode(mode, el) {
   currentMode = mode;
   document.querySelectorAll(".mode-tab").forEach(t => t.classList.remove("active"));
   el.classList.add("active");
+
   document.getElementById("sectionCoach").style.display = "none";
   document.getElementById("sectionPrepa").style.display = "none";
   document.getElementById("sectionPoids").style.display = "none";
-  document.getElementById("composer").style.display = mode === "poids" ? "none" : "flex";
-  document.getElementById("discBar").style.display = mode === "coach" ? "flex" : "none";
+  document.getElementById("discBar").style.display = "none";
 
   if (mode === "coach") {
     document.getElementById("sectionCoach").style.display = "flex";
-    document.getElementById("userInput").placeholder = "Ex: séance uppercuts 45min, combo pieds-poings…";
+    document.getElementById("discBar").style.display = "flex";
     if (document.getElementById("messages").children.length === 0) initCoach();
   } else if (mode === "prepa") {
     document.getElementById("sectionPrepa").style.display = "flex";
-    document.getElementById("userInput").placeholder = "Ex: programme cardio boxe, test VMA, renfo épaules…";
     if (document.getElementById("messagesPrepa").children.length === 0) initPrepa();
   } else {
     document.getElementById("sectionPoids").style.display = "block";
@@ -497,24 +517,23 @@ function selectDisc(el, disc) {
   document.querySelectorAll(".disc-chip").forEach(c => c.classList.remove("active"));
   el.classList.add("active");
   discipline = disc;
-  addBotMsg("Discipline : " + disc + " 🥊 Je m'adapte !", false);
+  addBotMsg("Discipline : " + disc + " 🥊 Je m'adapte !", false, false);
 }
 
 // ===== CHAT COACH =====
 function initCoach() {
-  addBotMsg("Bienvenue Champion CHICO ! 🥊\n\nJe suis ton Coach IA personnel — expert de toutes les boxes.\n\nChoisis ta discipline en haut et dis-moi ce que tu veux travailler !", true);
+  addBotMsg("Bienvenue Champion CHICO ! 🥊\n\nJe suis ton Coach IA personnel — expert de toutes les boxes.\n\nChoisis ta discipline en haut et dis-moi ce que tu veux travailler !", true, false);
 }
 
 function initPrepa() {
   addBotMsgPrepa("Let's go CHICO ! 💪\n\nJe suis ton préparateur physique spécialisé boxe.\n\nDis-moi ce que tu veux : cardio, force, vitesse, récupération ou un programme complet !", true);
 }
 
-function addBotMsg(text, withActions) {
+function addBotMsg(text, withActions, scroll) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = "🥊";
+  avatar.className = "avatar"; avatar.textContent = "🥊";
   const bubble = document.createElement("div");
   bubble.className = "bubble bot";
   bubble.textContent = text;
@@ -529,18 +548,16 @@ function addBotMsg(text, withActions) {
       '<button class="qa-btn" onclick="sendMsg(\'Séance sparring et tactique\')">⚡ Sparring</button>';
     bubble.appendChild(qa);
   }
-  wrap.appendChild(avatar);
-  wrap.appendChild(bubble);
+  wrap.appendChild(avatar); wrap.appendChild(bubble);
   document.getElementById("messages").appendChild(wrap);
-  document.getElementById("chat").scrollTop = 99999;
+  if (scroll !== false) document.getElementById("chat").scrollTop = 99999;
 }
 
 function addUserMsg(text) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap user";
   const bubble = document.createElement("div");
-  bubble.className = "bubble user";
-  bubble.textContent = text;
+  bubble.className = "bubble user"; bubble.textContent = text;
   wrap.appendChild(bubble);
   document.getElementById("messages").appendChild(wrap);
   document.getElementById("chat").scrollTop = 99999;
@@ -550,11 +567,9 @@ function addBotMsgPrepa(text, withActions) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = "💪";
+  avatar.className = "avatar"; avatar.textContent = "💪";
   const bubble = document.createElement("div");
-  bubble.className = "bubble bot";
-  bubble.textContent = text;
+  bubble.className = "bubble bot"; bubble.textContent = text;
   if (withActions) {
     const qa = document.createElement("div");
     qa.className = "quick-actions";
@@ -566,8 +581,7 @@ function addBotMsgPrepa(text, withActions) {
       '<button class="qa-btn" onclick="sendMsgPrepa(\'Programme perte de poids boxeur\')">⚖️ Poids</button>';
     bubble.appendChild(qa);
   }
-  wrap.appendChild(avatar);
-  wrap.appendChild(bubble);
+  wrap.appendChild(avatar); wrap.appendChild(bubble);
   document.getElementById("messagesPrepa").appendChild(wrap);
   document.getElementById("chatPrepa").scrollTop = 99999;
 }
@@ -576,8 +590,7 @@ function addUserMsgPrepa(text) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap user";
   const bubble = document.createElement("div");
-  bubble.className = "bubble user";
-  bubble.textContent = text;
+  bubble.className = "bubble user"; bubble.textContent = text;
   wrap.appendChild(bubble);
   document.getElementById("messagesPrepa").appendChild(wrap);
   document.getElementById("chatPrepa").scrollTop = 99999;
@@ -589,8 +602,7 @@ function setTyping(on) {
   const scrollEl = isPrepa ? document.getElementById("chatPrepa") : document.getElementById("chat");
   if (on) {
     const wrap = document.createElement("div");
-    wrap.className = "bubble-wrap bot";
-    wrap.id = "typingWrap";
+    wrap.className = "bubble-wrap bot"; wrap.id = "typingWrap";
     wrap.innerHTML = '<div class="avatar">' + (isPrepa ? "💪" : "🥊") + '</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
     container.appendChild(wrap);
     scrollEl.scrollTop = 99999;
@@ -600,35 +612,35 @@ function setTyping(on) {
   }
 }
 
-// ===== API CALLS =====
+// ===== API =====
 function getSystemPrompt() {
-  return "Tu es Coach Boxe IA, le coach personnel de CHICO, expert en " + discipline + " et toutes disciplines de boxe (anglaise, muay thaï, française, kick boxing, MMA, grappling, K1). Tu tutoies CHICO, tu es direct et motivant. Tu donnes des séances détaillées avec : échauffement, exercices numérotés, durées, répétitions, objectifs, consignes techniques précises. Pour chaque exercice décris clairement les mouvements, la posture, les erreurs à éviter. Réponds en français.";
+  return "Tu es Coach Boxe IA, le coach personnel de CHICO, expert en " + discipline + " et toutes disciplines de boxe. Tu tutoies CHICO, tu es direct et motivant. Tu donnes des séances détaillées avec échauffement, exercices numérotés, durées, répétitions, objectifs, consignes techniques précises. Tu te souviens du contexte de la conversation. Réponds en français.";
 }
 
 function getPrepaPrompt() {
-  return "Tu es un préparateur physique expert spécialisé en sports de combat et boxe. Tu crées des programmes de cardio, force, vitesse, endurance et récupération adaptés aux boxeurs. Tu peux aussi conseiller sur la nutrition, la perte de poids en catégorie, la récupération. Donne des programmes détaillés avec séries, répétitions, durées, intensités. Réponds en français.";
+  return "Tu es un préparateur physique expert spécialisé en sports de combat et boxe. Tu crées des programmes de cardio, force, vitesse, endurance et récupération adaptés aux boxeurs. Tu peux aussi conseiller sur la nutrition, la perte de poids, la récupération. Tu te souviens du contexte de la conversation. Réponds en français.";
 }
 
 async function sendMsg(text) {
   if (!text || isLoading) return;
   addUserMsg(text);
-  isLoading = true;
-  setTyping(true);
+  histCoach.push({ role: "user", content: text });
+  isLoading = true; setTyping(true);
   try {
+    const messages = [
+      { role: "system", content: getSystemPrompt() },
+      ...histCoach.slice(-10)
+    ];
     const resp = await fetch(API_BASE + "/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        conversation: [
-          { role: "system", content: getSystemPrompt() },
-          { role: "user", content: text }
-        ],
-        userId: userId + "_boxe"
-      })
+      body: JSON.stringify({ conversation: messages, userId: userId + "_coach" })
     });
     const data = await resp.json();
     setTyping(false);
-    addBotMsg(data.answer || "Pas de réponse.", false);
+    const answer = data.answer || "Pas de réponse.";
+    histCoach.push({ role: "assistant", content: answer });
+    addBotMsg(answer, false);
   } catch {
     setTyping(false);
     addBotMsg("Erreur de connexion. Réessayez.", false);
@@ -639,23 +651,23 @@ async function sendMsg(text) {
 async function sendMsgPrepa(text) {
   if (!text || isLoading) return;
   addUserMsgPrepa(text);
-  isLoading = true;
-  setTyping(true);
+  histPrepa.push({ role: "user", content: text });
+  isLoading = true; setTyping(true);
   try {
+    const messages = [
+      { role: "system", content: getPrepaPrompt() },
+      ...histPrepa.slice(-10)
+    ];
     const resp = await fetch(API_BASE + "/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        conversation: [
-          { role: "system", content: getPrepaPrompt() },
-          { role: "user", content: text }
-        ],
-        userId: userId + "_prepa"
-      })
+      body: JSON.stringify({ conversation: messages, userId: userId + "_prepa" })
     });
     const data = await resp.json();
     setTyping(false);
-    addBotMsgPrepa(data.answer || "Pas de réponse.", false);
+    const answer = data.answer || "Pas de réponse.";
+    histPrepa.push({ role: "assistant", content: answer });
+    addBotMsgPrepa(answer, false);
   } catch {
     setTyping(false);
     addBotMsgPrepa("Erreur de connexion. Réessayez.", false);
@@ -663,15 +675,18 @@ async function sendMsgPrepa(text) {
   isLoading = false;
 }
 
-// ===== POIDS TRACKER =====
+// ===== POIDS =====
 function ajouterPoids() {
   const p = parseFloat(document.getElementById("poidsInput").value);
   const o = parseFloat(document.getElementById("objectifInput").value);
   if (!p || isNaN(p)) return;
-  if (o && !isNaN(o)) { objectifPoids = o; localStorage.setItem("boxe_objectif", o); }
+  if (o && !isNaN(o)) {
+    objectifPoids = o;
+    localStorage.setItem("chico_objectif", o);
+  }
   const entry = { date: new Date().toLocaleDateString("fr-FR"), poids: p, ts: Date.now() };
   poidsData.unshift(entry);
-  localStorage.setItem("boxe_poids", JSON.stringify(poidsData));
+  localStorage.setItem("chico_poids", JSON.stringify(poidsData));
   document.getElementById("poidsInput").value = "";
   document.getElementById("objectifInput").value = "";
   renderPoids();
@@ -682,8 +697,7 @@ function renderPoids() {
   const bar = document.getElementById("objectifBar");
   if (poidsData.length === 0) {
     list.innerHTML = '<div class="histo-empty">Aucune entrée — commencez à enregistrer votre poids !</div>';
-    bar.style.display = "none";
-    return;
+    bar.style.display = "none"; return;
   }
   const actuel = poidsData[0].poids;
   const obj = objectifPoids;
@@ -693,17 +707,17 @@ function renderPoids() {
     document.getElementById("statObj").textContent = obj.toFixed(1);
     const aPerdr = Math.max(0, actuel - obj);
     document.getElementById("statReste").textContent = aPerdr.toFixed(1);
-    const depart = poidsData.length > 0 ? Math.max(...poidsData.map(d=>d.poids)) : actuel;
+    const depart = Math.max(...poidsData.map(d => d.poids));
     const total = depart - obj;
     const fait = depart - actuel;
-    const pct = total > 0 ? Math.min(100, Math.round((fait/total)*100)) : 100;
+    const pct = total > 0 ? Math.min(100, Math.round((fait / total) * 100)) : 100;
     document.getElementById("progPct").textContent = pct + "%";
     document.getElementById("progFill").style.width = pct + "%";
   } else {
     bar.style.display = "none";
   }
   list.innerHTML = poidsData.map((e, i) => {
-    const prev = poidsData[i+1];
+    const prev = poidsData[i + 1];
     let diffHtml = "";
     if (prev) {
       const diff = e.poids - prev.poids;
@@ -715,21 +729,33 @@ function renderPoids() {
   }).join("");
 }
 
-// ===== SEND EVENTS =====
+// ===== EVENTS =====
 document.getElementById("sendBtn").addEventListener("click", () => {
   const text = document.getElementById("userInput").value.trim();
   if (!text) return;
   document.getElementById("userInput").value = "";
-  if (currentMode === "coach") sendMsg(text);
-  else if (currentMode === "prepa") sendMsgPrepa(text);
+  sendMsg(text);
 });
 document.getElementById("userInput").addEventListener("keydown", e => {
   if (e.key === "Enter") {
     const text = e.target.value.trim();
     if (!text) return;
     e.target.value = "";
-    if (currentMode === "coach") sendMsg(text);
-    else if (currentMode === "prepa") sendMsgPrepa(text);
+    sendMsg(text);
+  }
+});
+document.getElementById("sendBtnPrepa").addEventListener("click", () => {
+  const text = document.getElementById("userInputPrepa").value.trim();
+  if (!text) return;
+  document.getElementById("userInputPrepa").value = "";
+  sendMsgPrepa(text);
+});
+document.getElementById("userInputPrepa").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    const text = e.target.value.trim();
+    if (!text) return;
+    e.target.value = "";
+    sendMsgPrepa(text);
   }
 });
 
