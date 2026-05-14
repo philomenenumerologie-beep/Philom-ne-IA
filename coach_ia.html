@@ -5,90 +5,41 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Coach IA — Assistant Football</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --green: #2ea043;
   --green2: #3fb950;
   --green-glow: rgba(46,160,67,0.3);
-  --dim: #a0b0a0;
-  --dark: rgba(0,20,0,0.92);
+  --dim: #a0b8a0;
+  --dark: rgba(0,18,0,0.93);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  color: #fff; font-family: 'DM Sans', sans-serif;
-  height: 100vh; display: flex; flex-direction: column;
-  overflow: hidden; position: relative;
-}
+body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
 /* TERRAIN */
 #pitch { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-.pitch-bg {
-width: 100%; height: 100%;
-background: repeating-linear-gradient(180deg,
-#1a4a1a 0px, #1a4a1a 40px,
-#1e5c1e 40px, #1e5c1e 80px);
-}
+.pitch-bg { width: 100%; height: 100%; background: repeating-linear-gradient(180deg, #1a4a1a 0px, #1a4a1a 40px, #1e5c1e 40px, #1e5c1e 80px); }
 .pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #overlay { position: fixed; inset: 0; z-index: 1; background: rgba(0,8,0,0.5); }
 
 /* TOPBAR */
-#topbar {
-position: relative; z-index: 10;
-display: flex; align-items: center; justify-content: space-between;
-padding: 12px 16px;
-background: linear-gradient(135deg, rgba(0,35,0,0.98), rgba(0,60,0,0.98));
-border-bottom: 2px solid rgba(46,160,67,0.5);
-box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-}
+#topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; background: linear-gradient(135deg, rgba(0,35,0,0.98), rgba(0,60,0,0.98)); border-bottom: 2px solid rgba(46,160,67,0.5); box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
 .logo-area { display: flex; align-items: center; gap: 12px; }
-.ball-icon {
-width: 40px; height: 40px; border-radius: 50%;
-background: rgba(0,0,0,0.4); border: 1.5px solid var(–green);
-display: flex; align-items: center; justify-content: center;
-font-size: 20px; box-shadow: 0 0 16px var(–green-glow);
-}
-.logo-name {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 19px; font-weight: 800; color: #fff;
-letter-spacing: 0.08em; text-transform: uppercase;
-text-shadow: 0 0 10px rgba(46,160,67,0.7); line-height: 1.1;
-}
+.ball-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid var(–green); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 16px var(–green-glow); }
+.logo-name { font-family: ‘Barlow Condensed’, sans-serif; font-size: 19px; font-weight: 800; color: #fff; letter-spacing: 0.08em; text-transform: uppercase; text-shadow: 0 0 10px rgba(46,160,67,0.7); line-height: 1.1; }
 .logo-sub { font-size: 11px; color: #4ade80; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
 
 /* BADGE ESSAIS */
-#trialBadge {
-display: flex; align-items: center; gap: 7px;
-background: rgba(46,160,67,0.15);
-border: 1px solid rgba(46,160,67,0.45);
-border-radius: 20px; padding: 5px 12px;
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 12px; font-weight: 700; color: #4ade80;
-letter-spacing: 0.06em; transition: all 0.4s;
-}
+#trialBadge { display: flex; align-items: center; gap: 7px; background: rgba(46,160,67,0.15); border: 1px solid rgba(46,160,67,0.45); border-radius: 20px; padding: 5px 12px; font-family: ‘Barlow Condensed’, sans-serif; font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em; transition: all 0.4s; }
 .dots { display: flex; gap: 4px; }
-.dot {
-width: 8px; height: 8px; border-radius: 50%;
-background: var(–green2); box-shadow: 0 0 6px var(–green2);
-transition: all 0.4s;
-}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(–green2); box-shadow: 0 0 6px var(–green2); transition: all 0.4s; }
 .dot.used { background: rgba(255,255,255,0.12); box-shadow: none; }
 
 /* CATBAR */
-#catBar {
-position: relative; z-index: 9;
-display: flex; gap: 8px; padding: 10px 14px;
-background: rgba(0,12,0,0.8);
-border-bottom: 1px solid rgba(255,255,255,0.08);
-overflow-x: auto; scrollbar-width: none;
-}
+#catBar { position: relative; z-index: 9; display: flex; gap: 8px; padding: 9px 14px; background: rgba(0,12,0,0.85); border-bottom: 1px solid rgba(255,255,255,0.07); overflow-x: auto; scrollbar-width: none; }
 #catBar::-webkit-scrollbar { display: none; }
-.cat-chip {
-padding: 6px 14px; border-radius: 20px;
-background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
-color: var(–dim); font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;
-}
+.cat-chip { padding: 5px 13px; border-radius: 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(46,160,67,0.2); color: var(–dim); font-family: ‘Barlow Condensed’, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
 .cat-chip:hover { border-color: var(–green); color: #4ade80; }
 .cat-chip.active { background: var(–green); border-color: var(–green); color: #fff; }
 
@@ -101,253 +52,92 @@ font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transit
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1.5px solid var(–green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 16px; }
+.bubble { max-width: min(86%, 380px); padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
+.bubble.bot { background: rgba(0,18,0,0.93); border: 1px solid rgba(46,160,67,0.2); border-top-left-radius: 4px; color: #e8f5e8; }
+.bubble.user { background: rgba(15,45,15,0.9); border: 1px solid rgba(46,160,67,0.3); border-top-right-radius: 4px; color: #c8e6c8; }
 
-.avatar {
-width: 30px; height: 30px; border-radius: 50%;
-background: rgba(0,0,0,0.5); border: 1px solid var(–green);
-display: flex; align-items: center; justify-content: center;
-flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 14px;
-}
-.bubble {
-max-width: min(86%, 380px); padding: 12px 14px; border-radius: 16px;
-font-size: 14px; line-height: 1.6;
-}
-.bubble.bot {
-background: rgba(0,18,0,0.93); border: 1px solid rgba(46,160,67,0.22);
-border-top-left-radius: 4px; color: #e8f5e8;
-}
-.bubble.user {
-background: rgba(15,45,15,0.9); border: 1px solid rgba(46,160,67,0.3);
-border-top-right-radius: 4px; color: #c8e6c8;
-}
-
-/* HERO WELCOME */
-.hero-card {
-background: linear-gradient(135deg, rgba(46,160,67,0.15), rgba(0,25,0,0.7));
-border: 1px solid rgba(46,160,67,0.4);
-border-radius: 16px; padding: 16px; margin-bottom: 12px;
-}
-.hero-title {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 22px; font-weight: 800; color: #4ade80;
-letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px;
-}
+/* HERO */
+.hero-card { background: linear-gradient(135deg, rgba(46,160,67,0.14), rgba(0,25,0,0.6)); border: 1px solid rgba(46,160,67,0.35); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.hero-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 22px; font-weight: 800; color: #4ade80; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
 .hero-sub { font-size: 13px; color: #8aba8a; margin-bottom: 14px; line-height: 1.5; }
-
 .features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-.feat {
-display: flex; align-items: flex-start; gap: 10px;
-background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.09);
-border-radius: 10px; padding: 10px 12px;
-}
+.feat { display: flex; align-items: flex-start; gap: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; }
 .feat-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 .feat-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
 .feat-desc { font-size: 12px; color: #789a78; line-height: 1.4; }
-
-.free-pill {
-display: inline-flex; align-items: center; gap: 6px;
-background: rgba(46,160,67,0.2); border: 1px solid rgba(46,160,67,0.5);
-border-radius: 20px; padding: 6px 14px;
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em;
-}
+.free-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(46,160,67,0.2); border: 1px solid rgba(46,160,67,0.5); border-radius: 20px; padding: 6px 14px; font-family: ‘Barlow Condensed’, sans-serif; font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em; }
 
 /* QUICK ACTIONS */
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.qa-btn {
-padding: 8px 13px; background: rgba(255,255,255,0.07);
-border: 1px solid rgba(46,160,67,0.3); border-radius: 20px;
-color: #e0f0e0; font-size: 13px; cursor: pointer;
-font-family: ‘DM Sans’, sans-serif; transition: all 0.2s;
-}
-.qa-btn:hover { background: rgba(46,160,67,0.18); border-color: var(–green2); color: #fff; }
+.qa-btn { padding: 8px 13px; background: rgba(255,255,255,0.07); border: 1px solid rgba(46,160,67,0.3); border-radius: 20px; color: #e0f0e0; font-size: 13px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; transition: all 0.2s; }
+.qa-btn:hover { background: rgba(46,160,67,0.18); border-color: var(–green2); }
 
-/* SÉANCE CARD */
-.seance-card {
-margin-top: 10px;
-background: rgba(0,0,0,0.3);
-border: 1px solid rgba(46,160,67,0.2);
-border-radius: 12px; overflow: hidden;
-}
-.seance-header {
-display: flex; align-items: center; justify-content: space-between;
-padding: 10px 14px;
-background: rgba(46,160,67,0.1);
-border-bottom: 1px solid rgba(46,160,67,0.15);
-}
-.seance-title {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 15px; font-weight: 700; color: #4ade80;
-letter-spacing: 0.05em; text-transform: uppercase;
-}
-.seance-dur {
-font-size: 12px; color: var(–dim);
-background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 10px;
-}
-.seance-body { padding: 12px 14px; }
-.seance-row { display: flex; gap: 6px; margin-bottom: 5px; font-size: 13px; }
-.seance-label { color: var(–dim); min-width: 80px; flex-shrink: 0; }
+/* CARTES EXERCICES */
+.ex-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(46,160,67,0.2); border-radius: 12px; margin-top: 10px; overflow: hidden; }
+.ex-card-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; background: rgba(46,160,67,0.1); border-bottom: 1px solid rgba(46,160,67,0.15); }
+.ex-card-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 14px; font-weight: 700; color: #4ade80; letter-spacing: 0.05em; text-transform: uppercase; }
+.ex-card-dur { font-size: 11px; color: var(–dim); background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.ex-card-body { padding: 10px 14px; }
+.ex-line { font-size: 13px; color: #c8e6c8; line-height: 1.7; padding: 2px 0; }
+.ex-line.consigne { color: #a0c8a0; padding-left: 8px; border-left: 2px solid rgba(46,160,67,0.4); margin: 3px 0; }
+.rt-text-block { font-size: 14px; color: #c8e6c8; line-height: 1.7; white-space: pre-wrap; }
+.rt-text-block strong { color: #fff; font-weight: 600; }
 
-.consignes-btn {
-display: flex; align-items: center; gap: 6px;
-margin-top: 10px; padding: 9px 14px;
-background: rgba(46,160,67,0.1); border: 1px solid rgba(46,160,67,0.25);
-border-radius: 10px; cursor: pointer; font-size: 13px; color: #4ade80;
-font-family: ‘DM Sans’, sans-serif; width: 100%; text-align: left; transition: all 0.2s;
-}
-.consignes-btn:hover { background: rgba(46,160,67,0.2); }
-.consignes-box {
-margin-top: 8px; padding: 12px;
-background: rgba(0,0,0,0.3); border-radius: 10px;
-border: 1px solid rgba(46,160,67,0.15); display: none;
-}
-.consignes-box.open { display: block; }
-.consigne-line {
-font-size: 13px; color: #a8d8a8; line-height: 1.7;
-padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-.consigne-line:last-child { border-bottom: none; }
-
-/* MESSAGE PARENTS */
-.msg-card {
-margin-top: 10px;
-background: rgba(0,0,0,0.35);
-border: 1px solid rgba(46,160,67,0.2);
-border-radius: 12px; padding: 14px;
-font-size: 13px; color: #c8e6c8; line-height: 1.8;
-white-space: pre-line;
-}
-.msg-note { margin-top: 8px; font-size: 12px; color: #5a7a5a; font-style: italic; }
+/* SCHEMA */
+.schema-wrap { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(46,160,67,0.25); }
+.schema-header { padding: 8px 12px; background: rgba(46,160,67,0.15); font-size: 11px; color: #4ade80; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+.schema-desc { padding: 5px 12px 8px; background: rgba(0,0,0,0.4); font-size: 12px; color: #a0c8a0; font-style: italic; }
+.schema-svg-box svg { width: 100%; display: block; }
+.schema-legend { display: flex; gap: 12px; padding: 6px 12px 8px; background: rgba(0,0,0,0.4); font-size: 10px; color: rgba(255,255,255,0.6); flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 4px; }
 
 /* TYPING */
 .typing { display:flex; gap:4px; padding:4px 0; }
-.typing span {
-width:6px; height:6px; border-radius:50%;
-background:var(–dim); animation: bounce 1.2s infinite;
-}
-.typing span:nth-child(2){animation-delay:0.2s}
-.typing span:nth-child(3){animation-delay:0.4s}
+.typing span { width:6px; height:6px; border-radius:50%; background:var(–dim); animation: bounce 1.2s infinite; }
+.typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
 /* COMPOSER */
-#composer {
-position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-padding: 10px 12px 18px;
-background: linear-gradient(to top, rgba(0,10,0,0.98) 70%, transparent);
-}
-.composer-inner {
-display: flex; align-items: center; gap: 8px;
-background: rgba(0,18,0,0.95); border: 1px solid rgba(255,255,255,0.12);
-border-radius: 22px; padding: 8px 12px;
-}
-#userInput {
-flex: 1; background: transparent; border: none; outline: none;
-color: #fff; font-size: 15px; font-family: ‘DM Sans’, sans-serif;
-}
+#composer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 10px 12px 20px; background: linear-gradient(to top, rgba(0,10,0,0.98) 70%, transparent); }
+.composer-inner { display: flex; align-items: center; gap: 8px; background: rgba(0,18,0,0.95); border: 1px solid rgba(46,160,67,0.2); border-radius: 22px; padding: 8px 12px; }
+#userInput { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 15px; font-family: ‘DM Sans’, sans-serif; caret-color: var(–green); }
 #userInput::placeholder { color: var(–dim); }
-.send-btn {
-width: 38px; height: 38px; border-radius: 50%;
-background: var(–green); border: none; color: #fff; font-size: 16px;
-display: flex; align-items: center; justify-content: center;
-cursor: pointer; flex-shrink: 0;
-box-shadow: 0 4px 14px var(–green-glow); transition: transform 0.15s;
-}
+.send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(–green); border: none; color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 14px var(–green-glow); transition: transform 0.15s; }
 .send-btn:hover { transform: scale(1.08); }
 
-/* =====================
-PAYWALL
-===================== */
-#paywall {
-display: none; position: fixed; inset: 0; z-index: 200;
-background: rgba(0,0,0,0.88); backdrop-filter: blur(12px);
-align-items: flex-end; justify-content: center;
-}
+/* ===== PAYWALL ===== */
+#paywall { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); align-items: flex-end; justify-content: center; }
 #paywall.open { display: flex; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-.pw-sheet {
-width: 100%; max-width: 480px;
-background: linear-gradient(180deg, #081808, #040c04);
-border: 1px solid rgba(46,160,67,0.45);
-border-radius: 28px 28px 0 0;
-padding: 22px 20px 40px;
-animation: sheetUp 0.4s cubic-bezier(0.34,1.4,0.64,1);
-}
+.pw-sheet { width: 100%; max-width: 480px; background: linear-gradient(180deg, #081808, #040c04); border: 1px solid rgba(46,160,67,0.4); border-radius: 28px 28px 0 0; padding: 22px 20px 40px; animation: sheetUp 0.4s cubic-bezier(0.34,1.4,0.64,1); }
 @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-
-.pw-handle {
-width: 36px; height: 4px; background: rgba(255,255,255,0.18);
-border-radius: 2px; margin: 0 auto 20px;
-}
+.pw-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 0 auto 20px; }
 .pw-emoji { font-size: 46px; text-align: center; display: block; margin-bottom: 10px; }
-.pw-title {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 30px; font-weight: 800; color: #fff;
-text-align: center; text-transform: uppercase;
-letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 8px;
-}
+.pw-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 30px; font-weight: 800; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 8px; }
 .pw-title span { color: #4ade80; }
-.pw-sub {
-font-size: 14px; color: #789a78; text-align: center;
-margin-bottom: 22px; line-height: 1.5;
-}
-
-/* Plans */
+.pw-sub { font-size: 14px; color: #789a78; text-align: center; margin-bottom: 22px; line-height: 1.5; }
 .plans { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
-.plan {
-border: 1.5px solid rgba(255,255,255,0.1); border-radius: 14px;
-padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
-background: rgba(255,255,255,0.04); position: relative;
-}
-.plan.popular {
-border-color: var(–green);
-background: linear-gradient(135deg, rgba(46,160,67,0.12), rgba(46,160,67,0.03));
-}
-.pop-badge {
-position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
-background: var(–green); color: #fff;
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-padding: 3px 14px; border-radius: 20px; white-space: nowrap;
-}
-.plan-name {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 17px; font-weight: 700; color: #fff;
-letter-spacing: 0.04em; text-transform: uppercase;
-}
+.plan { border: 1.5px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); position: relative; }
+.plan.popular { border-color: var(–green); background: linear-gradient(135deg, rgba(46,160,67,0.12), rgba(46,160,67,0.03)); }
+.pop-badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(–green); color: #fff; font-family: ‘Barlow Condensed’, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 14px; border-radius: 20px; white-space: nowrap; }
+.plan-name { font-family: ‘Barlow Condensed’, sans-serif; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
 .plan-desc { font-size: 12px; color: #789a78; margin-top: 2px; }
-.plan-amount {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 26px; font-weight: 800; color: #4ade80; text-align: right;
-}
+.plan-amount { font-family: ‘Barlow Condensed’, sans-serif; font-size: 26px; font-weight: 800; color: #4ade80; text-align: right; }
 .plan-period { font-size: 11px; color: #789a78; text-align: right; }
-
-/* Avantages */
 .pw-feats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
 .pw-feat { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #c8e6c8; }
 .pw-feat-icon { color: #4ade80; font-size: 15px; flex-shrink: 0; }
-
-/* Bouton WhatsApp */
-.wa-btn {
-display: flex; align-items: center; justify-content: center; gap: 10px;
-width: 100%; padding: 17px;
-background: #25D366; border: none; border-radius: 16px;
-color: #fff; font-size: 17px; font-weight: 700;
-font-family: ‘Barlow Condensed’, sans-serif;
-letter-spacing: 0.06em; text-transform: uppercase;
-cursor: pointer; text-decoration: none;
-box-shadow: 0 6px 28px rgba(37,211,102,0.45); transition: all 0.2s;
-}
+.wa-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 17px; background: #25D366; border: none; border-radius: 16px; color: #fff; font-size: 17px; font-weight: 700; font-family: ‘Barlow Condensed’, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; text-decoration: none; box-shadow: 0 6px 28px rgba(37,211,102,0.45); transition: all 0.2s; }
 .wa-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(37,211,102,0.55); }
 .wa-btn svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
-
 .pw-note { text-align: center; font-size: 12px; color: #3a5a3a; margin-top: 12px; }
 </style>
 
 </head>
 <body>
 
-<!-- TERRAIN FOOT -->
+<!-- TERRAIN -->
 
 <div id="pitch">
   <div class="pitch-bg"></div>
@@ -356,14 +146,12 @@ box-shadow: 0 6px 28px rgba(37,211,102,0.45); transition: all 0.2s;
     <line x1="20" y1="350" x2="380" y2="350" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
     <circle cx="200" cy="350" r="60" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
     <circle cx="200" cy="350" r="3" fill="rgba(255,255,255,0.28)"/>
-    <rect x="90" y="20" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-    <rect x="140" y="20" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-    <rect x="160" y="12" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-    <rect x="90" y="600" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-    <rect x="140" y="645" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-    <rect x="160" y="676" width="80" height="12" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-    <circle cx="200" cy="80" r="4" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-    <circle cx="200" cy="620" r="4" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <rect x="90" y="20" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+    <rect x="140" y="20" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+    <rect x="90" y="600" width="220" height="80" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+    <rect x="140" y="645" width="120" height="35" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+    <circle cx="200" cy="80" r="4" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+    <circle cx="200" cy="620" r="4" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
   </svg>
 </div>
 <div id="overlay"></div>
@@ -422,57 +210,45 @@ box-shadow: 0 6px 28px rgba(37,211,102,0.45); transition: all 0.2s;
     <span class="pw-emoji">🏆</span>
     <div class="pw-title">Passez Coach IA<br/><span>en illimité</span></div>
     <div class="pw-sub">Vous avez utilisé vos 3 essais gratuits.<br/>Choisissez votre formule et continuez !</div>
-
-```
-<div class="plans">
-  <div class="plan">
-    <div>
-      <div class="plan-name">Mensuel</div>
-      <div class="plan-desc">Sans engagement</div>
+    <div class="plans">
+      <div class="plan">
+        <div><div class="plan-name">Mensuel</div><div class="plan-desc">Sans engagement</div></div>
+        <div><div class="plan-amount">9€</div><div class="plan-period">/ mois</div></div>
+      </div>
+      <div class="plan popular">
+        <div class="pop-badge">⭐ Le plus populaire</div>
+        <div><div class="plan-name">Saison complète</div><div class="plan-desc">Août → Juin · Économisez 45%</div></div>
+        <div><div class="plan-amount">59€</div><div class="plan-period">/ saison</div></div>
+      </div>
     </div>
-    <div>
-      <div class="plan-amount">9€</div>
-      <div class="plan-period">/ mois</div>
+    <div class="pw-feats">
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Séances illimitées — toutes catégories</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Schémas terrain + consignes clés en main</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Messages parents rédigés en 1 clic</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Accès immédiat · Réponse en moins de 5 min</div>
     </div>
-  </div>
-  <div class="plan popular">
-    <div class="pop-badge">⭐ Le plus populaire</div>
-    <div>
-      <div class="plan-name">Saison complète</div>
-      <div class="plan-desc">Août → Juin · Économisez 45%</div>
-    </div>
-    <div>
-      <div class="plan-amount">59€</div>
-      <div class="plan-period">/ saison</div>
-    </div>
-  </div>
-</div>
-
-<div class="pw-feats">
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Séances illimitées — toutes catégories</div>
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Schémas terrain + consignes clés en main</div>
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Messages parents rédigés en 1 clic</div>
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Accès immédiat · Réponse en moins de 5 min</div>
-</div>
-
-<a class="wa-btn"
-   href="https://wa.me/33617123910?text=Bonjour%20!%20Je%20veux%20acc%C3%A9der%20%C3%A0%20Coach%20IA%20en%20illimit%C3%A9%20%F0%9F%9A%80"
-   target="_blank">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-  </svg>
-  Je m'abonne sur WhatsApp
-</a>
-<div class="pw-note">🔒 Paiement sécurisé · Réponse en moins de 5 min</div>
-```
-
+    <a class="wa-btn" href="https://wa.me/33617123910?text=Bonjour%20!%20Je%20veux%20acc%C3%A9der%20%C3%A0%20Coach%20IA%20en%20illimit%C3%A9%20%F0%9F%9A%80" target="_blank">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+      Je m'abonne sur WhatsApp
+    </a>
+    <div class="pw-note">🔒 Paiement sécurisé · Réponse en moins de 5 min</div>
   </div>
 </div>
 
 <script>
+const API_BASE = "https://philo-backend-by2c.onrender.com";
+const COACH_URL = API_BASE + "/coach";
+const CLUB_KEY = "DEMO-CLUB-0000";
 const MAX_FREE = 3;
-let usedTrials = 0;
-let cat = 'U8/U9';
+
+let deviceId = localStorage.getItem("demo_device_id");
+if (!deviceId) { deviceId = "device_" + Math.random().toString(36).slice(2,12); localStorage.setItem("demo_device_id", deviceId); }
+let userId = "demo_" + (localStorage.getItem("demo_user_id") || Math.random().toString(36).slice(2,10));
+localStorage.setItem("demo_user_id", userId.replace("demo_",""));
+let usedTrials = parseInt(localStorage.getItem("demo_trials") || "0");
+let categorie = "U8/U9";
 let isLoading = false;
 
 // ===== BADGE =====
@@ -481,274 +257,225 @@ function updateBadge() {
   document.getElementById('trialText').textContent = rem + (rem > 1 ? ' ESSAIS' : ' ESSAI');
   for (let i = 1; i <= 3; i++) document.getElementById('d'+i).classList.toggle('used', i > rem);
   const b = document.getElementById('trialBadge');
-  if (rem === 0) { b.style.cssText += 'background:rgba(255,80,80,0.15);border-color:rgba(255,80,80,0.4);color:#ff7070'; }
-  else if (rem === 1) { b.style.cssText += 'background:rgba(255,165,0,0.15);border-color:rgba(255,165,0,0.4);color:#ffb040'; }
+  if (rem === 0) { b.style.background='rgba(255,80,80,0.15)'; b.style.borderColor='rgba(255,80,80,0.4)'; b.style.color='#ff7070'; }
+  else if (rem === 1) { b.style.background='rgba(255,165,0,0.15)'; b.style.borderColor='rgba(255,165,0,0.4)'; b.style.color='#ffb040'; }
 }
 
-// ===== PAYWALL =====
 function showPaywall() { document.getElementById('paywall').classList.add('open'); }
 
 // ===== CAT =====
-function selectCat(el, c) {
-  document.querySelectorAll('.cat-chip').forEach(x => x.classList.remove('active'));
+function selectCat(el, cat) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  cat = c;
-  addBot('Catégorie <strong>' + c + '</strong> sélectionnée ⚽<br/>Quel thème de séance ce soir ?');
+  categorie = cat;
+  addBot('Catégorie <strong>' + cat + '</strong> sélectionnée ⚽<br/>Quel thème de séance ce soir ?');
 }
 
-// ===== CHAT HELPERS =====
-const msgs = document.getElementById('messages');
-const chat = document.getElementById('chat');
-
-function addBot(html) {
-  const w = document.createElement('div'); w.className = 'bubble-wrap bot';
-  w.innerHTML = '<div class="avatar">⚽</div><div class="bubble bot">' + html + '</div>';
-  msgs.appendChild(w); chat.scrollTop = chat.scrollHeight;
-}
-function addUser(text) {
-  const w = document.createElement('div'); w.className = 'bubble-wrap user';
-  w.innerHTML = '<div class="bubble user">' + text + '</div>';
-  msgs.appendChild(w); chat.scrollTop = chat.scrollHeight;
-}
-function showTyping() {
-  const w = document.createElement('div'); w.className = 'bubble-wrap bot'; w.id = 'typing';
-  w.innerHTML = '<div class="avatar">⚽</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
-  msgs.appendChild(w); chat.scrollTop = chat.scrollHeight;
-}
-function hideTyping() { const t = document.getElementById('typing'); if(t) t.remove(); }
-
-function toggleConsignes(btn) {
-  const box = btn.nextElementSibling;
-  box.classList.toggle('open');
-  btn.textContent = box.classList.contains('open') ? '📢 Masquer les consignes' : '📢 Consignes à dire aux joueurs ›';
+// ===== SCHEMA =====
+function buildSchema(schema) {
+  if (!schema) return null;
+  const W = 320, H = 220;
+  const px = p => 10 + p * (W-20) / 100;
+  const py = p => 10 + p * (H-20) / 100;
+  const PC = "#2ea043", SC = "#ffffff", BC = "#ffffff", MC = "#4ade80";
+  let defs = '<defs><marker id="aB" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="'+BC+'" opacity="0.9"/></marker><marker id="aM" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="'+MC+'"/></marker></defs>';
+  let els = [];
+  els.push('<defs><pattern id="gr" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#1a4a1a"/><rect width="40" height="20" fill="#1e5c1e"/></pattern></defs>');
+  els.push('<rect width="'+W+'" height="'+H+'" fill="url(#gr)" rx="8"/>');
+  els.push('<rect x="5" y="5" width="'+(W-10)+'" height="'+(H-10)+'" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" rx="3"/>');
+  const pos = {};
+  if (schema.players) schema.players.forEach(p => { pos[p.id] = [px(p.x), py(p.y)]; });
+  if (schema.plots) schema.plots.forEach((p,i) => { pos["plot_"+i] = [px(p.x), py(p.y)]; });
+  if (schema.goal) { const gx=px(schema.goal.x),gy=py(schema.goal.y); els.push('<rect x="'+(gx-22)+'" y="'+(gy-6)+'" width="44" height="12" fill="none" stroke="white" stroke-width="2" rx="1"/>'); els.push('<text x="'+gx+'" y="'+(gy+22)+'" text-anchor="middle" font-size="8" fill="white" font-weight="bold">BUT</text>'); }
+  if (schema.ball_paths) schema.ball_paths.forEach(p => { const f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="'+BC+'" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#aB)"/>'); });
+  if (schema.player_paths) schema.player_paths.forEach(p => { const f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="'+MC+'" stroke-width="2" marker-end="url(#aM)"/>'); });
+  if (schema.plots) schema.plots.forEach(p => { const x=px(p.x),y=py(p.y); els.push('<polygon points="'+x+','+(y-7)+' '+(x-5)+','+(y+4)+' '+(x+5)+','+(y+4)+'" fill="#f0a500" stroke="white" stroke-width="0.5"/>'); });
+  if (schema.players) schema.players.forEach(p => { const x=px(p.x),y=py(p.y); els.push('<circle cx="'+x+'" cy="'+y+'" r="10" fill="'+PC+'" stroke="'+SC+'" stroke-width="1.5"/>'); els.push('<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="8" font-weight="bold" fill="white">'+p.id+'</text>'); });
+  if (schema.distance) { els.push('<rect x="5" y="'+(H-18)+'" width="'+(W-10)+'" height="14" fill="rgba(0,0,0,0.6)" rx="2"/>'); els.push('<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.9)">'+schema.distance+'</text>'); }
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+defs+els.join("")+'</svg>';
 }
 
-// ===== CONTENU GÉNÉRÉ =====
-const SEANCES = {
-  dribble: {
-    label: 'Dribble 🏃', color: '#4ade80',
-    exos: [
-      { titre: '🔥 Échauffement — Chasse aux balles', dur: '10 min',
-        lignes: ['👥 Tout le groupe — zone 20x20m', '⚽ 1 balle par joueur', '🎯 Dribbler sans se percuter, tête haute'],
-        consignes: ['⚽ "Chacun sa balle, on se déplace dans tout le carré !"', '👀 "Tête haute — regardez où vous allez !"', '🚀 "Au coup de sifflet, changez de direction !"', '🎯 Variante : 2 chasseurs sans balle attrapent les autres'] },
-      { titre: '⚡ Slalom de plots', dur: '15 min',
-        lignes: ['👥 3 groupes de 4 — 3 couloirs', '⚽ 3 balles, 15 plots', '🎯 Dribble entre les plots, retour en sprint'],
-        consignes: ['⚽ "On slalome sans toucher les plots !"', '👣 "Utilisez les deux pieds !"', '🚀 "Au retour, on accélère !"', '🏆 Variante compétition : quelle équipe finit en premier ?'] },
-      { titre: '🏁 Match final 4v4', dur: '20 min',
-        lignes: ['👥 3 équipes de 4 — rotation toutes les 5 min', '⚽ 2 petits buts, 1 balle', '🎯 But bonus si dribble avant de tirer'],
-        consignes: ['⚽ "On applique le dribble vu à l\'entraînement !"', '🎯 "But bonus si tu dribbles un adversaire !"', '😄 "On s\'amuse, on encourage les copains !"'] }
-    ]
-  },
-  passe: {
-    label: 'Passe ⚡', color: '#60a5fa',
-    exos: [
-      { titre: '🔥 Échauffement — Rondo 4v1', dur: '10 min',
-        lignes: ['👥 Groupes de 5 — zone 10x10m', '⚽ 1 balle par groupe', '🎯 Conserver la balle, 1 défenseur au centre'],
-        consignes: ['⚽ "On garde la balle, on se déplace pour offrir une solution !"', '👀 "Regard périphérique — voyez tout le terrain !"', '🚀 "Appel de balle avant de recevoir !"'] },
-      { titre: '⚡ Triangle de passes', dur: '15 min',
-        lignes: ['👥 Groupes de 3 — triangles de 15m', '⚽ 1 balle par groupe', '🎯 Passe et va — enchainement rapide'],
-        consignes: ['⚽ "On court après sa passe !"', '👣 "Pied d\'appui orienté vers le receveur !"', '🏆 Variante : une touche maximum'] },
-      { titre: '🏁 Match 5v5 — passes obligatoires', dur: '20 min',
-        lignes: ['👥 2 équipes de 5', '🎯 3 passes minimum avant de tirer'],
-        consignes: ['⚽ "3 passes avant le tir — on circule !"', '🎯 "On cherche le joueur libre !"', '😄 "Communication — appelez la balle !"'] }
-    ]
-  },
-  tir: {
-    label: 'Tir au but 🎯', color: '#f97316',
-    exos: [
-      { titre: '🔥 Échauffement — Jonglages', dur: '8 min',
-        lignes: ['👥 Tout le groupe', '⚽ 1 balle par joueur', '🎯 Travail du toucher de balle'],
-        consignes: ['⚽ "On jongle, on essaie de battre son record !"', '👣 "Alternez les deux pieds !"'] },
-      { titre: '🎯 Frappe sur cône', dur: '15 min',
-        lignes: ['👥 Files de 3 — face au but', '⚽ Cône à 12m, gardien ou plot', '🎯 Précision du tir pied droit + gauche'],
-        consignes: ['⚽ "Pied d\'appui à côté de la balle — pas derrière !"', '🦵 "Frappe du coup de pied, jambe tendue !"', '🏆 Variante : tir en mouvement après contrôle'] },
-      { titre: '🏁 Concours de tirs', dur: '20 min',
-        lignes: ['👥 Équipes de 3 vs gardien', '🎯 5 tirs chacun — meilleur score gagne'],
-        consignes: ['🎯 "On vise les coins — gardien déteste ça !"', '😄 "Chaque but = 1 point pour l\'équipe !"', '🏆 "Le perdant fait 10 pompes !"'] }
-    ]
-  },
-  pressing: {
-    label: 'Pressing collectif 💥', color: '#e879f9',
-    exos: [
-      { titre: '🔥 Échauffement — Transition rapide', dur: '10 min',
-        lignes: ['👥 Tout le groupe — zone 30x20m', '🎯 Signal = tout le monde sprint vers la balle'],
-        consignes: ['⚽ "Au sifflet, tout le monde va vers la balle !"', '🚀 "Le plus proche presse, les autres ferment les lignes !"'] },
-      { titre: '💥 Pressing organisé 6v4', dur: '15 min',
-        lignes: ['👥 6 presseurs vs 4 relanceurs', '⚽ Zone 25x25m', '🎯 Récupérer la balle en moins de 6 secondes'],
-        consignes: ['⚽ "On presse haut — on ne laisse pas relancer !"', '🤝 "Le premier presse, le deuxième coupe la passe !"', '🏆 Variante : chrono — combien de récup en 5 min ?'] },
-      { titre: '🏁 Match avec règle pressing', dur: '20 min',
-        lignes: ['👥 8v8 ou selon effectif', '🎯 But interdit si pressing non appliqué'],
-        consignes: ['💥 "Si on perd la balle, pressing immédiat !"', '🎯 "On joue haut, on ne recule pas !"'] }
-    ]
+function renderSchema(schema) {
+  if (!schema) return "";
+  const svg = buildSchema(schema);
+  if (!svg) return "";
+  return '<div class="schema-wrap"><div class="schema-header">📐 Schéma de l\'exercice</div>'+(schema.description?'<div class="schema-desc">'+schema.description+'</div>':'')+'<div class="schema-svg-box">'+svg+'</div><div class="schema-legend"><div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#2ea043" stroke="white" stroke-width="1"/></svg> Joueur</div><div class="legend-item"><svg width="14" height="14"><polygon points="7,1 2,12 12,12" fill="#f0a500"/></svg> Plot</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="white" stroke-width="2.5" stroke-dasharray="5,3"/></svg> Ballon</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#4ade80" stroke-width="2"/></svg> Déplacement</div></div></div>';
+}
+
+// ===== PARSEUR MARKDOWN → CARTES =====
+function parseMarkdown(text) {
+  const hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Match|Conclusion|Objectif|Matériel|Consignes|Durée|Joueurs)/i.test(text);
+  if (!hasStruct) {
+    const html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
+    return '<div class="rt-text-block">'+html+'</div>';
   }
-};
+  const lines = text.split('\n');
+  let cards = [], currentCard = null, introLines = [], inIntro = true;
 
-const MESSAGES = {
-  convoc: `⚽ MATCH ${cat.toUpperCase()}
+  lines.forEach(line => {
+    const boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h))\))?$/i);
+    const boldColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
 
-📅 Samedi à 10h00
-📍 Lieu : [À compléter]
-🕘 Rendez-vous 30 min avant le coup d'envoi
+    if (boldTitle) {
+      inIntro = false;
+      if (currentCard) cards.push(currentCard);
+      currentCard = { title: boldTitle[1].trim(), dur: boldTitle[3]||'', lines: [] };
+    } else if (boldColon) {
+      const val = boldColon[2].replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+      const key = boldColon[1];
+      if (currentCard) {
+        currentCard.lines.push({ text: '<strong>'+key+' :</strong> '+val, consigne: false });
+      } else {
+        introLines.push('<div class="ex-line"><strong>'+key+' :</strong> '+val+'</div>');
+      }
+    } else {
+      const clean = line.replace(/^\s*[-–•]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').trim();
+      if (!clean) return;
+      const isConsigne = /^\s{2,}/.test(line) || (/^\s*[-–]/.test(line) && currentCard && currentCard.lines.some(l => l.text.includes('Consignes')));
+      if (inIntro) introLines.push('<div class="ex-line">'+clean+'</div>');
+      else if (currentCard) currentCard.lines.push({ text: clean, consigne: isConsigne });
+    }
+  });
+  if (currentCard) cards.push(currentCard);
 
-Merci de confirmer la présence de votre enfant en répondant à ce message.
+  let html = '';
+  if (introLines.length) html += '<div style="margin-bottom:8px">'+introLines.join('')+'</div>';
 
-Allez les verts ! 💪
-Le Coach`,
-  annul: `Bonjour à tous les parents,
+  cards.forEach(card => {
+    const t = card.title.toLowerCase();
+    const emoji = t.includes('échauffement')||t.includes('echauffement') ? '🔥 '
+      : t.includes('exercice 1') ? '⚡ '
+      : t.includes('exercice 2') ? '💥 '
+      : t.includes('exercice 3') ? '🎯 '
+      : t.includes('match')||t.includes('jeu') ? '🏁 '
+      : t.includes('conclusion')||t.includes('retour') ? '✅ '
+      : t.includes('tir') ? '🎯 '
+      : t.includes('dribble') ? '🏃 '
+      : t.includes('passe') ? '⚡ '
+      : t.includes('pressing') ? '💥 ' : '';
 
-Je vous informe que l'entraînement / le match ${cat} prévu ce week-end est annulé.
-
-Je vous tiendrai informés dès que possible pour la prochaine date.
-
-Merci de votre compréhension 🙏
-Le Coach`,
-  info: `Bonjour à tous les parents,
-
-Quelques informations importantes pour cette semaine :
-
-📌 [Point 1 à compléter]
-📌 [Point 2 à compléter]
-
-N'hésitez pas à me contacter pour toute question.
-
-Le Coach ⚽`
-};
-
-function buildSeance(type) {
-  const s = SEANCES[type];
-  if (!s) return '<em>Séance en cours de génération…</em>';
-  let html = '✅ Voici votre séance <strong>' + cat + ' — ' + s.label + '</strong> !';
-  s.exos.forEach(ex => {
-    html += `
-    <div class="seance-card">
-      <div class="seance-header">
-        <span class="seance-title">${ex.titre}</span>
-        <span class="seance-dur">${ex.dur}</span>
-      </div>
-      <div class="seance-body">
-        ${ex.lignes.map(l => '<div class="seance-row">' + l + '</div>').join('')}
-        <button class="consignes-btn" onclick="toggleConsignes(this)">📢 Consignes à dire aux joueurs ›</button>
-        <div class="consignes-box">
-          ${ex.consignes.map(c => '<div class="consigne-line">' + c + '</div>').join('')}
-        </div>
-      </div>
-    </div>`;
+    html += '<div class="ex-card"><div class="ex-card-header"><span class="ex-card-title">'+emoji+card.title+'</span>';
+    if (card.dur) html += '<span class="ex-card-dur">'+card.dur+'</span>';
+    html += '</div><div class="ex-card-body">';
+    card.lines.forEach(l => { html += '<div class="ex-line'+(l.consigne?' consigne':'')+'">'+l.text+'</div>'; });
+    html += '</div></div>';
   });
   return html;
 }
 
-function buildMessage(type) {
-  const key = type.includes('annul') ? 'annul' : type.includes('info') ? 'info' : 'convoc';
-  const txt = MESSAGES[key].replace(/U8\/U9/g, cat);
-  return `📢 <strong>Message rédigé — Prêt à envoyer !</strong>
-  <div class="msg-card">${txt}</div>
-  <div class="msg-note">✏️ Personnalisez les détails entre [ ] avant d'envoyer.</div>`;
+// ===== CHAT =====
+const msgs = document.getElementById('messages');
+const chatEl = document.getElementById('chat');
+
+function addBot(html, schema) {
+  const w = document.createElement('div'); w.className = 'bubble-wrap bot';
+  const av = document.createElement('div'); av.className = 'avatar'; av.textContent = '⚽';
+  const b = document.createElement('div'); b.className = 'bubble bot';
+  b.innerHTML = html;
+  if (schema) b.insertAdjacentHTML('beforeend', renderSchema(schema));
+  w.appendChild(av); w.appendChild(b);
+  msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-function generateResponse(text) {
-  const t = text.toLowerCase();
-  if (t.includes('dribble')) return buildSeance('dribble');
-  if (t.includes('passe') || t.includes('triangle')) return buildSeance('passe');
-  if (t.includes('tir') || t.includes('but')) return buildSeance('tir');
-  if (t.includes('pressing') || t.includes('défense') || t.includes('defense')) return buildSeance('pressing');
-  if (t.includes('annul')) return buildMessage('annul');
-  if (t.includes('convoc') || t.includes('match') || t.includes('parent') || t.includes('message') || t.includes('whatsapp')) return buildMessage('convoc');
-  if (t.includes('info')) return buildMessage('info');
-  // Réponse générique
-  return `Je suis prêt à vous aider ! 💪<br/><br/>Essayez par exemple :<br/>
-  <div class="quick-actions" style="margin-top:8px">
-    <button class="qa-btn" onclick="handleRequest('Séance dribble, 12 joueurs, 1h')">🏃 Dribble</button>
-    <button class="qa-btn" onclick="handleRequest('Séance passe, 10 joueurs, 45min')">⚡ Passe</button>
-    <button class="qa-btn" onclick="handleRequest('Message convocation match samedi')">📢 Parents</button>
-  </div>`;
+function addUser(text) {
+  const w = document.createElement('div'); w.className = 'bubble-wrap user';
+  const b = document.createElement('div'); b.className = 'bubble user'; b.textContent = text;
+  w.appendChild(b); msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-// ===== FLOW PRINCIPAL =====
-function handleRequest(text) {
-  if (isLoading) return;
+function showTyping() {
+  const w = document.createElement('div'); w.className = 'bubble-wrap bot'; w.id = 'typing';
+  w.innerHTML = '<div class="avatar">⚽</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
+}
+function hideTyping() { const t = document.getElementById('typing'); if(t) t.remove(); }
+
+// ===== SEND =====
+async function sendMessage(text) {
+  if (!text || isLoading) return;
   if (usedTrials >= MAX_FREE) { showPaywall(); return; }
 
   addUser(text);
   isLoading = true;
   showTyping();
   usedTrials++;
+  localStorage.setItem("demo_trials", usedTrials);
   updateBadge();
 
-  setTimeout(() => {
+  try {
+    const resp = await fetch(COACH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, userId, categorie, clubKey: CLUB_KEY, deviceId })
+    });
+    const data = await resp.json();
     hideTyping();
-    addBot(generateResponse(text));
-    isLoading = false;
-
-    if (usedTrials >= MAX_FREE) {
-      setTimeout(() => {
-        addBot('💡 <strong>C\'était votre dernier essai gratuit !</strong><br/>Pour continuer sans limite, choisissez votre formule 👇');
-        setTimeout(showPaywall, 800);
-      }, 300);
+    if (!resp.ok) {
+      addBot('❌ ' + (data.error || 'Erreur de connexion.'), null);
+    } else {
+      addBot(parseMarkdown(data.answer || 'Pas de réponse.'), data.schema || null);
     }
-  }, 1600);
+  } catch(e) {
+    hideTyping();
+    addBot('❌ Erreur de connexion. Réessayez.', null);
+  }
+
+  isLoading = false;
+
+  if (usedTrials >= MAX_FREE) {
+    setTimeout(() => {
+      addBot('💡 <strong>C\'était votre dernier essai gratuit !</strong><br/>Pour continuer sans limite, choisissez votre formule 👇', null);
+      setTimeout(showPaywall, 800);
+    }, 300);
+  }
 }
 
 // ===== WELCOME =====
 function showWelcome() {
   const w = document.createElement('div'); w.className = 'bubble-wrap bot';
-  w.innerHTML = `<div class="avatar">⚽</div><div class="bubble bot">
+  const av = document.createElement('div'); av.className = 'avatar'; av.textContent = '⚽';
+  const b = document.createElement('div'); b.className = 'bubble bot';
+  b.innerHTML = `
     <div class="hero-card">
       <div class="hero-title">Votre Coach IA Football ⚡</div>
-      <div class="hero-sub">En 10 secondes, je génère tout ce dont vous avez besoin pour votre séance. Dites-moi ce que vous voulez — je m'occupe du reste.</div>
+      <div class="hero-sub">En 10 secondes, je génère tout ce dont vous avez besoin. Dites-moi ce que vous voulez — je m'occupe du reste.</div>
       <div class="features">
-        <div class="feat">
-          <div class="feat-icon">🏃</div>
-          <div>
-            <div class="feat-title">Séances complètes sur mesure</div>
-            <div class="feat-desc">Dribble, passe, tir, pressing… Donnez le thème, les joueurs et la durée — j'adapte tout avec exercices et consignes clés en main.</div>
-          </div>
-        </div>
-        <div class="feat">
-          <div class="feat-icon">📢</div>
-          <div>
-            <div class="feat-title">Messages parents rédigés en 1 clic</div>
-            <div class="feat-desc">Convocation, annulation, info match — des messages clairs et pros prêts à envoyer directement.</div>
-          </div>
-        </div>
-        <div class="feat">
-          <div class="feat-icon">🎯</div>
-          <div>
-            <div class="feat-title">Adapté à votre catégorie</div>
-            <div class="feat-desc">De U6 aux Seniors — chaque exercice calibré pour l'âge et le niveau de vos joueurs.</div>
-          </div>
-        </div>
+        <div class="feat"><div class="feat-icon">🏃</div><div><div class="feat-title">Séances complètes sur mesure</div><div class="feat-desc">Dribble, passe, tir, pressing… Thème + joueurs + durée — j'adapte tout avec exercices, schémas et consignes.</div></div></div>
+        <div class="feat"><div class="feat-icon">📢</div><div><div class="feat-title">Messages parents en 1 clic</div><div class="feat-desc">Convocation, annulation, info match — prêts à envoyer directement.</div></div></div>
+        <div class="feat"><div class="feat-icon">🎯</div><div><div class="feat-title">Adapté à votre catégorie</div><div class="feat-desc">De U6 aux Seniors — chaque exercice calibré pour l'âge et le niveau.</div></div></div>
       </div>
       <div class="free-pill">🎁 3 ESSAIS GRATUITS · SANS INSCRIPTION</div>
     </div>
     Testez maintenant 👇
     <div class="quick-actions">
-      <button class="qa-btn" onclick="handleRequest('Séance dribble, 12 joueurs U8, 1h')">🏃 Séance dribble</button>
-      <button class="qa-btn" onclick="handleRequest('Séance passe en triangle, 10 joueurs, 45min')">⚡ Séance passe</button>
-      <button class="qa-btn" onclick="handleRequest('Séance tir au but, 14 joueurs, 1h')">🎯 Séance tir</button>
-      <button class="qa-btn" onclick="handleRequest('Séance pressing collectif, 16 joueurs, 1h')">💥 Pressing</button>
-      <button class="qa-btn" onclick="handleRequest('Message convocation match samedi 10h')">📢 Message parents</button>
-    </div>
-  </div>`;
-  msgs.appendChild(w); chat.scrollTop = chat.scrollHeight;
+      <button class="qa-btn" onclick="sendMessage('Séance dribble, 12 joueurs, 1h')">🏃 Dribble</button>
+      <button class="qa-btn" onclick="sendMessage('Séance passe en triangle, 10 joueurs, 45min')">⚡ Passe</button>
+      <button class="qa-btn" onclick="sendMessage('Séance tir au but, 14 joueurs, 1h')">🎯 Tir</button>
+      <button class="qa-btn" onclick="sendMessage('Séance pressing collectif, 16 joueurs, 1h')">💥 Pressing</button>
+      <button class="qa-btn" onclick="sendMessage('Message convocation match samedi 10h')">📢 Parents</button>
+    </div>`;
+  w.appendChild(av); w.appendChild(b);
+  msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
 }
 
 // ===== EVENTS =====
 document.getElementById('sendBtn').addEventListener('click', () => {
   const inp = document.getElementById('userInput');
   const t = inp.value.trim(); if (!t) return;
-  inp.value = ''; handleRequest(t);
+  inp.value = ''; sendMessage(t);
 });
 document.getElementById('userInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const inp = document.getElementById('userInput');
     const t = inp.value.trim(); if (!t) return;
-    inp.value = ''; handleRequest(t);
+    inp.value = ''; sendMessage(t);
   }
 });
 
 // ===== INIT =====
 updateBadge();
 showWelcome();
+if (usedTrials >= MAX_FREE) setTimeout(showPaywall, 500);
 </script>
 
 </body>
