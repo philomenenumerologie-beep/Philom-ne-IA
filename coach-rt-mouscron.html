@@ -24,13 +24,7 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
 #overlay { position: fixed; inset: 0; z-index: 1; background: rgba(0,0,0,0.55); }
 
 /* SPLASH */
-#splash {
-position: fixed; inset: 0; z-index: 200;
-display: flex; flex-direction: column;
-align-items: center; justify-content: center;
-background: rgba(0,0,0,0.92);
-transition: opacity 0.8s ease;
-}
+#splash { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.92); transition: opacity 0.8s ease; }
 #splash.gone { opacity: 0; pointer-events: none; }
 .splash-badge { margin-bottom: 20px; animation: splashUp 0.6s ease 0.2s both; filter: drop-shadow(0 0 20px rgba(204,0,0,0.6)); }
 .splash-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 52px; font-weight: 800; color: #fff; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; animation: splashUp 0.6s ease 0.5s both; text-shadow: 0 0 30px rgba(204,0,0,0.8); }
@@ -86,11 +80,43 @@ transition: opacity 0.8s ease;
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.7); border: 1.5px solid var(–red); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 8px; margin-top: 2px; overflow: hidden; }
-.bubble { max-width: min(85%, 360px); padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+.bubble { max-width: min(85%, 370px); padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
 .bubble.bot { background: rgba(20,0,0,0.92); border: 1px solid rgba(204,0,0,0.2); border-top-left-radius: 4px; color: #fff; }
-.bubble.user { background: rgba(100,0,0,0.8); border: 1px solid rgba(204,0,0,0.4); border-top-right-radius: 4px; color: #fff; }
+.bubble.user { background: rgba(100,0,0,0.8); border: 1px solid rgba(204,0,0,0.4); border-top-right-radius: 4px; color: #fff; white-space: pre-wrap; }
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .qa-btn { padding: 8px 12px; background: rgba(204,0,0,0.15); border: 1px solid rgba(204,0,0,0.3); border-radius: 20px; color: #fff; font-size: 13px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; }
+
+/* ===== CARTES EXERCICES (rouge RT) ===== */
+.ex-card {
+background: rgba(0,0,0,0.35);
+border: 1px solid rgba(204,0,0,0.25);
+border-radius: 12px; margin-top: 10px; overflow: hidden;
+}
+.ex-card-header {
+display: flex; align-items: center; justify-content: space-between;
+padding: 9px 14px;
+background: rgba(204,0,0,0.12);
+border-bottom: 1px solid rgba(204,0,0,0.2);
+cursor: pointer;
+}
+.ex-card-title {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 14px; font-weight: 700; color: #ff6666;
+letter-spacing: 0.05em; text-transform: uppercase;
+}
+.ex-card-dur {
+font-size: 11px; color: #ffaaaa;
+background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 10px; white-space: nowrap;
+}
+.ex-card-body { padding: 10px 14px; }
+.ex-line { font-size: 13px; color: #ffd0d0; line-height: 1.6; padding: 2px 0; }
+.ex-line.consigne { color: #ffaaaa; padding-left: 8px; border-left: 2px solid rgba(204,0,0,0.4); margin: 3px 0; }
+.ex-line.bold { font-weight: 600; color: #fff; margin-top: 6px; }
+.ex-sep { height: 1px; background: rgba(255,255,255,0.05); margin: 6px 0; }
+
+/* Bloc texte simple */
+.rt-text-block { font-size: 14px; color: #ffd0d0; line-height: 1.7; white-space: pre-wrap; }
+.rt-text-block strong { color: #fff; font-weight: 600; }
 
 /* SCHEMA */
 .schema-wrap { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(204,0,0,0.3); }
@@ -277,17 +303,13 @@ localStorage.setItem("rt_user_id", userId.replace("rt_",""));
 let isLoading = false;
 let currentMode = "coach";
 
-// SPLASH puis LOGIN
+// SPLASH → LOGIN
 setTimeout(function() {
   var splash = document.getElementById("splash");
   splash.classList.add("gone");
   setTimeout(function() {
     splash.style.display = "none";
-    if (clubKey) {
-      tryLogin();
-    } else {
-      document.getElementById("loginScreen").style.display = "flex";
-    }
+    if (clubKey) { tryLogin(); } else { document.getElementById("loginScreen").style.display = "flex"; }
   }, 800);
 }, 2800);
 
@@ -309,6 +331,7 @@ function switchMode(mode, el) {
   }
 }
 
+// ===== SCHEMA =====
 function buildProSchema(schema) {
   if (!schema) return null;
   var W = 320, H = 220;
@@ -339,7 +362,179 @@ function renderSchema(schema) {
   return '<div class="schema-wrap"><div class="schema-header">📐 Schéma de l\'exercice</div>' + (schema.description ? '<div class="schema-desc">'+schema.description+'</div>' : '') + '<div class="schema-svg-box">'+svgHtml+'</div><div class="schema-legend"><div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#cc0000" stroke="white" stroke-width="1"/></svg> Joueur</div><div class="legend-item"><svg width="14" height="14"><polygon points="7,1 2,12 12,12" fill="white"/></svg> Plot</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="white" stroke-width="2.5" stroke-dasharray="5,3"/></svg> Ballon</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#ff6666" stroke-width="2"/></svg> Déplacement</div></div></div>';
 }
 
-// LOGIN
+// ===== PARSEUR MARKDOWN → CARTES =====
+function parseMarkdownToCards(text) {
+  // Détecte si c'est une séance structurée (contient des ** avec titres d'exercices)
+  var hasStructure = /\*\*(Séance|Échauffement|Exercice|Match|Conclusion|Objectif|Matériel|Consignes|Durée)/i.test(text);
+  if (!hasStructure) {
+    // Texte simple : juste rendre le **gras** en HTML
+    var html = text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br/>');
+    return '<div class="rt-text-block">' + html + '</div>';
+  }
+
+  // Parser en blocs par **Titre**
+  var lines = text.split('\n');
+  var cards = [];
+  var currentCard = null;
+  var introLines = [];
+  var inIntro = true;
+
+  lines.forEach(function(line) {
+    var boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h))\))?$/i);
+    var boldTitleColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
+
+    if (boldTitle) {
+      inIntro = false;
+      if (currentCard) cards.push(currentCard);
+      var dur = boldTitle[3] || '';
+      currentCard = { title: boldTitle[1].trim(), dur: dur, lines: [] };
+    } else if (boldTitleColon && !currentCard) {
+      // Ligne clé: valeur dans l'intro
+      introLines.push('<div class="ex-line"><strong>' + boldTitleColon[1] + ' :</strong> ' + esc(boldTitleColon[2]) + '</div>');
+    } else {
+      var cleanLine = line
+        .replace(/^\s*[-–•]\s*/, '')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .trim();
+
+      if (!cleanLine) return;
+
+      if (inIntro) {
+        introLines.push('<div class="ex-line">' + cleanLine + '</div>');
+      } else if (currentCard) {
+        // Détecter si c'est une consigne (ligne indentée ou commence par –)
+        var isConsigne = /^[-–]/.test(line.trimStart()) && line.match(/^\s{2,}/);
+        currentCard.lines.push({ text: cleanLine, consigne: !!isConsigne });
+      }
+    }
+  });
+  if (currentCard) cards.push(currentCard);
+
+  var html = '';
+
+  // Intro
+  if (introLines.length) {
+    html += '<div style="margin-bottom:8px">' + introLines.join('') + '</div>';
+  }
+
+  // Cartes
+  cards.forEach(function(card) {
+    var titleEmoji = '';
+    var t = card.title.toLowerCase();
+    if (t.includes('échauffement') || t.includes('echauffement')) titleEmoji = '🔥 ';
+    else if (t.includes('exercice 1') || t.includes('exercice1')) titleEmoji = '⚡ ';
+    else if (t.includes('exercice 2') || t.includes('exercice2')) titleEmoji = '💥 ';
+    else if (t.includes('exercice 3') || t.includes('exercice3')) titleEmoji = '🎯 ';
+    else if (t.includes('match') || t.includes('jeu')) titleEmoji = '🏁 ';
+    else if (t.includes('conclusion') || t.includes('retour')) titleEmoji = '✅ ';
+    else if (t.includes('tir')) titleEmoji = '🎯 ';
+    else if (t.includes('dribble')) titleEmoji = '🏃 ';
+    else if (t.includes('passe')) titleEmoji = '⚡ ';
+
+    html += '<div class="ex-card">';
+    html += '<div class="ex-card-header">';
+    html += '<span class="ex-card-title">' + titleEmoji + card.title + '</span>';
+    if (card.dur) html += '<span class="ex-card-dur">' + card.dur + '</span>';
+    html += '</div>';
+    html += '<div class="ex-card-body">';
+    card.lines.forEach(function(l) {
+      html += '<div class="ex-line' + (l.consigne ? ' consigne' : '') + '">' + l.text + '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  return html;
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== AVATAR SVG =====
+var AVATAR_SVG = '<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg>';
+
+// ===== ADD BOT MSG (amélioré) =====
+var chat = document.getElementById("chat");
+var messages = document.getElementById("messages");
+
+function addBotMsg(text, schema, withActions) {
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
+  var avatar = document.createElement("div"); avatar.className = "avatar";
+  avatar.innerHTML = AVATAR_SVG;
+  var bubble = document.createElement("div"); bubble.className = "bubble bot";
+
+  // Rendu markdown → cartes ou texte formaté
+  bubble.innerHTML = parseMarkdownToCards(text);
+
+  // Schéma SVG
+  if (schema) bubble.insertAdjacentHTML("beforeend", renderSchema(schema));
+
+  // Boutons rapides
+  if (withActions) {
+    var actions = document.createElement("div"); actions.className = "quick-actions";
+    actions.innerHTML =
+      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs 1h\')">🏃 Dribble</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance passe triangle 10 joueurs 45min\')">⚡ Passe</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">🎯 Tir</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">🛡️ Pressing</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Redige message WhatsApp convocation match samedi 10h\')">📢 Parents</button>';
+    bubble.appendChild(actions);
+  }
+
+  wrap.appendChild(avatar); wrap.appendChild(bubble);
+  messages.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
+}
+
+function addUserMsg(text) {
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
+  var bubble = document.createElement("div"); bubble.className = "bubble user"; bubble.textContent = text;
+  wrap.appendChild(bubble); messages.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
+}
+
+function setTyping(on) {
+  var container = currentMode === "coach" ? messages : document.getElementById("messagesPrepa");
+  var scrollEl = currentMode === "coach" ? chat : document.getElementById("chatPrepa");
+  if (on) {
+    var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot"; wrap.id = "typingIndicator";
+    wrap.innerHTML = '<div class="avatar">' + AVATAR_SVG + '</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+    container.appendChild(wrap); scrollEl.scrollTop = scrollEl.scrollHeight;
+  } else { var t = document.getElementById("typingIndicator"); if(t) t.remove(); }
+}
+
+// ===== PREPA =====
+var chatPrepa = document.getElementById("chatPrepa");
+var messagesPrepa = document.getElementById("messagesPrepa");
+
+function addBotMsgPrepa(text, withActions) {
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
+  var bubble = document.createElement("div"); bubble.className = "bubble bot";
+  bubble.innerHTML = parseMarkdownToCards(text);
+  if (withActions) {
+    var actions = document.createElement("div"); actions.className = "quick-actions";
+    actions.innerHTML =
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test bip équipe U13\')">🏃 Test Bip</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe seniors\')">⏱️ Mini Cooper</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine\')">📋 Programme</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression équipe ce mois\')">📈 Progression</button>' +
+      '<button class="qa-btn" onclick="exportExcel()">📊 Télécharger Excel</button>';
+    bubble.appendChild(actions);
+  }
+  var avatar = document.createElement("div"); avatar.className = "avatar";
+  avatar.innerHTML = AVATAR_SVG;
+  wrap.appendChild(avatar); wrap.appendChild(bubble);
+  messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
+}
+
+function addUserMsgPrepa(text) {
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
+  var bubble = document.createElement("div"); bubble.className = "bubble user"; bubble.textContent = text;
+  wrap.appendChild(bubble); messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
+}
+
+// ===== LOGIN =====
 var loginScreen = document.getElementById("loginScreen");
 var loginBtn = document.getElementById("loginBtn");
 var clubKeyInput = document.getElementById("clubKeyInput");
@@ -380,73 +575,7 @@ function selectCat(el, cat) {
   addBotMsg("Catégorie : " + cat + " ⚽ Je m'adapte !", null, false);
 }
 
-var chat = document.getElementById("chat");
-var messages = document.getElementById("messages");
-
-function addBotMsg(text, schema, withActions) {
-  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
-  var bubble = document.createElement("div"); bubble.className = "bubble bot"; bubble.textContent = text;
-  if (schema) bubble.insertAdjacentHTML("beforeend", renderSchema(schema));
-  if (withActions) {
-    var actions = document.createElement("div"); actions.className = "quick-actions";
-    actions.innerHTML =
-      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs 1h\')">🏃 Dribble</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance passe triangle 10 joueurs 45min\')">⚡ Passe</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">🎯 Tir</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">🛡️ Pressing</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Redige message WhatsApp convocation match samedi 10h\')">📢 Parents</button>';
-    bubble.appendChild(actions);
-  }
-  var avatar = document.createElement("div"); avatar.className = "avatar";
-  avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg>';
-  wrap.appendChild(avatar); wrap.appendChild(bubble);
-  messages.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
-}
-
-function addUserMsg(text) {
-  var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
-  var bubble = document.createElement("div"); bubble.className = "bubble user"; bubble.textContent = text;
-  wrap.appendChild(bubble); messages.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
-}
-
-function setTyping(on) {
-  var container = currentMode === "coach" ? messages : document.getElementById("messagesPrepa");
-  var scrollEl = currentMode === "coach" ? chat : document.getElementById("chatPrepa");
-  if (on) {
-    var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot"; wrap.id = "typingIndicator";
-    wrap.innerHTML = '<div class="avatar"><svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg></div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
-    container.appendChild(wrap); scrollEl.scrollTop = scrollEl.scrollHeight;
-  } else { var t = document.getElementById("typingIndicator"); if(t) t.remove(); }
-}
-
-var chatPrepa = document.getElementById("chatPrepa");
-var messagesPrepa = document.getElementById("messagesPrepa");
-
-function addBotMsgPrepa(text, withActions) {
-  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
-  var bubble = document.createElement("div"); bubble.className = "bubble bot"; bubble.textContent = text;
-  if (withActions) {
-    var actions = document.createElement("div"); actions.className = "quick-actions";
-    actions.innerHTML =
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test bip équipe U13\')">🏃 Test Bip</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe seniors\')">⏱️ Mini Cooper</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine\')">📋 Programme</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression équipe ce mois\')">📈 Progression</button>' +
-      '<button class="qa-btn" onclick="exportExcel()">📊 Télécharger Excel</button>';
-    bubble.appendChild(actions);
-  }
-  var avatar = document.createElement("div"); avatar.className = "avatar";
-  avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg>';
-  wrap.appendChild(avatar); wrap.appendChild(bubble);
-  messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
-}
-
-function addUserMsgPrepa(text) {
-  var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
-  var bubble = document.createElement("div"); bubble.className = "bubble user"; bubble.textContent = text;
-  wrap.appendChild(bubble); messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
-}
-
+// ===== EXCEL =====
 function exportExcel() {
   var bubbles = document.querySelectorAll("#messagesPrepa .bubble.bot");
   var lastTable = null;
@@ -465,6 +594,7 @@ function exportExcel() {
   XLSX.writeFile(wb, "RT_Mouscron_Resultats_" + date + ".xlsx");
 }
 
+// ===== SEND =====
 async function sendMessage(text) {
   if (!text || isLoading) return;
   if (!clubKey) { loginScreen.style.display = "flex"; return; }
@@ -491,6 +621,7 @@ async function sendMessagePrepa(text) {
   isLoading = false;
 }
 
+// ===== EVENTS =====
 var userInput = document.getElementById("userInput");
 document.getElementById("sendBtn").addEventListener("click", function() {
   var text = userInput.value.trim(); if (!text) return; userInput.value = "";
