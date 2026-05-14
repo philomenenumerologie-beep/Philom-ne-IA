@@ -588,7 +588,7 @@ font-size: 13px; color: var(–dim);
     <div class="tarif-feature"><span class="tarif-check">✓</span> Devis avec analyse photo</div>
     <div class="tarif-feature"><span class="tarif-check">✓</span> Bouton urgence</div>
     <div class="tarif-feature"><span class="tarif-check">✓</span> Personnalisé à votre métier</div>
-    <button class="cta-btn" onclick="window.open('https://philomeneia.com')">Je veux mon assistant</button>
+    <button class="cta-btn" onclick="ouvrirWhatsApp('Bonjour, j\'ai testé la démo Assistant Artisan IA. Je suis intéressé pour avoir mon propre assistant personnalisé. Pouvez-vous me contacter ?')">💬 Je veux mon assistant</button>
   </div>
 
   <div class="tarif-card featured">
@@ -600,14 +600,43 @@ font-size: 13px; color: var(–dim);
     <div class="tarif-feature"><span class="tarif-check">✓</span> 2 mois offerts</div>
     <div class="tarif-feature"><span class="tarif-check">✓</span> Priorité support</div>
     <div class="tarif-feature"><span class="tarif-check">✓</span> Mises à jour incluses</div>
-    <button class="cta-btn" onclick="window.open('https://philomeneia.com')">Choisir l'annuel</button>
+    <button class="cta-btn" onclick="ouvrirWhatsApp('Bonjour, je suis intéressé par la formule annuelle de l\'Assistant Artisan IA. Pouvez-vous me contacter ?')">💬 Choisir l'annuel</button>
   </div>
 </div>
 
 <script>
 const API_BASE = "https://philo-backend-by2c.onrender.com";
+const WA_NUM = "33617123910";
+const WA_BASE = `https://wa.me/${WA_NUM}?text=`;
+const MAX_MSG = 10;
+const MAX_DEVIS = 2;
 let isLoading = false;
 let history = [];
+let msgCount = 0;
+let devisCount = 0;
+
+function ouvrirWhatsApp(msg) {
+  window.open(WA_BASE + encodeURIComponent(msg), '_blank');
+}
+
+function showLimiteMsg() {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap bot';
+  const av = document.createElement('div');
+  av.className = 'avatar'; av.textContent = '🔧';
+  const bub = document.createElement('div');
+  bub.className = 'bubble bot';
+  bub.innerHTML = "Vous avez utilisé vos " + MAX_MSG + " messages de démonstration gratuits. 🎉\n\nContactez-nous pour votre assistant personnalisé !";
+  const qa = document.createElement('div');
+  qa.className = 'quick-actions';
+  qa.innerHTML = `<button class="qa-btn" style="background:rgba(37,211,102,0.15);border-color:#25D366;color:#25D366;font-size:14px;padding:10px 16px" onclick="ouvrirWhatsApp('Bonjour, j\'ai testé la démo et je suis intéressé !')">💬 Contacter sur WhatsApp</button>`;
+  bub.appendChild(qa);
+  wrap.appendChild(av); wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+  document.getElementById('userInput').disabled = true;
+  document.getElementById('sendBtn').disabled = true;
+}
 
 // ===== TAB SWITCH =====
 function switchTab(tab, el) {
@@ -675,12 +704,39 @@ function setTyping(on) {
 }
 
 function getPrompt() {
-  return `Tu es un assistant IA pour un artisan professionnel (plombier, électricien, menuisier, peintre, carreleur selon le contexte). Tu réponds aux clients 24h/24 de façon professionnelle et rassurante. Tu peux donner des estimations de prix, des délais d'intervention, expliquer les types de travaux. Tarifs: installation 85€ (offre lancement 69€), 24€/mois ou 240€/an. Rappelle que l'artisan rappellera pour confirmer. Sois concis et professionnel. Réponds en français.`;
+  return `Tu es un assistant IA expert UNIQUEMENT en artisanat et travaux du bâtiment région Nord France et Belgique. Tu es une encyclopédie complète des métiers artisanaux. Tu réponds UNIQUEMENT aux questions liées aux travaux, prix, délais, conseils techniques et artisanat. Si la question n'est pas liée aux travaux, réponds: "Je suis spécialisé uniquement dans les travaux. Pour d'autres questions, contactez directement l'artisan."
+
+PRIX RÉGION NORD/BELGIQUE 2025:
+PLOMBIER: 50-75€/h, urgence 80-120€/h. Débouchage canalisation: 80-180€. Fuite robinet: 80-150€. Remplacement chauffe-eau: 300-800€. Rénovation salle de bain complète: 3000-8000€. Pose baignoire: 200-500€. Installation douche italienne: 800-2000€. Remplacement WC: 150-400€. Détartrage chaudière: 100-200€.
+ÉLECTRICIEN: 45-70€/h. Remplacement tableau électrique: 800-2000€. Ajout prise/interrupteur: 80-150€. Mise aux normes: 1500-4000€. Installation complète maison: 5000-15000€. Pose luminaire: 80-150€. Installation VMC: 300-800€. Alarme: 500-2000€. Domotique: 2000-8000€.
+MAÇON: 40-65€/h ou 35-70€/m². Mur parpaing: 30-60€/m². Fondations: 100-250€/m². Dalle béton: 50-120€/m². Extension maison: 1000-1800€/m². Escalier béton: 1500-4000€. Terrasse: 50-120€/m². Mur clôture: 80-200€/ml.
+MENUISIER: 40-65€/h. Pose porte intérieure: 150-300€. Fenêtre PVC double vitrage: 300-800€ pose comprise. Porte d'entrée: 500-2000€. Cuisine sur mesure: 3000-10000€. Parquet pose: 15-40€/m². Dressing: 800-3000€. Volet roulant: 300-800€.
+PEINTRE: 30-45€/h. Peinture intérieure: 15-35€/m². Façade/ravalement: 30-80€/m². Papier peint: 20-50€/m². Enduit décoratif: 25-60€/m². Peinture plafond: 15-30€/m². Lasure bois: 20-40€/m².
+CARRELEUR: 35-55€/h. Pose carrelage sol: 25-50€/m². Salle de bain: 35-70€/m². Faïence mur: 25-55€/m². Depose ancien carrelage: 10-20€/m². Joint époxy: 15-25€/m².
+COUVREUR: 40-60€/h. Réparation tuiles (unités): 200-600€. Toiture complète tuiles: 80-150€/m². Ardoise: 100-180€/m². Gouttière zinc: 30-60€/ml. Chéneau: 40-80€/ml. Velux pose: 400-800€. Nettoyage toiture: 5-15€/m².
+CHARPENTIER: 45-65€/h. Charpente neuve: 80-150€/m². Réparation poutre: 300-1000€. Traitement bois: 10-30€/m². Charpente fermette: 60-100€/m².
+PLAQUISTE/PLÂTRIER: 35-55€/h. Cloison sèche: 25-50€/m². Faux plafond: 20-45€/m². Isolation laine de verre: 20-50€/m². Enduit: 10-25€/m².
+CHAUFFAGISTE: 50-80€/h + déplacement 20-40€. Entretien chaudière gaz: 100-200€. Installation chaudière gaz condensation: 2000-4000€. Pompe à chaleur air/eau: 5000-12000€. Radiateur fonte: 200-400€. Plancher chauffant: 30-60€/m². Climatisation split: 800-2000€/unité.
+SERRURIER: 50-90€/h. Changement serrure standard: 100-250€. Serrure multipoints: 200-500€. Porte blindée: 1000-3000€. Urgence nuit/weekend: +50%. Ouverture porte: 100-300€.
+VITRIER: 40-70€/h. Remplacement vitre simple: 80-200€. Double vitrage: 200-500€/fenêtre. Vitre trempée: +30%. Miroir pose: 100-300€.
+FAÇADIER: 35-55€/h. Ravalement simple: 30-70€/m². Isolation extérieure (ITE): 80-200€/m². Crépi: 20-50€/m². Peinture façade: 20-45€/m².
+TERRASSIER: 40-70€/h. Terrassement: 5-15€/m³. Nivellement terrain: 15-40€/m². Décaissement: 20-50€/m². Tranchée: 20-60€/ml.
+PAYSAGISTE: 35-60€/h. Tonte pelouse: 30-80€. Taille haie: 3-8€/ml. Élagage arbre: 200-800€. Création jardin: 50-150€/m². Pose gazon: 8-20€/m².
+CARRELEUR SOL: Grès cérame: 30-55€/m². Mosaïque: 50-100€/m². Pierre naturelle: 40-80€/m².
+HOMME TOUTES MAINS: 35-55€/h. Petites réparations, montage meubles, fixations.
+
+GARANTIES LÉGALES: Parfait achèvement 1 an. Biennale 2 ans. Décennale 10 ans (gros oeuvre).
+TVA: 5.5% économies énergie. 10% rénovation logement >2 ans. 20% construction neuve.
+DÉLAIS: Urgence 2-4h. Standard 2-7 jours. Devis sous 48h.
+
+Sois précis, professionnel, concis. Donne fourchettes de prix claires. Dis toujours que l'artisan confirmera après visite. Réponds en français.`;
 }
 
 async function send(text) {
   if (!text || isLoading) return;
+  if (msgCount >= MAX_MSG) { showLimiteMsg(); return; }
   addUser(text);
+  msgCount++;
   history.push({ role: 'user', content: text });
   isLoading = true; setTyping(true);
   try {
@@ -697,6 +753,7 @@ async function send(text) {
     const answer = data.answer || 'Pas de réponse.';
     history.push({ role: 'assistant', content: answer });
     addBot(answer, false);
+    if (msgCount >= MAX_MSG) { setTimeout(showLimiteMsg, 800); }
   } catch {
     setTyping(false);
     addBot('Erreur de connexion. Réessayez.', false);
@@ -815,7 +872,7 @@ async function genererDevis() {
         <div class="devis-total"><span>TOTAL ESTIMÉ</span><span>${devis.totalMin}€ — ${devis.totalMax}€</span></div>
         <div style="margin-top:12px;font-size:12px;color:var(--dim)">⏱️ Délai : ${devis.delai || 'À confirmer'}</div>
         <div style="margin-top:6px;font-size:12px;color:var(--dim)">ℹ️ ${devis.note || "Devis indicatif. L'artisan confirmera après visite."}</div>
-        <button class="cta-btn" style="margin-top:14px" onclick="alert('Demande envoyée ! L\\'artisan vous contacte sous 24h.')">✅ Valider et envoyer</button>`;
+        <button class="cta-btn" style="margin-top:14px" onclick="ouvrirWhatsApp('Bonjour, j\'ai généré un devis via la démo Assistant Artisan IA et je souhaite confirmer avec un artisan. Pouvez-vous me contacter ?')">💬 Envoyer sur WhatsApp</button>`;
     } else {
       result.innerHTML = `
         <div class="devis-result-title">📋 Estimation ${type}</div>
@@ -824,7 +881,7 @@ async function genererDevis() {
         <div class="devis-line"><span>Déplacement</span><span>Inclus</span></div>
         <div class="devis-total"><span>TOTAL ESTIMÉ</span><span>230 — 500€</span></div>
         <div style="margin-top:12px;font-size:12px;color:var(--dim)">ℹ️ Devis indicatif. L'artisan confirmera après visite.</div>
-        <button class="cta-btn" style="margin-top:14px" onclick="alert('Demande envoyée ! L\\'artisan vous contacte sous 24h.')">✅ Valider et envoyer</button>`;
+        <button class="cta-btn" style="margin-top:14px" onclick="ouvrirWhatsApp('Bonjour, j\'ai généré un devis via la démo Assistant Artisan IA et je souhaite confirmer avec un artisan. Pouvez-vous me contacter ?')">💬 Envoyer sur WhatsApp</button>`;
     }
   } catch {
     document.getElementById('devisResult').style.display = 'block';
@@ -838,18 +895,24 @@ async function genererDevis() {
 
 // ===== URGENCE =====
 function declencherUrgence(type) {
+  const conseils = {
+    "Fuite d'eau": "• Coupez l'arrivée d'eau principale\n• Épongez l'excédent\n• Placez un récipient sous la fuite",
+    "Panne électrique": "• Vérifiez le disjoncteur principal\n• Ne touchez pas aux fils\n• Débranchez les appareils sensibles",
+    "Chauffage en panne": "• Vérifiez le thermostat\n• Contrôlez la pression chaudière\n• Couvrez-vous en attendant",
+    "Autre urgence": "• Sécurisez la zone\n• Ne prenez pas de risques\n• L'artisan vous guidera par téléphone"
+  };
+  const waMsg = `🚨 URGENCE ${type.toUpperCase()} 🚨\n\nJ'ai besoin d'une intervention urgente pour : ${type}.\n\nPouvez-vous intervenir rapidement ?`;
   const zone = document.querySelector('.urgence-zone');
   zone.innerHTML = `
     <div class="urgence-icon">✅</div>
     <div class="urgence-title" style="color:var(--green)">Alerte envoyée !</div>
-    <div class="urgence-sub">Votre urgence <strong>${type}</strong> a été transmise à l'artisan. Il vous rappelle dans les plus brefs délais.</div>
-    <div class="urgence-info">
-      <strong>Que faire en attendant ?</strong>
-      ${type === "Fuite d'eau" ? "• Coupez l'arrivée d'eau principale\n• Éponger l'excédent\n• Placez un récipient sous la fuite" : ""}
-      ${type === "Panne électrique" ? "• Vérifiez le disjoncteur principal\n• Ne touchez pas aux fils\n• Débranchez les appareils sensibles" : ""}
-      ${type === "Chauffage en panne" ? "• Vérifiez le thermostat\n• Contrôlez la pression de la chaudière\n• Couvrez-vous en attendant" : ""}
+    <div class="urgence-sub">Urgence <strong>${type}</strong> — Contactez l'artisan maintenant sur WhatsApp pour une intervention rapide.</div>
+    <button class="urgence-btn" onclick="ouvrirWhatsApp('${waMsg.replace(/'/g, "\'")}')">💬 Contacter sur WhatsApp</button>
+    <div class="urgence-info" style="margin-top:16px">
+      <strong>En attendant :</strong><br/>
+      ${(conseils[type] || "• Restez calme\n• Sécurisez la zone").replace(/\n/g, '<br/>')}
     </div>
-    <button class="urgence-btn" style="margin-top:20px" onclick="location.reload()">↩ Retour</button>`;
+    <button class="urgence-type-btn" style="margin-top:16px" onclick="location.reload()">↩ Retour</button>`;
 }
 
 // INIT
