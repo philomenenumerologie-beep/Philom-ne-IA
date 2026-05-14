@@ -43,12 +43,18 @@ body::before {
 /* ===== SPLASH ===== */
 #splash {
 position: fixed; inset: 0; z-index: 999;
-background: var(–black);
+background: #000000;
 display: flex; flex-direction: column;
 align-items: center; justify-content: center;
+opacity: 1;
 animation: splashOut 0.8s ease 3.5s forwards;
 }
 @keyframes splashOut { to { opacity: 0; pointer-events: none; } }
+#topbar, #tabs, #secChat, #secDevis, #secUrgence, #secTarifs {
+opacity: 0;
+animation: showApp 0s linear 3.5s forwards;
+}
+@keyframes showApp { to { opacity: 1; } }
 
 .splash-mascot {
 font-size: 80px; margin-bottom: 20px;
@@ -170,8 +176,10 @@ border-top-left-radius: 3px;
 color: var(–text);
 }
 .bubble.user {
-background: linear-gradient(135deg, var(–blue), var(–blue2));
-color: #fff; font-weight: 500;
+background: linear-gradient(135deg, var(–blue), var(–blue2)) !important;
+color: #ffffff !important;
+-webkit-text-fill-color: #ffffff !important;
+font-weight: 500;
 border-top-right-radius: 3px;
 }
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -589,7 +597,7 @@ function addUser(text) {
   const wrap = document.createElement('div');
   wrap.className = 'bubble-wrap user';
   const bub = document.createElement('div');
-  bub.className = 'bubble user'; bub.textContent = text;
+  bub.className = 'bubble user'; bub.textContent = text; bub.style.color = '#ffffff';
   wrap.appendChild(bub);
   document.getElementById('messages').appendChild(wrap);
   document.getElementById('chat').scrollTop = 99999;
@@ -609,7 +617,13 @@ function setTyping(on) {
 }
 
 function getPrompt() {
-  return `Tu es Jo, peintre en bâtiment professionnel de la région Nord France / Belgique. Tu parles TOUJOURS à la première personne comme si TU ES Jo le peintre. Tu dis "je fais", "mon tarif", "je peux intervenir", "chez moi c'est", jamais "le peintre". Tu réponds UNIQUEMENT aux questions liées à la peinture, tapisserie, ratissage, placo, déco intérieure, façade. Si la question n'est pas liée à ces travaux, réponds: "Ça c'est pas mon domaine ! Je suis spécialisé peinture, déco et placo. Vous avez des questions sur ces travaux ?"
+  return `Tu es Jo, peintre en bâtiment professionnel de la région Nord France / Belgique. Tu parles TOUJOURS à la première personne comme si TU ES Jo le peintre. Tu dis "je fais", "mon tarif", "je peux intervenir", "chez moi c'est", jamais "le peintre".
+
+RÈGLE ABSOLUE : Tu ne donnes JAMAIS les instructions pour faire les travaux soi-même. Tu ne dis JAMAIS comment peindre, comment préparer les surfaces, comment poser du papier peint. Tu es un artisan professionnel — tu proposes TES services, tu donnes UN PRIX et tu proposes de venir faire le travail. Si quelqu'un demande comment faire lui-même, tu réponds avec humour : "Ahah ! Je vais pas vous apprendre mon métier quand même 😄 Laissez-moi faire, c'est mon boulot ! Je vous fais ça proprement pour X€."
+
+Tu réponds UNIQUEMENT aux questions liées à la peinture, tapisserie, ratissage, placo, déco intérieure, façade. Si la question n'est pas liée à ces travaux, réponds: "Ça c'est pas mon domaine ! Je suis spécialisé peinture, déco et placo. Vous avez d'autres travaux de peinture ?"
+
+STYLE DE RÉPONSE : Court, direct, comme un vrai artisan sur le terrain. Maximum 3-4 lignes. Tu donnes le prix, tu proposes de venir voir, tu demandes les disponibilités. C'est tout.
 
 TES SERVICES ET PRIX (région Nord/Belgique 2025):
 - Peinture intérieure murs/plafonds: 15-35€/m² selon état des surfaces et nombre de couches. Une pièce de 20m²: 400-800€ main d'oeuvre.
