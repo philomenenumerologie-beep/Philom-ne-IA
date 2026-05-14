@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Assistant Artisan IA — Philomène</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold2: #f0cc6e;
+  --gold3: rgba(201,168,76,0.15);
+  --black: #0c0c0c;
+  --dark: #141414;
+  --surface: #1c1c1c;
+  --surface2: #242424;
+  --dim: #777;
+  --text: #f0ece4;
+  --border: rgba(201,168,76,0.2);
+  --orange: #e07b3a;
+  --green: #4ade80;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+/* BACKGROUND */
+body::before {
+content: ‘’;
+position: fixed; inset: 0;
+background:
+radial-gradient(ellipse at 10% 0%, rgba(201,168,76,0.07) 0%, transparent 50%),
+radial-gradient(ellipse at 90% 100%, rgba(224,123,58,0.05) 0%, transparent 50%);
+pointer-events: none; z-index: 0;
+}
+
+/* ===== SPLASH ===== */
+#splash {
+position: fixed; inset: 0; z-index: 999;
+background: #000;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+animation: splashOut 0.8s ease 3.2s forwards;
+}
+@keyframes splashOut { to { opacity: 0; pointer-events: none; } }
+
+.splash-icon {
+font-size: 70px;
+animation: iconIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+filter: drop-shadow(0 0 30px rgba(201,168,76,0.6));
+margin-bottom: 24px;
+}
+@keyframes iconIn {
+from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.splash-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 42px; font-weight: 900;
+color: var(–gold);
+letter-spacing: 0.05em;
+text-align: center;
+text-shadow: 0 0 60px rgba(201,168,76,0.5);
+animation: textIn 0.7s ease 0.8s both;
+line-height: 1.1;
+}
+.splash-title span { display: block; font-size: 22px; font-weight: 400; letter-spacing: 0.3em; color: var(–dim); font-family: ‘Oswald’, sans-serif; margin-bottom: 6px; }
+@keyframes textIn {
+from { opacity: 0; transform: translateY(20px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+.splash-line {
+width: 100px; height: 1px;
+background: linear-gradient(90deg, transparent, var(–gold), transparent);
+margin: 20px auto;
+animation: textIn 0.7s ease 1.2s both;
+}
+.splash-sub {
+font-size: 12px; color: var(–dim);
+letter-spacing: 0.25em; text-transform: uppercase;
+animation: textIn 0.7s ease 1.5s both;
+font-family: ‘Oswald’, sans-serif;
+}
+
+/* ===== TOPBAR ===== */
+#topbar {
+position: relative; z-index: 10;
+display: flex; align-items: center; justify-content: space-between;
+padding: 14px 16px;
+background: linear-gradient(180deg, #111, #0c0c0c);
+border-bottom: 1px solid var(–border);
+flex-shrink: 0;
+}
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+width: 44px; height: 44px; border-radius: 8px;
+background: linear-gradient(135deg, #1a1a1a, #242424);
+border: 1px solid var(–border);
+display: flex; align-items: center; justify-content: center;
+font-size: 22px;
+box-shadow: 0 2px 12px rgba(201,168,76,0.15);
+}
+.logo-text { display: flex; flex-direction: column; }
+.logo-name {
+font-family: ‘Playfair Display’, serif;
+font-size: 17px; color: var(–gold);
+font-weight: 700; letter-spacing: 0.03em;
+}
+.logo-sub { font-size: 10px; color: var(–dim); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+.status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(–dim); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(–green); box-shadow: 0 0 8px var(–green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ===== TABS ===== */
+#tabs {
+display: flex;
+background: var(–dark);
+border-bottom: 1px solid rgba(201,168,76,0.1);
+flex-shrink: 0;
+overflow-x: auto; scrollbar-width: none;
+}
+#tabs::-webkit-scrollbar { display: none; }
+.tab {
+flex: 1; min-width: 80px;
+padding: 11px 8px; text-align: center;
+font-family: ‘Oswald’, sans-serif;
+font-size: 11px; font-weight: 500;
+color: var(–dim); cursor: pointer;
+letter-spacing: 0.1em; text-transform: uppercase;
+border-bottom: 2px solid transparent;
+transition: all 0.2s; white-space: nowrap;
+}
+.tab.active { color: var(–gold); border-bottom-color: var(–gold); }
+
+/* ===== SECTIONS ===== */
+#secChat { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#secDevis { display: none; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; padding: 16px 14px 20px; }
+#secUrgence { display: none; flex-direction: column; flex: 1; align-items: center; justify-content: center; padding: 20px; }
+#secTarifs { display: none; flex: 1; overflow-y: auto; padding: 16px 14px 20px; }
+
+/* ===== CHAT ===== */
+#chat {
+flex: 1; overflow-y: auto;
+padding: 14px 12px;
+-webkit-overflow-scrolling: touch;
+}
+.bubble-wrap { display: flex; margin-bottom: 14px; animation: bubbleIn 0.3s ease; }
+@keyframes bubbleIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.bubble-wrap.bot { justify-content: flex-start; }
+.bubble-wrap.user { justify-content: flex-end; }
+.avatar {
+width: 36px; height: 36px; border-radius: 8px;
+background: var(–surface);
+border: 1px solid var(–border);
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0; margin-right: 10px; margin-top: 2px;
+font-size: 18px;
+}
+.bubble {
+max-width: min(82%, 340px);
+padding: 12px 15px; border-radius: 12px;
+font-size: 14px; line-height: 1.6;
+white-space: pre-wrap;
+}
+.bubble.bot {
+background: var(–surface);
+border: 1px solid rgba(201,168,76,0.12);
+border-top-left-radius: 3px;
+}
+.bubble.user {
+background: linear-gradient(135deg, #7a5a1a, #c9a84c);
+color: #000; font-weight: 500;
+border-top-right-radius: 3px;
+}
+.quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.qa-btn {
+padding: 8px 12px;
+background: rgba(201,168,76,0.08);
+border: 1px solid rgba(201,168,76,0.2);
+border-radius: 20px; color: var(–gold);
+font-size: 12px; cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.15s;
+}
+.qa-btn:active { background: rgba(201,168,76,0.2); transform: scale(0.97); }
+
+/* PHOTO BUBBLE */
+.photo-bubble {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px; padding: 12px;
+max-width: 260px; margin-top: 8px;
+}
+.photo-preview {
+width: 100%; border-radius: 8px;
+max-height: 180px; object-fit: cover;
+display: block; margin-bottom: 10px;
+}
+.photo-analyzing {
+display: flex; align-items: center; gap: 8px;
+font-size: 12px; color: var(–gold);
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.05em;
+}
+.devis-card {
+background: rgba(201,168,76,0.06);
+border: 1px solid var(–border);
+border-radius: 10px; padding: 14px; margin-top: 10px;
+}
+.devis-title {
+font-family: ‘Oswald’, sans-serif;
+font-size: 13px; color: var(–gold);
+text-transform: uppercase; letter-spacing: 0.1em;
+margin-bottom: 10px;
+}
+.devis-line {
+display: flex; justify-content: space-between;
+font-size: 13px; padding: 6px 0;
+border-bottom: 1px solid rgba(201,168,76,0.08);
+}
+.devis-total {
+display: flex; justify-content: space-between;
+font-size: 15px; font-weight: 700;
+color: var(–gold); margin-top: 10px;
+}
+
+/* TYPING */
+.typing { display:flex; gap:5px; padding:4px 2px; }
+.typing span {
+width:7px; height:7px; border-radius:50%;
+background: var(–gold); animation: bounce 1.3s infinite;
+}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+/* ===== COMPOSER ===== */
+#composer {
+flex-shrink: 0;
+padding: 10px 12px 16px;
+background: var(–dark);
+border-top: 1px solid rgba(201,168,76,0.1);
+}
+.composer-inner {
+display: flex; align-items: center; gap: 8px;
+background: var(–surface);
+border: 1px solid rgba(201,168,76,0.25);
+border-radius: 14px; padding: 8px 8px 8px 14px;
+}
+.composer-input {
+flex: 1; background: transparent; border: none; outline: none;
+color: var(–text); font-size: 15px;
+font-family: ‘DM Sans’, sans-serif;
+}
+.composer-input::placeholder { color: #444; }
+.photo-btn {
+width: 38px; height: 38px; border-radius: 10px;
+background: var(–surface2); border: 1px solid var(–border);
+color: var(–gold); font-size: 18px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; flex-shrink: 0;
+}
+.send-btn {
+width: 38px; height: 38px; border-radius: 10px;
+background: var(–gold); border: none; color: #000;
+font-size: 16px; display: flex; align-items: center; justify-content: center;
+cursor: pointer; flex-shrink: 0; font-weight: 900;
+}
+#photoInput { display: none; }
+
+/* ===== DEVIS ===== */
+.devis-form-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 22px; color: var(–gold);
+margin-bottom: 4px;
+}
+.devis-form-sub { font-size: 12px; color: var(–dim); margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+.form-label {
+display: block; font-size: 11px; color: var(–dim);
+text-transform: uppercase; letter-spacing: 0.1em;
+margin-bottom: 6px; font-family: ‘Oswald’, sans-serif;
+}
+.form-input, .form-select, .form-textarea {
+width: 100%;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 8px; padding: 11px 14px;
+color: var(–text); font-size: 14px;
+font-family: ‘DM Sans’, sans-serif; outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+border-color: var(–gold);
+}
+.form-select { appearance: none; }
+.form-textarea { resize: none; height: 80px; }
+.photo-upload-zone {
+border: 2px dashed rgba(201,168,76,0.3);
+border-radius: 10px; padding: 24px;
+text-align: center; cursor: pointer;
+transition: all 0.2s;
+background: rgba(201,168,76,0.03);
+}
+.photo-upload-zone:active { border-color: var(–gold); background: rgba(201,168,76,0.08); }
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-text { font-size: 13px; color: var(–dim); }
+.upload-text strong { color: var(–gold); display: block; font-size: 14px; margin-bottom: 4px; }
+.photos-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.thumb {
+width: 70px; height: 70px; border-radius: 8px;
+object-fit: cover; border: 1px solid var(–border);
+}
+.submit-btn {
+width: 100%; padding: 14px;
+background: linear-gradient(135deg, #a07830, var(–gold));
+border: none; border-radius: 10px;
+color: #000; font-weight: 700; font-size: 15px;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.1em; cursor: pointer;
+margin-top: 20px;
+box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+}
+.devis-result {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px; padding: 16px;
+margin-top: 16px; display: none;
+}
+.devis-result-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 18px; color: var(–gold); margin-bottom: 14px;
+}
+
+/* ===== URGENCE ===== */
+.urgence-zone { text-align: center; width: 100%; max-width: 320px; }
+.urgence-icon { font-size: 60px; margin-bottom: 16px; animation: urgPulse 1.5s infinite; }
+@keyframes urgPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.urgence-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 26px; color: #e74c3c;
+margin-bottom: 8px;
+}
+.urgence-sub { font-size: 13px; color: var(–dim); margin-bottom: 28px; line-height: 1.6; }
+.urgence-btn {
+width: 100%; padding: 18px;
+background: linear-gradient(135deg, #c0392b, #e74c3c);
+border: none; border-radius: 14px;
+color: #fff; font-size: 18px; font-weight: 700;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.1em; cursor: pointer;
+box-shadow: 0 6px 24px rgba(192,57,43,0.4);
+margin-bottom: 12px;
+animation: urgBtnPulse 2s infinite;
+}
+@keyframes urgBtnPulse {
+0%,100%{box-shadow: 0 6px 24px rgba(192,57,43,0.4)}
+50%{box-shadow: 0 6px 40px rgba(192,57,43,0.7)}
+}
+.urgence-info {
+background: var(–surface);
+border: 1px solid rgba(231,76,60,0.2);
+border-radius: 10px; padding: 14px;
+font-size: 13px; color: var(–dim);
+text-align: left; margin-top: 16px;
+}
+.urgence-info strong { color: var(–text); display: block; margin-bottom: 6px; }
+.urgence-type-btn {
+width: 100%; padding: 14px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 10px;
+color: var(–text); font-size: 14px;
+font-family: ‘DM Sans’, sans-serif;
+cursor: pointer; margin-bottom: 10px;
+text-align: left; display: flex; align-items: center; gap: 12px;
+}
+
+/* ===== TARIFS ===== */
+.tarifs-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 22px; color: var(–gold); margin-bottom: 4px;
+}
+.tarifs-sub { font-size: 12px; color: var(–dim); margin-bottom: 20px; }
+.tarif-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px; padding: 18px;
+margin-bottom: 14px;
+}
+.tarif-card.featured {
+border-color: var(–gold);
+background: linear-gradient(135deg, rgba(201,168,76,0.08), var(–surface));
+}
+.tarif-badge {
+display: inline-block;
+background: var(–gold); color: #000;
+font-size: 10px; font-weight: 700;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.1em; padding: 3px 8px;
+border-radius: 4px; margin-bottom: 10px;
+}
+.tarif-name {
+font-family: ‘Playfair Display’, serif;
+font-size: 20px; color: var(–text); margin-bottom: 4px;
+}
+.tarif-price {
+font-family: ‘Oswald’, sans-serif;
+font-size: 32px; color: var(–gold);
+margin-bottom: 4px;
+}
+.tarif-price span { font-size: 14px; color: var(–dim); }
+.tarif-desc { font-size: 12px; color: var(–dim); margin-bottom: 14px; }
+.tarif-feature {
+display: flex; align-items: center; gap: 10px;
+font-size: 13px; padding: 6px 0;
+border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.tarif-feature:last-child { border: none; }
+.tarif-check { color: var(–green); font-size: 14px; flex-shrink: 0; }
+.cta-btn {
+width: 100%; padding: 14px;
+background: linear-gradient(135deg, #a07830, var(–gold));
+border: none; border-radius: 10px;
+color: #000; font-weight: 700; font-size: 14px;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.08em; cursor: pointer;
+margin-top: 14px;
+}
+.install-note {
+background: rgba(201,168,76,0.06);
+border: 1px solid var(–border);
+border-radius: 10px; padding: 14px;
+text-align: center; margin-bottom: 16px;
+font-size: 13px; color: var(–dim);
+}
+.install-note strong { color: var(–gold); font-size: 18px; }
+</style>
+
+</head>
+<body>
+
+<!-- SPLASH -->
+
+<div id="splash">
+  <div class="splash-icon">🔧</div>
+  <div class="splash-title">
+    <span>Philomène I.A.</span>
+    Assistant Artisan
+  </div>
+  <div class="splash-line"></div>
+  <div class="splash-sub">Disponible 24h/24 pour vos clients</div>
+</div>
+
+<!-- TOPBAR -->
+
+<header id="topbar">
+  <div class="logo-area">
+    <div class="logo-icon">🔧</div>
+    <div class="logo-text">
+      <span class="logo-name">Assistant Artisan</span>
+      <span class="logo-sub">Philomène I.A. • 24h/24</span>
+    </div>
+  </div>
+  <div class="status"><div class="dot"></div>En ligne</div>
+</header>
+
+<!-- TABS -->
+
+<div id="tabs">
+  <div class="tab active" onclick="switchTab('chat',this)">💬 Assistant</div>
+  <div class="tab" onclick="switchTab('devis',this)">📋 Devis Photo</div>
+  <div class="tab" onclick="switchTab('urgence',this)">🚨 Urgence</div>
+  <div class="tab" onclick="switchTab('tarifs',this)">💶 Tarifs</div>
+</div>
+
+<!-- SECTION CHAT -->
+
+<div id="secChat">
+  <div id="chat"><div id="messages"></div></div>
+  <div id="composer">
+    <div class="composer-inner">
+      <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhoto(this)"/>
+      <button class="photo-btn" onclick="document.getElementById('photoInput').click()">📷</button>
+      <input class="composer-input" id="userInput" placeholder="Posez votre question…" type="text"/>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DEVIS -->
+
+<div id="secDevis">
+  <div class="devis-form-title">Devis instantané</div>
+  <div class="devis-form-sub">Prenez une photo du chantier, l'IA estime le devis</div>
+
+  <div class="form-group">
+    <label class="form-label">Type de travaux</label>
+    <select class="form-select" id="typeTravauxInput">
+      <option value="">Sélectionnez...</option>
+      <option>Plomberie — fuite, installation</option>
+      <option>Électricité — tableau, prises</option>
+      <option>Peinture — intérieur, extérieur</option>
+      <option>Menuiserie — portes, fenêtres</option>
+      <option>Carrelage — pose, rénovation</option>
+      <option>Toiture — réparation, remplacement</option>
+      <option>Autre</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Description du problème</label>
+    <textarea class="form-textarea" id="descInput" placeholder="Décrivez rapidement la situation…"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">📷 Photos du chantier</label>
+    <div class="photo-upload-zone" onclick="document.getElementById('devisPhotoInput').click()">
+      <div class="upload-icon">📸</div>
+      <div class="upload-text">
+        <strong>Ajouter des photos</strong>
+        L'IA analyse et estime les matériaux
+      </div>
+    </div>
+    <input type="file" id="devisPhotoInput" accept="image/*" multiple style="display:none" onchange="handleDevisPhoto(this)"/>
+    <div class="photos-preview" id="photosPreview"></div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Surface approximative</label>
+    <input class="form-input" id="surfaceInput" type="text" placeholder="Ex: 15m², 3 pièces, 10ml..."/>
+  </div>
+
+<button class="submit-btn" onclick="genererDevis()">🔧 Générer le devis IA</button>
+
+  <div class="devis-result" id="devisResult"></div>
+</div>
+
+<!-- SECTION URGENCE -->
+
+<div id="secUrgence">
+  <div class="urgence-zone">
+    <div class="urgence-icon">🚨</div>
+    <div class="urgence-title">Urgence Artisan</div>
+    <div class="urgence-sub">Un problème urgent ? L'artisan est alerté immédiatement et vous rappelle dans les plus brefs délais.</div>
+
+```
+<button class="urgence-type-btn" onclick="declencherUrgence('Fuite d\'eau')">💧 Fuite d'eau</button>
+<button class="urgence-type-btn" onclick="declencherUrgence('Panne électrique')">⚡ Panne électrique</button>
+<button class="urgence-type-btn" onclick="declencherUrgence('Chauffage en panne')">🔥 Chauffage en panne</button>
+<button class="urgence-type-btn" onclick="declencherUrgence('Autre urgence')">🔧 Autre urgence</button>
+
+<div class="urgence-info">
+  <strong>Comment ça fonctionne ?</strong>
+  1. Vous choisissez le type d'urgence<br>
+  2. L'artisan reçoit une alerte immédiate<br>
+  3. Il vous rappelle dans les plus brefs délais
+</div>
+```
+
+  </div>
+</div>
+
+<!-- SECTION TARIFS -->
+
+<div id="secTarifs">
+  <div class="tarifs-title">Nos tarifs</div>
+  <div class="tarifs-sub">Transparent, sans surprise</div>
+
+  <div class="install-note">
+    Installation unique <strong>85€</strong> — configuration complète incluse<br>
+    <span style="font-size:11px">🎁 Offre lancement : 69€ pour les 10 premiers clients</span>
+  </div>
+
+  <div class="tarif-card">
+    <div class="tarif-name">Mensuel</div>
+    <div class="tarif-price">24€ <span>/ mois</span></div>
+    <div class="tarif-desc">Sans engagement — résiliable à tout moment</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Assistant IA 24h/24</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Réponses automatiques clients</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Devis avec analyse photo</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Bouton urgence</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Personnalisé à votre métier</div>
+    <button class="cta-btn" onclick="window.open('https://philomeneia.com')">Je veux mon assistant</button>
+  </div>
+
+  <div class="tarif-card featured">
+    <div class="tarif-badge">⭐ MEILLEURE OFFRE</div>
+    <div class="tarif-name">Annuel</div>
+    <div class="tarif-price">240€ <span>/ an • 2 mois offerts</span></div>
+    <div class="tarif-desc">Économisez 48€ par rapport au mensuel</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Tout le forfait mensuel</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> 2 mois offerts</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Priorité support</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Mises à jour incluses</div>
+    <button class="cta-btn" onclick="window.open('https://philomeneia.com')">Choisir l'annuel</button>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://philo-backend-by2c.onrender.com";
+let isLoading = false;
+let history = [];
+
+// ===== TAB SWITCH =====
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('secChat').style.display = 'none';
+  document.getElementById('secDevis').style.display = 'none';
+  document.getElementById('secUrgence').style.display = 'none';
+  document.getElementById('secTarifs').style.display = 'none';
+  if (tab === 'chat') document.getElementById('secChat').style.display = 'flex';
+  else if (tab === 'devis') document.getElementById('secDevis').style.display = 'flex';
+  else if (tab === 'urgence') document.getElementById('secUrgence').style.display = 'flex';
+  else if (tab === 'tarifs') document.getElementById('secTarifs').style.display = 'block';
+}
+
+// ===== CHAT =====
+function initChat() {
+  addBot("Bonjour ! 👋 Je suis votre assistant artisan, disponible 24h/24.\n\nJe peux vous aider avec vos questions, estimer un devis, gérer une urgence ou vous donner nos tarifs.", true);
+}
+
+function addBot(text, withActions) {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap bot';
+  const av = document.createElement('div');
+  av.className = 'avatar'; av.textContent = '🔧';
+  const bub = document.createElement('div');
+  bub.className = 'bubble bot'; bub.textContent = text;
+  if (withActions) {
+    const qa = document.createElement('div');
+    qa.className = 'quick-actions';
+    qa.innerHTML =
+      '<button class="qa-btn" onclick="send(\'Quels sont vos tarifs ?\')">💶 Tarifs</button>' +
+      '<button class="qa-btn" onclick="send(\'Vous intervenez le weekend ?\')">📅 Disponibilités</button>' +
+      '<button class="qa-btn" onclick="send(\'Comment obtenir un devis ?\')">📋 Devis</button>' +
+      '<button class="qa-btn" onclick="send(\'Quels travaux faites-vous ?\')">🔧 Travaux</button>' +
+      '<button class="qa-btn" onclick="send(\'Délai d\'intervention ?\')">⏱️ Délai</button>';
+    bub.appendChild(qa);
+  }
+  wrap.appendChild(av); wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+}
+
+function addUser(text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap user';
+  const bub = document.createElement('div');
+  bub.className = 'bubble user'; bub.textContent = text;
+  wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+}
+
+function setTyping(on) {
+  if (on) {
+    const wrap = document.createElement('div');
+    wrap.className = 'bubble-wrap bot'; wrap.id = 'typingWrap';
+    wrap.innerHTML = '<div class="avatar">🔧</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+    document.getElementById('messages').appendChild(wrap);
+    document.getElementById('chat').scrollTop = 99999;
+  } else {
+    const t = document.getElementById('typingWrap');
+    if (t) t.remove();
+  }
+}
+
+function getPrompt() {
+  return `Tu es un assistant IA pour un artisan professionnel (plombier, électricien, menuisier, peintre, carreleur selon le contexte). Tu réponds aux clients 24h/24 de façon professionnelle et rassurante. Tu peux donner des estimations de prix, des délais d'intervention, expliquer les types de travaux. Tarifs: installation 85€ (offre lancement 69€), 24€/mois ou 240€/an. Rappelle que l'artisan rappellera pour confirmer. Sois concis et professionnel. Réponds en français.`;
+}
+
+async function send(text) {
+  if (!text || isLoading) return;
+  addUser(text);
+  history.push({ role: 'user', content: text });
+  isLoading = true; setTyping(true);
+  try {
+    const resp = await fetch(API_BASE + '/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation: [{ role: 'system', content: getPrompt() }, ...history.slice(-8)],
+        userId: 'artisan_demo'
+      })
+    });
+    const data = await resp.json();
+    setTyping(false);
+    const answer = data.answer || 'Pas de réponse.';
+    history.push({ role: 'assistant', content: answer });
+    addBot(answer, false);
+  } catch {
+    setTyping(false);
+    addBot('Erreur de connexion. Réessayez.', false);
+  }
+  isLoading = false;
+}
+
+function sendMessage() {
+  const text = document.getElementById('userInput').value.trim();
+  if (!text) return;
+  document.getElementById('userInput').value = '';
+  send(text);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('userInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { sendMessage(); }
+  });
+});
+
+// ===== PHOTO IN CHAT =====
+function handlePhoto(input) {
+  if (!input.files.length) return;
+  const file = input.files[0];
+  const url = URL.createObjectURL(file);
+
+  // Show photo bubble
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap user';
+  const bub = document.createElement('div');
+  bub.className = 'bubble user';
+  bub.innerHTML = '📷 Photo envoyée';
+  wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+
+  // Show analyzing
+  setTimeout(() => {
+    const wrap2 = document.createElement('div');
+    wrap2.className = 'bubble-wrap bot';
+    const av = document.createElement('div');
+    av.className = 'avatar'; av.textContent = '🔧';
+    const bub2 = document.createElement('div');
+    bub2.className = 'bubble bot';
+    bub2.innerHTML = `<img src="${url}" class="photo-preview"/><div class="photo-analyzing">🔍 Analyse de la photo en cours...</div>`;
+    wrap2.appendChild(av); wrap2.appendChild(bub2);
+    document.getElementById('messages').appendChild(wrap2);
+    document.getElementById('chat').scrollTop = 99999;
+
+    setTimeout(() => {
+      bub2.querySelector('.photo-analyzing').remove();
+      const card = document.createElement('div');
+      card.className = 'devis-card';
+      card.innerHTML = `
+        <div class="devis-title">📋 Estimation basée sur la photo</div>
+        <div class="devis-line"><span>Main d'œuvre</span><span>180 — 280€</span></div>
+        <div class="devis-line"><span>Matériaux estimés</span><span>80 — 150€</span></div>
+        <div class="devis-line"><span>Déplacement</span><span>Inclus</span></div>
+        <div class="devis-total"><span>Total estimé</span><span>260 — 430€</span></div>`;
+      bub2.appendChild(card);
+      addBot("Estimation basée sur votre photo. L'artisan vous contactera pour confirmer le devis définitif. Souhaitez-vous prendre rendez-vous ?", false);
+    }, 2500);
+  }, 500);
+
+  input.value = '';
+}
+
+// ===== DEVIS FORM =====
+function handleDevisPhoto(input) {
+  const preview = document.getElementById('photosPreview');
+  Array.from(input.files).forEach(file => {
+    const url = URL.createObjectURL(file);
+    const img = document.createElement('img');
+    img.src = url; img.className = 'thumb';
+    preview.appendChild(img);
+  });
+}
+
+async function genererDevis() {
+  const type = document.getElementById('typeTravauxInput').value;
+  const desc = document.getElementById('descInput').value;
+  const surface = document.getElementById('surfaceInput').value;
+  const photos = document.getElementById('photosPreview').children.length;
+
+  if (!type) { alert('Veuillez sélectionner le type de travaux.'); return; }
+
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = '⏳ Analyse en cours...';
+  btn.disabled = true;
+
+  const prompt = `Tu es expert en estimation de travaux. Génère un devis détaillé et réaliste en JSON strict (sans backticks, juste le JSON) pour: Type: ${type}, Description: ${desc || 'Non précisée'}, Surface: ${surface || 'Non précisée'}, Photos fournies: ${photos > 0 ? 'Oui' : 'Non'}. 
+  Format JSON: {"titre":"...","lignes":[{"label":"...","min":0,"max":0}],"totalMin":0,"totalMax":0,"delai":"...","note":"..."}
+  Donne 4-5 lignes de devis réalistes avec main d'oeuvre, matériaux, etc.`;
+
+  try {
+    const resp = await fetch(API_BASE + '/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation: [{ role: 'user', content: prompt }],
+        userId: 'devis_demo'
+      })
+    });
+    const data = await resp.json();
+    const text = (data.answer || '').replace(/```json|```/g, '').trim();
+    let devis;
+    try { devis = JSON.parse(text); } catch { devis = null; }
+
+    const result = document.getElementById('devisResult');
+    result.style.display = 'block';
+
+    if (devis && devis.lignes) {
+      result.innerHTML = `
+        <div class="devis-result-title">📋 ${devis.titre || 'Estimation de travaux'}</div>
+        ${devis.lignes.map(l => `<div class="devis-line"><span>${l.label}</span><span>${l.min}€ — ${l.max}€</span></div>`).join('')}
+        <div class="devis-total"><span>TOTAL ESTIMÉ</span><span>${devis.totalMin}€ — ${devis.totalMax}€</span></div>
+        <div style="margin-top:12px;font-size:12px;color:var(--dim)">⏱️ Délai : ${devis.delai || 'À confirmer'}</div>
+        <div style="margin-top:6px;font-size:12px;color:var(--dim)">ℹ️ ${devis.note || "Devis indicatif. L'artisan confirmera après visite."}</div>
+        <button class="cta-btn" style="margin-top:14px" onclick="alert('Demande envoyée ! L\\'artisan vous contacte sous 24h.')">✅ Valider et envoyer</button>`;
+    } else {
+      result.innerHTML = `
+        <div class="devis-result-title">📋 Estimation ${type}</div>
+        <div class="devis-line"><span>Main d'œuvre</span><span>150 — 300€</span></div>
+        <div class="devis-line"><span>Matériaux</span><span>80 — 200€</span></div>
+        <div class="devis-line"><span>Déplacement</span><span>Inclus</span></div>
+        <div class="devis-total"><span>TOTAL ESTIMÉ</span><span>230 — 500€</span></div>
+        <div style="margin-top:12px;font-size:12px;color:var(--dim)">ℹ️ Devis indicatif. L'artisan confirmera après visite.</div>
+        <button class="cta-btn" style="margin-top:14px" onclick="alert('Demande envoyée ! L\\'artisan vous contacte sous 24h.')">✅ Valider et envoyer</button>`;
+    }
+  } catch {
+    document.getElementById('devisResult').style.display = 'block';
+    document.getElementById('devisResult').innerHTML = '<p style="color:var(--dim)">Erreur de connexion. Réessayez.</p>';
+  }
+
+  btn.textContent = '🔧 Générer le devis IA';
+  btn.disabled = false;
+  document.getElementById('devisResult').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== URGENCE =====
+function declencherUrgence(type) {
+  const zone = document.querySelector('.urgence-zone');
+  zone.innerHTML = `
+    <div class="urgence-icon">✅</div>
+    <div class="urgence-title" style="color:var(--green)">Alerte envoyée !</div>
+    <div class="urgence-sub">Votre urgence <strong>${type}</strong> a été transmise à l'artisan. Il vous rappelle dans les plus brefs délais.</div>
+    <div class="urgence-info">
+      <strong>Que faire en attendant ?</strong>
+      ${type === "Fuite d'eau" ? "• Coupez l'arrivée d'eau principale\n• Éponger l'excédent\n• Placez un récipient sous la fuite" : ""}
+      ${type === "Panne électrique" ? "• Vérifiez le disjoncteur principal\n• Ne touchez pas aux fils\n• Débranchez les appareils sensibles" : ""}
+      ${type === "Chauffage en panne" ? "• Vérifiez le thermostat\n• Contrôlez la pression de la chaudière\n• Couvrez-vous en attendant" : ""}
+    </div>
+    <button class="urgence-btn" style="margin-top:20px" onclick="location.reload()">↩ Retour</button>`;
+}
+
+// INIT
+initChat();
+</script>
+
+</body>
+</html>
