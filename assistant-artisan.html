@@ -43,7 +43,7 @@ body::before {
 /* ===== SPLASH ===== */
 #splash {
 position: fixed; inset: 0; z-index: 999;
-background: var(–black);
+background: #000000;
 display: flex; flex-direction: column;
 align-items: center; justify-content: center;
 opacity: 1;
@@ -51,9 +51,10 @@ animation: splashOut 0.8s ease 3.5s forwards;
 }
 @keyframes splashOut { to { opacity: 0; pointer-events: none; } }
 #topbar, #tabs, #secChat, #secDevis, #secUrgence, #secTarifs {
-animation: showApp 0s ease 3.5s both;
+opacity: 0;
+animation: showApp 0s linear 3.5s forwards;
 }
-@keyframes showApp { from { visibility: hidden; } to { visibility: visible; } }
+@keyframes showApp { to { opacity: 1; } }
 
 .splash-mascot {
 font-size: 80px; margin-bottom: 20px;
@@ -175,8 +176,10 @@ border-top-left-radius: 3px;
 color: var(–text);
 }
 .bubble.user {
-background: linear-gradient(135deg, var(–blue), var(–blue2));
-color: #ffffff !important; font-weight: 500;
+background: linear-gradient(135deg, var(–blue), var(–blue2)) !important;
+color: #ffffff !important;
+-webkit-text-fill-color: #ffffff !important;
+font-weight: 500;
 border-top-right-radius: 3px;
 }
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
