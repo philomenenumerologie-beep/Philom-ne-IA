@@ -46,9 +46,14 @@ position: fixed; inset: 0; z-index: 999;
 background: var(–black);
 display: flex; flex-direction: column;
 align-items: center; justify-content: center;
+opacity: 1;
 animation: splashOut 0.8s ease 3.5s forwards;
 }
 @keyframes splashOut { to { opacity: 0; pointer-events: none; } }
+#topbar, #tabs, #secChat, #secDevis, #secUrgence, #secTarifs {
+animation: showApp 0s ease 3.5s both;
+}
+@keyframes showApp { from { visibility: hidden; } to { visibility: visible; } }
 
 .splash-mascot {
 font-size: 80px; margin-bottom: 20px;
@@ -589,7 +594,7 @@ function addUser(text) {
   const wrap = document.createElement('div');
   wrap.className = 'bubble-wrap user';
   const bub = document.createElement('div');
-  bub.className = 'bubble user'; bub.textContent = text;
+  bub.className = 'bubble user'; bub.textContent = text; bub.style.color = '#ffffff';
   wrap.appendChild(bub);
   document.getElementById('messages').appendChild(wrap);
   document.getElementById('chat').scrollTop = 99999;
