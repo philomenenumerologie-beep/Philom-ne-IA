@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Jo Déco — Assistant IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --blue: #1a3a6b;
+  --blue2: #2a5298;
+  --green: #2ecc71;
+  --green2: #27ae60;
+  --gold: #c9a84c;
+  --black: #0a0f1a;
+  --dark: #0f1824;
+  --surface: #162030;
+  --surface2: #1e2d42;
+  --dim: #7a9ab8;
+  --text: #e8f0f8;
+  --border: rgba(46,204,113,0.25);
+  --lime: #4ade80;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--text);
+  display: flex; flex-direction: column;
+  height: 100dvh;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(26,58,107,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 100%, rgba(46,204,113,0.08) 0%, transparent 55%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ===== SPLASH ===== */
+#splash {
+position: fixed; inset: 0; z-index: 999;
+background: var(–black);
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+animation: splashOut 0.8s ease 3.5s forwards;
+}
+@keyframes splashOut { to { opacity: 0; pointer-events: none; } }
+
+.splash-mascot {
+font-size: 80px; margin-bottom: 20px;
+animation: mascotIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+filter: drop-shadow(0 0 20px rgba(46,204,113,0.4));
+}
+@keyframes mascotIn { from{opacity:0;transform:scale(0.3) translateY(30px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+.splash-name {
+font-family: ‘Oswald’, sans-serif;
+font-size: 58px; font-weight: 700;
+color: #fff; letter-spacing: 0.12em;
+text-shadow: 0 0 40px rgba(46,204,113,0.4);
+animation: fadeUp 0.6s ease 1s both;
+}
+.splash-name span { color: var(–green); }
+.splash-line {
+width: 140px; height: 2px;
+background: linear-gradient(90deg, transparent, var(–green), transparent);
+margin: 14px auto;
+animation: fadeUp 0.6s ease 1.3s both;
+}
+.splash-services {
+font-family: ‘Oswald’, sans-serif;
+font-size: 11px; color: var(–dim);
+letter-spacing: 0.2em; text-transform: uppercase;
+text-align: center; line-height: 2;
+animation: fadeUp 0.6s ease 1.6s both;
+}
+.splash-powered {
+position: absolute; bottom: 30px;
+font-size: 10px; color: rgba(255,255,255,0.2);
+letter-spacing: 0.15em; text-transform: uppercase;
+animation: fadeUp 0.6s ease 2s both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===== TOPBAR ===== */
+#topbar {
+position: relative; z-index: 10;
+display: flex; align-items: center; justify-content: space-between;
+padding: 12px 16px;
+background: linear-gradient(180deg, #0f1824, #0a0f1a);
+border-bottom: 2px solid rgba(46,204,113,0.3);
+flex-shrink: 0;
+}
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+width: 46px; height: 46px; border-radius: 10px;
+background: linear-gradient(135deg, var(–blue), var(–blue2));
+border: 1px solid rgba(46,204,113,0.3);
+display: flex; align-items: center; justify-content: center;
+font-size: 24px;
+box-shadow: 0 2px 14px rgba(26,58,107,0.5);
+}
+.logo-text { display: flex; flex-direction: column; }
+.logo-name {
+font-family: ‘Oswald’, sans-serif;
+font-size: 20px; color: #fff;
+font-weight: 700; letter-spacing: 0.1em;
+}
+.logo-name span { color: var(–green); }
+.logo-sub { font-size: 10px; color: var(–dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px; }
+.status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(–dim); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(–lime); box-shadow: 0 0 8px var(–lime); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ===== TABS ===== */
+#tabs {
+display: flex;
+background: var(–dark);
+border-bottom: 1px solid rgba(46,204,113,0.1);
+flex-shrink: 0;
+}
+.tab {
+flex: 1; padding: 10px 4px; text-align: center;
+font-family: ‘Oswald’, sans-serif;
+font-size: 10px; font-weight: 500;
+color: var(–dim); cursor: pointer;
+letter-spacing: 0.06em; text-transform: uppercase;
+border-bottom: 2px solid transparent;
+transition: all 0.2s;
+}
+.tab.active { color: var(–green); border-bottom-color: var(–green); }
+
+/* ===== SECTIONS ===== */
+#secChat { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#secDevis { display: none; flex: 1; overflow-y: auto; padding: 16px 14px 20px; }
+#secUrgence { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; }
+#secTarifs { display: none; flex: 1; overflow-y: auto; padding: 16px 14px 20px; }
+
+/* ===== CHAT ===== */
+#chat {
+flex: 1; overflow-y: auto;
+padding: 14px 12px;
+-webkit-overflow-scrolling: touch;
+}
+.bubble-wrap { display: flex; margin-bottom: 14px; animation: bubbleIn 0.3s ease; }
+@keyframes bubbleIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.bubble-wrap.bot { justify-content: flex-start; }
+.bubble-wrap.user { justify-content: flex-end; }
+.avatar {
+width: 36px; height: 36px; border-radius: 8px;
+background: linear-gradient(135deg, var(–blue), var(–blue2));
+border: 1px solid rgba(46,204,113,0.3);
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0; margin-right: 10px; margin-top: 2px;
+font-size: 18px;
+}
+.bubble {
+max-width: min(82%, 340px);
+padding: 12px 15px; border-radius: 12px;
+font-size: 14px; line-height: 1.65;
+}
+.bubble.bot {
+background: var(–surface);
+border: 1px solid rgba(46,204,113,0.12);
+border-top-left-radius: 3px;
+color: var(–text);
+}
+.bubble.user {
+background: linear-gradient(135deg, var(–blue), var(–blue2));
+color: #fff; font-weight: 500;
+border-top-right-radius: 3px;
+}
+.quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.qa-btn {
+padding: 8px 12px;
+background: rgba(46,204,113,0.08);
+border: 1px solid rgba(46,204,113,0.25);
+border-radius: 20px; color: var(–green);
+font-size: 12px; cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.15s;
+}
+.qa-btn:active { background: rgba(46,204,113,0.2); transform: scale(0.97); }
+
+/* TYPING */
+.typing { display:flex; gap:5px; padding:4px 2px; }
+.typing span {
+width:7px; height:7px; border-radius:50%;
+background: var(–green); animation: bounce 1.3s infinite;
+}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+/* ===== COMPOSER ===== */
+#composer {
+flex-shrink: 0;
+padding: 10px 12px 16px;
+background: var(–dark);
+border-top: 1px solid rgba(46,204,113,0.1);
+}
+.composer-inner {
+display: flex; align-items: center; gap: 8px;
+background: var(–surface);
+border: 1px solid rgba(46,204,113,0.2);
+border-radius: 14px; padding: 8px 8px 8px 14px;
+}
+.composer-input {
+flex: 1; background: transparent; border: none; outline: none;
+color: var(–text); font-size: 15px;
+font-family: ‘DM Sans’, sans-serif;
+}
+.composer-input::placeholder { color: #445; }
+.photo-btn {
+width: 38px; height: 38px; border-radius: 10px;
+background: var(–surface2); border: 1px solid var(–border);
+color: var(–green); font-size: 18px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; flex-shrink: 0;
+}
+.send-btn {
+width: 38px; height: 38px; border-radius: 10px;
+background: var(–green); border: none; color: #000;
+font-size: 16px; display: flex; align-items: center; justify-content: center;
+cursor: pointer; flex-shrink: 0; font-weight: 900;
+}
+
+/* ===== DEVIS ===== */
+.section-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 22px; color: var(–green);
+margin-bottom: 4px;
+}
+.section-sub { font-size: 12px; color: var(–dim); margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+.form-label {
+display: block; font-size: 11px; color: var(–dim);
+text-transform: uppercase; letter-spacing: 0.1em;
+margin-bottom: 6px; font-family: ‘Oswald’, sans-serif;
+}
+.form-input, .form-select, .form-textarea {
+width: 100%;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 8px; padding: 11px 14px;
+color: var(–text); font-size: 14px;
+font-family: ‘DM Sans’, sans-serif; outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(–green); }
+.form-select option { background: var(–surface); }
+.form-textarea { resize: none; height: 80px; }
+.photo-upload-zone {
+border: 2px dashed rgba(46,204,113,0.3);
+border-radius: 10px; padding: 24px;
+text-align: center; cursor: pointer;
+background: rgba(46,204,113,0.03);
+}
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-text { font-size: 13px; color: var(–dim); }
+.upload-text strong { color: var(–green); display: block; font-size: 14px; margin-bottom: 4px; }
+.photos-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.thumb { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid var(–border); }
+.submit-btn {
+width: 100%; padding: 14px;
+background: linear-gradient(135deg, var(–green2), var(–green));
+border: none; border-radius: 10px;
+color: #000; font-weight: 700; font-size: 15px;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.1em; cursor: pointer;
+margin-top: 20px;
+box-shadow: 0 4px 20px rgba(46,204,113,0.3);
+}
+.devis-result {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px; padding: 16px;
+margin-top: 16px; display: none;
+}
+.devis-result-title { font-family: ‘Playfair Display’, serif; font-size: 18px; color: var(–green); margin-bottom: 14px; }
+.devis-line { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.devis-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(–green); margin-top: 10px; }
+.cta-btn {
+width: 100%; padding: 14px;
+background: linear-gradient(135deg, var(–green2), var(–green));
+border: none; border-radius: 10px;
+color: #000; font-weight: 700; font-size: 14px;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.08em; cursor: pointer; margin-top: 14px;
+}
+
+/* ===== URGENCE ===== */
+.urgence-zone { text-align: center; width: 100%; max-width: 320px; margin: 0 auto; }
+.urgence-icon { font-size: 60px; margin-bottom: 16px; animation: urgPulse 1.5s infinite; }
+@keyframes urgPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.urgence-title { font-family: ‘Playfair Display’, serif; font-size: 26px; color: var(–green); margin-bottom: 8px; }
+.urgence-sub { font-size: 13px; color: var(–dim); margin-bottom: 24px; line-height: 1.6; }
+.urgence-type-btn {
+width: 100%; padding: 14px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 10px; color: var(–text);
+font-size: 14px; font-family: ‘DM Sans’, sans-serif;
+cursor: pointer; margin-bottom: 10px;
+text-align: left; display: flex; align-items: center; gap: 12px;
+}
+.urgence-btn {
+width: 100%; padding: 16px;
+background: linear-gradient(135deg, var(–green2), var(–green));
+border: none; border-radius: 12px;
+color: #000; font-size: 16px; font-weight: 700;
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 0.08em; cursor: pointer;
+box-shadow: 0 6px 24px rgba(46,204,113,0.35);
+margin-bottom: 10px;
+}
+
+/* ===== TARIFS ===== */
+.tarif-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px; padding: 18px; margin-bottom: 14px;
+}
+.tarif-card.featured { border-color: var(–green); background: linear-gradient(135deg, rgba(46,204,113,0.08), var(–surface)); }
+.tarif-badge { display: inline-block; background: var(–green); color: #000; font-size: 10px; font-weight: 700; font-family: ‘Oswald’, sans-serif; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; }
+.tarif-name { font-family: ‘Playfair Display’, serif; font-size: 20px; color: var(–text); margin-bottom: 4px; }
+.tarif-price { font-family: ‘Oswald’, sans-serif; font-size: 32px; color: var(–green); margin-bottom: 4px; }
+.tarif-price span { font-size: 14px; color: var(–dim); }
+.tarif-desc { font-size: 12px; color: var(–dim); margin-bottom: 14px; }
+.tarif-feature { display: flex; align-items: center; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.tarif-feature:last-child { border: none; }
+.tarif-check { color: var(–lime); font-size: 14px; flex-shrink: 0; }
+.install-note { background: rgba(46,204,113,0.06); border: 1px solid var(–border); border-radius: 10px; padding: 14px; text-align: center; margin-bottom: 16px; font-size: 13px; color: var(–dim); }
+.install-note strong { color: var(–green); font-size: 18px; }
+</style>
+
+</head>
+<body>
+
+<!-- SPLASH -->
+
+<div id="splash">
+  <div class="splash-mascot">🎨</div>
+  <div class="splash-name">JO <span>DÉCO</span></div>
+  <div class="splash-line"></div>
+  <div class="splash-services">
+    Peinture intérieure • Peinture extérieure<br/>
+    Tapisserie • Ratissage • Placo • Déco intérieure
+  </div>
+  <div class="splash-powered">Propulsé par Philomène I.A.</div>
+</div>
+
+<!-- TOPBAR -->
+
+<header id="topbar">
+  <div class="logo-area">
+    <div class="logo-icon">🎨</div>
+    <div class="logo-text">
+      <span class="logo-name">JO <span>DÉCO</span></span>
+      <span class="logo-sub">Assistant IA • 24h/24</span>
+    </div>
+  </div>
+  <div class="status"><div class="dot"></div>En ligne</div>
+</header>
+
+<!-- TABS -->
+
+<div id="tabs">
+  <div class="tab active" onclick="switchTab('chat',this)">💬 Assistant</div>
+  <div class="tab" onclick="switchTab('devis',this)">📋 Devis Photo</div>
+  <div class="tab" onclick="switchTab('urgence',this)">📞 Contact</div>
+  <div class="tab" onclick="switchTab('tarifs',this)">💶 Tarifs</div>
+</div>
+
+<!-- SECTION CHAT -->
+
+<div id="secChat">
+  <div id="chat"><div id="messages"></div></div>
+  <div id="composer">
+    <div class="composer-inner">
+      <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhoto(this)" style="display:none"/>
+      <button class="photo-btn" onclick="document.getElementById('photoInput').click()">📷</button>
+      <input class="composer-input" id="userInput" placeholder="Décrivez vos travaux…" type="text"/>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DEVIS -->
+
+<div id="secDevis">
+  <div class="section-title">Devis instantané</div>
+  <div class="section-sub">Prenez une photo, Jo Déco vous donne une estimation</div>
+
+  <div class="form-group">
+    <label class="form-label">Type de travaux</label>
+    <select class="form-select" id="typeTravauxInput">
+      <option value="">Sélectionnez...</option>
+      <option>Peinture intérieure — murs et plafonds</option>
+      <option>Peinture extérieure — façade</option>
+      <option>Tapisserie — pose de papier peint</option>
+      <option>Ratissage — enduit lissé</option>
+      <option>Placo — cloison sèche</option>
+      <option>Déco intérieure — conseil et réalisation</option>
+      <option>Rénovation complète d'une pièce</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Description</label>
+    <textarea class="form-textarea" id="descInput" placeholder="Ex: Salon de 25m², murs en mauvais état, ancienne peinture à gratter…"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">📷 Photos des surfaces</label>
+    <div class="photo-upload-zone" onclick="document.getElementById('devisPhotoInput').click()">
+      <div class="upload-icon">📸</div>
+      <div class="upload-text">
+        <strong>Ajouter des photos</strong>
+        Jo Déco analyse l'état des surfaces
+      </div>
+    </div>
+    <input type="file" id="devisPhotoInput" accept="image/*" multiple style="display:none" onchange="handleDevisPhoto(this)"/>
+    <div class="photos-preview" id="photosPreview"></div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Surface approximative</label>
+    <input class="form-input" id="surfaceInput" type="text" placeholder="Ex: 30m², 3 pièces, 15ml de façade..."/>
+  </div>
+
+<button class="submit-btn" onclick="genererDevis()">🎨 Générer le devis</button>
+
+  <div class="devis-result" id="devisResult"></div>
+</div>
+
+<!-- SECTION CONTACT/URGENCE -->
+
+<div id="secUrgence" style="display:none;flex-direction:column">
+  <div class="urgence-zone">
+    <div class="urgence-icon">📞</div>
+    <div class="urgence-title">Contactez Jo Déco</div>
+    <div class="urgence-sub">Une question ? Un projet ? Un devis urgent ? Jo vous répond rapidement sur WhatsApp.</div>
+
+```
+<button class="urgence-btn" onclick="ouvrirWhatsApp('Bonjour Jo Déco ! Je vous contacte depuis votre assistant IA. Je voudrais un devis pour des travaux de peinture.')">💬 Envoyer un message WhatsApp</button>
+
+<button class="urgence-type-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! J\\'ai un projet de peinture intérieure et j\\'aimerais un devis rapide.')">🎨 Projet peinture intérieure</button>
+<button class="urgence-type-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! Je cherche quelqu\\'un pour refaire ma façade extérieure.')">🏠 Façade extérieure</button>
+<button class="urgence-type-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! J\\'aimerais poser du papier peint dans ma pièce.')">🖼️ Tapisserie / Papier peint</button>
+<button class="urgence-type-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! J\\'ai un besoin urgent de peinture.')">⚡ Besoin urgent</button>
+```
+
+  </div>
+</div>
+
+<!-- SECTION TARIFS -->
+
+<div id="secTarifs">
+  <div class="section-title" style="color:var(--green)">Tarifs Jo Déco</div>
+  <div class="section-sub">Devis gratuit • Prix honnêtes • Travail soigné</div>
+
+  <div class="tarif-card">
+    <div class="tarif-name">🎨 Peinture intérieure</div>
+    <div class="tarif-price">15 — 35€ <span>/ m²</span></div>
+    <div class="tarif-desc">Selon préparation des surfaces et nombre de couches</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Préparation et protection incluses</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Murs, plafonds, boiseries</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Peinture haut de gamme</div>
+  </div>
+
+  <div class="tarif-card">
+    <div class="tarif-name">🏠 Peinture extérieure / Façade</div>
+    <div class="tarif-price">25 — 60€ <span>/ m²</span></div>
+    <div class="tarif-desc">Ravalement, nettoyage, traitement et peinture</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Nettoyage haute pression inclus</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Traitement anti-mousse</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Peinture résistante aux intempéries</div>
+  </div>
+
+  <div class="tarif-card">
+    <div class="tarif-name">🖼️ Tapisserie</div>
+    <div class="tarif-price">20 — 45€ <span>/ m²</span></div>
+    <div class="tarif-desc">Pose de papier peint, intissé, vinyle</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Dépose de l'ancien papier incluse</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Préparation des supports</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Pose soignée et précise</div>
+  </div>
+
+  <div class="tarif-card featured">
+    <div class="tarif-badge">⭐ POPULAIRE</div>
+    <div class="tarif-name">🏡 Rénovation complète pièce</div>
+    <div class="tarif-price">Sur devis</div>
+    <div class="tarif-desc">Placo + ratissage + peinture — clé en main</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Placo et cloisons sèches</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Ratissage et enduit lissé</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Peinture finition</div>
+    <div class="tarif-feature"><span class="tarif-check">✓</span> Déco intérieure conseil inclus</div>
+    <button class="cta-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! Je voudrais un devis pour une rénovation complète de pièce.')">💬 Demander un devis</button>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://philo-backend-by2c.onrender.com";
+const WA_NUM = "33617123910";
+const WA_BASE = `https://wa.me/${WA_NUM}?text=`;
+const MAX_MSG = 10;
+const MAX_DEVIS = 2;
+let isLoading = false;
+let history = [];
+let msgCount = 0;
+let devisCount = 0;
+
+function ouvrirWhatsApp(msg) {
+  window.open(WA_BASE + encodeURIComponent(msg), '_blank');
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br/>');
+}
+
+function showLimiteMsg() {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap bot';
+  const av = document.createElement('div');
+  av.className = 'avatar'; av.textContent = '🎨';
+  const bub = document.createElement('div');
+  bub.className = 'bubble bot';
+  bub.innerHTML = formatText("Vous avez utilisé vos " + MAX_MSG + " messages gratuits ! 🎨\n\nPour continuer à discuter avec Jo Déco, contactez-le directement sur WhatsApp !");
+  const qa = document.createElement('div');
+  qa.className = 'quick-actions';
+  qa.innerHTML = `<button class="qa-btn" style="background:rgba(37,211,102,0.15);border-color:#25D366;color:#25D366;font-size:13px;padding:10px 16px" onclick="ouvrirWhatsApp('Bonjour Jo Déco ! J\\'ai testé votre assistant IA et j\\'aimerais discuter de mon projet.')">💬 Contacter Jo sur WhatsApp</button>`;
+  bub.appendChild(qa);
+  wrap.appendChild(av); wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+  document.getElementById('userInput').disabled = true;
+  document.getElementById('sendBtn').disabled = true;
+}
+
+// ===== TAB SWITCH =====
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['secChat','secDevis','secUrgence','secTarifs'].forEach(s => {
+    const el2 = document.getElementById(s);
+    el2.style.display = 'none';
+  });
+  if (tab === 'chat') document.getElementById('secChat').style.display = 'flex';
+  else if (tab === 'devis') document.getElementById('secDevis').style.display = 'block';
+  else if (tab === 'urgence') document.getElementById('secUrgence').style.display = 'flex';
+  else if (tab === 'tarifs') document.getElementById('secTarifs').style.display = 'block';
+}
+
+// ===== CHAT =====
+function initChat() {
+  addBot("Bonjour ! 👋 Je suis l'assistant de Jo Déco.\n\nDécrivez-moi vos travaux et je vous donne une estimation de prix, les délais et tous les conseils dont vous avez besoin.", true);
+}
+
+function addBot(text, withActions) {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap bot';
+  const av = document.createElement('div');
+  av.className = 'avatar'; av.textContent = '🎨';
+  const bub = document.createElement('div');
+  bub.className = 'bubble bot'; bub.innerHTML = formatText(text);
+  if (withActions) {
+    const qa = document.createElement('div');
+    qa.className = 'quick-actions';
+    qa.innerHTML =
+      '<button class="qa-btn" onclick="send(\'Combien coûte repeindre un salon de 25m² ?\')">🎨 Prix peinture</button>' +
+      '<button class="qa-btn" onclick="send(\'Quel est le prix pour refaire une façade extérieure ?\')">🏠 Façade</button>' +
+      '<button class="qa-btn" onclick="send(\'Combien pour poser du papier peint dans une chambre ?\')">🖼️ Tapisserie</button>' +
+      '<button class="qa-btn" onclick="send(\'Vous pouvez intervenir rapidement ?\')">⏱️ Délai</button>' +
+      '<button class="qa-btn" onclick="send(\'Comment se passe le ratissage et enduit lissé ?\')">🔧 Ratissage</button>';
+    bub.appendChild(qa);
+  }
+  wrap.appendChild(av); wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+}
+
+function addUser(text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap user';
+  const bub = document.createElement('div');
+  bub.className = 'bubble user'; bub.textContent = text;
+  wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+}
+
+function setTyping(on) {
+  if (on) {
+    const wrap = document.createElement('div');
+    wrap.className = 'bubble-wrap bot'; wrap.id = 'typingWrap';
+    wrap.innerHTML = '<div class="avatar">🎨</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+    document.getElementById('messages').appendChild(wrap);
+    document.getElementById('chat').scrollTop = 99999;
+  } else {
+    const t = document.getElementById('typingWrap');
+    if (t) t.remove();
+  }
+}
+
+function getPrompt() {
+  return `Tu es Jo, peintre en bâtiment professionnel de la région Nord France / Belgique. Tu parles TOUJOURS à la première personne comme si TU ES Jo le peintre. Tu dis "je fais", "mon tarif", "je peux intervenir", "chez moi c'est", jamais "le peintre". Tu réponds UNIQUEMENT aux questions liées à la peinture, tapisserie, ratissage, placo, déco intérieure, façade. Si la question n'est pas liée à ces travaux, réponds: "Ça c'est pas mon domaine ! Je suis spécialisé peinture, déco et placo. Vous avez des questions sur ces travaux ?"
+
+TES SERVICES ET PRIX (région Nord/Belgique 2025):
+- Peinture intérieure murs/plafonds: 15-35€/m² selon état des surfaces et nombre de couches. Une pièce de 20m²: 400-800€ main d'oeuvre.
+- Peinture extérieure/façade: 25-60€/m². Nettoyage haute pression, traitement anti-mousse, 2 couches minimum.
+- Tapisserie papier peint: 20-45€/m². Dépose ancien papier incluse. Intissé, vinyle, toile de verre.
+- Ratissage/enduit lissé: 10-25€/m². Préparation parfaite des surfaces avant peinture.
+- Placo/cloison sèche: 25-50€/m² fourni posé. Isolation thermique et phonique possible.
+- Déco intérieure: conseil gratuit avec le devis. Choix couleurs, matières, tendances.
+- Rénovation complète pièce (placo+ratissage+peinture): devis sur mesure, 800-3000€ selon surface.
+- Tarif horaire: 30-45€/h.
+- Déplacement: gratuit dans un rayon de 30km. Au-delà 0.50€/km.
+- Délai intervention: 1-2 semaines en standard. Urgence possible selon disponibilité.
+- Garantie: parfait achèvement 1 an sur tous mes travaux.
+- Devis: gratuit et sans engagement sous 48h.
+
+Sois chaleureux et direct comme un vrai artisan. Donne des prix précis. Dis toujours que tu passes voir le chantier pour confirmer le prix exact. Propose toujours de passer sur WhatsApp pour fixer un rendez-vous. Réponds en français, de façon concise.`;
+}
+
+async function send(text) {
+  if (!text || isLoading) return;
+  if (msgCount >= MAX_MSG) { showLimiteMsg(); return; }
+  addUser(text);
+  msgCount++;
+  history.push({ role: 'user', content: text });
+  isLoading = true; setTyping(true);
+  try {
+    const resp = await fetch(API_BASE + '/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation: [{ role: 'system', content: getPrompt() }, ...history.slice(-8)],
+        userId: 'jodeco_demo'
+      })
+    });
+    const data = await resp.json();
+    setTyping(false);
+    const answer = data.answer || 'Pas de réponse.';
+    history.push({ role: 'assistant', content: answer });
+    addBot(answer, false);
+    if (msgCount >= MAX_MSG) { setTimeout(showLimiteMsg, 1000); }
+  } catch {
+    setTyping(false);
+    addBot('Erreur de connexion. Réessayez.', false);
+  }
+  isLoading = false;
+}
+
+function sendMessage() {
+  const text = document.getElementById('userInput').value.trim();
+  if (!text) return;
+  document.getElementById('userInput').value = '';
+  send(text);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('userInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { sendMessage(); }
+  });
+});
+
+// ===== PHOTO CHAT =====
+function handlePhoto(input) {
+  if (!input.files.length) return;
+  const file = input.files[0];
+  const url = URL.createObjectURL(file);
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap user';
+  const bub = document.createElement('div');
+  bub.className = 'bubble user'; bub.innerHTML = '📷 Photo envoyée';
+  wrap.appendChild(bub);
+  document.getElementById('messages').appendChild(wrap);
+  document.getElementById('chat').scrollTop = 99999;
+  setTimeout(() => {
+    const wrap2 = document.createElement('div');
+    wrap2.className = 'bubble-wrap bot';
+    const av = document.createElement('div');
+    av.className = 'avatar'; av.textContent = '🎨';
+    const bub2 = document.createElement('div');
+    bub2.className = 'bubble bot';
+    bub2.innerHTML = `<img src="${url}" style="width:100%;border-radius:8px;max-height:180px;object-fit:cover;display:block;margin-bottom:10px"/><div style="color:var(--green);font-size:12px;font-family:Oswald,sans-serif">🔍 J'analyse vos surfaces...</div>`;
+    wrap2.appendChild(av); wrap2.appendChild(bub2);
+    document.getElementById('messages').appendChild(wrap2);
+    document.getElementById('chat').scrollTop = 99999;
+    setTimeout(() => {
+      bub2.querySelector('div:last-child').remove();
+      addBot("J'ai regardé votre photo 👀\n\nLes surfaces semblent nécessiter une bonne préparation avant peinture. Je passe vous faire un devis gratuit — comme ça je vois l'état exact et je vous donne un prix précis.\n\nVous êtes disponible cette semaine ?", false);
+    }, 2500);
+  }, 500);
+  input.value = '';
+}
+
+// ===== DEVIS FORM =====
+function handleDevisPhoto(input) {
+  const preview = document.getElementById('photosPreview');
+  Array.from(input.files).forEach(file => {
+    const url = URL.createObjectURL(file);
+    const img = document.createElement('img');
+    img.src = url; img.className = 'thumb';
+    preview.appendChild(img);
+  });
+}
+
+async function genererDevis() {
+  const type = document.getElementById('typeTravauxInput').value;
+  const desc = document.getElementById('descInput').value;
+  const surface = document.getElementById('surfaceInput').value;
+  const photos = document.getElementById('photosPreview').children.length;
+  if (!type) { alert('Veuillez sélectionner le type de travaux.'); return; }
+  if (devisCount >= MAX_DEVIS) {
+    ouvrirWhatsApp('Bonjour Jo Déco ! J\'aimerais un devis pour mes travaux de peinture.');
+    return;
+  }
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = '⏳ Jo analyse...';
+  btn.disabled = true;
+  devisCount++;
+  const prompt = `Tu es Jo, peintre professionnel. Génère un devis réaliste en JSON strict (sans backticks) pour: Type: ${type}, Description: ${desc || 'Standard'}, Surface: ${surface || 'À estimer'}, Photos: ${photos > 0 ? 'Oui' : 'Non'}. Prix région Nord France/Belgique. Format: {"titre":"...","lignes":[{"label":"...","min":0,"max":0}],"totalMin":0,"totalMax":0,"delai":"...","note":"..."}. 4-5 lignes réalistes.`;
+  try {
+    const resp = await fetch(API_BASE + '/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversation: [{ role: 'user', content: prompt }], userId: 'jodeco_devis' })
+    });
+    const data = await resp.json();
+    const text = (data.answer || '').replace(/```json|```/g, '').trim();
+    let devis;
+    try { devis = JSON.parse(text); } catch { devis = null; }
+    const result = document.getElementById('devisResult');
+    result.style.display = 'block';
+    if (devis && devis.lignes) {
+      result.innerHTML = `
+        <div class="devis-result-title">🎨 ${devis.titre || 'Estimation Jo Déco'}</div>
+        ${devis.lignes.map(l => `<div class="devis-line"><span>${l.label}</span><span>${l.min}€ — ${l.max}€</span></div>`).join('')}
+        <div class="devis-total"><span>TOTAL ESTIMÉ</span><span>${devis.totalMin}€ — ${devis.totalMax}€</span></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--dim)">⏱️ Délai : ${devis.delai || 'À confirmer'}</div>
+        <div style="margin-top:6px;font-size:12px;color:var(--dim)">ℹ️ ${devis.note || "Devis indicatif. Jo passe voir le chantier pour confirmer."}</div>
+        <button class="cta-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! J\\'ai généré un devis via votre assistant pour ${type}. Total estimé ${devis.totalMin}-${devis.totalMax}€. Pouvez-vous confirmer ?')">💬 Envoyer à Jo sur WhatsApp</button>`;
+    } else {
+      result.innerHTML = `
+        <div class="devis-result-title">🎨 Estimation ${type}</div>
+        <div class="devis-line"><span>Main d'œuvre</span><span>150 — 400€</span></div>
+        <div class="devis-line"><span>Fournitures peinture</span><span>50 — 150€</span></div>
+        <div class="devis-line"><span>Préparation surfaces</span><span>50 — 100€</span></div>
+        <div class="devis-total"><span>TOTAL ESTIMÉ</span><span>250 — 650€</span></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--dim)">ℹ️ Jo passe voir le chantier pour un devis précis et gratuit.</div>
+        <button class="cta-btn" onclick="ouvrirWhatsApp('Bonjour Jo ! Je voudrais un devis pour mes travaux de peinture.')">💬 Contacter Jo sur WhatsApp</button>`;
+    }
+  } catch {
+    document.getElementById('devisResult').style.display = 'block';
+    document.getElementById('devisResult').innerHTML = '<p style="color:var(--dim)">Erreur. Contactez Jo directement.</p>';
+  }
+  btn.textContent = '🎨 Générer le devis';
+  btn.disabled = false;
+  document.getElementById('devisResult').scrollIntoView({ behavior: 'smooth' });
+}
+
+// INIT
+initChat();
+</script>
+
+</body>
+</html>
