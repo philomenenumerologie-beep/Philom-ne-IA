@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Maka Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#111;font-family:'Jost',sans-serif;color:#F5EFE4}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;z-index:100}
+#login-screen.hidden{display:none}
+.login-logo{width:80px;height:80px;border-radius:50%;background:#F5EFE4;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:8px}
+.login-title{font-family:‘Playfair Display’,serif;font-size:28px;color:#F5EFE4;letter-spacing:.06em}
+.login-sub{font-size:12px;color:rgba(245,239,228,.4);letter-spacing:.15em;text-transform:uppercase}
+.login-input{width:100%;max-width:300px;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(245,239,228,.2);background:rgba(245,239,228,.06);color:#F5EFE4;font-size:16px;font-family:‘Jost’,sans-serif;outline:none;text-align:center;letter-spacing:.2em}
+.login-input::placeholder{color:rgba(245,239,228,.3);letter-spacing:.05em}
+.login-btn{width:100%;max-width:300px;padding:15px;border-radius:14px;border:none;background:#F5EFE4;color:#111;font-size:15px;font-weight:700;font-family:‘Jost’,sans-serif;cursor:pointer}
+.login-err{color:#ff6b6b;font-size:13px;display:none}
+
+/* APP */
+#admin-app{display:none;flex-direction:column;min-height:100vh}
+#admin-app.show{display:flex}
+
+/* HEADER */
+header{background:#111;border-bottom:1px solid rgba(245,239,228,.1);padding:16px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.h-logo{width:40px;height:40px;border-radius:50%;background:#F5EFE4;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.h-title{font-family:‘Playfair Display’,serif;font-size:16px;font-weight:700}
+.h-sub{font-size:10px;color:rgba(245,239,228,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.logout-btn{margin-left:auto;font-size:11px;color:rgba(245,239,228,.4);background:none;border:1px solid rgba(245,239,228,.15);padding:6px 12px;border-radius:20px;cursor:pointer;font-family:‘Jost’,sans-serif}
+
+/* CONTENT */
+.content{padding:20px 15px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto;width:100%}
+
+/* ADD FLASH */
+.add-card{background:rgba(245,239,228,.06);border:1px solid rgba(245,239,228,.12);border-radius:18px;padding:20px}
+.card-title{font-family:‘Playfair Display’,serif;font-size:18px;font-weight:700;margin-bottom:16px}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,239,228,.45);margin-bottom:7px}
+.inp{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(245,239,228,.15);background:rgba(245,239,228,.06);color:#F5EFE4;font-size:14px;font-family:‘Jost’,sans-serif;outline:none}
+.inp::placeholder{color:rgba(245,239,228,.3)}
+.inp:focus{border-color:rgba(245,239,228,.4)}
+
+/* PHOTO UPLOAD */
+.upload-zone{border:2px dashed rgba(245,239,228,.2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.upload-zone:hover{border-color:rgba(245,239,228,.4)}
+.upload-icon{font-size:32px;margin-bottom:8px}
+.upload-zone strong{display:block;font-size:14px;margin-bottom:4px}
+.upload-zone p{font-size:12px;color:rgba(245,239,228,.4)}
+#photo-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#photo-preview{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;margin-top:10px;display:none;border:2px solid rgba(245,239,228,.2)}
+
+.add-btn{width:100%;padding:15px;border-radius:14px;border:none;background:#F5EFE4;color:#111;font-size:15px;font-weight:700;font-family:‘Jost’,sans-serif;cursor:pointer;margin-top:4px;transition:opacity .2s}
+.add-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* STATUS */
+.status{padding:12px 16px;border-radius:12px;font-size:13px;text-align:center;display:none}
+.status.ok{background:rgba(107,203,119,.15);border:1px solid rgba(107,203,119,.3);color:#6BCB77}
+.status.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b}
+
+/* FLASHS LIST */
+.list-card{background:rgba(245,239,228,.06);border:1px solid rgba(245,239,228,.12);border-radius:18px;padding:20px}
+.count-badge{display:inline-block;background:rgba(245,239,228,.12);padding:3px 10px;border-radius:20px;font-size:11px;color:rgba(245,239,228,.6);margin-left:10px;vertical-align:middle}
+.flash-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.flash-item{display:flex;align-items:center;gap:12px;background:rgba(245,239,228,.04);border:1px solid rgba(245,239,228,.08);border-radius:14px;padding:10px}
+.fi-img{width:60px;height:60px;border-radius:10px;object-fit:cover;background:rgba(245,239,228,.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px}
+.fi-img img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.fi-info{flex:1;min-width:0}
+.fi-name{font-family:‘Playfair Display’,serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-price{font-size:12px;color:rgba(245,239,228,.5);margin-top:2px}
+.fi-del{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.08);color:#ff6b6b;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.empty-state{text-align:center;padding:24px;color:rgba(245,239,228,.3);font-size:13px}
+.loading{text-align:center;padding:20px;color:rgba(245,239,228,.4);font-size:13px}
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN -->
+
+<div id="login-screen">
+  <div class="login-logo">🖤</div>
+  <div class="login-title">Maka Admin</div>
+  <div class="login-sub">Espace privé</div>
+  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  <button class="login-btn" onclick="checkPwd()">Entrer</button>
+</div>
+
+<!-- APP -->
+
+<div id="admin-app">
+  <header>
+    <div class="h-logo">🖤</div>
+    <div>
+      <div class="h-title">Maka Tattoo</div>
+      <div class="h-sub">Gestion des flashs</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </header>
+
+  <div class="content">
+
+```
+<!-- AJOUTER UN FLASH -->
+<div class="add-card">
+  <div class="card-title">Ajouter un flash</div>
+
+  <div style="margin-bottom:14px">
+    <div class="lbl">Nom du flash</div>
+    <input class="inp" id="flash-nom" type="text" placeholder="Ex: Femme et fleurs"/>
+  </div>
+
+  <div style="margin-bottom:14px">
+    <div class="lbl">Prix</div>
+    <input class="inp" id="flash-prix" type="text" placeholder="Ex: 80-150€"/>
+  </div>
+
+  <div style="margin-bottom:14px">
+    <div class="lbl">Photo</div>
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
+      <div class="upload-icon">📷</div>
+      <strong>Appuyez pour choisir une photo</strong>
+      <p>JPG, PNG — max 2MB</p>
+    </div>
+    <img id="photo-preview" alt="preview"/>
+  </div>
+
+  <div class="status" id="add-status"></div>
+
+  <button class="add-btn" id="add-btn" onclick="addFlash()">
+    ➕ Ajouter ce flash
+  </button>
+</div>
+
+<!-- LISTE DES FLASHS -->
+<div class="list-card">
+  <div class="card-title">
+    Mes flashs
+    <span class="count-badge" id="count-badge">0</span>
+  </div>
+  <div class="flash-list" id="flash-list">
+    <div class="loading">Chargement…</div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var PWD = "maka2024";
+var photoBase64 = null;
+
+function checkPwd() {
+  var val = document.getElementById('pwd-input').value;
+  if (val === PWD) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-app').classList.add('show');
+    loadFlashs();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+
+function logout() {
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('admin-app').classList.remove('show');
+  document.getElementById('pwd-input').value = '';
+}
+
+function handlePhoto(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Photo trop grande ! Max 2MB');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    photoBase64 = e.target.result;
+    var prev = document.getElementById('photo-preview');
+    prev.src = photoBase64;
+    prev.style.display = 'block';
+    document.getElementById('upload-zone').style.borderColor = 'rgba(107,203,119,.5)';
+  };
+  reader.readAsDataURL(file);
+}
+
+function showStatus(msg, type) {
+  var s = document.getElementById('add-status');
+  s.textContent = msg;
+  s.className = 'status ' + type;
+  s.style.display = 'block';
+  setTimeout(function(){ s.style.display = 'none'; }, 3000);
+}
+
+function addFlash() {
+  var nom = document.getElementById('flash-nom').value.trim();
+  var prix = document.getElementById('flash-prix').value.trim();
+  if (!nom || !prix || !photoBase64) {
+    showStatus('Remplissez tous les champs et ajoutez une photo', 'err');
+    return;
+  }
+  var btn = document.getElementById('add-btn');
+  btn.disabled = true;
+  btn.textContent = 'Ajout en cours…';
+
+  fetch(API + '/maka/flashs', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({action: 'add', nom: nom, prix: prix, image: photoBase64})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) {
+      showStatus('Flash ajouté avec succès !', 'ok');
+      document.getElementById('flash-nom').value = '';
+      document.getElementById('flash-prix').value = '';
+      document.getElementById('photo-preview').style.display = 'none';
+      document.getElementById('upload-zone').style.borderColor = '';
+      document.getElementById('photo-input').value = '';
+      photoBase64 = null;
+      loadFlashs();
+    } else {
+      showStatus('Erreur : ' + (d.error || 'inconnue'), 'err');
+    }
+    btn.disabled = false;
+    btn.textContent = '➕ Ajouter ce flash';
+  }).catch(function(){
+    showStatus('Erreur de connexion', 'err');
+    btn.disabled = false;
+    btn.textContent = '➕ Ajouter ce flash';
+  });
+}
+
+function deleteFlash(id) {
+  if (!confirm('Supprimer ce flash ?')) return;
+  fetch(API + '/maka/flashs', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({action: 'delete', id: id})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) loadFlashs();
+  });
+}
+
+function loadFlashs() {
+  var list = document.getElementById('flash-list');
+  list.innerHTML = '<div class="loading">Chargement…</div>';
+  fetch(API + '/maka/flashs').then(function(r){ return r.json(); }).then(function(d){
+    var flashs = d.flashs || [];
+    document.getElementById('count-badge').textContent = flashs.length;
+    if (flashs.length === 0) {
+      list.innerHTML = '<div class="empty-state">Aucun flash pour le moment.<br/>Ajoutez votre premier flash ci-dessus 🖤</div>';
+      return;
+    }
+    list.innerHTML = '';
+    flashs.forEach(function(f){
+      var item = document.createElement('div');
+      item.className = 'flash-item';
+      var imgDiv = document.createElement('div');
+      imgDiv.className = 'fi-img';
+      if (f.image) {
+        var img = document.createElement('img');
+        img.src = f.image;
+        imgDiv.appendChild(img);
+      } else {
+        imgDiv.textContent = '🖤';
+      }
+      var info = document.createElement('div');
+      info.className = 'fi-info';
+      info.innerHTML = '<div class="fi-name">' + f.nom + '</div><div class="fi-price">' + f.prix + '</div>';
+      var del = document.createElement('div');
+      del.className = 'fi-del';
+      del.textContent = '✕';
+      del.onclick = function(){ deleteFlash(f.id); };
+      item.appendChild(imgDiv);
+      item.appendChild(info);
+      item.appendChild(del);
+      list.appendChild(item);
+    });
+  }).catch(function(){
+    list.innerHTML = '<div class="empty-state">Erreur de chargement</div>';
+  });
+}
+</script>
+
+</body>
+</html>
