@@ -2,227 +2,617 @@
 
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Maka Tattoo — Assistante IA</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Maka Tattoo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: #07070d; color: #e8e4f0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-body::before { content: ''; position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse 60% 50% at 15% 10%, rgba(155,107,255,0.07) 0%, transparent 60%), radial-gradient(ellipse 50% 60% at 85% 90%, rgba(201,168,76,0.05) 0%, transparent 60%); pointer-events: none; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#F5EFE4;font-family:'Jost',sans-serif;color:#111}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
 /* SPLASH */
-#splash { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #07070d; transition: opacity 0.8s ease; }
-#splash.gone { opacity: 0; pointer-events: none; }
-.splash-icon { font-size: 56px; margin-bottom: 20px; animation: up 0.7s ease 0.2s both; filter: drop-shadow(0 0 20px rgba(201,168,76,0.4)); }
-.splash-name { font-family: ‘Cinzel’, serif; font-size: 42px; font-weight: 700; color: #c9a84c; letter-spacing: 0.12em; text-transform: uppercase; animation: up 0.7s ease 0.5s both; }
-.splash-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, #c9a84c, transparent); margin: 18px auto; animation: up 0.7s ease 0.7s both; }
-.splash-sub { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: #7777a0; animation: up 0.7s ease 0.9s both; }
-@keyframes up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+#splash{position:fixed;inset:0;z-index:500;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+#splash .logo{width:100px;height:100px;border-radius:50%;background:#F5EFE4;display:flex;align-items:center;justify-content:center;font-size:52px;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+#splash h1{font-family:‘Playfair Display’,serif;font-size:34px;color:#F5EFE4;letter-spacing:.1em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+#splash p{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(245,239,228,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+/* SHELL */
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 
 /* TOPBAR */
-#topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; background: rgba(7,7,13,0.95); border-bottom: 1px solid rgba(201,168,76,0.2); }
-.logo-area { display: flex; align-items: center; gap: 12px; }
-.logo-icon { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #1a1a2e, #2a1a4a); border: 1.5px solid #c9a84c; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 16px rgba(201,168,76,0.25); }
-.logo-name { font-family: ‘Cinzel’, serif; font-size: 15px; font-weight: 700; color: #c9a84c; letter-spacing: 0.06em; }
-.logo-sub { font-size: 10px; color: #7777a0; letter-spacing: 0.1em; text-transform: uppercase; }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+#topbar{background:#111;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(245,239,228,.08);flex-shrink:0}
+.tb-av{width:42px;height:42px;border-radius:50%;background:#F5EFE4;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.tb-name{font-family:‘Playfair Display’,serif;font-size:16px;font-weight:700;color:#F5EFE4;letter-spacing:.04em}
+.tb-sub{font-size:10px;color:rgba(245,239,228,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
 
-/* CHAT */
-#chat { flex: 1; overflow-y: auto; padding: 20px 15px 130px; position: relative; z-index: 1; }
-.bubble-wrap { display: flex; margin-bottom: 14px; animation: fadeUp 0.3s ease; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.bubble-wrap.bot { justify-content: flex-start; }
-.bubble-wrap.user { justify-content: flex-end; }
-.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #1a1a2e, #2a1a4a); border: 1px solid #c9a84c; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px; margin-top: 2px; font-size: 16px; }
-.bubble { max-width: min(82%, 360px); padding: 12px 15px; border-radius: 18px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
-.bubble.bot { background: #161625; border: 1px solid rgba(255,255,255,0.07); border-top-left-radius: 4px; color: #e8e4f0; }
-.bubble.user { background: linear-gradient(135deg, #2a1a4a, #1a0a3a); border: 1px solid rgba(155,107,255,0.2); border-top-right-radius: 4px; color: #ddd8f8; }
+/* TABS */
+#tabs{background:#111;display:flex;border-bottom:1px solid rgba(245,239,228,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,239,228,.35);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:#F5EFE4;border-bottom-color:#F5EFE4}
 
-/* QUICK ACTIONS */
-.quick-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-.qa-btn { padding: 7px 12px; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius: 20px; color: #c9a84c; font-size: 12px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; }
+/* PAGES */
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
 
-/* DEVIS CARD */
-.devis-card { background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04)); border: 1px solid rgba(201,168,76,0.25); border-radius: 14px; padding: 14px; margin-top: 10px; }
-.devis-title { font-family: ‘Cinzel’, serif; font-size: 13px; color: #c9a84c; margin-bottom: 10px; letter-spacing: 0.05em; }
-.devis-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #7777a0; }
-.devis-row span:last-child { color: #e8e4f0; font-weight: 500; }
-.devis-total { display: flex; justify-content: space-between; margin-top: 10px; font-size: 16px; font-weight: 600; }
-.devis-total span:last-child { color: #c9a84c; }
-.rdv-btn { display: block; width: 100%; margin-top: 12px; padding: 11px; text-align: center; background: linear-gradient(135deg, #25D366, #128C7E); color: #ffffff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: ‘DM Sans’, sans-serif; text-decoration: none; }
+/* ======= CHAT ======= */
+#page-chat{background:#F5EFE4}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:#111;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.bub.user{background:#111;color:#F5EFE4;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #111;background:transparent;color:#111;font-size:12px;font-weight:500;font-family:‘Jost’,sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:#F5EFE4;border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(0,0,0,.14);background:#fff;font-size:15px;font-family:‘Jost’,sans-serif;outline:none;color:#111}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:#111}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#F5EFE4;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:‘Jost’,sans-serif;text-decoration:none;margin-top:10px}
 
-/* TYPING */
-.typing { display:flex; gap:4px; padding:12px 14px; }
-.typing span { width:6px; height:6px; border-radius:50%; background: #7777a0; animation: bounce 1.2s infinite; }
-.typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+/* ======= DEVIS ======= */
+#page-devis{background:#F5EFE4;padding:20px 15px 36px;gap:14px}
+.df-title{font-family:‘Playfair Display’,serif;font-size:26px;font-weight:700}
+.df-title em{font-style:italic;color:#999;font-size:.7em;display:block}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#999;margin-bottom:7px}
+.df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:14px;font-family:‘Jost’,sans-serif;color:#111;outline:none;-webkit-appearance:none}
+.df-select{background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘8’%3E%3Cpath d=‘M1 1l5 5 5-5’ stroke=’%23999’ stroke-width=‘1.5’ fill=‘none’ stroke-linecap=‘round’/%3E%3C/svg%3E”);background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+.df-textarea{resize:none;height:88px}
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.sz{padding:10px 4px;border-radius:12px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:12px;font-family:‘Jost’,sans-serif;font-weight:500;text-align:center;cursor:pointer;color:#555;line-height:1.4}
+.sz small{font-size:10px;color:#bbb;display:block}
+.sz.sel{background:#111;color:#F5EFE4;border-color:#111}
+.sz.sel small{color:rgba(245,239,228,.5)}
+.em-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.em{padding:7px 12px;border-radius:22px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:12px;font-family:‘Jost’,sans-serif;font-weight:500;cursor:pointer;color:#555}
+.em.sel{background:#111;color:#F5EFE4;border-color:#111}
+.photo-zone{border:2px dashed rgba(0,0,0,.15);border-radius:13px;padding:20px;text-align:center;background:#fff;cursor:pointer}
+.photo-zone .pz-icon{font-size:30px;margin-bottom:8px}
+.photo-zone strong{color:#111;font-size:14px;display:block;margin-bottom:3px}
+.photo-zone p{font-size:12px;color:#aaa}
+#prev{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;justify-content:center}
+#prev img{width:70px;height:70px;object-fit:cover;border-radius:10px;border:1.5px solid rgba(0,0,0,.1)}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:‘Jost’,sans-serif;border:none;width:100%;cursor:pointer;box-shadow:0 4px 18px rgba(37,211,102,.28)}
 
-/* COMPOSER */
-#composer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 10px 14px 22px; background: linear-gradient(to top, #07070d 75%, transparent); }
-.composer-inner { display: flex; align-items: center; gap: 10px; background: #161625; border: 1px solid rgba(201,168,76,0.2); border-radius: 14px; padding: 10px 14px; }
-#userInput { flex: 1; background: transparent; border: none; outline: none; color: #e8e4f0; -webkit-text-fill-color: #e8e4f0; font-size: 15px; font-family: ‘DM Sans’, sans-serif; caret-color: #c9a84c; }
-#userInput::placeholder { color: #7777a0; -webkit-text-fill-color: #7777a0; }
-.send-btn { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #c9a84c, #f0d080); border: none; color: #1a1000; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
+/* ======= FLASHS ======= */
+#page-flashs{background:#F5EFE4;padding:20px 15px 32px}
+.fl-h{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700}
+.fl-h em{font-style:italic;color:#999;font-size:.7em;display:block}
+.fl-sub{font-size:13px;color:#666;margin-top:6px;margin-bottom:16px}
+.fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.05);cursor:pointer}
+.fl-card:active{opacity:.85}
+.fl-thumb{width:100%;aspect-ratio:1;background:#111;display:flex;align-items:center;justify-content:center;font-size:46px;position:relative}
+.fl-badge{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#F5EFE4;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:18px 8px 7px;text-align:center}
+.fl-info{padding:10px 12px 13px}
+.fl-name{font-family:‘Playfair Display’,serif;font-size:14px;font-weight:600}
+.fl-price{font-size:12px;color:#888;margin-top:2px}
+.fl-price b{color:#111}
+.fl-note{margin-top:14px;padding:13px;background:#fff;border-radius:13px;border:1px solid rgba(0,0,0,.06);font-size:13px;color:#666;line-height:1.6;text-align:center}
 
-#watermark { position: fixed; bottom: 84px; right: 16px; font-size: 9px; color: rgba(255,255,255,0.12); letter-spacing: 0.08em; z-index: 5; }
+/* ======= TARIFS ======= */
+#page-tarifs{background:#F5EFE4;padding:20px 15px 32px}
+.t-h{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700;line-height:1.1}
+.t-h em{font-style:italic;color:#999;font-size:.72em;display:block}
+.t-intro{font-size:13px;color:#666;margin-top:7px;line-height:1.5;margin-bottom:18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#999;margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.08)}
+.t-card{background:#fff;border-radius:15px;padding:15px;margin-bottom:9px;box-shadow:0 2px 10px rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.05)}
+.t-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.t-name{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:600}
+.t-sub{font-size:11px;color:#888;margin-top:3px}
+.t-badge{background:#111;color:#F5EFE4;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.t-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.t-px{background:#F5EFE4;border-radius:9px;padding:8px 4px;text-align:center}
+.t-plbl{font-size:9px;color:#888;font-weight:500;margin-bottom:3px}
+.t-pval{font-family:‘Playfair Display’,serif;font-size:14px;font-weight:700}
+.t-bonus{margin-top:8px;font-size:11px;color:#888;font-style:italic;text-align:center}
+.t-bonus b{color:#111;font-style:normal}
+.f-card{background:#111;color:#F5EFE4;border-radius:15px;padding:15px;margin-bottom:9px}
+.f-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.f-name{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:700}
+.f-price{font-family:‘Playfair Display’,serif;font-size:21px;font-weight:700;color:#D4C5B0}
+.f-items{display:flex;flex-direction:column;gap:3px}
+.f-item{font-size:12px;color:rgba(245,239,228,.55)}
+.f-item::before{content:’— ’}
+.f-gift{font-size:11px;color:#D4C5B0;margin-top:8px;font-style:italic}
+.t-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:‘Jost’,sans-serif;box-shadow:0 4px 18px rgba(37,211,102,.28);margin-top:6px}
+
+/* MODAL */
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+#overlay.open{display:flex}
+#mbox{background:#F5EFE4;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
+#mbox .m-ico{font-size:50px;text-align:center;margin-bottom:12px}
+#mbox .m-name{font-family:‘Playfair Display’,serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
+#mbox .m-price{text-align:center;font-size:16px;color:#888;margin-bottom:12px}
+#mbox .m-price b{color:#111;font-size:20px}
+#mbox .m-desc{font-size:13px;color:#666;text-align:center;line-height:1.6;margin-bottom:20px}
+#m-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:‘Jost’,sans-serif;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 18px rgba(37,211,102,.3)}
+#m-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#888;cursor:pointer;font-family:‘Jost’,sans-serif;border:none;background:none;width:100%}
 </style>
 
 </head>
 <body>
 
+<!-- SPLASH -->
+
 <div id="splash">
-  <div class="splash-icon">🖤</div>
-  <div class="splash-name">Maka Tattoo</div>
-  <div class="splash-line"></div>
-  <div class="splash-sub">Assistante IA • Disponible 24h/24</div>
+  <div class="logo">&#128148;</div>
+  <h1>MAKA TATTOO</h1>
+  <p>Tatouage &middot; Piercing &middot; Art</p>
 </div>
 
-<header id="topbar">
-  <div class="logo-area">
-    <div class="logo-icon">🖤</div>
+<!-- APP -->
+
+<div id="app">
+
+  <div id="topbar">
+    <div class="tb-av">&#128148;</div>
     <div>
-      <div class="logo-name">MAKA TATTOO</div>
-      <div class="logo-sub">Assistante IA • 24h/24</div>
+      <div class="tb-name">Maka Tattoo</div>
+      <div class="tb-sub">Assistante IA &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab('chat',this)"><span>&#128172;</span>Assistant</button>
+    <button class="tab" onclick="showTab('devis',this)"><span>&#128247;</span>Devis</button>
+    <button class="tab" onclick="showTab('flashs',this)"><span>&#9889;</span>Flashs</button>
+    <button class="tab" onclick="showTab('tarifs',this)"><span>&#128176;</span>Tarifs</button>
+  </div>
+
+  <!-- CHAT -->
+
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question…"/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
     </div>
   </div>
-  <div class="status-dot"></div>
-</header>
 
-<div id="chat"><div id="messages"></div></div>
+  <!-- DEVIS -->
 
-<div id="composer">
-  <div class="composer-inner">
-    <input id="userInput" placeholder="Posez votre question…" type="text"/>
-    <button class="send-btn" id="sendBtn">➤</button>
+  <div id="page-devis" class="page">
+    <div class="df-title">Devis instantané<em>Votre projet sur WhatsApp</em></div>
+
+```
+<div>
+  <div class="lbl">Style de tatouage</div>
+  <select class="df-select" id="df-style">
+    <option value="">Sélectionnez…</option>
+    <option>Minimaliste / Linework</option>
+    <option>Réaliste</option>
+    <option>Géométrique / Mandala</option>
+    <option>Flash cadre (dispo en salon)</option>
+    <option>Lettrage / Écriture</option>
+    <option>Floral / Botanique</option>
+    <option>Japonais / Traditionnel</option>
+    <option>Blackwork</option>
+    <option>Autre / Sur mesure</option>
+  </select>
+</div>
+
+<div>
+  <div class="lbl">Description du projet</div>
+  <textarea class="df-textarea" id="df-desc" placeholder="Ex : Portrait de mon chat en minimaliste, avec une fleur…"></textarea>
+</div>
+
+<div>
+  <div class="lbl">Taille souhaitée</div>
+  <div class="size-grid">
+    <div class="sz" onclick="selSz(this)">Micro<small>3–4 cm</small></div>
+    <div class="sz" onclick="selSz(this)">Mini<small>4–7 cm</small></div>
+    <div class="sz" onclick="selSz(this)">Petit<small>7–10 cm</small></div>
+    <div class="sz" onclick="selSz(this)">Simple<small>~10 cm</small></div>
+    <div class="sz" onclick="selSz(this)">Élaboré<small>≤15 cm</small></div>
+    <div class="sz" onclick="selSz(this)">Grand<small>15 cm+</small></div>
   </div>
 </div>
 
-<div id="watermark">Propulsé par Philomène IA</div>
+<div>
+  <div class="lbl">Emplacement</div>
+  <div class="em-wrap">
+    <div class="em" onclick="this.classList.toggle('sel')">Poignet</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Avant-bras</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Bras</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Épaule</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Dos</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Cheville</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Mollet</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Cuisse</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Cou / nuque</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Côtes</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Doigt / main</div>
+    <div class="em" onclick="this.classList.toggle('sel')">Autre</div>
+  </div>
+</div>
+
+<div>
+  <div class="lbl">Photo de référence (optionnel)</div>
+  <div class="photo-zone" onclick="document.getElementById('df-photo').click()">
+    <div class="pz-icon">&#128247;</div>
+    <strong>Ajouter une photo</strong>
+    <p>Référence, croquis ou idée visuelle</p>
+    <div id="prev"></div>
+  </div>
+  <input type="file" id="df-photo" accept="image/*" multiple style="display:none" onchange="prevPhotos(this)"/>
+</div>
+
+<button class="df-btn" onclick="genDevis()">
+  &#128241; Envoyer mon projet sur WhatsApp
+</button>
+```
+
+  </div>
+
+  <!-- FLASHS -->
+
+  <div id="page-flashs" class="page">
+    <div class="fl-h">Flashs<em>disponibles en salon</em></div>
+    <div class="fl-sub">Appuyez sur un flash pour le réserver directement &#128148;</div>
+    <div class="fl-grid">
+      <div class="fl-card" onclick="openFlash('Femme et fleurs','&#127800;','80–150€','Composition florale minimaliste avec silhouette féminine, 7-12cm')">
+        <div class="fl-thumb">&#127800;<div class="fl-badge">Flash cadre</div></div>
+        <div class="fl-info"><div class="fl-name">Femme &amp; fleurs</div><div class="fl-price"><b>80–150€</b></div></div>
+      </div>
+      <div class="fl-card" onclick="openFlash('Visage de profil','&#128100;','80–150€','Visage féminin épuré, style linework, 7-12cm')">
+        <div class="fl-thumb" style="font-size:38px">&#128100;<div class="fl-badge">Flash cadre</div></div>
+        <div class="fl-info"><div class="fl-name">Visage de profil</div><div class="fl-price"><b>80–150€</b></div></div>
+      </div>
+      <div class="fl-card" onclick="openFlash('Noeud celtique','&#10022;','80–150€','Symbole géométrique celtique entrelacé, 7-12cm')">
+        <div class="fl-thumb" style="color:#F5EFE4;font-size:38px">&#10022;<div class="fl-badge">Flash cadre</div></div>
+        <div class="fl-info"><div class="fl-name">Nœud celtique</div><div class="fl-price"><b>80–150€</b></div></div>
+      </div>
+      <div class="fl-card" onclick="openFlash('Mains entrelacées','&#129309;','80–150€','Deux mains délicates, style linework fin, 7-12cm')">
+        <div class="fl-thumb">&#129309;<div class="fl-badge">Flash cadre</div></div>
+        <div class="fl-info"><div class="fl-name">Mains entrelacées</div><div class="fl-price"><b>80–150€</b></div></div>
+      </div>
+      <div class="fl-card" onclick="openFlash('Mère et enfant','&#129330;','80–150€','Silhouette douce d\'une mère tenant son bébé, 7-12cm')">
+        <div class="fl-thumb">&#129330;<div class="fl-badge">Flash cadre</div></div>
+        <div class="fl-info"><div class="fl-name">Mère &amp; enfant</div><div class="fl-price"><b>80–150€</b></div></div>
+      </div>
+      <div class="fl-card" onclick="openFlash('Poisson et nature','&#128031;','80–150€','Motif poisson entrelacé de végétaux, 7-12cm')">
+        <div class="fl-thumb">&#128031;<div class="fl-badge">Flash cadre</div></div>
+        <div class="fl-info"><div class="fl-name">Poisson &amp; nature</div><div class="fl-price"><b>80–150€</b></div></div>
+      </div>
+    </div>
+    <div class="fl-note">
+      Ces flashs sont <b style="color:#111">visibles en salon</b>.<br/>
+      Ton propre projet ? Utilise l'onglet <b style="color:#111">Devis</b> &#128148;
+    </div>
+  </div>
+
+  <!-- TARIFS -->
+
+  <div id="page-tarifs" class="page">
+    <div class="t-h">Tarifs<em>complets &amp; transparents</em></div>
+    <div class="t-intro">Consultation, dessin et retouche de contrôle inclus dans tous les prix.</div>
+
+```
+<div class="t-sec">Flashs disponibles</div>
+
+<div class="t-card">
+  <div class="t-top"><div><div class="t-name">Micros-flashs</div><div class="t-sub">Écriture · chiffre · symbole</div></div><div class="t-badge">3–4 cm</div></div>
+  <div class="t-prices">
+    <div class="t-px"><div class="t-plbl">1 flash</div><div class="t-pval">60€</div></div>
+    <div class="t-px"><div class="t-plbl">2 flashs</div><div class="t-pval">100€</div></div>
+    <div class="t-px"><div class="t-plbl">3 flashs</div><div class="t-pval">150€</div></div>
+  </div>
+  <div class="t-bonus">+ <b>1 micro flash offert</b> à partir de 3</div>
+</div>
+
+<div class="t-card">
+  <div class="t-top"><div><div class="t-name">Minis flashs</div><div class="t-sub">Mini phrase · symbole · petit motif</div></div><div class="t-badge">4–7 cm</div></div>
+  <div class="t-prices">
+    <div class="t-px"><div class="t-plbl">1 flash</div><div class="t-pval">80€</div></div>
+    <div class="t-px"><div class="t-plbl">2 flashs</div><div class="t-pval">150€</div></div>
+    <div class="t-px"><div class="t-plbl">3 flashs</div><div class="t-pval">210€</div></div>
+  </div>
+  <div class="t-bonus">+ <b>1 micro flash offert</b> à partir de 3</div>
+</div>
+
+<div class="t-card">
+  <div class="t-top"><div><div class="t-name">Petits flashs</div><div class="t-sub">Dessin simple · phrase · gothique</div></div><div class="t-badge">7–10 cm</div></div>
+  <div class="t-prices">
+    <div class="t-px"><div class="t-plbl">1 flash</div><div class="t-pval">100€</div></div>
+    <div class="t-px"><div class="t-plbl">2 flashs</div><div class="t-pval">180€</div></div>
+    <div class="t-px"><div class="t-plbl">3 flashs</div><div class="t-pval">260€</div></div>
+  </div>
+  <div class="t-bonus">+ <b>1 micro ou mini flash offert</b></div>
+</div>
+
+<div class="t-card">
+  <div class="t-top"><div><div class="t-name">Flashs simples</div><div class="t-sub">Dessin sans compo · fleur minimaliste</div></div><div class="t-badge">~10 cm</div></div>
+  <div class="t-prices">
+    <div class="t-px"><div class="t-plbl">1 flash</div><div class="t-pval">120€</div></div>
+    <div class="t-px"><div class="t-plbl">2 flashs</div><div class="t-pval">220€</div></div>
+    <div class="t-px"><div class="t-plbl">3 flashs</div><div class="t-pval">320€</div></div>
+  </div>
+  <div class="t-bonus">+ <b>1 mini flash offert</b></div>
+</div>
+
+<div class="t-card">
+  <div class="t-top"><div><div class="t-name">Flashs élaborés</div><div class="t-sub">Compo florale · réalisme · grand lettrage</div></div><div class="t-badge">≤15 cm</div></div>
+  <div class="t-prices">
+    <div class="t-px"><div class="t-plbl">1 flash</div><div class="t-pval" style="font-size:12px">150–200€</div></div>
+    <div class="t-px"><div class="t-plbl">2 flashs</div><div class="t-pval" style="font-size:12px">260–350€</div></div>
+    <div class="t-px"><div class="t-plbl">3 flashs</div><div class="t-pval" style="font-size:12px">380–450€</div></div>
+  </div>
+  <div class="t-bonus">+ <b>1 flash simple offert</b></div>
+</div>
+
+<div class="t-card">
+  <div class="t-top"><div><div class="t-name">Flashs cadre</div><div class="t-sub">Designs disponibles en salon</div></div><div class="t-badge">7–12 cm</div></div>
+  <div class="t-prices">
+    <div class="t-px" style="grid-column:1/-1"><div class="t-plbl">Fourchette</div><div class="t-pval" style="font-size:20px">80€ – 150€</div></div>
+  </div>
+</div>
+
+<div class="t-sec">Forfaits Patchwork</div>
+<p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.5">Idéal pour créer un dos ou un bras sur mesure en quelques séances.</p>
+
+<div class="f-card">
+  <div class="f-top"><div class="f-name">Forfait 1</div><div class="f-price">220€</div></div>
+  <div class="f-items"><div class="f-item">1 micro</div><div class="f-item">1 mini</div><div class="f-item">1 petit</div></div>
+  <div class="f-gift">&#127873; + 1 micro flash offert</div>
+</div>
+<div class="f-card">
+  <div class="f-top"><div class="f-name">Forfait 2</div><div class="f-price">280€</div></div>
+  <div class="f-items"><div class="f-item">1 mini</div><div class="f-item">1 petit</div><div class="f-item">1 simple</div></div>
+  <div class="f-gift">&#127873; + 1 mini flash offert</div>
+</div>
+<div class="f-card">
+  <div class="f-top"><div class="f-name">Forfait 3</div><div class="f-price">330€</div></div>
+  <div class="f-items"><div class="f-item">1 mini</div><div class="f-item">1 petit</div><div class="f-item">1 élaboré</div></div>
+  <div class="f-gift">&#127873; + 1 simple flash offert</div>
+</div>
+
+<a class="t-wa" href="https://wa.me/32472803127?text=Bonjour%20Maka%20!%20Je%20voudrais%20un%20devis%20&#128148;" target="_blank">
+  &#128241; Demander un devis
+</a>
+```
+
+  </div>
+
+</div><!-- /app -->
+
+<!-- MODAL FLASH -->
+
+<div id="overlay" onclick="closeModal()">
+  <div id="mbox" onclick="event.stopPropagation()">
+    <div class="m-ico" id="m-ico"></div>
+    <div class="m-name" id="m-name"></div>
+    <div class="m-price" id="m-price"></div>
+    <div class="m-desc" id="m-desc"></div>
+    <a class="t-wa" id="m-wa" href="#" target="_blank">&#128241; Je veux ce flash !</a>
+    <button id="m-cancel" onclick="closeModal()">Annuler</button>
+  </div>
+</div>
 
 <script>
-const API_BASE = "https://philo-backend-by2c.onrender.com";
-const WHATSAPP_NUM = "33617123910";
-const SYSTEM_PROMPT = "Tu es l'assistante IA de Maka Tattoo, un salon de tatouage professionnel. Tu reponds aux questions des clients de facon chaleureuse, precise et professionnelle.\n\nTARIFS PAR TAILLE (prix indicatifs) :\n- Tres petit (moins de 4cm) : a partir de 80 euros\n- Petit (4-8cm) : 80 a 150 euros\n- Moyen (8-15cm) : 150 a 300 euros\n- Grand (15-25cm) : 300 a 600 euros\n- Tres grand / piece complete (plus de 25cm) : 600 euros et plus\n- Tarif horaire : 100 a 150 euros par heure selon complexite\n\nFACTEURS QUI INFLUENCENT LE PRIX :\n- Style : minimaliste (moins cher), geometrique, mandala, japonais, realiste (plus cher)\n- Couleurs : noir et gris moins cher que couleur\n- Emplacement : zones sensibles (cotes, nuque, mains) = majoration\n- Complexite des details\n\nSOINS APRES TATOUAGE :\n- Garder le film protecteur 2-4h puis retirer delicatement\n- Laver 2-3 fois par jour avec savon doux pH neutre, eau tiede\n- Appliquer creme cicatrisante fine couche (baume tatoueur, Bepanthen, beurre karite)\n- NE PAS gratter ni arracher les croutes\n- Eviter soleil, piscine, mer, sauna pendant 3-4 semaines\n- Cicatrisation surface : 3-4 semaines. Complete : 2-6 mois\n- SPF 50+ obligatoire apres cicatrisation\n\nFAQ FREQUENTES :\n- Douleur ? Oui selon la zone. Cotes, mains, nuque = plus douloureux. Bras, cuisses = plus supportable.\n- Duree ? Selon la taille : 1h a plusieurs heures. Grandes pieces = plusieurs seances.\n- Apporter son propre dessin ? Oui, Maka peut aussi creer un design sur mesure.\n- Retouches incluses ? Oui, une retouche de controle incluse 1-2 mois apres.\n- Grossesse ? Non, deconseille pendant la grossesse.\n- Age minimum ? 18 ans.\n- Preparation ? Bien manger avant, peau hydratee, eviter alcool 24h avant.\n\nA la fin de chaque reponse sur les RDV, ajoute toujours ce bouton en disant : Pour prendre RDV ou envoyer votre projet, cliquez sur le bouton WhatsApp ci-dessous. Sois concise (3-5 phrases max), chaleureuse, professionnelle. Reponds en francais.";
+var WA = "32472803127";
+var API = "https://philo-backend-by2c.onrender.com";
+var SYS = "Tu es l'assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise (3-5 phrases max). TARIFS: Micros 3-4cm: 1=60€/2=100€/3=150€. Minis 4-7cm: 1=80€/2=150€/3=210€. Petits 7-10cm: 1=100€/2=180€/3=260€. Simples 10cm: 1=120€/2=220€/3=320€. Elabores 15cm: 1=150-200€/2=260-350€/3=380-450€. Cadre 7-12cm: 80-150€. Forfait1=220€ Forfait2=280€ Forfait3=330€. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. WhatsApp 0472 80 31 27 Instagram @Maka.ink. Pour RDV orienter vers WhatsApp.";
+var busy = false;
 
-let isLoading = false;
-let userId = "maka_" + (localStorage.getItem("maka_uid") || Math.random().toString(36).slice(2,10));
-localStorage.setItem("maka_uid", userId.replace("maka_",""));
-
-setTimeout(function() {
-  document.getElementById("splash").classList.add("gone");
-  setTimeout(function() { document.getElementById("splash").style.display = "none"; init(); }, 800);
-}, 2800);
-
-function addBotMsg(text, withActions, devis, showWhatsapp) {
-  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
-  var av = document.createElement("div"); av.className = "avatar"; av.textContent = "🖤";
-  var bbl = document.createElement("div"); bbl.className = "bubble bot"; bbl.textContent = text;
-
-  if (devis) {
-    var card = document.createElement("div"); card.className = "devis-card";
-    card.innerHTML =
-      '<div class="devis-title">✦ Estimation indicative</div>' +
-      '<div class="devis-row"><span>Style</span><span>' + devis.style + '</span></div>' +
-      '<div class="devis-row"><span>Taille estimée</span><span>' + devis.taille + '</span></div>' +
-      '<div class="devis-row"><span>Durée estimée</span><span>' + devis.duree + '</span></div>' +
-      '<div class="devis-total"><span>Fourchette</span><span>' + devis.prix + '</span></div>' +
-      '<a class="rdv-btn" href="https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent("Bonjour Maka ! Je suis intéressé(e) par un tatouage. Je vous envoie mon projet 📸") + '" target="_blank">📸 Envoyer mon projet sur WhatsApp</a>';
-    bbl.appendChild(card);
-  } else if (showWhatsapp) {
-    var wbtn = document.createElement("a");
-    wbtn.className = "rdv-btn";
-    wbtn.href = "https://wa.me/" + WHATSAPP_NUM + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous 😊");
-    wbtn.target = "_blank";
-    wbtn.style.marginTop = "10px";
-    wbtn.textContent = "💬 Contacter Maka sur WhatsApp";
-    bbl.appendChild(wbtn);
-  }
-
-  if (withActions) {
-    var qa = document.createElement("div"); qa.className = "quick-actions";
-    qa.innerHTML =
-      '<button class="qa-btn" onclick="sendMsg(\'Combien coûte un tatouage ?\')">💰 Tarifs</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Comment soigner mon tatouage ?\')">🩹 Soins</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Est-ce que ça fait mal ?\')">😬 Douleur</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Vous faites quels styles ?\')">🎨 Styles</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Comment prendre rendez-vous ?\')">📅 RDV</button>';
-    bbl.appendChild(qa);
-  }
-
-  wrap.appendChild(av); wrap.appendChild(bbl);
-  document.getElementById("messages").appendChild(wrap);
-  setTimeout(function(){ document.getElementById("chat").scrollTop = 99999; }, 100);
+function showTab(n, btn) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('page-'+n).classList.add('active');
+  btn.classList.add('active');
 }
 
-function addUserMsg(text) {
-  var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
-  var bbl = document.createElement("div"); bbl.className = "bubble user"; bbl.textContent = text;
-  wrap.appendChild(bbl); document.getElementById("messages").appendChild(wrap);
-  setTimeout(function(){ document.getElementById("chat").scrollTop = 99999; }, 100);
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById('page-chat');
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById('messages');
+  var row = document.createElement('div');
+  row.className = 'mrow bot';
+  var av = document.createElement('div');
+  av.className = 'bav';
+  av.textContent = String.fromCodePoint(128148);
+  var bub = document.createElement('div');
+  bub.className = 'bub bot';
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement('div');
+    qw.className = 'qbtns';
+    var items = [
+      ['💰 Tarifs','Quels sont les tarifs ?'],
+      ['🩹 Soins','Comment soigner mon tatouage ?'],
+      ['😬 Douleur','Est-ce que ca fait mal ?'],
+      ['🎨 Styles','Quels styles faites-vous ?'],
+      ['📅 RDV','Comment prendre rendez-vous ?']
+    ];
+    items.forEach(function(it){
+      var b = document.createElement('button');
+      b.className = 'qb';
+      b.textContent = it[0];
+      b.onclick = function(){ send(it[1]); };
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(av);
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById('messages');
+  var row = document.createElement('div');
+  row.className = 'mrow user';
+  var bub = document.createElement('div');
+  bub.className = 'bub user';
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
 }
 
 function setTyping(on) {
-  if (on) {
-    var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot"; wrap.id = "typing";
-    wrap.innerHTML = '<div class="avatar">🖤</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
-    document.getElementById("messages").appendChild(wrap);
-    setTimeout(function(){ document.getElementById("chat").scrollTop = 99999; }, 100);
-  } else { var t = document.getElementById("typing"); if (t) t.remove(); }
+  var old = document.getElementById('ty-row');
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById('messages');
+  var row = document.createElement('div');
+  row.className = 'mrow bot';
+  row.id = 'ty-row';
+  var av = document.createElement('div');
+  av.className = 'bav';
+  av.textContent = String.fromCodePoint(128148);
+  var ty = document.createElement('div');
+  ty.className = 'tybub';
+  ty.innerHTML = '<span></span><span></span><span></span>';
+  row.appendChild(av);
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
 }
 
-function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
-
-async function init() {
-  await sleep(400);
-  addBotMsg("Bonjour ! 👋 Je suis l'assistante de Maka Tattoo.\n\nJe peux vous aider avec les tarifs, les styles, les soins après tatouage et les demandes de RDV.\n\nQue puis-je faire pour vous ? 🖤", true, null, false);
-}
-
-async function sendMsg(text) {
-  if (!text || isLoading) return;
-  addUserMsg(text); isLoading = true; setTyping(true);
-  try {
-    var resp = await fetch(API_BASE + "/maka", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ message: text, userId: userId, systemPrompt: SYSTEM_PROMPT })
-    });
-    var data = await resp.json();
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('page-chat').classList.add('active');
+  document.querySelector('.tab').classList.add('active');
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + '/maka', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({message: txt, userId: 'maka_ui', systemPrompt: SYS})
+  }).then(function(r){ return r.json(); }).then(function(d){
     setTyping(false);
-    var answer = data.answer || "Je suis là pour vous aider ! Posez-moi votre question 🖤";
-
-    var devis = null;
-    var lower = text.toLowerCase();
-    if ((lower.includes("combien") || lower.includes("prix") || lower.includes("tarif") || lower.includes("devis")) &&
-        (lower.includes("cm") || lower.includes("petit") || lower.includes("grand") || lower.includes("moyen") || lower.includes("bras") || lower.includes("dos") || lower.includes("cheville"))) {
-      if (lower.includes("petit") || lower.includes("4") || lower.includes("5") || lower.includes("6") || lower.includes("7") || lower.includes("8")) {
-        devis = { style:"À préciser", taille:"Petit (4-8cm)", duree:"1h environ", prix:"80€ – 150€" };
-      } else if (lower.includes("grand") || lower.includes("dos") || lower.includes("manche")) {
-        devis = { style:"À préciser", taille:"Grand (15cm+)", duree:"3h et plus", prix:"300€ – 600€+" };
-      } else if (lower.includes("moyen") || lower.includes("bras") || lower.includes("cuisse")) {
-        devis = { style:"À préciser", taille:"Moyen (8-15cm)", duree:"1h30 – 3h", prix:"150€ – 300€" };
-      }
+    var ans = (d && d.answer) ? d.answer : 'Je suis la pour vous aider !';
+    var msgs = document.getElementById('messages');
+    var row = document.createElement('div');
+    row.className = 'mrow bot';
+    var av = document.createElement('div');
+    av.className = 'bav';
+    av.textContent = String.fromCodePoint(128148);
+    var bub = document.createElement('div');
+    bub.className = 'bub bot';
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    if (low.indexOf('rendez') >= 0 || low.indexOf('rdv') >= 0 || low.indexOf('reserver') >= 0) {
+      var wa = document.createElement('a');
+      wa.className = 'wa-bubble';
+      wa.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('Bonjour Maka ! Je voudrais prendre rendez-vous');
+      wa.target = '_blank';
+      wa.textContent = String.fromCodePoint(128241) + ' Contacter sur WhatsApp';
+      bub.appendChild(wa);
     }
-
-    // Afficher bouton WhatsApp si question RDV
-    var showWa = lower.includes("rendez") || lower.includes("rdv") || lower.includes("contact") || lower.includes("appeler");
-
-    addBotMsg(answer, false, devis, showWa);
-  } catch(e) {
+    row.appendChild(av);
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
     setTyping(false);
-    addBotMsg("Une erreur s'est produite.", false, null, true);
-  }
-  isLoading = false;
+    addBot('Erreur de connexion, reessayez.');
+    busy = false;
+  });
 }
 
-document.getElementById("sendBtn").addEventListener("click", function() {
-  var text = document.getElementById("userInput").value.trim();
-  if (!text) return; document.getElementById("userInput").value = ""; sendMsg(text);
+function sendMsg() {
+  var inp = document.getElementById('inp');
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  send(txt);
+}
+
+document.getElementById('inp').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') sendMsg();
 });
-document.getElementById("userInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") { var text = e.target.value.trim(); if (!text) return; e.target.value = ""; sendMsg(text); }
-});
+
+// DEVIS
+function selSz(el) {
+  document.querySelectorAll('.sz').forEach(function(e){ e.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function prevPhotos(input) {
+  var prev = document.getElementById('prev');
+  prev.innerHTML = '';
+  Array.from(input.files).forEach(function(f){
+    var img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    prev.appendChild(img);
+  });
+}
+
+function genDevis() {
+  var style = document.getElementById('df-style').value;
+  var desc = document.getElementById('df-desc').value.trim();
+  var sz = document.querySelector('.sz.sel');
+  var size = sz ? sz.textContent.replace(/\s+/g,' ').trim() : '';
+  var ems = Array.from(document.querySelectorAll('.em.sel')).map(function(e){ return e.textContent; }).join(', ');
+  if (!style && !desc && !size) {
+    alert('Remplissez au moins le style ou la description');
+    return;
+  }
+  var msg = String.fromCodePoint(128148) + ' Bonjour Maka ! Je voudrais un devis pour un tatouage.\n\n';
+  if (style) msg += String.fromCodePoint(127912) + ' Style : ' + style + '\n';
+  if (desc) msg += String.fromCodePoint(128221) + ' Description : ' + desc + '\n';
+  if (size) msg += String.fromCodePoint(128207) + ' Taille : ' + size + '\n';
+  if (ems) msg += String.fromCodePoint(128205) + ' Emplacement : ' + ems + '\n';
+  msg += '\n(Photo de reference a suivre si besoin)';
+  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// FLASH MODAL
+function openFlash(name, ico, price, desc) {
+  document.getElementById('m-ico').innerHTML = ico;
+  document.getElementById('m-name').textContent = name;
+  document.getElementById('m-price').innerHTML = '<b>' + price + '</b>';
+  document.getElementById('m-desc').textContent = desc;
+  var msg = String.fromCodePoint(128148) + ' Bonjour Maka ! Je suis interesse(e) par le flash "' + name + '" (' + price + '). Je voudrais le reserver !';
+  document.getElementById('m-wa').href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// INIT
+setTimeout(function(){
+  document.getElementById('splash').classList.add('gone');
+  setTimeout(function(){
+    document.getElementById('splash').style.display = 'none';
+    addBot("Bonjour ! " + String.fromCodePoint(128075) + " Je suis l'assistante de Maka Tattoo.\n\nJe peux vous aider avec les tarifs, les soins, prendre rendez-vous ou repondre a toutes vos questions " + String.fromCodePoint(128148), true);
+  }, 900);
+}, 2500);
 </script>
 
 </body>
