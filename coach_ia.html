@@ -422,7 +422,8 @@ function addBot(html, schema) {
   b.innerHTML = html;
   if (schema) b.insertAdjacentHTML('beforeend', renderSchema(schema));
   w.appendChild(av); w.appendChild(b);
-  msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
+  msgs.appendChild(w);
+  setTimeout(() => { w.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
 function addUser(text) {
   const w = document.createElement('div'); w.className = 'bubble-wrap user';
