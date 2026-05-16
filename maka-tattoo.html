@@ -19,15 +19,14 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 #splash.gone{opacity:0;pointer-events:none}
 .sp-logo{width:110px;height:110px;border-radius:50%;background:#EDE0CC;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
 .sp-logo svg{width:60px;height:54px}
-.sp-name{font-family:Playfair Display,serif;font-size:34px;color:#EDE0CC;letter-spacing:.1em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-name{font-family:‘Playfair Display’,serif;font-size:34px;color:#EDE0CC;letter-spacing:.1em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
 .sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(237,224,204,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
 
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
-
 #topbar{background:#111;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(237,224,204,.08);flex-shrink:0}
 .tb-av{width:44px;height:44px;border-radius:50%;background:#EDE0CC;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .tb-av svg{width:26px;height:23px}
-.tb-name{font-family:Playfair Display,serif;font-size:16px;font-weight:700;color:#EDE0CC;letter-spacing:.04em}
+.tb-name{font-family:‘Playfair Display’,serif;font-size:16px;font-weight:700;color:#EDE0CC;letter-spacing:.04em}
 .tb-sub{font-size:10px;color:rgba(237,224,204,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
 
@@ -40,6 +39,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
+/* CHAT */
 #page-chat{background:#EDE0CC}
 #messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
 .mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
@@ -64,8 +64,9 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 #snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#EDE0CC;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
 
+/* DEVIS */
 #page-devis{background:#EDE0CC;padding:20px 15px 36px;gap:14px}
-.df-title{font-family:Playfair Display,serif;font-size:26px;font-weight:700}
+.df-title{font-family:‘Playfair Display’,serif;font-size:26px;font-weight:700}
 .df-title em{font-style:italic;color:#999;font-size:.7em;display:block}
 .lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#999;margin-bottom:7px}
 .df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:14px;font-family:Jost,sans-serif;color:#111;outline:none;-webkit-appearance:none}
@@ -85,55 +86,61 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 #prev img{width:70px;height:70px;object-fit:cover;border-radius:10px}
 .df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
 
+/* FLASHS */
 #page-flashs{background:#EDE0CC;padding:20px 15px 32px}
-.fl-h{font-family:Playfair Display,serif;font-size:28px;font-weight:700}
+.fl-h{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700}
 .fl-h em{font-style:italic;color:#999;font-size:.7em;display:block}
 .fl-sub{font-size:13px;color:#666;margin-top:6px;margin-bottom:16px}
 .fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fl-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.05);cursor:pointer}
 .fl-card:active{opacity:.85}
-.fl-thumb{width:100%;aspect-ratio:1;background:#111;display:flex;align-items:center;justify-content:center;position:relative}
+.fl-thumb{width:100%;aspect-ratio:1;background:#111;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.fl-thumb img{width:100%;height:100%;object-fit:cover}
 .fl-emoji{font-size:48px}
 .fl-badge{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#EDE0CC;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:18px 8px 7px;text-align:center}
 .fl-info{padding:10px 12px 13px}
-.fl-name{font-family:Playfair Display,serif;font-size:14px;font-weight:600}
+.fl-name{font-family:‘Playfair Display’,serif;font-size:14px;font-weight:600}
 .fl-price{font-size:12px;color:#888;margin-top:2px}
 .fl-price b{color:#111}
 .fl-note{margin-top:14px;padding:13px;background:#fff;border-radius:13px;font-size:13px;color:#666;line-height:1.6;text-align:center}
+.fl-empty{text-align:center;padding:40px 20px;color:#888;font-size:14px}
+.fl-empty-icon{font-size:40px;margin-bottom:12px}
 
+/* TARIFS */
 #page-tarifs{background:#EDE0CC;padding:20px 15px 32px}
-.t-h{font-family:Playfair Display,serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px}
+.t-h{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px}
 .t-h em{font-style:italic;color:#999;font-size:.72em;display:block}
 .t-intro{font-size:13px;color:#666;line-height:1.5;margin-bottom:18px}
 .t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#999;margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.08)}
 .tcard{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
 .tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
-.tcard-name{font-family:Playfair Display,serif;font-size:15px;font-weight:600}
+.tcard-name{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:600}
 .tcard-sub{font-size:11px;color:#888;margin-top:3px}
 .tcard-badge{background:#111;color:#EDE0CC;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
 .tprices{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .tpx{background:#EDE0CC;border-radius:9px;padding:8px 4px;text-align:center}
 .tplbl{font-size:9px;color:#888;font-weight:500;margin-bottom:3px}
-.tpval{font-family:Playfair Display,serif;font-size:14px;font-weight:700}
+.tpval{font-family:‘Playfair Display’,serif;font-size:14px;font-weight:700}
 .tbonus{margin-top:8px;font-size:11px;color:#888;font-style:italic;text-align:center}
 .tbonus b{color:#111;font-style:normal}
 .fcard{background:#111;color:#EDE0CC;border-radius:15px;padding:15px;margin-bottom:9px}
 .fcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
-.fcard-name{font-family:Playfair Display,serif;font-size:15px;font-weight:700}
-.fcard-price{font-family:Playfair Display,serif;font-size:21px;font-weight:700;color:#D4C5B0}
+.fcard-name{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:700}
+.fcard-price{font-family:‘Playfair Display’,serif;font-size:21px;font-weight:700;color:#D4C5B0}
 .fcard-items{display:flex;flex-direction:column;gap:3px}
 .fcard-item{font-size:12px;color:rgba(237,224,204,.55);padding-left:10px}
 .fcard-gift{font-size:11px;color:#D4C5B0;margin-top:8px;font-style:italic}
 .twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
 
+/* OVERLAY */
 #overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
 #overlay.open{display:flex}
 #mbox{background:#EDE0CC;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
+.mbox-img{width:140px;height:140px;border-radius:16px;object-fit:cover;margin:0 auto 12px;display:block;background:#111}
 .mbox-ico{font-size:52px;text-align:center;margin-bottom:12px}
-.mbox-name{font-family:Playfair Display,serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
-.mbox-price{text-align:center;font-size:16px;color:#888;margin-bottom:12px}
+.mbox-name{font-family:‘Playfair Display’,serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
+.mbox-price{text-align:center;font-size:16px;color:#888;margin-bottom:20px}
 .mbox-price b{color:#111;font-size:20px}
-.mbox-desc{font-size:13px;color:#666;text-align:center;line-height:1.6;margin-bottom:20px}
 .mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px}
 .mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#888;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%}
 </style>
@@ -143,9 +150,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 
 <div id="splash">
   <div class="sp-logo">
-    <svg viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M30 50 C30 50 3 33 3 17 C3 9 9 4 17 4 C22 4 27 7 30 12 C33 7 38 4 43 4 C51 4 57 9 57 17 C57 33 30 50 30 50Z" fill="#111"/>
-    </svg>
+    <svg viewBox="0 0 60 54" fill="none"><path d="M30 50 C30 50 3 33 3 17 C3 9 9 4 17 4 C22 4 27 7 30 12 C33 7 38 4 43 4 C51 4 57 9 57 17 C57 33 30 50 30 50Z" fill="#111"/></svg>
   </div>
   <div class="sp-name">MAKA TATTOO</div>
   <div class="sp-sub">Tatouage &middot; Piercing &middot; Art</div>
@@ -154,9 +159,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 <div id="app">
   <div id="topbar">
     <div class="tb-av">
-      <svg viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M30 50 C30 50 3 33 3 17 C3 9 9 4 17 4 C22 4 27 7 30 12 C33 7 38 4 43 4 C51 4 57 9 57 17 C57 33 30 50 30 50Z" fill="#111"/>
-      </svg>
+      <svg viewBox="0 0 60 54" fill="none"><path d="M30 50 C30 50 3 33 3 17 C3 9 9 4 17 4 C22 4 27 7 30 12 C33 7 38 4 43 4 C51 4 57 9 57 17 C57 33 30 50 30 50Z" fill="#111"/></svg>
     </div>
     <div>
       <div class="tb-name">Maka Tattoo</div>
@@ -166,11 +169,13 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
   </div>
 
   <div id="tabs">
-    <button class="tab active" onclick="showTab(this,'chat')"><span>&#128172;</span>Assistant</button>
-    <button class="tab" onclick="showTab(this,'devis')"><span>&#128247;</span>Devis</button>
-    <button class="tab" onclick="showTab(this,'flashs')"><span>&#9889;</span>Flashs</button>
-    <button class="tab" onclick="showTab(this,'tarifs')"><span>&#128176;</span>Tarifs</button>
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📷</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'flashs')"><span>⚡</span>Flashs</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
   </div>
+
+  <!-- CHAT -->
 
   <div id="page-chat" class="page active">
     <div id="messages"></div>
@@ -183,8 +188,10 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
     </div>
   </div>
 
+  <!-- DEVIS -->
+
   <div id="page-devis" class="page">
-    <div class="df-title">Devis instantane<em>Votre projet sur WhatsApp</em></div>
+    <div class="df-title">Devis instantané<em>Votre projet sur WhatsApp</em></div>
     <div>
       <div class="lbl">Style</div>
       <select class="df-select" id="df-style">
@@ -211,7 +218,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
         <div class="sz" onclick="selSz(this)">Mini<small>4-7cm</small></div>
         <div class="sz" onclick="selSz(this)">Petit<small>7-10cm</small></div>
         <div class="sz" onclick="selSz(this)">Simple<small>~10cm</small></div>
-        <div class="sz" onclick="selSz(this)">Elabore<small>15cm</small></div>
+        <div class="sz" onclick="selSz(this)">Elaboré<small>15cm</small></div>
         <div class="sz" onclick="selSz(this)">Grand<small>15cm+</small></div>
       </div>
     </div>
@@ -226,56 +233,40 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
         <div class="em" onclick="this.classList.toggle('sel')">Cheville</div>
         <div class="em" onclick="this.classList.toggle('sel')">Mollet</div>
         <div class="em" onclick="this.classList.toggle('sel')">Cuisse</div>
-        <div class="em" onclick="this.classList.toggle('sel')">Cou nuque</div>
-        <div class="em" onclick="this.classList.toggle('sel')">Cotes</div>
-        <div class="em" onclick="this.classList.toggle('sel')">Doigt main</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Cou / nuque</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Côtes</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Doigt / main</div>
         <div class="em" onclick="this.classList.toggle('sel')">Autre</div>
       </div>
     </div>
     <div>
       <div class="lbl">Photo (optionnel)</div>
       <div class="photo-zone" onclick="document.getElementById('df-photo').click()">
-        <div class="pz-icon">&#128247;</div>
+        <div class="pz-icon">📷</div>
         <strong>Ajouter une photo</strong>
-        <p>Reference ou croquis</p>
+        <p>Référence ou croquis</p>
         <div id="prev"></div>
       </div>
       <input type="file" id="df-photo" accept="image/*" multiple style="display:none" onchange="prevPhotos(this)"/>
     </div>
-    <button class="df-btn" onclick="genDevis()">&#128241; Envoyer sur WhatsApp</button>
+    <button class="df-btn" onclick="genDevis()">📱 Envoyer sur WhatsApp</button>
   </div>
+
+  <!-- FLASHS -->
 
   <div id="page-flashs" class="page">
     <div class="fl-h">Flashs<em>disponibles en salon</em></div>
-    <div class="fl-sub">Appuyez pour reserver directement &#128149;</div>
-    <div class="fl-grid">
-      <div class="fl-card" onclick="ouvrirFlash(0)">
-        <div class="fl-thumb"><span class="fl-emoji">&#127800;</span><div class="fl-badge">Flash cadre</div></div>
-        <div class="fl-info"><div class="fl-name">Femme et fleurs</div><div class="fl-price"><b>80-150&#8364;</b></div></div>
-      </div>
-      <div class="fl-card" onclick="ouvrirFlash(1)">
-        <div class="fl-thumb"><span class="fl-emoji">&#9999;&#65039;</span><div class="fl-badge">Flash cadre</div></div>
-        <div class="fl-info"><div class="fl-name">Visage linework</div><div class="fl-price"><b>80-150&#8364;</b></div></div>
-      </div>
-      <div class="fl-card" onclick="ouvrirFlash(2)">
-        <div class="fl-thumb"><span class="fl-emoji">&#9790;&#65039;</span><div class="fl-badge">Flash cadre</div></div>
-        <div class="fl-info"><div class="fl-name">Micros flashs</div><div class="fl-price"><b>60-150&#8364;</b></div></div>
-      </div>
-      <div class="fl-card" onclick="ouvrirFlash(3)">
-        <div class="fl-thumb"><span class="fl-emoji">&#129419;</span><div class="fl-badge">Flash cadre</div></div>
-        <div class="fl-info"><div class="fl-name">Petits flashs</div><div class="fl-price"><b>100-260&#8364;</b></div></div>
-      </div>
-      <div class="fl-card" onclick="ouvrirFlash(4)">
-        <div class="fl-thumb"><span class="fl-emoji">&#128065;&#65039;</span><div class="fl-badge">Flash cadre</div></div>
-        <div class="fl-info"><div class="fl-name">Minis flashs</div><div class="fl-price"><b>80-210&#8364;</b></div></div>
-      </div>
-      <div class="fl-card" onclick="ouvrirFlash(5)">
-        <div class="fl-thumb"><span class="fl-emoji">&#128081;</span><div class="fl-badge">Forfait</div></div>
-        <div class="fl-info"><div class="fl-name">Patchwork</div><div class="fl-price"><b>220-330&#8364;</b></div></div>
+    <div class="fl-sub">Appuyez pour réserver directement 🖤</div>
+    <div class="fl-grid" id="fl-grid">
+      <div style="grid-column:1/-1" class="fl-empty">
+        <div class="fl-empty-icon">⏳</div>
+        Chargement des flashs...
       </div>
     </div>
-    <div class="fl-note">Appuyez sur un flash pour le reserver sur WhatsApp &#128149;</div>
+    <div class="fl-note" id="fl-note" style="display:none">Appuyez sur un flash pour le réserver sur WhatsApp 🖤</div>
   </div>
+
+  <!-- TARIFS -->
 
   <div id="page-tarifs" class="page">
     <div class="t-h">Tarifs<em>complets et transparents</em></div>
@@ -283,98 +274,70 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 
 ```
 <div class="t-sec">Flashs disponibles</div>
-
 <div class="tcard">
   <div class="tcard-top"><div><div class="tcard-name">Micros-flashs</div><div class="tcard-sub">Ecriture, chiffre, symbole</div></div><div class="tcard-badge">3-4 cm</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">60&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">100&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">150&#8364;</div></div>
+    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">60€</div></div>
+    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">100€</div></div>
+    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">150€</div></div>
   </div>
-  <div class="tbonus"><b>+ 1 micro flash offert</b> a partir de 3</div>
+  <div class="tbonus"><b>+ 1 micro flash offert</b> à partir de 3</div>
 </div>
-
 <div class="tcard">
   <div class="tcard-top"><div><div class="tcard-name">Minis flashs</div><div class="tcard-sub">Mini phrase, symbole, petit motif</div></div><div class="tcard-badge">4-7 cm</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">80&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">150&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">210&#8364;</div></div>
+    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">80€</div></div>
+    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">150€</div></div>
+    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">210€</div></div>
   </div>
-  <div class="tbonus"><b>+ 1 micro flash offert</b> a partir de 3</div>
+  <div class="tbonus"><b>+ 1 micro flash offert</b> à partir de 3</div>
 </div>
-
 <div class="tcard">
   <div class="tcard-top"><div><div class="tcard-name">Petits flashs</div><div class="tcard-sub">Dessin simple, phrase, gothique</div></div><div class="tcard-badge">7-10 cm</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">100&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">180&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">260&#8364;</div></div>
+    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">100€</div></div>
+    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">180€</div></div>
+    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">260€</div></div>
   </div>
   <div class="tbonus"><b>+ 1 micro ou mini flash offert</b></div>
 </div>
-
-<div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Flashs simples</div><div class="tcard-sub">Dessin, phrase, fleur minimaliste</div></div><div class="tcard-badge">~10 cm</div></div>
-  <div class="tprices">
-    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval">120&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval">220&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval">320&#8364;</div></div>
-  </div>
-  <div class="tbonus"><b>+ 1 mini flash offert</b></div>
-</div>
-
-<div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Flashs elabores</div><div class="tcard-sub">Compo florale, realisme, lettrage</div></div><div class="tcard-badge">15 cm</div></div>
-  <div class="tprices">
-    <div class="tpx"><div class="tplbl">1 flash</div><div class="tpval" style="font-size:12px">150-200&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">2 flashs</div><div class="tpval" style="font-size:12px">260-350&#8364;</div></div>
-    <div class="tpx"><div class="tplbl">3 flashs</div><div class="tpval" style="font-size:12px">380-450&#8364;</div></div>
-  </div>
-  <div class="tbonus"><b>+ 1 flash simple offert</b></div>
-</div>
-
 <div class="tcard">
   <div class="tcard-top"><div><div class="tcard-name">Flashs cadre</div><div class="tcard-sub">Designs disponibles en salon</div></div><div class="tcard-badge">7-12 cm</div></div>
   <div class="tprices">
-    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Fourchette</div><div class="tpval" style="font-size:20px">80 - 150&#8364;</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Fourchette</div><div class="tpval" style="font-size:20px">80 - 150€</div></div>
   </div>
 </div>
 
 <div class="t-sec">Forfaits Patchwork</div>
-<p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.5">Ideal pour creer un dos ou un bras sur mesure.</p>
-
 <div class="fcard">
-  <div class="fcard-top"><div class="fcard-name">Forfait 1</div><div class="fcard-price">220&#8364;</div></div>
+  <div class="fcard-top"><div class="fcard-name">Forfait 1</div><div class="fcard-price">220€</div></div>
   <div class="fcard-items"><div class="fcard-item">1 micro</div><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div></div>
-  <div class="fcard-gift">&#127873; + 1 micro flash offert</div>
+  <div class="fcard-gift">🎁 + 1 micro flash offert</div>
 </div>
-
 <div class="fcard">
-  <div class="fcard-top"><div class="fcard-name">Forfait 2</div><div class="fcard-price">280&#8364;</div></div>
+  <div class="fcard-top"><div class="fcard-name">Forfait 2</div><div class="fcard-price">280€</div></div>
   <div class="fcard-items"><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div><div class="fcard-item">1 simple</div></div>
-  <div class="fcard-gift">&#127873; + 1 mini flash offert</div>
+  <div class="fcard-gift">🎁 + 1 mini flash offert</div>
 </div>
-
 <div class="fcard">
-  <div class="fcard-top"><div class="fcard-name">Forfait 3</div><div class="fcard-price">330&#8364;</div></div>
-  <div class="fcard-items"><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div><div class="fcard-item">1 elabore</div></div>
-  <div class="fcard-gift">&#127873; + 1 simple flash offert</div>
+  <div class="fcard-top"><div class="fcard-name">Forfait 3</div><div class="fcard-price">330€</div></div>
+  <div class="fcard-items"><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div><div class="fcard-item">1 élaboré</div></div>
+  <div class="fcard-gift">🎁 + 1 simple flash offert</div>
 </div>
-
-<a class="twa" href="https://wa.me/32472803127?text=Bonjour%20Maka%20!" target="_blank">&#128241; Demander un devis</a>
+<a class="twa" href="https://wa.me/32472803127?text=Bonjour%20Maka%20!" target="_blank">📱 Demander un devis</a>
 ```
 
   </div>
 </div>
 
+<!-- OVERLAY FLASH -->
+
 <div id="overlay" onclick="fermerModal()">
   <div id="mbox" onclick="event.stopPropagation()">
-    <div class="mbox-ico" id="mbox-ico"></div>
+    <div id="mbox-img-wrap"></div>
     <div class="mbox-name" id="mbox-name"></div>
     <div class="mbox-price" id="mbox-price"></div>
-    <div class="mbox-desc" id="mbox-desc"></div>
-    <a class="mbox-wa" id="mbox-wa" href="#" target="_blank">&#128241; Je veux ce flash !</a>
+    <a class="mbox-wa" id="mbox-wa" href="#" target="_blank">📱 Je veux ce flash !</a>
     <button class="mbox-cancel" onclick="fermerModal()">Annuler</button>
   </div>
 </div>
@@ -382,42 +345,19 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 <script>
 var WA = "32472803127";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise (3-5 phrases max). TARIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Elabores 15cm: 1=150-200/2=260-350/3=380-450. Forfait1=220 Forfait2=280 Forfait3=330. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. WhatsApp 0472 80 31 27 Instagram @Maka.ink. Pour RDV orienter vers WhatsApp.";
+var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise (3-5 phrases max). TARIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. WhatsApp 0472 80 31 27 Instagram @Maka.ink. Pour RDV orienter vers WhatsApp.";
 var busy = false;
 
-var FLASHS = [
-  {ico:"&#127800;", name:"Femme et fleurs", price:"80-150", desc:"Composition florale avec silhouette, 7-12cm"},
-  {ico:"&#9999;", name:"Visage linework", price:"80-150", desc:"Visage feminin epure style linework, 7-12cm"},
-  {ico:"&#9790;", name:"Micros flashs", price:"60-150", desc:"Ecriture, chiffre, symbole minimaliste 3-4cm"},
-  {ico:"&#129419;", name:"Petits flashs", price:"100-260", desc:"Dessin simple, phrase, ecriture 7-10cm"},
-  {ico:"&#128065;", name:"Minis flashs", price:"80-210", desc:"Mini phrase, symbole, petit motif 4-7cm"},
-  {ico:"&#128081;", name:"Patchwork", price:"220-330", desc:"Forfaits pour creer un dos ou bras sur mesure"}
-];
-
-function ouvrirFlash(i) {
-  var f = FLASHS[i];
-  document.getElementById("mbox-ico").innerHTML = f.ico;
-  document.getElementById("mbox-name").textContent = f.name;
-  document.getElementById("mbox-price").innerHTML = "<b>" + f.price + "\u20AC</b>";
-  document.getElementById("mbox-desc").textContent = f.desc;
-  var msg = "Bonjour Maka ! Je suis interesse par le flash " + f.name + " (" + f.price + " euros). Je voudrais le reserver !";
-  document.getElementById("mbox-wa").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
-  document.getElementById("overlay").classList.add("open");
-}
-
-function fermerModal() {
-  document.getElementById("overlay").classList.remove("open");
-}
-
 function showTab(btn, n) {
-  document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active"); });
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
   document.getElementById("page-" + n).classList.add("active");
   btn.classList.add("active");
+  if (n === "flashs") loadFlashs();
 }
 
 function scrollChat() {
-  setTimeout(function() {
+  setTimeout(function(){
     var c = document.getElementById("page-chat");
     c.scrollTop = c.scrollHeight;
   }, 80);
@@ -426,7 +366,7 @@ function scrollChat() {
 function mkAv() {
   var av = document.createElement("div");
   av.className = "bav";
-  av.innerHTML = '<svg viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 50 C30 50 3 33 3 17 C3 9 9 4 17 4 C22 4 27 7 30 12 C33 7 38 4 43 4 C51 4 57 9 57 17 C57 33 30 50 30 50Z" fill="#EDE0CC"/></svg>';
+  av.innerHTML = '<svg viewBox="0 0 60 54" fill="none"><path d="M30 50 C30 50 3 33 3 17 C3 9 9 4 17 4 C22 4 27 7 30 12 C33 7 38 4 43 4 C51 4 57 9 57 17 C57 33 30 50 30 50Z" fill="#EDE0CC"/></svg>';
   return av;
 }
 
@@ -440,18 +380,11 @@ function addBot(txt, withQ) {
   if (withQ) {
     var qw = document.createElement("div");
     qw.className = "qbtns";
-    var items = [
-      ["Tarifs", "Quels sont les tarifs ?"],
-      ["Soins", "Comment soigner mon tatouage ?"],
-      ["Douleur", "Est-ce que ca fait mal ?"],
-      ["Styles", "Quels styles faites-vous ?"],
-      ["RDV", "Comment prendre rendez-vous ?"]
-    ];
-    items.forEach(function(it) {
+    [["Tarifs","Quels sont les tarifs ?"],["Soins","Comment soigner mon tatouage ?"],["Douleur","Est-ce que ça fait mal ?"],["Styles","Quels styles faites-vous ?"],["RDV","Comment prendre rendez-vous ?"]].forEach(function(it){
       var b = document.createElement("button");
       b.className = "qb";
       b.textContent = it[0];
-      (function(m) { b.onclick = function() { send(m); }; })(it[1]);
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
       qw.appendChild(b);
     });
     bub.appendChild(qw);
@@ -493,8 +426,8 @@ function setTyping(on) {
 
 function send(txt) {
   if (!txt || busy) return;
-  document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active"); });
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
   document.getElementById("page-chat").classList.add("active");
   document.querySelector(".tab").classList.add("active");
   addUser(txt);
@@ -504,11 +437,10 @@ function send(txt) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: txt, userId: "maka_ui", systemPrompt: SYS })
-  }).then(function(r) {
-    return r.json();
-  }).then(function(d) {
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
     setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Je suis la pour vous aider !";
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
     var msgs = document.getElementById("messages");
     var row = document.createElement("div");
     row.className = "mrow bot";
@@ -529,9 +461,9 @@ function send(txt) {
     msgs.appendChild(row);
     scrollChat();
     busy = false;
-  }).catch(function() {
+  }).catch(function(){
     setTyping(false);
-    addBot("Erreur de connexion, reessayez.");
+    addBot("Erreur de connexion, réessayez.");
     busy = false;
   });
 }
@@ -544,19 +476,19 @@ function sendMsg() {
   send(txt);
 }
 
-document.getElementById("inp").addEventListener("keydown", function(e) {
+document.getElementById("inp").addEventListener("keydown", function(e){
   if (e.key === "Enter") sendMsg();
 });
 
 function selSz(el) {
-  document.querySelectorAll(".sz").forEach(function(e) { e.classList.remove("sel"); });
+  document.querySelectorAll(".sz").forEach(function(e){ e.classList.remove("sel"); });
   el.classList.add("sel");
 }
 
 function prevPhotos(input) {
   var prev = document.getElementById("prev");
   prev.innerHTML = "";
-  Array.from(input.files).forEach(function(f) {
+  Array.from(input.files).forEach(function(f){
     var img = document.createElement("img");
     img.src = URL.createObjectURL(f);
     prev.appendChild(img);
@@ -568,22 +500,94 @@ function genDevis() {
   var desc = document.getElementById("df-desc").value.trim();
   var sz = document.querySelector(".sz.sel");
   var size = sz ? sz.childNodes[0].textContent.trim() : "";
-  var ems = Array.from(document.querySelectorAll(".em.sel")).map(function(e) { return e.textContent; }).join(", ");
+  var ems = Array.from(document.querySelectorAll(".em.sel")).map(function(e){ return e.textContent; }).join(", ");
   if (!style && !desc && !size) { alert("Remplissez au moins le style ou la description"); return; }
   var msg = "Bonjour Maka ! Je voudrais un devis.\n\n";
   if (style) msg += "Style : " + style + "\n";
   if (desc) msg += "Description : " + desc + "\n";
   if (size) msg += "Taille : " + size + "\n";
   if (ems) msg += "Emplacement : " + ems + "\n";
-  msg += "\n(Photo de reference a suivre si besoin)";
+  msg += "\n(Photo de référence à suivre si besoin)";
   window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
 }
 
-setTimeout(function() {
+// FLASHS — charge depuis /memory/maka_flashs
+function loadFlashs() {
+  var grid = document.getElementById("fl-grid");
+  grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">⏳</div>Chargement...</div>';
+  fetch(API + "/memory/maka_flashs")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var flashs = d.value || [];
+      if (flashs.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🖤</div>Les flashs arrivent bientôt !</div>';
+        document.getElementById("fl-note").style.display = "none";
+        return;
+      }
+      grid.innerHTML = "";
+      flashs.forEach(function(f){
+        var card = document.createElement("div");
+        card.className = "fl-card";
+        card.onclick = function(){ ouvrirFlash(f); };
+        var thumb = document.createElement("div");
+        thumb.className = "fl-thumb";
+        if (f.image) {
+          var img = document.createElement("img");
+          img.src = f.image;
+          thumb.appendChild(img);
+        } else {
+          var em = document.createElement("span");
+          em.className = "fl-emoji";
+          em.textContent = "🖤";
+          thumb.appendChild(em);
+        }
+        var badge = document.createElement("div");
+        badge.className = "fl-badge";
+        badge.textContent = "Flash";
+        thumb.appendChild(badge);
+        var info = document.createElement("div");
+        info.className = "fl-info";
+        info.innerHTML = '<div class="fl-name">' + f.nom + '</div><div class="fl-price"><b>' + f.prix + '</b></div>';
+        card.appendChild(thumb);
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+      document.getElementById("fl-note").style.display = "block";
+    }).catch(function(){
+      grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🖤</div>Les flashs arrivent bientôt !</div>';
+    });
+}
+
+function ouvrirFlash(f) {
+  var wrap = document.getElementById("mbox-img-wrap");
+  wrap.innerHTML = "";
+  if (f.image) {
+    var img = document.createElement("img");
+    img.className = "mbox-img";
+    img.src = f.image;
+    wrap.appendChild(img);
+  } else {
+    var ico = document.createElement("div");
+    ico.className = "mbox-ico";
+    ico.textContent = "🖤";
+    wrap.appendChild(ico);
+  }
+  document.getElementById("mbox-name").textContent = f.nom;
+  document.getElementById("mbox-price").innerHTML = "<b>" + f.prix + "</b>";
+  var msg = "Bonjour Maka ! Je suis intéressé(e) par le flash " + f.nom + " (" + f.prix + "). Je voudrais le réserver !";
+  document.getElementById("mbox-wa").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+  document.getElementById("overlay").classList.add("open");
+}
+
+function fermerModal() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+setTimeout(function(){
   document.getElementById("splash").classList.add("gone");
-  setTimeout(function() {
+  setTimeout(function(){
     document.getElementById("splash").style.display = "none";
-    addBot("Bonjour ! Je suis l assistante de Maka Tattoo.\n\nJe peux vous aider avec les tarifs, les soins, prendre rendez-vous ou repondre a toutes vos questions.", true);
+    addBot("Bonjour ! Je suis l'assistante de Maka Tattoo.\n\nJe peux vous aider avec les tarifs, les soins, prendre rendez-vous ou répondre à toutes vos questions.", true);
   }, 900);
 }, 2500);
 </script>
