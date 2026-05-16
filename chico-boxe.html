@@ -272,7 +272,11 @@ function speakText(text, btn) {
 
 // ✅ PARSEUR MARKDOWN → CARTES OR
 function parseMarkdown(text, addSpeak) {
-  const hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Round|Combat|Conclusion|Objectif|Matériel|Consignes|Durée|Programme|Cardio|Force|Récup)/i.test(text);
+  // Nettoyer les ### markdown en **bold**
+  text = text.replace(/#{1,6}\s*\d*\.?\s*\*\*(.+?)\*\*/g, '**$1**');
+  text = text.replace(/#{1,6}\s*\d+\.\s+(.+?)(?=\n|$)/gm, '**$1**');
+  text = text.replace(/#{1,6}\s+(.+?)(?=\n|$)/gm, '**$1**');
+  const hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Round|Combat|Conclusion|Objectif|Matériel|Consignes|Durée|Programme|Cardio|Force|Récup|Structure|Retour|Mise|Sparring|Analyse|Conseils)/i.test(text);
   if (!hasStruct) {
     const html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
     let result = '<div class="rt-text-block">' + html + '</div>';
@@ -359,14 +363,15 @@ function initPrepa() {
 }
 
 // ✅ SCROLL CORRIGÉ - défile en haut de la réponse
-function addBotMsg(text, withActions) {
+function addBotMsg(text, withActions, isResponse) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const avatar = document.createElement("div");
   avatar.className = "avatar"; avatar.textContent = "🥊";
   const bubble = document.createElement("div");
   bubble.className = "bubble bot";
-  bubble.innerHTML = parseMarkdown(text, true);
+  // Bouton lecture uniquement sur les vraies réponses IA (pas message d'accueil)
+  bubble.innerHTML = parseMarkdown(text, isResponse === true);
   if (withActions) {
     const qa = document.createElement("div");
     qa.className = "quick-actions";
@@ -394,14 +399,14 @@ function addUserMsg(text) {
 }
 
 // ✅ SCROLL CORRIGÉ PREPA
-function addBotMsgPrepa(text, withActions) {
+function addBotMsgPrepa(text, withActions, isResponse) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const avatar = document.createElement("div");
   avatar.className = "avatar"; avatar.textContent = "💪";
   const bubble = document.createElement("div");
   bubble.className = "bubble bot";
-  bubble.innerHTML = parseMarkdown(text, true);
+  bubble.innerHTML = parseMarkdown(text, isResponse === true);
   if (withActions) {
     const qa = document.createElement("div");
     qa.className = "quick-actions";
@@ -441,11 +446,11 @@ function setTyping(on) {
 }
 
 function getSystemPrompt() {
-  return "Tu es Coach Boxe IA, le coach personnel de CHICO, expert en " + discipline + " et toutes disciplines de boxe. Tu tutoies CHICO, tu es direct et motivant. Tu donnes des séances détaillées avec échauffement, exercices numérotés, durées, répétitions, objectifs, consignes techniques précises. Structure chaque section avec **Titre** pour créer des cartes visuelles. Réponds en français.";
+  return "Tu es Coach Boxe IA, le coach personnel de CHICO, expert en " + discipline + " et toutes disciplines de boxe. Tu tutoies CHICO, tu es direct et motivant. IMPORTANT : structure TOUJOURS ta réponse avec **Titre (durée)** en gras pour chaque section (ex: **Échauffement (10 minutes)**, **Exercice 1 (15 minutes)**). N'utilise JAMAIS les # ou ## ou ###. Donne des exercices détaillés avec durées, répétitions, consignes précises. Réponds en français.";
 }
 
 function getPrepaPrompt() {
-  return "Tu es un préparateur physique expert spécialisé en sports de combat et boxe. Tu crées des programmes de cardio, force, vitesse, endurance et récupération adaptés aux boxeurs. Structure chaque section avec **Titre** pour créer des cartes visuelles. Réponds en français.";
+  return "Tu es un préparateur physique expert spécialisé en sports de combat et boxe. Tu crées des programmes de cardio, force, vitesse, endurance et récupération adaptés aux boxeurs. IMPORTANT : structure TOUJOURS ta réponse avec **Titre (durée)** en gras pour chaque section. N'utilise JAMAIS les # ou ## ou ###. Réponds en français.";
 }
 
 async function sendMsg(text) {
@@ -460,8 +465,8 @@ async function sendMsg(text) {
     setTyping(false);
     const answer = data.answer || "Pas de réponse.";
     histCoach.push({ role: "assistant", content: answer });
-    addBotMsg(answer, false);
-  } catch { setTyping(false); addBotMsg("Erreur de connexion. Réessayez.", false); }
+    addBotMsg(answer, false, true);
+  } catch { setTyping(false); addBotMsg("Erreur de connexion. Réessayez.", false, false); }
   isLoading = false;
 }
 
@@ -477,7 +482,7 @@ async function sendMsgPrepa(text) {
     setTyping(false);
     const answer = data.answer || "Pas de réponse.";
     histPrepa.push({ role: "assistant", content: answer });
-    addBotMsgPrepa(answer, false);
+    addBotMsgPrepa(answer, false, true);
   } catch { setTyping(false); addBotMsgPrepa("Erreur de connexion. Réessayez.", false); }
   isLoading = false;
 }
