@@ -21,306 +21,106 @@
   --border: rgba(201,168,76,0.2);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--black);
-  color: var(--text);
-  height: 100%;
-  overflow: hidden;
-}
-body {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-}
+html, body { font-family: 'DM Sans', sans-serif; background: var(--black); color: var(--text); height: 100%; overflow: hidden; }
+body { display: flex; flex-direction: column; height: 100dvh; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 20% 20%, rgba(192,57,43,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.06) 0%, transparent 60%); pointer-events: none; z-index: 0; }
 
-body::before {
-content: ‘’;
-position: fixed;
-inset: 0;
-background:
-radial-gradient(ellipse at 20% 20%, rgba(192,57,43,0.08) 0%, transparent 60%),
-radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.06) 0%, transparent 60%);
-pointer-events: none;
-z-index: 0;
-}
-
-/* ===== SPLASH ===== */
-#splash {
-position: fixed; inset: 0; z-index: 999;
-background: #000;
-display: flex; flex-direction: column;
-align-items: center; justify-content: center;
-gap: 0;
-/* Visible immédiatement, disparaît après 3s */
-opacity: 1;
-animation: splashOut 0.6s ease 3s forwards;
-}
-/* Cacher tout le reste pendant le splash */
-#topbar, #modeBar, #discBar, #sectionCoach, #sectionPrepa, #sectionPoids {
-animation: showApp 0s ease 3s both;
-}
+/* SPLASH */
+#splash { position: fixed; inset: 0; z-index: 999; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; opacity: 1; animation: splashOut 0.6s ease 3s forwards; }
+#topbar, #modeBar, #discBar, #sectionCoach, #sectionPrepa, #sectionPoids { animation: showApp 0s ease 3s both; }
 @keyframes showApp { from { visibility: hidden; } to { visibility: visible; } }
 @keyframes splashOut { to { opacity: 0; pointer-events: none; } }
+.splash-gloves { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; animation: glovesIn 1s ease 0.3s both; }
+.glove-left { font-size: 72px; display: inline-block; transform: scaleX(-1); animation: gloveLeft 1s ease 0.6s both; filter: drop-shadow(0 0 20px rgba(201,168,76,0.5)); }
+.glove-right { font-size: 72px; display: inline-block; animation: gloveRight 1s ease 0.6s both; filter: drop-shadow(0 0 20px rgba(201,168,76,0.5)); }
+@keyframes gloveLeft { from { transform: scaleX(-1) translateX(60px); opacity: 0; } to { transform: scaleX(-1) translateX(0); opacity: 1; } }
+@keyframes gloveRight { from { transform: translateX(-60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.splash-name { font-family: ‘Bebas Neue’, sans-serif; font-size: 80px; color: var(–gold); letter-spacing: 0.25em; text-shadow: 0 0 40px rgba(201,168,76,0.7), 0 0 80px rgba(201,168,76,0.3); animation: fadeUp 0.6s ease 1.2s both; }
+.splash-line { width: 140px; height: 2px; background: linear-gradient(90deg, transparent, var(–gold), transparent); margin: 12px auto; animation: fadeUp 0.6s ease 1.4s both; }
+.splash-sub { font-family: ‘Oswald’, sans-serif; font-size: 13px; color: var(–dim); letter-spacing: 0.3em; text-transform: uppercase; animation: fadeUp 0.6s ease 1.6s both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.splash-gloves {
-display: flex;
-align-items: center;
-justify-content: center;
-margin-bottom: 28px;
-animation: glovesIn 1s ease 0.3s both;
-}
-.glove-left {
-font-size: 72px;
-display: inline-block;
-transform: scaleX(-1);
-animation: gloveLeft 1s ease 0.6s both;
-filter: drop-shadow(0 0 20px rgba(201,168,76,0.5));
-}
-.glove-right {
-font-size: 72px;
-display: inline-block;
-animation: gloveRight 1s ease 0.6s both;
-filter: drop-shadow(0 0 20px rgba(201,168,76,0.5));
-}
-@keyframes gloveLeft {
-from { transform: scaleX(-1) translateX(60px); opacity: 0; }
-to   { transform: scaleX(-1) translateX(0);    opacity: 1; }
-}
-@keyframes gloveRight {
-from { transform: translateX(-60px); opacity: 0; }
-to   { transform: translateX(0);     opacity: 1; }
-}
-
-.splash-name {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 80px;
-color: var(–gold);
-letter-spacing: 0.25em;
-text-shadow: 0 0 40px rgba(201,168,76,0.7), 0 0 80px rgba(201,168,76,0.3);
-animation: fadeUp 0.6s ease 1.2s both;
-}
-.splash-line {
-width: 140px; height: 2px;
-background: linear-gradient(90deg, transparent, var(–gold), transparent);
-margin: 12px auto;
-animation: fadeUp 0.6s ease 1.4s both;
-}
-.splash-sub {
-font-family: ‘Oswald’, sans-serif;
-font-size: 13px; color: var(–dim);
-letter-spacing: 0.3em; text-transform: uppercase;
-animation: fadeUp 0.6s ease 1.6s both;
-}
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(10px); }
-to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== TOPBAR ===== */
-#topbar {
-position: relative; z-index: 10;
-display: flex; align-items: center; justify-content: space-between;
-padding: 12px 16px;
-background: linear-gradient(180deg, #0f0f0f, #0a0a0a);
-border-bottom: 2px solid var(–gold);
-box-shadow: 0 4px 30px rgba(0,0,0,0.8), 0 2px 0 rgba(201,168,76,0.3);
-flex-shrink: 0;
-}
+/* TOPBAR */
+#topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: linear-gradient(180deg, #0f0f0f, #0a0a0a); border-bottom: 2px solid var(–gold); box-shadow: 0 4px 30px rgba(0,0,0,0.8), 0 2px 0 rgba(201,168,76,0.3); flex-shrink: 0; }
 .logo-area { display: flex; align-items: center; gap: 12px; }
 .logo-icon { font-size: 28px; filter: drop-shadow(0 0 8px rgba(201,168,76,0.5)); }
 .logo-text { display: flex; flex-direction: column; }
-.logo-name {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 22px; color: var(–gold);
-letter-spacing: 0.15em;
-text-shadow: 0 0 20px rgba(201,168,76,0.4);
-}
+.logo-name { font-family: ‘Bebas Neue’, sans-serif; font-size: 22px; color: var(–gold); letter-spacing: 0.15em; text-shadow: 0 0 20px rgba(201,168,76,0.4); }
 .logo-sub { font-size: 10px; color: var(–dim); letter-spacing: 0.15em; text-transform: uppercase; }
 .status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(–dim); }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* ===== TABS ===== */
-#modeBar {
-position: relative; z-index: 9;
-display: flex;
-background: var(–dark);
-border-bottom: 1px solid rgba(201,168,76,0.15);
-flex-shrink: 0;
-}
-.mode-tab {
-flex: 1; padding: 10px 6px; text-align: center;
-font-family: ‘Oswald’, sans-serif;
-font-size: 13px; font-weight: 500;
-color: var(–dim); cursor: pointer;
-letter-spacing: 0.08em; text-transform: uppercase;
-border-bottom: 2px solid transparent;
-transition: all 0.2s;
-}
+/* TABS */
+#modeBar { position: relative; z-index: 9; display: flex; background: var(–dark); border-bottom: 1px solid rgba(201,168,76,0.15); flex-shrink: 0; }
+.mode-tab { flex: 1; padding: 10px 6px; text-align: center; font-family: ‘Oswald’, sans-serif; font-size: 13px; font-weight: 500; color: var(–dim); cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 2px solid transparent; transition: all 0.2s; }
 .mode-tab.active { color: var(–gold); border-bottom-color: var(–gold); }
 
-/* ===== DISCIPLINE BAR ===== */
-#discBar {
-position: relative; z-index: 9;
-display: flex; gap: 8px; padding: 8px 12px;
-background: rgba(10,10,10,0.9);
-border-bottom: 1px solid rgba(201,168,76,0.1);
-overflow-x: auto; scrollbar-width: none;
-flex-shrink: 0;
-}
+/* DISCIPLINE BAR */
+#discBar { position: relative; z-index: 9; display: flex; gap: 8px; padding: 8px 12px; background: rgba(10,10,10,0.9); border-bottom: 1px solid rgba(201,168,76,0.1); overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
 #discBar::-webkit-scrollbar { display: none; }
-.disc-chip {
-padding: 5px 12px; border-radius: 3px;
-background: rgba(255,255,255,0.04);
-border: 1px solid rgba(201,168,76,0.15);
-color: var(–dim);
-font-family: ‘Oswald’, sans-serif;
-font-size: 12px; font-weight: 500;
-cursor: pointer; white-space: nowrap;
-letter-spacing: 0.05em;
-transition: all 0.15s;
-}
+.disc-chip { padding: 5px 12px; border-radius: 3px; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); color: var(–dim); font-family: ‘Oswald’, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; letter-spacing: 0.05em; transition: all 0.15s; }
 .disc-chip.active { background: var(–gold); border-color: var(–gold); color: var(–black); }
 
-/* ===== SECTIONS ===== */
+/* SECTIONS */
 #sectionCoach { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 #sectionPrepa { display: none; flex-direction: column; flex: 1; min-height: 0; }
 #sectionPoids { display: none; flex: 1; overflow-y: auto; padding: 16px 14px 100px; position: relative; z-index: 2; }
 
-/* ===== CHAT ===== */
-#chat, #chatPrepa {
-flex: 1;
-overflow-y: auto;
-padding: 14px 12px 14px;
-position: relative; z-index: 2;
--webkit-overflow-scrolling: touch;
-}
+/* CHAT */
+#chat, #chatPrepa { flex: 1; overflow-y: auto; padding: 14px 12px 14px; position: relative; z-index: 2; -webkit-overflow-scrolling: touch; }
 
 .bubble-wrap { display: flex; margin-bottom: 12px; animation: fadeUp 0.3s ease; }
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
+.avatar { width: 34px; height: 34px; border-radius: 4px; background: var(–surface); border: 1px solid var(–gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 18px; }
+.bubble { max-width: min(85%, 360px); padding: 11px 14px; border-radius: 6px; font-size: 14px; line-height: 1.65; }
+.bubble.bot { background: var(–surface); border: 1px solid rgba(201,168,76,0.15); border-top-left-radius: 2px; color: var(–text); }
+.bubble.user { background: linear-gradient(135deg, #8B0000, #c0392b); border-top-right-radius: 2px; color: #fff; }
 
-.avatar {
-width: 34px; height: 34px; border-radius: 4px;
-background: var(–surface);
-border: 1px solid var(–gold);
-display: flex; align-items: center; justify-content: center;
-flex-shrink: 0; margin-right: 8px; margin-top: 2px;
-font-size: 18px;
-}
-.bubble {
-max-width: min(85%, 360px);
-padding: 11px 14px; border-radius: 6px;
-font-size: 14px; line-height: 1.65;
-white-space: pre-wrap;
-}
-.bubble.bot {
-background: var(–surface);
-border: 1px solid rgba(201,168,76,0.15);
-border-top-left-radius: 2px;
-color: var(–text);
-}
-.bubble.user {
-background: linear-gradient(135deg, #8B0000, #c0392b);
-border-top-right-radius: 2px;
-color: #fff;
-}
+/* ✅ CARTES EXERCICES OR */
+.ex-card { background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; margin-top: 10px; overflow: hidden; }
+.ex-card-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(201,168,76,0.1); border-bottom: 1px solid rgba(201,168,76,0.15); }
+.ex-card-title { font-family: ‘Oswald’, sans-serif; font-size: 13px; font-weight: 600; color: var(–gold); letter-spacing: 0.08em; text-transform: uppercase; }
+.ex-card-dur { font-size: 11px; color: var(–dim); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 10px; }
+.ex-card-body { padding: 10px 12px; }
+.ex-line { font-size: 13px; color: var(–text); line-height: 1.65; padding: 2px 0; }
+.ex-line.consigne { color: #c9b070; padding-left: 8px; border-left: 2px solid rgba(201,168,76,0.4); margin: 3px 0; }
+.rt-text-block { font-size: 14px; color: var(–text); line-height: 1.7; white-space: pre-wrap; }
+.rt-text-block strong { color: var(–gold); font-weight: 600; }
+
+/* ✅ BOUTON LECTURE VOCALE */
+.speak-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 5px 12px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); border-radius: 20px; color: var(–gold); font-size: 12px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; transition: all 0.2s; }
+.speak-btn:hover { background: rgba(201,168,76,0.25); }
+.speak-btn.speaking { background: rgba(201,168,76,0.3); border-color: var(–gold); }
 
 .quick-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-.qa-btn {
-padding: 7px 11px;
-background: rgba(201,168,76,0.08);
-border: 1px solid rgba(201,168,76,0.25);
-border-radius: 3px; color: var(–gold);
-font-size: 12px; cursor: pointer;
-font-family: ‘Oswald’, sans-serif;
-font-weight: 400; letter-spacing: 0.05em;
-transition: all 0.15s;
-}
+.qa-btn { padding: 7px 11px; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius: 3px; color: var(–gold); font-size: 12px; cursor: pointer; font-family: ‘Oswald’, sans-serif; font-weight: 400; letter-spacing: 0.05em; transition: all 0.15s; }
 .qa-btn:active { background: rgba(201,168,76,0.25); }
 
 .typing { display:flex; gap:4px; padding:12px 14px; }
-.typing span {
-width:6px; height:6px; border-radius:50%;
-background: var(–gold); animation: bounce 1.2s infinite;
-}
-.typing span:nth-child(2){animation-delay:0.2s}
-.typing span:nth-child(3){animation-delay:0.4s}
+.typing span { width:6px; height:6px; border-radius:50%; background: var(–gold); animation: bounce 1.2s infinite; }
+.typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
-/* ===== COMPOSER ===== */
-#composer {
-flex-shrink: 0;
-padding: 10px 12px 16px;
-background: linear-gradient(to top, rgba(10,10,10,0.98) 75%, transparent);
-position: relative; z-index: 10;
-}
-.composer-inner {
-display: flex; align-items: center; gap: 10px;
-background: var(–surface2);
-border: 1px solid rgba(201,168,76,0.3);
-border-radius: 12px; padding: 10px 14px;
-}
-.composer-input {
-flex: 1; background: transparent; border: none; outline: none;
-color: var(–text); font-size: 16px;
-font-family: ‘DM Sans’, sans-serif;
-}
+/* COMPOSER */
+#composer { flex-shrink: 0; padding: 10px 12px 16px; background: linear-gradient(to top, rgba(10,10,10,0.98) 75%, transparent); position: relative; z-index: 10; }
+.composer-inner { display: flex; align-items: center; gap: 10px; background: var(–surface2); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 10px 14px; }
+.composer-input { flex: 1; background: transparent; border: none; outline: none; color: var(–text); font-size: 16px; font-family: ‘DM Sans’, sans-serif; }
 .composer-input::placeholder { color: #555; }
-.send-btn {
-width: 42px; height: 42px; border-radius: 10px;
-background: var(–gold); border: none; color: var(–black);
-font-size: 18px; display: flex; align-items: center; justify-content: center;
-cursor: pointer; flex-shrink: 0; font-weight: 900;
-box-shadow: 0 4px 12px rgba(201,168,76,0.3);
-}
+.send-btn { width: 42px; height: 42px; border-radius: 10px; background: var(–gold); border: none; color: var(–black); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-weight: 900; box-shadow: 0 4px 12px rgba(201,168,76,0.3); }
 
-/* ===== POIDS ===== */
-.poids-header {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 28px; color: var(–gold); letter-spacing: 0.1em;
-margin-bottom: 4px;
-}
+/* POIDS */
+.poids-header { font-family: ‘Bebas Neue’, sans-serif; font-size: 28px; color: var(–gold); letter-spacing: 0.1em; margin-bottom: 4px; }
 .poids-sub { font-size: 12px; color: var(–dim); margin-bottom: 20px; }
-.poids-form {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 6px; padding: 16px; margin-bottom: 16px;
-}
-.poids-form label {
-display: block; font-size: 11px; color: var(–dim);
-text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;
-font-family: ‘Oswald’, sans-serif;
-}
+.poids-form { background: var(–surface); border: 1px solid var(–border); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+.poids-form label { display: block; font-size: 11px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; font-family: ‘Oswald’, sans-serif; }
 .poids-row { display: flex; gap: 10px; margin-bottom: 12px; }
-.poids-input {
-flex: 1; background: var(–black);
-border: 1px solid rgba(201,168,76,0.2);
-border-radius: 4px; padding: 10px 12px;
-color: var(–text); font-size: 15px;
-font-family: ‘DM Sans’, sans-serif; outline: none;
-}
+.poids-input { flex: 1; background: var(–black); border: 1px solid rgba(201,168,76,0.2); border-radius: 4px; padding: 10px 12px; color: var(–text); font-size: 15px; font-family: ‘DM Sans’, sans-serif; outline: none; }
 .poids-input:focus { border-color: var(–gold); }
-.poids-btn {
-padding: 10px 16px; background: var(–gold);
-border: none; border-radius: 4px;
-color: var(–black); font-weight: 700;
-font-size: 14px; cursor: pointer;
-font-family: ‘Oswald’, sans-serif;
-letter-spacing: 0.05em;
-}
-.objectif-bar {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 6px; padding: 14px; margin-bottom: 16px;
-}
-.obj-title {
-font-family: ‘Oswald’, sans-serif;
-font-size: 11px; color: var(–gold);
-text-transform: uppercase; letter-spacing: 0.1em;
-margin-bottom: 10px;
-}
+.poids-btn { padding: 10px 16px; background: var(–gold); border: none; border-radius: 4px; color: var(–black); font-weight: 700; font-size: 14px; cursor: pointer; font-family: ‘Oswald’, sans-serif; letter-spacing: 0.05em; }
+.objectif-bar { background: var(–surface); border: 1px solid var(–border); border-radius: 6px; padding: 14px; margin-bottom: 16px; }
+.obj-title { font-family: ‘Oswald’, sans-serif; font-size: 11px; color: var(–gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
 .obj-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .obj-stat { text-align: center; }
 .obj-val { font-family: ‘Bebas Neue’, sans-serif; font-size: 26px; color: var(–text); }
@@ -344,8 +144,6 @@ margin-bottom: 10px;
 </head>
 <body>
 
-<!-- SPLASH -->
-
 <div id="splash">
   <div class="splash-gloves">
     <span class="glove-left">🥊</span>
@@ -355,8 +153,6 @@ margin-bottom: 10px;
   <div class="splash-line"></div>
   <div class="splash-sub">Coach Boxe IA • Toutes disciplines</div>
 </div>
-
-<!-- TOPBAR -->
 
 <header id="topbar">
   <div class="logo-area">
@@ -369,15 +165,11 @@ margin-bottom: 10px;
   <div class="status"><div class="dot"></div>En ligne</div>
 </header>
 
-<!-- TABS -->
-
 <div id="modeBar">
   <div class="mode-tab active" onclick="switchMode('coach',this)">🥊 Entraînement</div>
   <div class="mode-tab" onclick="switchMode('prepa',this)">💪 Prépa Physique</div>
   <div class="mode-tab" onclick="switchMode('poids',this)">⚖️ Poids</div>
 </div>
-
-<!-- DISCIPLINE BAR -->
 
 <div id="discBar">
   <div class="disc-chip active" onclick="selectDisc(this,'Boxe Anglaise')">🥊 Anglaise</div>
@@ -389,8 +181,6 @@ margin-bottom: 10px;
   <div class="disc-chip" onclick="selectDisc(this,'K1')">🔥 K1</div>
 </div>
 
-<!-- SECTION ENTRAÎNEMENT -->
-
 <div id="sectionCoach">
   <div id="chat"><div id="messages"></div></div>
   <div id="composer">
@@ -400,8 +190,6 @@ margin-bottom: 10px;
     </div>
   </div>
 </div>
-
-<!-- SECTION PRÉPA PHYSIQUE -->
 
 <div id="sectionPrepa">
   <div id="chatPrepa"><div id="messagesPrepa"></div></div>
@@ -415,51 +203,26 @@ margin-bottom: 10px;
   </div>
 </div>
 
-<!-- SECTION POIDS -->
-
 <div id="sectionPoids">
   <div class="poids-header">SUIVI DU POIDS</div>
   <div class="poids-sub">Suivez votre évolution semaine par semaine</div>
   <div class="poids-form">
     <div class="poids-row">
-      <div style="flex:1">
-        <label>Poids actuel (kg)</label>
-        <input class="poids-input" id="poidsInput" type="number" step="0.1" placeholder="Ex: 72.5"/>
-      </div>
-      <div style="flex:1">
-        <label>Objectif (kg)</label>
-        <input class="poids-input" id="objectifInput" type="number" step="0.1" placeholder="Ex: 69.0"/>
-      </div>
+      <div style="flex:1"><label>Poids actuel (kg)</label><input class="poids-input" id="poidsInput" type="number" step="0.1" placeholder="Ex: 72.5"/></div>
+      <div style="flex:1"><label>Objectif (kg)</label><input class="poids-input" id="objectifInput" type="number" step="0.1" placeholder="Ex: 69.0"/></div>
     </div>
     <button class="poids-btn" onclick="ajouterPoids()">+ Enregistrer</button>
   </div>
   <div class="objectif-bar" id="objectifBar" style="display:none">
     <div class="obj-title">📊 Progression vers l'objectif</div>
     <div class="obj-stats">
-      <div class="obj-stat">
-        <div class="obj-val" id="statActuel">—</div>
-        <div class="obj-unit">kg</div>
-        <div class="obj-label">Actuel</div>
-      </div>
-      <div class="obj-stat">
-        <div class="obj-val" id="statReste">—</div>
-        <div class="obj-unit">kg</div>
-        <div class="obj-label">À perdre</div>
-      </div>
-      <div class="obj-stat">
-        <div class="obj-val" id="statObj">—</div>
-        <div class="obj-unit">kg</div>
-        <div class="obj-label">Objectif</div>
-      </div>
+      <div class="obj-stat"><div class="obj-val" id="statActuel">—</div><div class="obj-unit">kg</div><div class="obj-label">Actuel</div></div>
+      <div class="obj-stat"><div class="obj-val" id="statReste">—</div><div class="obj-unit">kg</div><div class="obj-label">À perdre</div></div>
+      <div class="obj-stat"><div class="obj-val" id="statObj">—</div><div class="obj-unit">kg</div><div class="obj-label">Objectif</div></div>
     </div>
     <div class="progress-bar-wrap">
-      <div class="progress-label">
-        <span>Progression</span>
-        <span id="progPct">0%</span>
-      </div>
-      <div class="progress-bg">
-        <div class="progress-fill" id="progFill" style="width:0%"></div>
-      </div>
+      <div class="progress-label"><span>Progression</span><span id="progPct">0%</span></div>
+      <div class="progress-bg"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
     </div>
   </div>
   <div class="historique">
@@ -476,30 +239,97 @@ let isLoading = false;
 
 const UID_KEY = "chico_uid";
 let userId = localStorage.getItem(UID_KEY);
-if (!userId) {
-  userId = "chico_" + Math.random().toString(36).slice(2,10);
-  localStorage.setItem(UID_KEY, userId);
-}
+if (!userId) { userId = "chico_" + Math.random().toString(36).slice(2,10); localStorage.setItem(UID_KEY, userId); }
 
-// Historique conversations
 let histCoach = [];
 let histPrepa = [];
-
-// Poids persistant
 let poidsData = JSON.parse(localStorage.getItem("chico_poids") || "[]");
 let objectifPoids = parseFloat(localStorage.getItem("chico_objectif") || "0");
 
-// ===== MODE SWITCH =====
+// ✅ LECTURE VOCALE
+let currentUtterance = null;
+function speakText(text, btn) {
+  if (!window.speechSynthesis) return;
+  if (currentUtterance) {
+    window.speechSynthesis.cancel();
+    if (btn.classList.contains('speaking')) {
+      btn.classList.remove('speaking');
+      btn.textContent = '🔊 Écouter';
+      currentUtterance = null;
+      return;
+    }
+  }
+  document.querySelectorAll('.speak-btn').forEach(b => { b.classList.remove('speaking'); b.textContent = '🔊 Écouter'; });
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fr-FR';
+  utterance.rate = 0.9;
+  utterance.onend = () => { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; currentUtterance = null; };
+  currentUtterance = utterance;
+  btn.classList.add('speaking');
+  btn.textContent = '⏹ Stop';
+  window.speechSynthesis.speak(utterance);
+}
+
+// ✅ PARSEUR MARKDOWN → CARTES OR
+function parseMarkdown(text, addSpeak) {
+  const hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Round|Combat|Conclusion|Objectif|Matériel|Consignes|Durée|Programme|Cardio|Force|Récup)/i.test(text);
+  if (!hasStruct) {
+    const html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
+    let result = '<div class="rt-text-block">' + html + '</div>';
+    if (addSpeak) {
+      const safe = text.replace(/\*\*/g,'').replace(/\n/g,' ').replace(/'/g,"\\'").substring(0,500);
+      result += '<button class="speak-btn" onclick="speakText(\'' + safe + '\', this)">🔊 Écouter</button>';
+    }
+    return result;
+  }
+  const lines = text.split('\n');
+  let cards = [], currentCard = null, introLines = [], inIntro = true;
+  lines.forEach(line => {
+    const boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h|rounds?))\))?$/i);
+    const boldColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
+    if (boldTitle) {
+      inIntro = false;
+      if (currentCard) cards.push(currentCard);
+      currentCard = { title: boldTitle[1].trim(), dur: boldTitle[3]||'', lines: [], raw: boldTitle[1].trim() + '. ' };
+    } else if (boldColon) {
+      const val = boldColon[2].replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+      if (currentCard) currentCard.lines.push({ text: '<strong>'+boldColon[1]+' :</strong> '+val });
+      else introLines.push('<div class="ex-line"><strong>'+boldColon[1]+' :</strong> '+val+'</div>');
+    } else {
+      const clean = line.replace(/^\s*[-–•\d\.]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').trim();
+      const raw = line.replace(/^\s*[-–•\d\.]\s*/,'').replace(/\*\*(.+?)\*\*/g,'$1').trim();
+      if (!clean) return;
+      if (inIntro) introLines.push('<div class="ex-line">'+clean+'</div>');
+      else if (currentCard) { currentCard.lines.push({ text: clean }); currentCard.raw += raw + '. '; }
+    }
+  });
+  if (currentCard) cards.push(currentCard);
+  let html = '';
+  if (introLines.length) html += '<div style="margin-bottom:8px">'+introLines.join('')+'</div>';
+  cards.forEach(card => {
+    const t = card.title.toLowerCase();
+    const emoji = t.includes('échauffement')||t.includes('echauffement') ? '🔥 ' : t.includes('exercice 1')||t.includes('round 1') ? '⚡ ' : t.includes('exercice 2')||t.includes('round 2') ? '💥 ' : t.includes('exercice 3')||t.includes('round 3') ? '🎯 ' : t.includes('combat')||t.includes('sparring') ? '🥊 ' : t.includes('conclusion')||t.includes('récup') ? '✅ ' : t.includes('cardio') ? '❤️ ' : t.includes('force') ? '💪 ' : '';
+    html += '<div class="ex-card"><div class="ex-card-header"><span class="ex-card-title">'+emoji+card.title+'</span>';
+    if (card.dur) html += '<span class="ex-card-dur">'+card.dur+'</span>';
+    html += '</div><div class="ex-card-body">';
+    card.lines.forEach(l => { html += '<div class="ex-line">'+l.text+'</div>'; });
+    if (addSpeak && card.raw) {
+      const safe = card.raw.replace(/'/g,"\\'").substring(0,500);
+      html += '<button class="speak-btn" onclick="speakText(\''+safe+'\', this)">🔊 Écouter</button>';
+    }
+    html += '</div></div>';
+  });
+  return html;
+}
+
 function switchMode(mode, el) {
   currentMode = mode;
   document.querySelectorAll(".mode-tab").forEach(t => t.classList.remove("active"));
   el.classList.add("active");
-
   document.getElementById("sectionCoach").style.display = "none";
   document.getElementById("sectionPrepa").style.display = "none";
   document.getElementById("sectionPoids").style.display = "none";
   document.getElementById("discBar").style.display = "none";
-
   if (mode === "coach") {
     document.getElementById("sectionCoach").style.display = "flex";
     document.getElementById("discBar").style.display = "flex";
@@ -517,26 +347,26 @@ function selectDisc(el, disc) {
   document.querySelectorAll(".disc-chip").forEach(c => c.classList.remove("active"));
   el.classList.add("active");
   discipline = disc;
-  addBotMsg("Discipline : " + disc + " 🥊 Je m'adapte !", false, false);
+  addBotMsg("Discipline : " + disc + " 🥊 Je m'adapte !", false);
 }
 
-// ===== CHAT COACH =====
 function initCoach() {
-  addBotMsg("Bienvenue Champion CHICO ! 🥊\n\nJe suis ton Coach IA personnel — expert de toutes les boxes.\n\nChoisis ta discipline en haut et dis-moi ce que tu veux travailler !", true, false);
+  addBotMsg("Bienvenue Champion CHICO ! 🥊\n\nJe suis ton Coach IA personnel — expert de toutes les boxes.\n\nChoisis ta discipline en haut et dis-moi ce que tu veux travailler !", true);
 }
 
 function initPrepa() {
   addBotMsgPrepa("Let's go CHICO ! 💪\n\nJe suis ton préparateur physique spécialisé boxe.\n\nDis-moi ce que tu veux : cardio, force, vitesse, récupération ou un programme complet !", true);
 }
 
-function addBotMsg(text, withActions, scroll) {
+// ✅ SCROLL CORRIGÉ - défile en haut de la réponse
+function addBotMsg(text, withActions) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const avatar = document.createElement("div");
   avatar.className = "avatar"; avatar.textContent = "🥊";
   const bubble = document.createElement("div");
   bubble.className = "bubble bot";
-  bubble.textContent = text;
+  bubble.innerHTML = parseMarkdown(text, true);
   if (withActions) {
     const qa = document.createElement("div");
     qa.className = "quick-actions";
@@ -550,7 +380,7 @@ function addBotMsg(text, withActions, scroll) {
   }
   wrap.appendChild(avatar); wrap.appendChild(bubble);
   document.getElementById("messages").appendChild(wrap);
-  if (scroll !== false) document.getElementById("chat").scrollTop = 99999;
+  setTimeout(() => { wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
 
 function addUserMsg(text) {
@@ -563,13 +393,15 @@ function addUserMsg(text) {
   document.getElementById("chat").scrollTop = 99999;
 }
 
+// ✅ SCROLL CORRIGÉ PREPA
 function addBotMsgPrepa(text, withActions) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const avatar = document.createElement("div");
   avatar.className = "avatar"; avatar.textContent = "💪";
   const bubble = document.createElement("div");
-  bubble.className = "bubble bot"; bubble.textContent = text;
+  bubble.className = "bubble bot";
+  bubble.innerHTML = parseMarkdown(text, true);
   if (withActions) {
     const qa = document.createElement("div");
     qa.className = "quick-actions";
@@ -583,7 +415,7 @@ function addBotMsgPrepa(text, withActions) {
   }
   wrap.appendChild(avatar); wrap.appendChild(bubble);
   document.getElementById("messagesPrepa").appendChild(wrap);
-  document.getElementById("chatPrepa").scrollTop = 99999;
+  setTimeout(() => { wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
 
 function addUserMsgPrepa(text) {
@@ -604,21 +436,16 @@ function setTyping(on) {
     const wrap = document.createElement("div");
     wrap.className = "bubble-wrap bot"; wrap.id = "typingWrap";
     wrap.innerHTML = '<div class="avatar">' + (isPrepa ? "💪" : "🥊") + '</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
-    container.appendChild(wrap);
-    scrollEl.scrollTop = 99999;
-  } else {
-    const t = document.getElementById("typingWrap");
-    if (t) t.remove();
-  }
+    container.appendChild(wrap); scrollEl.scrollTop = 99999;
+  } else { const t = document.getElementById("typingWrap"); if (t) t.remove(); }
 }
 
-// ===== API =====
 function getSystemPrompt() {
-  return "Tu es Coach Boxe IA, le coach personnel de CHICO, expert en " + discipline + " et toutes disciplines de boxe. Tu tutoies CHICO, tu es direct et motivant. Tu donnes des séances détaillées avec échauffement, exercices numérotés, durées, répétitions, objectifs, consignes techniques précises. Tu te souviens du contexte de la conversation. Réponds en français.";
+  return "Tu es Coach Boxe IA, le coach personnel de CHICO, expert en " + discipline + " et toutes disciplines de boxe. Tu tutoies CHICO, tu es direct et motivant. Tu donnes des séances détaillées avec échauffement, exercices numérotés, durées, répétitions, objectifs, consignes techniques précises. Structure chaque section avec **Titre** pour créer des cartes visuelles. Réponds en français.";
 }
 
 function getPrepaPrompt() {
-  return "Tu es un préparateur physique expert spécialisé en sports de combat et boxe. Tu crées des programmes de cardio, force, vitesse, endurance et récupération adaptés aux boxeurs. Tu peux aussi conseiller sur la nutrition, la perte de poids, la récupération. Tu te souviens du contexte de la conversation. Réponds en français.";
+  return "Tu es un préparateur physique expert spécialisé en sports de combat et boxe. Tu crées des programmes de cardio, force, vitesse, endurance et récupération adaptés aux boxeurs. Structure chaque section avec **Titre** pour créer des cartes visuelles. Réponds en français.";
 }
 
 async function sendMsg(text) {
@@ -627,24 +454,14 @@ async function sendMsg(text) {
   histCoach.push({ role: "user", content: text });
   isLoading = true; setTyping(true);
   try {
-    const messages = [
-      { role: "system", content: getSystemPrompt() },
-      ...histCoach.slice(-10)
-    ];
-    const resp = await fetch(API_BASE + "/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ conversation: messages, userId: userId + "_coach" })
-    });
+    const messages = [{ role: "system", content: getSystemPrompt() }, ...histCoach.slice(-10)];
+    const resp = await fetch(API_BASE + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversation: messages, userId: userId + "_coach" }) });
     const data = await resp.json();
     setTyping(false);
     const answer = data.answer || "Pas de réponse.";
     histCoach.push({ role: "assistant", content: answer });
     addBotMsg(answer, false);
-  } catch {
-    setTyping(false);
-    addBotMsg("Erreur de connexion. Réessayez.", false);
-  }
+  } catch { setTyping(false); addBotMsg("Erreur de connexion. Réessayez.", false); }
   isLoading = false;
 }
 
@@ -654,36 +471,22 @@ async function sendMsgPrepa(text) {
   histPrepa.push({ role: "user", content: text });
   isLoading = true; setTyping(true);
   try {
-    const messages = [
-      { role: "system", content: getPrepaPrompt() },
-      ...histPrepa.slice(-10)
-    ];
-    const resp = await fetch(API_BASE + "/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ conversation: messages, userId: userId + "_prepa" })
-    });
+    const messages = [{ role: "system", content: getPrepaPrompt() }, ...histPrepa.slice(-10)];
+    const resp = await fetch(API_BASE + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversation: messages, userId: userId + "_prepa" }) });
     const data = await resp.json();
     setTyping(false);
     const answer = data.answer || "Pas de réponse.";
     histPrepa.push({ role: "assistant", content: answer });
     addBotMsgPrepa(answer, false);
-  } catch {
-    setTyping(false);
-    addBotMsgPrepa("Erreur de connexion. Réessayez.", false);
-  }
+  } catch { setTyping(false); addBotMsgPrepa("Erreur de connexion. Réessayez.", false); }
   isLoading = false;
 }
 
-// ===== POIDS =====
 function ajouterPoids() {
   const p = parseFloat(document.getElementById("poidsInput").value);
   const o = parseFloat(document.getElementById("objectifInput").value);
   if (!p || isNaN(p)) return;
-  if (o && !isNaN(o)) {
-    objectifPoids = o;
-    localStorage.setItem("chico_objectif", o);
-  }
+  if (o && !isNaN(o)) { objectifPoids = o; localStorage.setItem("chico_objectif", o); }
   const entry = { date: new Date().toLocaleDateString("fr-FR"), poids: p, ts: Date.now() };
   poidsData.unshift(entry);
   localStorage.setItem("chico_poids", JSON.stringify(poidsData));
@@ -695,10 +498,7 @@ function ajouterPoids() {
 function renderPoids() {
   const list = document.getElementById("histoList");
   const bar = document.getElementById("objectifBar");
-  if (poidsData.length === 0) {
-    list.innerHTML = '<div class="histo-empty">Aucune entrée — commencez à enregistrer votre poids !</div>';
-    bar.style.display = "none"; return;
-  }
+  if (poidsData.length === 0) { list.innerHTML = '<div class="histo-empty">Aucune entrée — commencez à enregistrer votre poids !</div>'; bar.style.display = "none"; return; }
   const actuel = poidsData[0].poids;
   const obj = objectifPoids;
   if (obj && obj > 0) {
@@ -713,53 +513,20 @@ function renderPoids() {
     const pct = total > 0 ? Math.min(100, Math.round((fait / total) * 100)) : 100;
     document.getElementById("progPct").textContent = pct + "%";
     document.getElementById("progFill").style.width = pct + "%";
-  } else {
-    bar.style.display = "none";
-  }
+  } else { bar.style.display = "none"; }
   list.innerHTML = poidsData.map((e, i) => {
     const prev = poidsData[i + 1];
     let diffHtml = "";
-    if (prev) {
-      const diff = e.poids - prev.poids;
-      const cls = diff <= 0 ? "diff-neg" : "diff-pos";
-      const sign = diff <= 0 ? "" : "+";
-      diffHtml = '<span class="histo-diff ' + cls + '">' + sign + diff.toFixed(1) + ' kg</span>';
-    }
+    if (prev) { const diff = e.poids - prev.poids; const cls = diff <= 0 ? "diff-neg" : "diff-pos"; const sign = diff <= 0 ? "" : "+"; diffHtml = '<span class="histo-diff ' + cls + '">' + sign + diff.toFixed(1) + ' kg</span>'; }
     return '<div class="histo-row"><span class="histo-date">📅 ' + e.date + '</span><span class="histo-poids">' + e.poids.toFixed(1) + ' kg</span>' + diffHtml + '</div>';
   }).join("");
 }
 
-// ===== EVENTS =====
-document.getElementById("sendBtn").addEventListener("click", () => {
-  const text = document.getElementById("userInput").value.trim();
-  if (!text) return;
-  document.getElementById("userInput").value = "";
-  sendMsg(text);
-});
-document.getElementById("userInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    const text = e.target.value.trim();
-    if (!text) return;
-    e.target.value = "";
-    sendMsg(text);
-  }
-});
-document.getElementById("sendBtnPrepa").addEventListener("click", () => {
-  const text = document.getElementById("userInputPrepa").value.trim();
-  if (!text) return;
-  document.getElementById("userInputPrepa").value = "";
-  sendMsgPrepa(text);
-});
-document.getElementById("userInputPrepa").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    const text = e.target.value.trim();
-    if (!text) return;
-    e.target.value = "";
-    sendMsgPrepa(text);
-  }
-});
+document.getElementById("sendBtn").addEventListener("click", () => { const text = document.getElementById("userInput").value.trim(); if (!text) return; document.getElementById("userInput").value = ""; sendMsg(text); });
+document.getElementById("userInput").addEventListener("keydown", e => { if (e.key === "Enter") { const text = e.target.value.trim(); if (!text) return; e.target.value = ""; sendMsg(text); } });
+document.getElementById("sendBtnPrepa").addEventListener("click", () => { const text = document.getElementById("userInputPrepa").value.trim(); if (!text) return; document.getElementById("userInputPrepa").value = ""; sendMsgPrepa(text); });
+document.getElementById("userInputPrepa").addEventListener("keydown", e => { if (e.key === "Enter") { const text = e.target.value.trim(); if (!text) return; e.target.value = ""; sendMsgPrepa(text); } });
 
-// INIT
 initCoach();
 renderPoids();
 </script>
