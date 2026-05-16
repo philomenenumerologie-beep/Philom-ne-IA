@@ -2,502 +2,505 @@
 
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Jo Déco — Assistante IA 24h/24</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Jo Déco</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --vert: #2d5a3d;
-  --vert2: #3d7a52;
-  --beige: #f2ead8;
-  --beige2: #e8dfc8;
-  --beige3: #d8cfb8;
-  --dark: #1a2e20;
-  --text: #1a2e20;
-  --dim: #7a8c6a;
-  --border: rgba(45,90,61,0.18);
-  --glow: rgba(45,90,61,0.25);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { font-family: 'DM Sans', sans-serif; background: var(--beige); color: var(--text); height: 100%; overflow: hidden; }
-body { display: flex; flex-direction: column; height: 100dvh; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#f2ead8;font-family:Jost,sans-serif;color:#1a2e20}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* SPLASH */
-#splash { position: fixed; inset: 0; z-index: 999; background: var(–dark); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
-#splash.gone { opacity: 0; pointer-events: none; }
-.splash-icon { font-size: 60px; margin-bottom: 20px; animation: splashUp 0.6s ease 0.3s both; filter: drop-shadow(0 0 20px rgba(61,122,82,0.6)); }
-.splash-name { font-family: ‘Cinzel’, serif; font-size: 48px; font-weight: 700; color: var(–vert2); letter-spacing: 0.1em; animation: splashUp 0.6s ease 0.6s both; text-shadow: 0 0 30px rgba(61,122,82,0.4); }
-.splash-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(–vert2), transparent); margin: 14px auto; animation: splashUp 0.6s ease 0.8s both; }
-.splash-sub { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.25em; text-transform: uppercase; animation: splashUp 0.6s ease 1s both; }
-@keyframes splashUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+#splash{position:fixed;inset:0;z-index:500;background:#1a2e20;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:110px;height:110px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both;font-size:52px}
+.sp-name{font-family:‘Playfair Display’,serif;font-size:34px;color:#f2ead8;letter-spacing:.1em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(242,234,216,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
 
-/* TOPBAR */
-#topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; background: var(–dark); border-bottom: 2px solid var(–vert2); box-shadow: 0 4px 20px rgba(0,0,0,0.3); flex-shrink: 0; }
-.logo-area { display: flex; align-items: center; gap: 10px; }
-.logo-icon { font-size: 26px; filter: drop-shadow(0 0 6px rgba(61,122,82,0.5)); }
-.logo-name { font-family: ‘Cinzel’, serif; font-size: 19px; font-weight: 700; color: #c8dfc0; letter-spacing: 0.08em; }
-.logo-sub { font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 0.18em; text-transform: uppercase; }
-.status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: rgba(255,255,255,0.4); }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:#1a2e20;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(242,234,216,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.tb-name{font-family:‘Playfair Display’,serif;font-size:16px;font-weight:700;color:#f2ead8;letter-spacing:.04em}
+.tb-sub{font-size:10px;color:rgba(242,234,216,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
 
-/* TABS */
-#tabBar { position: relative; z-index: 9; display: flex; background: var(–beige2); border-bottom: 1px solid var(–border); flex-shrink: 0; }
-.tab { flex: 1; padding: 10px 4px; text-align: center; font-size: 11px; font-weight: 600; color: var(–dim); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; letter-spacing: 0.03em; text-transform: uppercase; transition: all 0.2s; }
-.tab.active { color: var(–vert); border-bottom-color: var(–vert); }
+#tabs{background:#1a2e20;display:flex;border-bottom:1px solid rgba(242,234,216,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,234,216,.35);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:#f2ead8;border-bottom-color:#f2ead8}
 
-/* SECTIONS */
-.section { display: none; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
-.section.active { display: flex; }
-.scroll-section { display: none; flex: 1; overflow-y: auto; padding: 16px 14px 100px; }
-.scroll-section.active { display: block; }
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
 
 /* CHAT */
-#chat { flex: 1; overflow-y: auto; padding: 14px 12px 14px; -webkit-overflow-scrolling: touch; }
-
-.bubble-wrap { display: flex; margin-bottom: 12px; animation: fadeUp 0.3s ease; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.bubble-wrap.bot { justify-content: flex-start; }
-.bubble-wrap.user { justify-content: flex-end; }
-.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(–dark); border: 2px solid var(–vert2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 16px; }
-.bubble { max-width: min(85%, 360px); padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.65; }
-.bubble.bot { background: #fff; border: 1px solid var(–border); border-top-left-radius: 4px; color: var(–text); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-.bubble.user { background: linear-gradient(135deg, var(–vert), var(–vert2)); border-top-right-radius: 4px; color: #fff; }
-
-/* CARTES */
-.ex-card { background: var(–beige); border: 1px solid var(–border); border-radius: 10px; margin-top: 10px; overflow: hidden; }
-.ex-card-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(45,90,61,0.08); border-bottom: 1px solid var(–border); }
-.ex-card-title { font-size: 12px; font-weight: 700; color: var(–vert); letter-spacing: 0.06em; text-transform: uppercase; }
-.ex-card-body { padding: 10px 12px; }
-.ex-line { font-size: 13px; color: var(–text); line-height: 1.65; padding: 2px 0; }
-.ex-line strong { color: var(–vert); }
-.rt-text-block { font-size: 14px; color: var(–text); line-height: 1.7; white-space: pre-wrap; }
-.rt-text-block strong { color: var(–vert); font-weight: 600; }
-
-.quick-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-.qa-btn { padding: 7px 12px; background: rgba(45,90,61,0.08); border: 1px solid rgba(45,90,61,0.25); border-radius: 20px; color: var(–vert); font-size: 12px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; font-weight: 500; }
-
-.typing { display:flex; gap:4px; padding:12px 14px; }
-.typing span { width:6px; height:6px; border-radius:50%; background: var(–vert2); animation: bounce 1.2s infinite; }
-.typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-
-/* COMPOSER */
-#composer { flex-shrink: 0; padding: 10px 12px 16px; background: linear-gradient(to top, var(–beige) 75%, transparent); position: relative; z-index: 10; }
-.composer-inner { display: flex; align-items: center; gap: 10px; background: #fff; border: 1.5px solid var(–border); border-radius: 24px; padding: 8px 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-.composer-input { flex: 1; background: transparent; border: none; outline: none; color: var(–text) !important; font-size: 15px; font-family: ‘DM Sans’, sans-serif; -webkit-text-fill-color: var(–text); }
-.composer-input::placeholder { color: #aaa; }
-.send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(–vert); border: none; color: #fff !important; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 14px var(–glow); -webkit-text-fill-color: #fff; }
+#page-chat{background:#f2ead8}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:32px;height:32px;border-radius:50%;background:#1a2e20;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:16px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:#1a2e20;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.bub.user{background:#1a2e20;color:#f2ead8;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #2d5a3d;background:transparent;color:#2d5a3d;font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#2d5a3d;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:#f2ead8;border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(45,90,61,.2);background:#fff;font-size:15px;font-family:Jost,sans-serif;outline:none;color:#1a2e20}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:#2d5a3d}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#1a2e20;color:#f2ead8;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 
 /* DEVIS */
-.devis-title { font-family: ‘Cinzel’, serif; font-size: 20px; font-weight: 700; color: var(–dark); margin-bottom: 4px; }
-.devis-sub { font-size: 13px; color: var(–dim); margin-bottom: 20px; }
-.devis-field { margin-bottom: 14px; }
-.devis-label { display: block; font-size: 11px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 600; }
-.devis-select, .devis-textarea, .devis-input { width: 100%; background: #fff; border: 1.5px solid var(–border); border-radius: 10px; padding: 11px 14px; color: var(–text) !important; font-size: 14px; font-family: ‘DM Sans’, sans-serif; outline: none; -webkit-text-fill-color: var(–text); }
-.devis-select:focus, .devis-textarea:focus, .devis-input:focus { border-color: var(–vert); }
-.devis-textarea { min-height: 80px; resize: none; }
-.photo-zone { border: 2px dashed rgba(45,90,61,0.3); border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; background: rgba(45,90,61,0.03); margin-bottom: 14px; }
-.photo-zone-icon { font-size: 32px; margin-bottom: 8px; }
-.photo-zone-text { font-size: 13px; color: var(–dim); font-weight: 600; }
-.photo-zone-sub { font-size: 11px; color: #aaa; margin-top: 4px; }
-.photo-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-.photo-thumb { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 2px solid var(–border); }
-.devis-btn { width: 100%; padding: 14px; background: var(–vert); border: none; border-radius: 12px; color: #fff !important; font-size: 15px; font-weight: 600; cursor: pointer; font-family: ‘DM Sans’, sans-serif; box-shadow: 0 4px 16px var(–glow); -webkit-text-fill-color: #fff; }
+#page-devis{background:#f2ead8;padding:20px 15px 36px;gap:14px}
+.df-title{font-family:‘Playfair Display’,serif;font-size:26px;font-weight:700;color:#1a2e20}
+.df-title em{font-style:italic;color:#999;font-size:.7em;display:block}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#7a8c6a;margin-bottom:7px}
+.df-select,.df-textarea,.df-input{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(45,90,61,.18);background:#fff;font-size:14px;font-family:Jost,sans-serif;color:#1a2e20;outline:none;-webkit-appearance:none}
+.df-textarea{resize:none;height:88px}
+.photo-zone{border:2px dashed rgba(45,90,61,.25);border-radius:13px;padding:20px;text-align:center;background:#fff;cursor:pointer}
+.pz-icon{font-size:30px;margin-bottom:8px}
+.photo-zone strong{color:#1a2e20;font-size:14px;display:block;margin-bottom:3px}
+.photo-zone p{font-size:12px;color:#aaa}
+#prev{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;justify-content:center}
+#prev img{width:70px;height:70px;object-fit:cover;border-radius:10px}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
 
 /* GALERIE */
-.galerie-title { font-family: ‘Cinzel’, serif; font-size: 20px; font-weight: 700; color: var(–dark); margin-bottom: 4px; }
-.galerie-sub { font-size: 13px; color: var(–dim); margin-bottom: 16px; }
-.galerie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.galerie-item { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1; background: var(–beige2); border: 1px solid var(–border); cursor: pointer; user-select: none; }
-.galerie-img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
-.galerie-watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: ‘Cinzel’, serif; font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.3); transform: rotate(-30deg); letter-spacing: 0.08em; pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-.galerie-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px; background: linear-gradient(to top, rgba(26,46,32,0.85), transparent); }
-.galerie-tag { font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.05em; text-transform: uppercase; }
-.galerie-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 38px; }
-
-/* CONTACT */
-.contact-card { background: #fff; border: 1px solid var(–border); border-radius: 14px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-.contact-title { font-family: ‘Cinzel’, serif; font-size: 18px; font-weight: 700; color: var(–dark); margin-bottom: 16px; }
-.contact-item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(45,90,61,0.08); }
-.contact-item:last-child { border-bottom: none; }
-.contact-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-.contact-label { font-size: 10px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 2px; }
-.contact-val { font-size: 14px; color: var(–text); font-weight: 500; }
+#page-galerie{background:#f2ead8;padding:20px 15px 32px}
+.g-h{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700;color:#1a2e20}
+.g-h em{font-style:italic;color:#999;font-size:.7em;display:block}
+.g-sub{font-size:13px;color:#7a8c6a;margin-top:6px;margin-bottom:16px}
+.chantier-card{background:#fff;border-radius:18px;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid rgba(45,90,61,.08)}
+.chantier-title{padding:14px 16px 10px;font-family:‘Playfair Display’,serif;font-size:15px;font-weight:600;color:#1a2e20}
+.avant-apres{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.aa-side{position:relative}
+.aa-img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.aa-placeholder{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;background:#f2ead8}
+.aa-badge{position:absolute;top:8px;left:8px;background:rgba(26,46,32,.75);color:#fff;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:20px}
+.aa-badge.apres{background:rgba(45,90,61,.9)}
+.g-empty{text-align:center;padding:40px 20px;color:#7a8c6a;font-size:14px}
+.g-empty-icon{font-size:40px;margin-bottom:12px}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
 
 /* TARIFS */
-.tarifs-title { font-family: ‘Cinzel’, serif; font-size: 20px; font-weight: 700; color: var(–dark); margin-bottom: 4px; }
-.tarifs-sub { font-size: 13px; color: var(–dim); margin-bottom: 16px; }
-.tarif-card { background: #fff; border: 1px solid var(–border); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-.tarif-card.featured { border-color: var(–vert); background: rgba(45,90,61,0.04); }
-.tarif-badge { display: inline-block; background: var(–vert); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 10px; border-radius: 20px; margin-bottom: 8px; }
-.tarif-name { font-family: ‘Cinzel’, serif; font-size: 16px; font-weight: 700; color: var(–dark); margin-bottom: 4px; }
-.tarif-desc { font-size: 12px; color: var(–dim); margin-bottom: 10px; line-height: 1.5; }
-.tarif-price { font-family: ‘Cinzel’, serif; font-size: 26px; font-weight: 700; color: var(–vert); }
-.tarif-unit { font-size: 12px; color: var(–dim); font-family: ‘DM Sans’, sans-serif; }
-
-/* BOUTON WHATSAPP */
-.wa-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; background: #25D366; border: none; border-radius: 12px; color: #fff !important; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: ‘DM Sans’, sans-serif; box-shadow: 0 4px 16px rgba(37,211,102,0.35); margin-top: 4px; -webkit-text-fill-color: #fff; }
+#page-tarifs{background:#f2ead8;padding:20px 15px 32px}
+.t-h{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px;color:#1a2e20}
+.t-h em{font-style:italic;color:#999;font-size:.72em;display:block}
+.t-intro{font-size:13px;color:#7a8c6a;line-height:1.5;margin-bottom:18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#7a8c6a;margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(45,90,61,.1)}
+.tcard{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
+.tcard-name{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:600;color:#1a2e20}
+.tcard-sub{font-size:11px;color:#7a8c6a;margin-top:3px}
+.tcard-badge{background:#1a2e20;color:#f2ead8;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tprices{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.tpx{background:#f2ead8;border-radius:9px;padding:8px 4px;text-align:center}
+.tplbl{font-size:9px;color:#7a8c6a;font-weight:500;margin-bottom:3px}
+.tpval{font-family:‘Playfair Display’,serif;font-size:14px;font-weight:700;color:#1a2e20}
+.twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
 </style>
 
 </head>
 <body>
 
-<!-- SPLASH -->
-
 <div id="splash">
-  <div class="splash-icon">🎨</div>
-  <div class="splash-name">Jo Déco</div>
-  <div class="splash-line"></div>
-  <div class="splash-sub">Assistante IA • Disponible 24h/24</div>
+  <div class="sp-logo">🎨</div>
+  <div class="sp-name">JO DÉCO</div>
+  <div class="sp-sub">Peintre &middot; Décorateur &middot; Artisan</div>
 </div>
 
-<!-- TOPBAR -->
-
-<header id="topbar">
-  <div class="logo-area">
-    <div class="logo-icon">🎨</div>
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🎨</div>
     <div>
-      <div class="logo-name">Jo Déco</div>
-      <div class="logo-sub">Assistante IA • 24h/24</div>
+      <div class="tb-name">Jo Déco</div>
+      <div class="tb-sub">Assistante IA &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'galerie')"><span>🖼️</span>Galerie</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+  </div>
+
+  <!-- CHAT -->
+
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
     </div>
   </div>
-  <div class="status"><div class="dot"></div>En ligne</div>
-</header>
 
-<!-- TABS -->
+  <!-- DEVIS -->
 
-<div id="tabBar">
-  <div class="tab active" onclick="switchTab('assistant',this)">💬 Assistant</div>
-  <div class="tab" onclick="switchTab('devis',this)">📋 Devis</div>
-  <div class="tab" onclick="switchTab('galerie',this)">🖼️ Galerie</div>
-  <div class="tab" onclick="switchTab('contact',this)">📞 Contact</div>
-  <div class="tab" onclick="switchTab('tarifs',this)">💰 Tarifs</div>
-</div>
-
-<!-- ASSISTANT -->
-
-<div class="section active" id="sectionAssistant">
-  <div id="chat"><div id="messages"></div></div>
-  <div id="composer">
-    <div class="composer-inner">
-      <input class="composer-input" id="userInput" placeholder="Posez votre question…" type="text"/>
-      <button class="send-btn" id="sendBtn">➤</button>
+  <div id="page-devis" class="page">
+    <div class="df-title">Devis gratuit<em>Votre projet en quelques clics</em></div>
+    <div>
+      <div class="lbl">Type de travaux</div>
+      <select class="df-select" id="df-type">
+        <option value="">Sélectionnez...</option>
+        <option>Peinture intérieure — murs et plafonds</option>
+        <option>Peinture extérieure — façade</option>
+        <option>Papier peint et revêtements muraux</option>
+        <option>Enduits et ragréage</option>
+        <option>Boiseries, plinthes et portes</option>
+        <option>Rénovation complète</option>
+        <option>Autre</option>
+      </select>
     </div>
+    <div>
+      <div class="lbl">Description du projet</div>
+      <textarea class="df-textarea" id="df-desc" placeholder="Ex: Salon de 25m², murs abîmés, ancienne peinture à décoller..."></textarea>
+    </div>
+    <div>
+      <div class="lbl">Surface approximative</div>
+      <input class="df-input" id="df-surface" type="text" placeholder="Ex: 30m², 3 pièces, 15ml de façade..."/>
+    </div>
+    <div>
+      <div class="lbl">Photos des surfaces</div>
+      <div class="photo-zone" onclick="document.getElementById('df-photo').click()">
+        <div class="pz-icon">📸</div>
+        <strong>Ajouter des photos</strong>
+        <p>Jo analyse l'état des surfaces</p>
+        <div id="prev"></div>
+      </div>
+      <input type="file" id="df-photo" accept="image/*" multiple style="display:none" onchange="prevPhotos(this)"/>
+    </div>
+    <button class="df-btn" onclick="genDevis()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Envoyer sur WhatsApp
+    </button>
   </div>
-</div>
 
-<!-- DEVIS -->
+  <!-- GALERIE -->
 
-<div class="scroll-section" id="sectionDevis">
-  <div class="devis-title">Devis instantané</div>
-  <div class="devis-sub">Décrivez votre projet, ajoutez des photos 📸</div>
-  <div class="devis-field">
-    <label class="devis-label">Type de travaux</label>
-    <select class="devis-select" id="typeSelect">
-      <option>Peinture intérieure — murs et plafonds</option>
-      <option>Peinture extérieure — façade</option>
-      <option>Papier peint et revêtements</option>
-      <option>Décoration et finitions</option>
-      <option>Rénovation complète</option>
-      <option>Autre</option>
-    </select>
+  <div id="page-galerie" class="page">
+    <div class="g-h">Réalisations<em>avant &amp; après</em></div>
+    <div class="g-sub">Nos chantiers en images 🎨</div>
+    <div id="galerie-list">
+      <div class="g-empty"><div class="g-empty-icon">⏳</div>Chargement...</div>
+    </div>
+    <a class="wa-btn" href="https://wa.me/33617123910?text=Bonjour%20Jo%20D%C3%A9co%20!%20J%27ai%20vu%20vos%20r%C3%A9alisations%20et%20je%20voudrais%20un%20devis." target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Vous voulez ce résultat ? Contactez Jo
+    </a>
   </div>
-  <div class="devis-field">
-    <label class="devis-label">Description du projet</label>
-    <textarea class="devis-textarea" id="descInput" placeholder="Ex: Salon de 25m², murs en mauvais état, ancienne peinture à gratter…"></textarea>
-  </div>
-  <label class="devis-label">Photos des surfaces</label>
-  <div class="photo-zone" onclick="document.getElementById('photoInput').click()">
-    <div class="photo-zone-icon">📸</div>
-    <div class="photo-zone-text">Ajouter des photos</div>
-    <div class="photo-zone-sub">Jo Déco analyse l'état des surfaces</div>
-  </div>
-  <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotos(this)"/>
-  <div class="photo-preview" id="photoPreview"></div>
-  <div class="devis-field">
-    <label class="devis-label">Surface approximative</label>
-    <input class="devis-input" id="surfaceInput" type="text" placeholder="Ex: 30m², 3 pièces, 15ml de façade..."/>
-  </div>
-  <button class="devis-btn" onclick="genererDevis()">🎨 Générer le devis</button>
-</div>
 
-<!-- GALERIE -->
+  <!-- TARIFS -->
 
-<div class="scroll-section" id="sectionGalerie">
-  <div class="galerie-title">Nos réalisations</div>
-  <div class="galerie-sub">Quelques exemples de nos travaux 🎨</div>
-  <div class="galerie-grid">
-    <div class="galerie-item">
-      <div class="galerie-placeholder" style="background:linear-gradient(135deg,#b8d4c0,#7aab8a)">🏠</div>
-      <div class="galerie-watermark">Jo Déco</div>
-      <div class="galerie-label"><div class="galerie-tag">Salon</div></div>
+  <div id="page-tarifs" class="page">
+    <div class="t-h">Tarifs<em>transparents et sans surprise</em></div>
+    <div class="t-intro">Devis gratuit et sans engagement. Déplacement offert dans un rayon de 30km.</div>
+    <div class="t-sec">Peinture intérieure</div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Murs &amp; plafonds</div><div class="tcard-sub">Préparation des surfaces incluse</div></div>
+        <div class="tcard-badge">au m²</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Peinture simple</div><div class="tpval">À partir de XX€</div></div>
+        <div class="tpx"><div class="tplbl">Avec sous-couche</div><div class="tpval">À partir de XX€</div></div>
+      </div>
     </div>
-    <div class="galerie-item">
-      <div class="galerie-placeholder" style="background:linear-gradient(135deg,#c8d8b8,#8aaa78)">🛏️</div>
-      <div class="galerie-watermark">Jo Déco</div>
-      <div class="galerie-label"><div class="galerie-tag">Chambre</div></div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Boiseries &amp; portes</div><div class="tcard-sub">Ponçage et lasure ou glycéro</div></div>
+        <div class="tcard-badge">au ml</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Plinthes</div><div class="tpval">À partir de XX€</div></div>
+        <div class="tpx"><div class="tplbl">Portes</div><div class="tpval">À partir de XX€</div></div>
+      </div>
     </div>
-    <div class="galerie-item">
-      <div class="galerie-placeholder" style="background:linear-gradient(135deg,#d8e8c8,#a0c088)">🏢</div>
-      <div class="galerie-watermark">Jo Déco</div>
-      <div class="galerie-label"><div class="galerie-tag">Façade</div></div>
+    <div class="t-sec">Peinture extérieure</div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Ravalement de façade</div><div class="tcard-sub">Traitement anti-humidité disponible</div></div>
+        <div class="tcard-badge">au m²</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Fourchette</div><div class="tpval" style="font-size:20px">À partir de XX€/m²</div></div>
+      </div>
     </div>
-    <div class="galerie-item">
-      <div class="galerie-placeholder" style="background:linear-gradient(135deg,#e8d8b8,#c0a870)">🖼️</div>
-      <div class="galerie-watermark">Jo Déco</div>
-      <div class="galerie-label"><div class="galerie-tag">Décoration</div></div>
+    <div class="t-sec">Revêtements muraux</div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Papier peint &amp; toile de verre</div><div class="tcard-sub">Pose et dépose, toutes surfaces</div></div>
+        <div class="tcard-badge">au m²</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Pose seule</div><div class="tpval">À partir de XX€</div></div>
+        <div class="tpx"><div class="tplbl">Dépose + pose</div><div class="tpval">À partir de XX€</div></div>
+      </div>
     </div>
-    <div class="galerie-item">
-      <div class="galerie-placeholder" style="background:linear-gradient(135deg,#c8e8d8,#80b898)">🍳</div>
-      <div class="galerie-watermark">Jo Déco</div>
-      <div class="galerie-label"><div class="galerie-tag">Cuisine</div></div>
-    </div>
-    <div class="galerie-item">
-      <div class="galerie-placeholder" style="background:linear-gradient(135deg,#d0d8c0,#909878)">🛁</div>
-      <div class="galerie-watermark">Jo Déco</div>
-      <div class="galerie-label"><div class="galerie-tag">Salle de bain</div></div>
-    </div>
+    <a class="twa" href="https://wa.me/33617123910?text=Bonjour%20Jo%20D%C3%A9co%20!%20Je%20voudrais%20un%20devis%20gratuit." target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Devis gratuit sur WhatsApp
+    </a>
   </div>
-  <a class="wa-btn" href="https://wa.me/33617123910?text=Bonjour%20Jo%20D%C3%A9co%20!%20J%27ai%20vu%20vos%20r%C3%A9alisations%20et%20je%20voudrais%20un%20devis." target="_blank">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-    Je veux ce style — Contacter Jo Déco
-  </a>
-</div>
 
-<!-- CONTACT -->
-
-<div class="scroll-section" id="sectionContact">
-  <div class="contact-card">
-    <div class="contact-title">Nous contacter</div>
-    <div class="contact-item">
-      <div class="contact-icon">📍</div>
-      <div><div class="contact-label">Adresse</div><div class="contact-val">À renseigner</div></div>
-    </div>
-    <div class="contact-item">
-      <div class="contact-icon">🕐</div>
-      <div><div class="contact-label">Horaires</div><div class="contact-val">À renseigner</div></div>
-    </div>
-    <div class="contact-item">
-      <div class="contact-icon">📱</div>
-      <div><div class="contact-label">Téléphone</div><div class="contact-val">À renseigner</div></div>
-    </div>
-    <div class="contact-item">
-      <div class="contact-icon">✉️</div>
-      <div><div class="contact-label">Email</div><div class="contact-val">À renseigner</div></div>
-    </div>
-  </div>
-  <a class="wa-btn" href="https://wa.me/33617123910?text=Bonjour%20Jo%20D%C3%A9co%20!%20Je%20voudrais%20un%20devis%20gratuit." target="_blank">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-    Demander un devis sur WhatsApp
-  </a>
-</div>
-
-<!-- TARIFS -->
-
-<div class="scroll-section" id="sectionTarifs">
-  <div class="tarifs-title">Nos tarifs</div>
-  <div class="tarifs-sub">Devis gratuit et sans engagement 🎨</div>
-  <div class="tarif-card">
-    <div class="tarif-name">🏠 Peinture intérieure</div>
-    <div class="tarif-desc">Murs, plafonds, boiseries — préparation des surfaces incluse</div>
-    <div class="tarif-price">À partir de XX€ <span class="tarif-unit">/m²</span></div>
-  </div>
-  <div class="tarif-card featured">
-    <div class="tarif-badge">⭐ Le plus demandé</div>
-    <div class="tarif-name">🏢 Peinture extérieure</div>
-    <div class="tarif-desc">Façade, volets, enduits — traitement anti-humidité disponible</div>
-    <div class="tarif-price">À partir de XX€ <span class="tarif-unit">/m²</span></div>
-  </div>
-  <div class="tarif-card">
-    <div class="tarif-name">🖼️ Papier peint</div>
-    <div class="tarif-desc">Pose et dépose, toutes surfaces</div>
-    <div class="tarif-price">À partir de XX€ <span class="tarif-unit">/m²</span></div>
-  </div>
-  <div class="tarif-card">
-    <div class="tarif-name">✨ Décoration complète</div>
-    <div class="tarif-desc">Conseil colorimétrique + exécution complète</div>
-    <div class="tarif-price">Sur devis</div>
-  </div>
-  <a class="wa-btn" href="https://wa.me/33617123910?text=Bonjour%20Jo%20D%C3%A9co%20!%20Je%20voudrais%20un%20devis%20gratuit." target="_blank">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-    Devis gratuit sur WhatsApp
-  </a>
 </div>
 
 <script>
-const API_BASE = "https://philo-backend-by2c.onrender.com";
-let isLoading = false;
-let userId = localStorage.getItem("jodeco_uid") || ("jodeco_" + Math.random().toString(36).slice(2,10));
-localStorage.setItem("jodeco_uid", userId);
+var API = "https://philo-backend-by2c.onrender.com";
+var WA = "33617123910";
+var busy = false;
 
-const SYSTEM_PROMPT = `Tu es Philomène, l'assistante de Jo Déco — artisan peintre-décorateur depuis plus de 20 ans, basé dans la région.
+var SYS = "Tu es l'assistante de Jo, artisan peintre-décorateur avec 20 ans de métier. Tu parles EN SON NOM, comme si t'étais dans son atelier.\n\nRÈGLES ABSOLUES :\n- Jamais de liste à puces, jamais de numéros, jamais de titres en majuscules\n- Pas de guide Wikipedia, pas de \"voici les étapes\"\n- Réponses courtes : 2 à 4 phrases maximum\n- Toujours finir par proposer de venir voir ou faire un devis gratuit\n- Parle comme un artisan de terrain, pas comme un vendeur\n\nEXEMPLES :\n\"Pour des WC en 6m², je prends toujours une lessivable satinée, ça tient bien à l'humidité. Si les murs sont en bon état une sous-couche et deux couches suffisent. Je viens jeter un œil et je vous fais le devis gratuit.\"\n\n\"Ce genre de tache brune c'est souvent de l'humidité qui remonte. On traite d'abord la cause sinon ça revient. Je passe voir et on règle ça correctement.\"\n\nTu connais : peinture mate/satinée/glycéro/acrylique/lessivable, anti-humidité, anti-moisissures, enduits, ragréage, papier peint, toile de verre, boiseries, façades, ravalement.";
 
-Tu parles AU NOM de Jo, comme si tu étais dans son atelier. Tu utilises le "on" et le "je" — pas le "nous" de société. Tu parles comme un vrai artisan de terrain, pas comme un vendeur ou un technicien.
+if (!localStorage.getItem("jodeco_uid")) {
+  localStorage.setItem("jodeco_uid", Math.random().toString(36).slice(2,10));
+}
+var userId = "jodeco_" + localStorage.getItem("jodeco_uid");
 
-Tu connais parfaitement le métier :
-- Peinture intérieure et extérieure, ravalement de façade, papier peint, toile de verre, enduits, boiseries, plinthes
-- Peintures professionnelles : mate, satinée, glycéro, acrylique, lessivable, anti-humidité, anti-moisissures
-- Problèmes courants : fissures, cloques, humidité, moisissures, décollements, efflorescence
-- Préparation des surfaces : ponçage, rebouchage, sous-couche, dégraissage, primaire
-
-STYLE OBLIGATOIRE — parle comme Jo parlerait à un voisin :
-- "Pour vos toilettes, on enlève d'abord l'ancienne peinture si elle cloque, on rebouche les fissures et on applique deux couches de lessivable. Venez me montrer ça et je vous fais un devis."
-- "Ce genre de tâche d'humidité, c'est souvent un problème de ventilation ou d'infiltration. On traite d'abord la cause, ensuite on applique une peinture anti-moisissures. Je passe voir ?"
-- Jamais de liste à puces technique. Jamais de jargon pompeux.
-- Toujours proposer de venir voir ou de faire un devis gratuit à la fin.
-
-N'utilise JAMAIS # ou ## ou ###.
-Réponds en français, courts, directs, comme un artisan qui sait de quoi il parle.`;
-
-// SPLASH
-setTimeout(() => {
-  const splash = document.getElementById('splash');
-  splash.style.opacity = '0';
-  setTimeout(() => { splash.style.display = 'none'; }, 800);
-}, 2500);
-
-// TABS
-function switchTab(tab, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.scroll-section').forEach(s => s.classList.remove('active'));
-  if (tab === 'assistant') document.getElementById('sectionAssistant').classList.add('active');
-  else document.getElementById('section' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+  if (n === "galerie") loadGalerie();
 }
 
-// PARSEUR MARKDOWN
-function parseMarkdown(text) {
-  // Convertir ### en **bold**
-  text = text.replace(/#{1,6}\s*(.+?)(?=\n|$)/gm, '**$1**');
-  const hasStruct = /\*\*(.+?)\*\*/i.test(text);
-  if (!hasStruct) {
-    const html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
-    return '<div class="rt-text-block">' + html + '</div>';
-  }
-  const lines = text.split('\n');
-  let cards = [], currentCard = null, introLines = [], inIntro = true;
-  lines.forEach(line => {
-    const boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((.+?)\))?$/i);
-    const boldColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
-    if (boldTitle) {
-      inIntro = false;
-      if (currentCard) cards.push(currentCard);
-      currentCard = { title: boldTitle[1].trim(), lines: [] };
-    } else if (boldColon) {
-      const val = boldColon[2].replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-      if (currentCard) currentCard.lines.push('<strong>'+boldColon[1]+' :</strong> '+val);
-      else introLines.push('<div class="ex-line"><strong>'+boldColon[1]+' :</strong> '+val+'</div>');
-    } else {
-      const clean = line.replace(/^\s*[-–•]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').trim();
-      if (!clean) return;
-      if (inIntro) introLines.push('<div class="ex-line">'+clean+'</div>');
-      else if (currentCard) currentCard.lines.push(clean);
-    }
-  });
-  if (currentCard) cards.push(currentCard);
-  let html = '';
-  if (introLines.length) html += '<div style="margin-bottom:8px">'+introLines.join('')+'</div>';
-  cards.forEach(card => {
-    html += '<div class="ex-card"><div class="ex-card-header"><span class="ex-card-title">'+card.title+'</span></div><div class="ex-card-body">';
-    card.lines.forEach(l => { html += '<div class="ex-line">'+l+'</div>'; });
-    html += '</div></div>';
-  });
-  return html;
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
 }
 
-// CHAT
-function addBot(html, withActions) {
-  const wrap = document.createElement('div'); wrap.className = 'bubble-wrap bot';
-  const av = document.createElement('div'); av.className = 'avatar'; av.textContent = '🎨';
-  const b = document.createElement('div'); b.className = 'bubble bot';
-  b.innerHTML = html;
-  if (withActions) {
-    const qa = document.createElement('div'); qa.className = 'quick-actions';
-    qa.innerHTML =
-      '<button class="qa-btn" onclick="sendMsg(\'Quels types de travaux faites-vous ?\')">🏠 Services</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Comment se passe un devis ?\')">📋 Devis</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Quels sont vos délais ?\')">⏱️ Délais</button>' +
-      '<button class="qa-btn" onclick="sendMsg(\'Quels matériaux utilisez-vous ?\')">🖌️ Matériaux</button>';
-    b.appendChild(qa);
-  }
-  wrap.appendChild(av); wrap.appendChild(b);
-  document.getElementById('messages').appendChild(wrap);
-  setTimeout(() => { wrap.scrollIntoView({ behavior:'smooth', block:'start' }); }, 100);
-}
-
-function addUser(text) {
-  const wrap = document.createElement('div'); wrap.className = 'bubble-wrap user';
-  const b = document.createElement('div'); b.className = 'bubble user'; b.textContent = text;
-  wrap.appendChild(b);
-  document.getElementById('messages').appendChild(wrap);
-  document.getElementById('chat').scrollTop = 99999;
-}
-
-function showTyping() {
-  const wrap = document.createElement('div'); wrap.className = 'bubble-wrap bot'; wrap.id = 'typing';
-  wrap.innerHTML = '<div class="avatar">🎨</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
-  document.getElementById('messages').appendChild(wrap);
-  document.getElementById('chat').scrollTop = 99999;
-}
-function hideTyping() { const t = document.getElementById('typing'); if(t) t.remove(); }
-
-async function sendMsg(text) {
-  if (!text || isLoading) return;
-  addUser(text); isLoading = true; showTyping();
-  try {
-    const resp = await fetch(API_BASE + '/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ conversation: [{ role:'system', content: SYSTEM_PROMPT }, { role:'user', content: text }], userId })
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🎨";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["Mes services","Quels travaux faites-vous ?"],["Devis","Comment se passe un devis ?"],["Délais","Quels sont vos délais ?"],["Matériaux","Quelles peintures utilisez-vous ?"],["Façade","Vous faites les façades ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
     });
-    const data = await resp.json();
-    hideTyping();
-    addBot(parseMarkdown(data.answer || 'Pas de réponse.'), false);
-  } catch { hideTyping(); addBot('❌ Erreur de connexion. Réessayez.', false); }
-  isLoading = false;
+    bub.appendChild(qw);
+  }
+  row.appendChild(av);
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
 }
 
-// DEVIS
-function handlePhotos(input) {
-  const preview = document.getElementById('photoPreview');
-  preview.innerHTML = '';
-  Array.from(input.files).slice(0,6).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.createElement('img');
-      img.className = 'photo-thumb'; img.src = e.target.result;
-      preview.appendChild(img);
-    };
-    reader.readAsDataURL(file);
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🎨";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(av);
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: userId, systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var av = document.createElement("div");
+    av.className = "bav";
+    av.textContent = "🎨";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    if (low.indexOf("devis") >= 0 || low.indexOf("prix") >= 0 || low.indexOf("rdv") >= 0 || low.indexOf("rendez") >= 0) {
+      var wa = document.createElement("a");
+      wa.style.cssText = "display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:700;font-size:13px;margin-top:10px;font-family:Jost,sans-serif";
+      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Jo ! Je voudrais un devis gratuit.");
+      wa.target = "_blank";
+      wa.textContent = "📱 Contacter Jo sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(av);
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+    busy = false;
   });
 }
 
-function genererDevis() {
-  const type = document.getElementById('typeSelect').value;
-  const desc = document.getElementById('descInput').value;
-  const surface = document.getElementById('surfaceInput').value;
-  if (!desc.trim()) { alert('Décrivez votre projet avant de générer le devis.'); return; }
-  switchTab('assistant', document.querySelector('[onclick*="assistant"]'));
-  sendMsg(`Je voudrais un devis pour : ${type}. Description : ${desc}. Surface : ${surface || 'non précisée'}.`);
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
 }
 
-// PROTECTION GALERIE
-document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
-
-// INIT
-addBot('Bonjour ! 👋 Je suis Philomène, l\'assistante de Jo Déco.<br/><br/>Je peux vous aider avec vos questions sur la peinture, les devis, les délais et les tarifs.<br/><br/>Que puis-je faire pour vous ? 🎨', true);
-
-document.getElementById('sendBtn').addEventListener('click', () => {
-  const inp = document.getElementById('userInput');
-  const t = inp.value.trim(); if (!t) return;
-  inp.value = ''; sendMsg(t);
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
 });
-document.getElementById('userInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { const t = e.target.value.trim(); if (!t) return; e.target.value = ''; sendMsg(t); }
-});
+
+function prevPhotos(input) {
+  var prev = document.getElementById("prev");
+  prev.innerHTML = "";
+  Array.from(input.files).forEach(function(f){
+    var img = document.createElement("img");
+    img.src = URL.createObjectURL(f);
+    prev.appendChild(img);
+  });
+}
+
+function genDevis() {
+  var type = document.getElementById("df-type").value;
+  var desc = document.getElementById("df-desc").value.trim();
+  var surface = document.getElementById("df-surface").value.trim();
+  if (!type && !desc) { alert("Décrivez votre projet avant d'envoyer."); return; }
+  var msg = "Bonjour Jo ! Je voudrais un devis gratuit.\n\n";
+  if (type) msg += "Travaux : " + type + "\n";
+  if (desc) msg += "Description : " + desc + "\n";
+  if (surface) msg += "Surface : " + surface + "\n";
+  msg += "\n(Photos à suivre si besoin)";
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function loadGalerie() {
+  var list = document.getElementById("galerie-list");
+  list.innerHTML = '<div class="g-empty"><div class="g-empty-icon">⏳</div>Chargement...</div>';
+  fetch(API + "/memory/jodeco_galerie")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var chantiers = d.value || [];
+      if (chantiers.length === 0) {
+        list.innerHTML = '<div class="g-empty"><div class="g-empty-icon">📸</div>Les réalisations arrivent bientôt !</div>';
+        return;
+      }
+      list.innerHTML = "";
+      chantiers.forEach(function(c){
+        var card = document.createElement("div");
+        card.className = "chantier-card";
+        var title = document.createElement("div");
+        title.className = "chantier-title";
+        title.textContent = c.titre || "Chantier";
+        var grid = document.createElement("div");
+        grid.className = "avant-apres";
+        // AVANT
+        var avant = document.createElement("div");
+        avant.className = "aa-side";
+        if (c.avant) {
+          var imgA = document.createElement("img");
+          imgA.className = "aa-img";
+          imgA.src = c.avant;
+          avant.appendChild(imgA);
+        } else {
+          var phA = document.createElement("div");
+          phA.className = "aa-placeholder";
+          phA.textContent = "🏚️";
+          avant.appendChild(phA);
+        }
+        var badgeA = document.createElement("div");
+        badgeA.className = "aa-badge";
+        badgeA.textContent = "Avant";
+        avant.appendChild(badgeA);
+        // APRÈS
+        var apres = document.createElement("div");
+        apres.className = "aa-side";
+        if (c.apres) {
+          var imgP = document.createElement("img");
+          imgP.className = "aa-img";
+          imgP.src = c.apres;
+          apres.appendChild(imgP);
+        } else {
+          var phP = document.createElement("div");
+          phP.className = "aa-placeholder";
+          phP.textContent = "🏠";
+          apres.appendChild(phP);
+        }
+        var badgeP = document.createElement("div");
+        badgeP.className = "aa-badge apres";
+        badgeP.textContent = "Après";
+        apres.appendChild(badgeP);
+        grid.appendChild(avant);
+        grid.appendChild(apres);
+        card.appendChild(title);
+        card.appendChild(grid);
+        list.appendChild(card);
+      });
+    }).catch(function(){
+      list.innerHTML = '<div class="g-empty"><div class="g-empty-icon">📸</div>Les réalisations arrivent bientôt !</div>';
+    });
+}
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bonjour ! Je suis l'assistante de Jo Déco.\n\nJo est peintre-décorateur depuis plus de 20 ans. Je peux répondre à vos questions sur vos travaux, les tarifs, ou vous aider à obtenir un devis gratuit.", true);
+  }, 900);
+}, 2500);
 </script>
 
 </body>
