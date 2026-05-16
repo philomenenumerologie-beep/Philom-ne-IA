@@ -106,8 +106,8 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 /* COMPOSER */
 #composer { flex-shrink: 0; padding: 10px 12px 16px; background: linear-gradient(to top, rgba(10,10,10,0.98) 75%, transparent); position: relative; z-index: 10; }
 .composer-inner { display: flex; align-items: center; gap: 10px; background: var(–surface2); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 10px 14px; }
-.composer-input { flex: 1; background: transparent; border: none; outline: none; color: var(–text); font-size: 16px; font-family: ‘DM Sans’, sans-serif; }
-.composer-input::placeholder { color: #555; }
+.composer-input { flex: 1; background: transparent; border: none; outline: none; color: #f0e8d8 !important; font-size: 16px; font-family: ‘DM Sans’, sans-serif; -webkit-text-fill-color: #f0e8d8; }
+.composer-input::placeholder { color: #666; }
 .send-btn { width: 42px; height: 42px; border-radius: 10px; background: var(–gold); border: none; color: var(–black); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-weight: 900; box-shadow: 0 4px 12px rgba(201,168,76,0.3); }
 
 /* POIDS */
@@ -249,25 +249,33 @@ let objectifPoids = parseFloat(localStorage.getItem("chico_objectif") || "0");
 // ✅ LECTURE VOCALE
 let currentUtterance = null;
 function speakText(text, btn) {
-  if (!window.speechSynthesis) return;
+  if (!window.speechSynthesis) { alert("La lecture vocale n'est pas disponible sur ce navigateur."); return; }
+  // Stop si déjà en cours
   if (currentUtterance) {
     window.speechSynthesis.cancel();
-    if (btn.classList.contains('speaking')) {
-      btn.classList.remove('speaking');
-      btn.textContent = '🔊 Écouter';
-      currentUtterance = null;
-      return;
-    }
+    document.querySelectorAll('.speak-btn').forEach(b => { b.classList.remove('speaking'); b.textContent = '🔊 Écouter'; });
+    currentUtterance = null;
+    if (btn.dataset.speaking === '1') { btn.dataset.speaking = '0'; return; }
   }
-  document.querySelectorAll('.speak-btn').forEach(b => { b.classList.remove('speaking'); b.textContent = '🔊 Écouter'; });
+  document.querySelectorAll('.speak-btn').forEach(b => { b.classList.remove('speaking'); b.textContent = '🔊 Écouter'; b.dataset.speaking = '0'; });
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'fr-FR';
-  utterance.rate = 0.9;
-  utterance.onend = () => { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; currentUtterance = null; };
+  utterance.rate = 0.85;
+  utterance.volume = 1;
+  utterance.pitch = 1;
+  // Chercher une voix française
+  const voices = window.speechSynthesis.getVoices();
+  const frVoice = voices.find(v => v.lang.startsWith('fr'));
+  if (frVoice) utterance.voice = frVoice;
+  utterance.onend = () => { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; btn.dataset.speaking = '0'; currentUtterance = null; };
+  utterance.onerror = () => { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; btn.dataset.speaking = '0'; currentUtterance = null; };
   currentUtterance = utterance;
   btn.classList.add('speaking');
   btn.textContent = '⏹ Stop';
-  window.speechSynthesis.speak(utterance);
+  btn.dataset.speaking = '1';
+  // Fix bug iOS - cancel + petit délai avant speak
+  window.speechSynthesis.cancel();
+  setTimeout(() => { window.speechSynthesis.speak(utterance); }, 100);
 }
 
 // ✅ PARSEUR MARKDOWN → CARTES OR
