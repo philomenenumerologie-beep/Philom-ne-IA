@@ -502,13 +502,64 @@ function genDevis() {
   var size = sz ? sz.childNodes[0].textContent.trim() : "";
   var ems = Array.from(document.querySelectorAll(".em.sel")).map(function(e){ return e.textContent; }).join(", ");
   if (!style && !desc && !size) { alert("Remplissez au moins le style ou la description"); return; }
-  var msg = "Bonjour Maka ! Je voudrais un devis.\n\n";
-  if (style) msg += "Style : " + style + "\n";
-  if (desc) msg += "Description : " + desc + "\n";
-  if (size) msg += "Taille : " + size + "\n";
-  if (ems) msg += "Emplacement : " + ems + "\n";
-  msg += "\n(Photo de référence à suivre si besoin)";
-  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+
+  // Construire le résumé pour l'IA
+  var resume = "Le client demande un devis pour un tatouage :";
+  if (style) resume += "\n- Style : " + style;
+  if (desc) resume += "\n- Description : " + desc;
+  if (size) resume += "\n- Taille : " + size;
+  if (ems) resume += "\n- Emplacement : " + ems;
+  resume += "\n\nFais un devis estimatif précis avec le prix, la durée de séance estimée, et un conseil court. Termine en disant que Marie peut confirmer sur WhatsApp.";
+
+  // Construire le message WhatsApp pour plus tard
+  var waMsg = "Bonjour Maka ! Je voudrais un devis.\n\n";
+  if (style) waMsg += "Style : " + style + "\n";
+  if (desc) waMsg += "Description : " + desc + "\n";
+  if (size) waMsg += "Taille : " + size + "\n";
+  if (ems) waMsg += "Emplacement : " + ems + "\n";
+  waMsg += "\n(Photo de référence à suivre si besoin)";
+
+  // Basculer sur le chat
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+
+  addUser("Je voudrais un devis pour : " + (style || desc) + (size ? ", " + size : "") + (ems ? ", " + ems : ""));
+  busy = true;
+  setTyping(true);
+
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: resume, userId: "maka_devis", systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Contactez Marie pour un devis précis.";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    // Bouton WhatsApp pour confirmer
+    var wa = document.createElement("a");
+    wa.className = "wa-bubble";
+    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
+    wa.target = "_blank";
+    wa.textContent = "✅ Confirmer avec Marie sur WhatsApp";
+    bub.appendChild(wa);
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+    busy = false;
+  });
 }
 
 // FLASHS — charge depuis /memory/maka_flashs
