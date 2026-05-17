@@ -17,15 +17,15 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 
 #splash{position:fixed;inset:0;z-index:500;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
 #splash.gone{opacity:0;pointer-events:none}
-.sp-name{font-family:Playfair Display,serif;font-size:52px;font-weight:700;color:#c9a84c;letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-name{font-family:‘Playfair Display’,serif;font-size:52px;font-weight:700;color:#c9a84c;letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
 .sp-bar{width:2px;height:44px;background:linear-gradient(180deg,transparent,#c9a84c,transparent);margin:18px auto;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
-.sp-sub{font-family:Playfair Display,serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.4);animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+.sp-sub{font-family:‘Playfair Display’,serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.4);animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
 
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 
 #topbar{background:rgba(10,10,10,.98);padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(201,168,76,.2);flex-shrink:0}
 .tb-gem{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.tb-name{font-family:Playfair Display,serif;font-size:16px;font-weight:700;color:#c9a84c;letter-spacing:.04em}
+.tb-name{font-family:‘Playfair Display’,serif;font-size:16px;font-weight:700;color:#c9a84c;letter-spacing:.04em}
 .tb-sub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
 
@@ -47,7 +47,7 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 .bav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:15px}
 .bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
 .bub.bot{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#f0ecff;border-top-left-radius:4px}
-.bub.user{background:linear-gradient(135deg,#c9a84c,#c9a84c);color:#fff;border-top-right-radius:4px}
+.bub.user{background:#c9a84c;color:#fff;border-top-right-radius:4px}
 .qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
 .qb{padding:7px 12px;border-radius:22px;border:1.5px solid rgba(201,168,76,.4);background:rgba(201,168,76,.08);color:#c9a84c;font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
 .tybub{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px}
@@ -59,66 +59,64 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 #inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(201,168,76,.3);background:rgba(255,255,255,.06);font-size:15px;font-family:Jost,sans-serif;outline:none;color:#f0ecff}
 #inp::placeholder{color:rgba(255,255,255,.28)}
 #inp:focus{border-color:#c9a84c}
-#snd{width:46px;height:46px;border-radius:50%;border:none;background:linear-gradient(135deg,#c9a84c,#c9a84c);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#c9a84c;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
 
 /* DEVIS */
 #page-devis{background:#0a0a0a;padding:20px 15px 36px;gap:14px}
-.df-title{font-family:Playfair Display,serif;font-size:26px;font-weight:700;color:#f0ecff}
+.df-title{font-family:‘Playfair Display’,serif;font-size:26px;font-weight:700;color:#f0ecff}
 .df-title em{font-style:italic;color:#c9a84c;font-size:.7em;display:block}
 .lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:7px}
 .df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(201,168,76,.2);background:rgba(255,255,255,.06);font-size:14px;font-family:Jost,sans-serif;color:#f0ecff;outline:none;-webkit-appearance:none}
 .df-select option{background:#111;color:#f0ecff}
-.df-textarea{resize:none;height:88px}
-.size-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.sz{padding:12px 8px;border-radius:12px;border:1.5px solid rgba(201,168,76,.2);background:rgba(255,255,255,.04);font-size:13px;font-family:Jost,sans-serif;font-weight:500;text-align:center;cursor:pointer;color:rgba(255,255,255,.6);line-height:1.4;transition:all .18s}
-.sz small{font-size:10px;color:rgba(255,255,255,.35);display:block;margin-top:2px}
-.sz.sel{background:linear-gradient(135deg,#c9a84c,#c9a84c);color:#fff;border-color:#7c3aed}
+.df-textarea{resize:none;height:100px}
 .color-wrap{display:flex;flex-wrap:wrap;gap:8px}
-.col-btn{padding:8px 14px;border-radius:22px;border:1.5px solid rgba(201,168,76,.2);background:rgba(255,255,255,.04);font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:rgba(255,255,255,.6);transition:all .18s;display:flex;align-items:center;gap:6px}
-.col-btn.sel{border-color:#c9a84c;background:rgba(212,160,23,.15);color:#c9a84c}
+.col-btn{padding:8px 14px;border-radius:22px;border:1.5px solid rgba(201,168,76,.2);background:rgba(255,255,255,.04);font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px}
+.col-btn.sel{border-color:#c9a84c;background:rgba(201,168,76,.15);color:#c9a84c}
 .col-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer;box-shadow:0 4px 18px rgba(37,211,102,.25)}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
+
+/* PACK INCLUS */
+.pack-card{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:16px;padding:16px;margin-bottom:4px}
+.pack-title{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:700;color:#c9a84c;margin-bottom:12px}
+.pack-item{font-size:13px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:8px;padding:4px 0}
+.pack-item::before{content:“✓”;color:#c9a84c;font-weight:700;flex-shrink:0}
 
 /* GALERIE */
 #page-galerie{background:#0a0a0a;padding:20px 15px 32px}
-.g-title{font-family:Playfair Display,serif;font-size:28px;font-weight:700;color:#f0ecff}
+.g-title{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700;color:#f0ecff}
 .g-title em{font-style:italic;color:#c9a84c;font-size:.7em;display:block}
 .g-sub{font-size:13px;color:rgba(255,255,255,.45);margin-top:6px;margin-bottom:18px}
 .g-grid{display:flex;flex-direction:column;gap:12px}
-.g-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;cursor:pointer;transition:all .2s}
+.g-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;cursor:pointer}
 .g-card:active{opacity:.8}
 .g-card-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
 .g-card-ico{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.g-card-name{font-family:Playfair Display,serif;font-size:18px;font-weight:700;color:#f0ecff}
+.g-card-name{font-family:‘Playfair Display’,serif;font-size:18px;font-weight:700;color:#f0ecff}
 .g-card-type{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .g-features{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .g-feat{font-size:12px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:7px}
 .g-feat::before{content:“✓”;color:#c9a84c;font-weight:700}
 .g-prix{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
-.g-prix-val{font-family:Playfair Display,serif;font-size:18px;color:#c9a84c;font-weight:700}
+.g-prix-val{font-family:‘Playfair Display’,serif;font-size:18px;color:#c9a84c;font-weight:700}
 .g-prix-sub{font-size:11px;color:rgba(255,255,255,.35)}
-.g-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:12px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
 
 /* TARIFS */
 #page-tarifs{background:#0a0a0a;padding:20px 15px 32px}
-.t-title{font-family:Playfair Display,serif;font-size:28px;font-weight:700;color:#f0ecff}
+.t-title{font-family:‘Playfair Display’,serif;font-size:28px;font-weight:700;color:#f0ecff}
 .t-title em{font-style:italic;color:#c9a84c;font-size:.72em;display:block}
 .t-intro{font-size:13px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:6px;margin-bottom:18px}
 .t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.7);margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(201,168,76,.2)}
 .tcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:16px;margin-bottom:10px}
 .tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
-.tcard-ico{font-size:24px;margin-right:10px}
-.tcard-name{font-family:Playfair Display,serif;font-size:15px;font-weight:600;color:#f0ecff}
+.tcard-name{font-family:‘Playfair Display’,serif;font-size:15px;font-weight:600;color:#f0ecff}
 .tcard-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
-.tcard-badge{background:linear-gradient(135deg,#c9a84c,#c9a84c);color:#fff;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tcard-badge{background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
 .tprices{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .tpx{background:rgba(0,0,0,.3);border-radius:9px;padding:10px 8px;text-align:center;border:1px solid rgba(255,255,255,.06)}
 .tplbl{font-size:9px;color:rgba(255,255,255,.4);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.tpval{font-family:Playfair Display,serif;font-size:18px;font-weight:700;color:#c9a84c}
+.tpval{font-family:‘Playfair Display’,serif;font-size:22px;font-weight:700;color:#c9a84c}
 .tpunit{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
-.tinstall{margin-top:9px;font-size:11px;color:rgba(255,255,255,.4);text-align:center;padding:8px;background:rgba(255,255,255,.04);border-radius:8px}
-.tinstall b{color:#f0ecff}
 .t-note{font-size:12px;color:rgba(255,255,255,.35);text-align:center;margin-top:4px;font-style:italic}
 .t-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
 </style>
@@ -134,7 +132,7 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 
 <div id="app">
   <div id="topbar">
-    <div class="tb-gem">&#10024;</div>
+    <div class="tb-gem">✨</div>
     <div>
       <div class="tb-name">Philomene I.A.</div>
       <div class="tb-sub">Assistants IA sur mesure</div>
@@ -143,10 +141,10 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
   </div>
 
   <div id="tabs">
-    <button class="tab active" onclick="showTab(this,'chat')"><span>&#128172;</span>Assistant</button>
-    <button class="tab" onclick="showTab(this,'devis')"><span>&#128203;</span>Devis</button>
-    <button class="tab" onclick="showTab(this,'galerie')"><span>&#127968;</span>Galerie</button>
-    <button class="tab" onclick="showTab(this,'tarifs')"><span>&#128176;</span>Tarifs</button>
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'galerie')"><span>🏠</span>Galerie</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
   </div>
 
   <!-- CHAT -->
@@ -168,38 +166,36 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
     <div class="df-title">Votre devis<em>en 2 minutes</em></div>
 
 ```
+<div class="pack-card">
+  <div class="pack-title">✨ Pack complet inclus</div>
+  <div class="pack-item">Chatbot IA — répond à vos clients 24h/24</div>
+  <div class="pack-item">Formulaire devis automatique sur WhatsApp</div>
+  <div class="pack-item">Galerie photos gérée depuis votre admin</div>
+  <div class="pack-item">Page tarifs personnalisée</div>
+  <div class="pack-item">QR Code carte de visite</div>
+  <div class="pack-item">Page admin privée pour gérer votre contenu</div>
+</div>
+
 <div>
-  <div class="lbl">Votre metier</div>
+  <div class="lbl">Votre métier</div>
   <select class="df-select" id="df-metier" onchange="updateSousMetier()">
-    <option value="">Selectionnez...</option>
+    <option value="">Sélectionnez...</option>
     <option value="artisan">Artisan</option>
-    <option value="beaute">Beaute / Bien-etre</option>
+    <option value="beaute">Beauté / Bien-être</option>
     <option value="sport">Coach sportif / Club</option>
-    <option value="sante">Sante</option>
+    <option value="sante">Santé</option>
     <option value="commerce">Commerce / Boutique</option>
-    <option value="autre">Autre activite</option>
+    <option value="autre">Autre activité</option>
   </select>
 </div>
 
 <div id="sous-metier-block" style="display:none">
-  <div class="lbl">Specialite</div>
+  <div class="lbl">Spécialité</div>
   <select class="df-select" id="df-sous"></select>
 </div>
 
 <div>
-  <div class="lbl">Ce dont vous avez besoin</div>
-  <div class="size-grid" id="besoins-grid">
-    <div class="sz" onclick="this.classList.toggle('sel')">Chatbot IA<small>repond 24h/24</small></div>
-    <div class="sz" onclick="this.classList.toggle('sel')">Devis auto<small>formulaire WhatsApp</small></div>
-    <div class="sz" onclick="this.classList.toggle('sel')">Galerie<small>portfolio photos</small></div>
-    <div class="sz" onclick="this.classList.toggle('sel')">Tarifs<small>page de prix</small></div>
-    <div class="sz" onclick="this.classList.toggle('sel')">QR Code<small>carte de visite</small></div>
-    <div class="sz" onclick="this.classList.toggle('sel')">Admin<small>gerer son contenu</small></div>
-  </div>
-</div>
-
-<div>
-  <div class="lbl">Couleurs souhaitees</div>
+  <div class="lbl">Couleurs souhaitées</div>
   <div class="color-wrap">
     <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#111"></div>Noir &amp; Blanc</div>
     <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#EDE0CC"></div>Beige &amp; Noir</div>
@@ -212,11 +208,11 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 </div>
 
 <div>
-  <div class="lbl">Informations complementaires</div>
-  <textarea class="df-textarea" id="df-info" placeholder="Ex: Je suis tatoueur a Bruxelles, je veux une app beige et noire avec mes flashs et mon chatbot..."></textarea>
+  <div class="lbl">Informations complémentaires</div>
+  <textarea class="df-textarea" id="df-info" placeholder="Ex: Je suis tatoueur à Bruxelles, je veux une app beige et noire avec mes flashs..."></textarea>
 </div>
 
-<button class="df-btn" onclick="genDevisPhilo()">&#128241; Envoyer ma demande sur WhatsApp</button>
+<button class="df-btn" onclick="genDevisPhilo()">📱 Envoyer ma demande sur WhatsApp</button>
 ```
 
   </div>
@@ -224,88 +220,88 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
   <!-- GALERIE -->
 
   <div id="page-galerie" class="page">
-    <div class="g-title">Galerie<em>nos realisations</em></div>
-    <div class="g-sub">Appuyez sur une app pour en savoir plus &#10024;</div>
+    <div class="g-title">Galerie<em>nos réalisations</em></div>
+    <div class="g-sub">Appuyez sur une app pour en savoir plus ✨</div>
     <div class="g-grid">
 
 ```
   <div class="g-card" onclick="ouvrirApp(0)">
     <div class="g-card-top">
-      <div class="g-card-ico" style="background:linear-gradient(135deg,#111,#333)">&#128148;</div>
+      <div class="g-card-ico" style="background:linear-gradient(135deg,#111,#333)">🖤</div>
       <div>
         <div class="g-card-name">Maka Tattoo</div>
-        <div class="g-card-type">Tatouage &middot; Belgique</div>
+        <div class="g-card-type">Tatouage · Belgique</div>
       </div>
     </div>
     <div class="g-features">
-      <div class="g-feat">Chatbot IA specialise tatouage</div>
-      <div class="g-feat">Galerie flashs avec reservation WhatsApp</div>
-      <div class="g-feat">Formulaire devis personnalise</div>
-      <div class="g-feat">Tarifs complets avec forfaits</div>
+      <div class="g-feat">Chatbot IA spécialisé tatouage</div>
+      <div class="g-feat">Galerie flashs avec réservation WhatsApp</div>
+      <div class="g-feat">Devis IA avec calcul 110€/heure</div>
+      <div class="g-feat">Admin pour gérer ses flashs</div>
     </div>
     <div class="g-prix">
-      <div><div class="g-prix-val">150&#8364; + 24&#8364;/mois</div><div class="g-prix-sub">Setup + abonnement</div></div>
-      <span style="font-size:20px">&#129097;</span>
+      <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
+      <span style="font-size:20px">👉</span>
     </div>
   </div>
 
   <div class="g-card" onclick="ouvrirApp(1)">
     <div class="g-card-top">
-      <div class="g-card-ico" style="background:linear-gradient(135deg,#134e4a,#065f46)">&#127912;</div>
+      <div class="g-card-ico" style="background:linear-gradient(135deg,#134e4a,#065f46)">🎨</div>
       <div>
-        <div class="g-card-name">Jo Deco</div>
-        <div class="g-card-type">Peintre-decorateur &middot; France</div>
+        <div class="g-card-name">Jo Déco</div>
+        <div class="g-card-type">Peintre-décorateur · France</div>
       </div>
     </div>
     <div class="g-features">
-      <div class="g-feat">Chatbot devis chantier avec photo</div>
-      <div class="g-feat">Analyse photo IA des surfaces</div>
-      <div class="g-feat">Estimation materiaux automatique</div>
-      <div class="g-feat">Contact et urgence integres</div>
+      <div class="g-feat">Chatbot expert bâtiment artisan</div>
+      <div class="g-feat">Devis IA avec analyse photo chantier</div>
+      <div class="g-feat">Galerie avant/après gérée en admin</div>
+      <div class="g-feat">Estimation prix automatique</div>
     </div>
     <div class="g-prix">
-      <div><div class="g-prix-val">150&#8364; + 24&#8364;/mois</div><div class="g-prix-sub">Setup + abonnement</div></div>
-      <span style="font-size:20px">&#129097;</span>
+      <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
+      <span style="font-size:20px">👉</span>
     </div>
   </div>
 
   <div class="g-card" onclick="ouvrirApp(2)">
     <div class="g-card-top">
-      <div class="g-card-ico" style="background:linear-gradient(135deg,#1e3a5f,#1e40af)">&#9917;</div>
+      <div class="g-card-ico" style="background:linear-gradient(135deg,#1e3a5f,#1e40af)">⚽</div>
       <div>
         <div class="g-card-name">Coach IA Football</div>
-        <div class="g-card-type">Club sportif &middot; Belgique</div>
+        <div class="g-card-type">Club sportif · Belgique</div>
       </div>
     </div>
     <div class="g-features">
-      <div class="g-feat">Generateur de seances par categorie</div>
-      <div class="g-feat">Schemas d exercices automatiques</div>
-      <div class="g-feat">Preparation physique integree</div>
+      <div class="g-feat">Générateur de séances par catégorie</div>
+      <div class="g-feat">Schémas d'exercices automatiques</div>
+      <div class="g-feat">Préparation physique intégrée</div>
       <div class="g-feat">Multi-coachs selon formule</div>
     </div>
     <div class="g-prix">
-      <div><div class="g-prix-val">5&#8364; a 39&#8364;/mois</div><div class="g-prix-sub">Selon nombre de coachs</div></div>
-      <span style="font-size:20px">&#129097;</span>
+      <div><div class="g-prix-val">50€ à 390€/an</div><div class="g-prix-sub">Selon nombre de coachs</div></div>
+      <span style="font-size:20px">👉</span>
     </div>
   </div>
 
   <div class="g-card" onclick="ouvrirApp(3)">
     <div class="g-card-top">
-      <div class="g-card-ico" style="background:linear-gradient(135deg,#831843,#9f1239)">&#9986;&#65039;</div>
+      <div class="g-card-ico" style="background:linear-gradient(135deg,#831843,#9f1239)">✂️</div>
       <div>
-        <div class="g-card-name">Salon Beaute</div>
-        <div class="g-card-type">Coiffeur / Estheticienne</div>
+        <div class="g-card-name">Salon Beauté</div>
+        <div class="g-card-type">Coiffeur / Esthéticienne</div>
       </div>
     </div>
     <div class="g-features">
       <div class="g-feat">Chatbot RDV et tarifs 24h/24</div>
-      <div class="g-feat">Galerie avant/apres</div>
-      <div class="g-feat">Formulaire devis beaute</div>
+      <div class="g-feat">Galerie avant/après</div>
+      <div class="g-feat">Formulaire devis beauté</div>
       <div class="g-feat">QR code carte de visite</div>
     </div>
     <div class="g-prix">
-      <div><div class="g-prix-val">150&#8364; + 24&#8364;/mois</div><div class="g-prix-sub">Setup + abonnement</div></div>
-      <span style="font-size:20px">&#129097;</span>
+      <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
+      <span style="font-size:20px">👉</span>
     </div>
   </div>
 
@@ -317,94 +313,82 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
   <!-- TARIFS -->
 
   <div id="page-tarifs" class="page">
-    <div class="t-title">Tarifs<em>clairs et transparents</em></div>
-    <div class="t-intro">Setup unique + abonnement mensuel. Votre app est hebergee sur nos serveurs, mise a jour incluse.</div>
+    <div class="t-title">Tarifs<em>clairs et sans surprise</em></div>
+    <div class="t-intro">490€ la première année tout compris. Puis 340€/an pour continuer. Pas d'abonnement mensuel, pas de surprise.</div>
 
 ```
-<div class="t-sec">Toutes activites</div>
+<div class="t-sec">App IA — Toutes activités</div>
 
 <div class="tcard">
   <div class="tcard-top">
-    <div style="display:flex;align-items:center">
-      <span class="tcard-ico">&#10024;</span>
-      <div><div class="tcard-name">App IA Complete</div><div class="tcard-sub">Chatbot + Devis + Galerie + Tarifs + QR Code</div></div>
-    </div>
+    <div><div class="tcard-name">✨ Première année</div><div class="tcard-sub">Création + configuration + 12 mois inclus</div></div>
     <div class="tcard-badge">Tout inclus</div>
   </div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">Mensuel</div><div class="tpval">24&#8364;</div><div class="tpunit">/ mois</div></div>
-    <div class="tpx"><div class="tplbl">Annuel</div><div class="tpval">240&#8364;</div><div class="tpunit">2 mois offerts</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Prix unique</div><div class="tpval">490€</div><div class="tpunit">création + 1 an d'hébergement</div></div>
   </div>
-  <div class="tinstall">Setup unique : <b>150&#8364;</b> — configuration complete + personnalisation</div>
-</div>
-
-<div class="t-sec">Ce qui est inclus</div>
-
-<div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">&#128172; Chatbot IA</div><div class="tcard-sub">Repond a vos clients 24h/24 dans votre style</div></div></div>
-  <div style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.6">Repond aux questions, donne les tarifs, oriente vers WhatsApp. Personnalise a votre metier et vos services.</div>
 </div>
 
 <div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">&#128247; Formulaire Devis</div><div class="tcard-sub">Vos clients vous envoient leur projet sur WhatsApp</div></div></div>
-  <div style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.6">Formulaire adapte a votre metier — style, taille, emplacement, photo. Message WhatsApp genere automatiquement.</div>
-</div>
-
-<div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">&#127968; Galerie / Portfolio</div><div class="tcard-sub">Vos realisations, vos flashs, vos avant/apres</div></div></div>
-  <div style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.6">Vous gerez votre galerie depuis une page admin privee. Ajoutez vos photos en quelques secondes.</div>
-</div>
-
-<div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">&#128243; QR Code</div><div class="tcard-sub">Carte de visite virtuelle a imprimer</div></div></div>
-  <div style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.6">Un QR code qui pointe vers votre app. A mettre sur votre vitrine, vos flyers ou vos stories Instagram.</div>
-</div>
-
-<div class="t-sec">&#9917; Coach IA — Clubs sportifs</div>
-
-<div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Solo</div><div class="tcard-sub">1 coach — seances, schemas, prepa physique</div></div><div class="tcard-badge">1 coach</div></div>
+  <div class="tcard-top">
+    <div><div class="tcard-name">🔄 Renouvellement annuel</div><div class="tcard-sub">Hébergement + mises à jour + support WhatsApp</div></div>
+  </div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">Mensuel</div><div class="tpval">5&#8364;</div><div class="tpunit">/ mois</div></div>
-    <div class="tpx"><div class="tplbl">Annuel</div><div class="tpval">50&#8364;</div><div class="tpunit">/ an</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">À partir de la 2ème année</div><div class="tpval">340€</div><div class="tpunit">par an</div></div>
   </div>
 </div>
 
 <div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Mini Club</div><div class="tcard-sub">Jusqu a 5 coachs connectes</div></div><div class="tcard-badge">5 coachs</div></div>
+  <div class="tcard-top"><div><div class="tcard-name">Pack complet inclus</div><div class="tcard-sub">Dans les 490€, tout est là</div></div></div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Chatbot IA personnalisé 24h/24</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Formulaire devis automatique WhatsApp</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Galerie photos gérée depuis votre admin</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Page tarifs personnalisée</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>QR Code carte de visite</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Page admin privée</div>
+  </div>
+</div>
+
+<div class="t-sec">⚽ Coach IA — Clubs sportifs</div>
+
+<div class="tcard">
+  <div class="tcard-top"><div><div class="tcard-name">Solo</div><div class="tcard-sub">1 coach — séances, schémas, prépa physique</div></div><div class="tcard-badge">1 coach</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">Mensuel</div><div class="tpval">9&#8364;</div><div class="tpunit">/ mois</div></div>
-    <div class="tpx"><div class="tplbl">Annuel</div><div class="tpval">90&#8364;</div><div class="tpunit">/ an</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">50€</div><div class="tpunit">/ an</div></div>
   </div>
 </div>
 
 <div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Club</div><div class="tcard-sub">Jusqu a 10 coachs connectes</div></div><div class="tcard-badge">10 coachs</div></div>
+  <div class="tcard-top"><div><div class="tcard-name">Mini Club</div><div class="tcard-sub">Jusqu'à 5 coachs connectés</div></div><div class="tcard-badge">5 coachs</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">Mensuel</div><div class="tpval">15&#8364;</div><div class="tpunit">/ mois</div></div>
-    <div class="tpx"><div class="tplbl">Annuel</div><div class="tpval">150&#8364;</div><div class="tpunit">/ an</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">90€</div><div class="tpunit">/ an</div></div>
   </div>
 </div>
 
 <div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Club Pro</div><div class="tcard-sub">Jusqu a 20 coachs connectes</div></div><div class="tcard-badge">20 coachs</div></div>
+  <div class="tcard-top"><div><div class="tcard-name">Club</div><div class="tcard-sub">Jusqu'à 10 coachs connectés</div></div><div class="tcard-badge">10 coachs</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">Mensuel</div><div class="tpval">25&#8364;</div><div class="tpunit">/ mois</div></div>
-    <div class="tpx"><div class="tplbl">Annuel</div><div class="tpval">250&#8364;</div><div class="tpunit">/ an</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">150€</div><div class="tpunit">/ an</div></div>
   </div>
 </div>
 
 <div class="tcard">
-  <div class="tcard-top"><div><div class="tcard-name">Club Max</div><div class="tcard-sub">Coachs illimites — toutes fonctionnalites</div></div><div class="tcard-badge">Illimite</div></div>
+  <div class="tcard-top"><div><div class="tcard-name">Club Pro</div><div class="tcard-sub">Jusqu'à 20 coachs connectés</div></div><div class="tcard-badge">20 coachs</div></div>
   <div class="tprices">
-    <div class="tpx"><div class="tplbl">Mensuel</div><div class="tpval">39&#8364;</div><div class="tpunit">/ mois</div></div>
-    <div class="tpx"><div class="tplbl">Annuel</div><div class="tpval">390&#8364;</div><div class="tpunit">/ an</div></div>
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">250€</div><div class="tpunit">/ an</div></div>
   </div>
 </div>
 
-<div class="t-note">Tous les prix incluent l hebergement, les mises a jour et le support WhatsApp.</div>
+<div class="tcard">
+  <div class="tcard-top"><div><div class="tcard-name">Club Max</div><div class="tcard-sub">Coachs illimités</div></div><div class="tcard-badge">Illimité</div></div>
+  <div class="tprices">
+    <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">390€</div><div class="tpunit">/ an</div></div>
+  </div>
+</div>
 
-<a class="t-wa" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20!%20Je%20voudrais%20en%20savoir%20plus%20sur%20vos%20apps%20IA." target="_blank">&#128241; Nous contacter sur WhatsApp</a>
+<div class="t-note">Hébergement, mises à jour et support WhatsApp inclus dans tous les tarifs.</div>
+<a class="t-wa" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20!%20Je%20voudrais%20en%20savoir%20plus%20sur%20vos%20apps%20IA." target="_blank">📱 Nous contacter sur WhatsApp</a>
 ```
 
   </div>
@@ -416,10 +400,10 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 <div id="overlay" onclick="fermerModal()" style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center">
   <div id="mbox" onclick="event.stopPropagation()" style="background:#111;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)">
     <div id="m-ico" style="font-size:44px;text-align:center;margin-bottom:12px"></div>
-    <div id="m-name" style="font-family:Playfair Display,serif;font-size:22px;font-weight:700;text-align:center;color:#f0ecff;margin-bottom:4px"></div>
+    <div id="m-name" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-align:center;color:#f0ecff;margin-bottom:4px"></div>
     <div id="m-type" style="text-align:center;font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px"></div>
     <div id="m-desc" style="font-size:13px;color:rgba(255,255,255,.55);text-align:center;line-height:1.6;margin-bottom:20px"></div>
-    <a id="m-wa" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px">&#128241; Je veux cette app !</a>
+    <a id="m-wa" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px">📱 Je veux cette app !</a>
     <button onclick="fermerModal()" style="display:block;text-align:center;padding:12px;font-size:14px;color:rgba(255,255,255,.4);cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%">Fermer</button>
   </div>
 </div>
@@ -427,23 +411,23 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
 <script>
 var WA = "33617123910";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es Philomene I.A., l assistante commerciale qui vend des apps IA personnalisees pour les professionnels. Reponds en francais, chaleureuse et concise (3-4 phrases max). TARIFS: Setup 150 euros + 24 euros/mois ou 240 euros/an (2 mois offerts). Pour les clubs sportifs: solo 5 euros/mois, club 15 euros/mois, max 39 euros/mois. Chaque app comprend: chatbot IA, formulaire devis WhatsApp, galerie photos, tarifs, QR code. Exemples de clients: Maka Tattoo (tatoueur), Jo Deco (peintre), Coach IA (football). Pour toute demande de devis orienter vers l onglet Devis ou WhatsApp.";
+var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. Reponds en francais, chaleureuse et concise (3-4 phrases max). TARIFS: 490 euros la premiere annee tout compris (creation + configuration + 1 an d'hebergement). Puis 340 euros par an pour le renouvellement. Pour les clubs sportifs: solo 50 euros/an, mini club 90 euros/an, club 150 euros/an, club pro 250 euros/an, club max 390 euros/an. Chaque app comprend: chatbot IA, formulaire devis WhatsApp, galerie photos, tarifs, QR code, page admin. Exemples: Maka Tattoo (tatoueur), Jo Deco (peintre), Coach IA (football). Pour toute demande orienter vers l'onglet Devis ou WhatsApp.";
 var busy = false;
 
 var APPS = [
-  {ico:"&#128148;", name:"Maka Tattoo", type:"Tatouage - Belgique", desc:"App complete pour tatoueur avec chatbot specialise, galerie flashs cliquable, formulaire devis et tarifs complets.", wa:"Je suis interesse par une app comme Maka Tattoo pour mon salon de tatouage !"},
-  {ico:"&#127912;", name:"Jo Deco", type:"Peintre-decorateur - France", desc:"App pour artisan avec chatbot devis, analyse photo IA des chantiers, estimation materiaux et gestion urgences.", wa:"Je suis interesse par une app comme Jo Deco pour mon activite artisanale !"},
-  {ico:"&#9917;", name:"Coach IA Football", type:"Club sportif - Belgique", desc:"App pour club avec generateur de seances, schemas d exercices automatiques et preparation physique par categorie.", wa:"Je suis interesse par une app Coach IA pour mon club sportif !"},
-  {ico:"&#9986;", name:"Salon Beaute", type:"Coiffeur / Estheticienne", desc:"App pour salon avec chatbot RDV, galerie avant/apres, formulaire devis beaute et QR code carte de visite.", wa:"Je suis interesse par une app pour mon salon de beaute !"}
+  {ico:"🖤", name:"Maka Tattoo", type:"Tatouage — Belgique", desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis IA avec calcul au tarif horaire, et admin pour gérer ses flashs.", wa:"Je suis intéressé par une app comme Maka Tattoo pour mon salon de tatouage !"},
+  {ico:"🎨", name:"Jo Déco", type:"Peintre-décorateur — France", desc:"App pour artisan avec chatbot expert bâtiment, devis IA avec analyse photo chantier, galerie avant/après et admin pour gérer les réalisations.", wa:"Je suis intéressé par une app comme Jo Déco pour mon activité artisanale !"},
+  {ico:"⚽", name:"Coach IA Football", type:"Club sportif — Belgique", desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.", wa:"Je suis intéressé par une app Coach IA pour mon club sportif !"},
+  {ico:"✂️", name:"Salon Beauté", type:"Coiffeur / Esthéticienne", desc:"App pour salon avec chatbot RDV, galerie avant/après, formulaire devis beauté et QR code carte de visite.", wa:"Je suis intéressé par une app pour mon salon de beauté !"}
 ];
 
 var SOUS_METIERS = {
   artisan: ["Plombier","Electricien","Menuisier / Charpentier","Peintre / Carreleur","Chauffagiste","Multi-services","Autre artisan"],
-  beaute: ["Tatoueur / Piercing","Coiffeur","Estheticienne","Nail artist","Barbier","Autre beaute"],
-  sport: ["Football","Basketball / Handball","Boxe / Arts martiaux","Tennis / Padel","Natation / Athletisme","Fitness / Coach perso","Autre sport"],
-  sante: ["Kinesitherapeute","Infirmiere liberale","Osteopathe","Naturopathe","Autre sante"],
-  commerce: ["Boutique vetements","Fleuriste","Boulangerie / Patisserie","Restaurant","Autre commerce"],
-  autre: ["Consultant","Photographe","Formateur","Autre activite"]
+  beaute: ["Tatoueur / Piercing","Coiffeur","Esthéticienne","Nail artist","Barbier","Autre beauté"],
+  sport: ["Football","Basketball / Handball","Boxe / Arts martiaux","Tennis / Padel","Natation / Athlétisme","Fitness / Coach perso","Autre sport"],
+  sante: ["Kinésithérapeute","Infirmière libérale","Ostéopathe","Naturopathe","Autre santé"],
+  commerce: ["Boutique vêtements","Fleuriste","Boulangerie / Pâtisserie","Restaurant","Autre commerce"],
+  autre: ["Consultant","Photographe","Formateur","Autre activité"]
 };
 
 function updateSousMetier() {
@@ -452,8 +436,8 @@ function updateSousMetier() {
   var sel = document.getElementById("df-sous");
   if (!metier) { block.style.display = "none"; return; }
   var options = SOUS_METIERS[metier] || [];
-  sel.innerHTML = '<option value="">Selectionnez...</option>';
-  options.forEach(function(o) {
+  sel.innerHTML = '<option value="">Sélectionnez...</option>';
+  options.forEach(function(o){
     var opt = document.createElement("option");
     opt.value = o; opt.textContent = o;
     sel.appendChild(opt);
@@ -463,7 +447,7 @@ function updateSousMetier() {
 
 function ouvrirApp(i) {
   var a = APPS[i];
-  document.getElementById("m-ico").innerHTML = a.ico;
+  document.getElementById("m-ico").textContent = a.ico;
   document.getElementById("m-name").textContent = a.name;
   document.getElementById("m-type").textContent = a.type;
   document.getElementById("m-desc").textContent = a.desc;
@@ -476,14 +460,14 @@ function fermerModal() {
 }
 
 function showTab(btn, n) {
-  document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active"); });
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
   document.getElementById("page-" + n).classList.add("active");
   btn.classList.add("active");
 }
 
 function scrollChat() {
-  setTimeout(function() {
+  setTimeout(function(){
     var c = document.getElementById("page-chat");
     c.scrollTop = c.scrollHeight;
   }, 80);
@@ -496,9 +480,9 @@ function addBot(txt, withQ) {
   var bub = document.createElement("div"); bub.className = "bub bot"; bub.textContent = txt;
   if (withQ) {
     var qw = document.createElement("div"); qw.className = "qbtns";
-    withQ.forEach(function(it) {
+    withQ.forEach(function(it){
       var b = document.createElement("button"); b.className = "qb"; b.textContent = it[0];
-      (function(m) { b.onclick = function() { send(m); }; })(it[1]);
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
       qw.appendChild(b);
     });
     bub.appendChild(qw);
@@ -526,8 +510,8 @@ function setTyping(on) {
 
 function send(txt) {
   if (!txt || busy) return;
-  document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active"); });
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
   document.getElementById("page-chat").classList.add("active");
   document.querySelector(".tab").classList.add("active");
   addUser(txt); busy = true; setTyping(true);
@@ -535,9 +519,10 @@ function send(txt) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: txt, userId: "vitrine_ui", systemPrompt: SYS })
-  }).then(function(r) { return r.json(); }).then(function(d) {
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
     setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Je suis la pour vous aider !";
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
     var msgs = document.getElementById("messages");
     var row = document.createElement("div"); row.className = "mrow bot";
     var av = document.createElement("div"); av.className = "bav"; av.textContent = "✨";
@@ -551,9 +536,9 @@ function send(txt) {
     }
     row.appendChild(av); row.appendChild(bub); msgs.appendChild(row); scrollChat();
     busy = false;
-  }).catch(function() {
+  }).catch(function(){
     setTyping(false);
-    addBot("Erreur de connexion, reessayez.");
+    addBot("Erreur de connexion, réessayez.");
     busy = false;
   });
 }
@@ -564,34 +549,34 @@ function sendMsg() {
   inp.value = ""; send(txt);
 }
 
-document.getElementById("inp").addEventListener("keydown", function(e) {
+document.getElementById("inp").addEventListener("keydown", function(e){
   if (e.key === "Enter") sendMsg();
 });
 
 function genDevisPhilo() {
   var metier = document.getElementById("df-metier").value;
   var sous = document.getElementById("df-sous").value;
-  var besoins = Array.from(document.querySelectorAll("#besoins-grid .sz.sel")).map(function(e) { return e.childNodes[0].textContent.trim(); }).join(", ");
-  var couleurs = Array.from(document.querySelectorAll(".col-btn.sel")).map(function(e) { return e.childNodes[1].textContent.trim(); }).join(", ");
+  var couleurs = Array.from(document.querySelectorAll(".col-btn.sel")).map(function(e){ return e.childNodes[1].textContent.trim(); }).join(", ");
   var info = document.getElementById("df-info").value.trim();
-  if (!metier) { alert("Selectionnez votre metier"); return; }
+  if (!metier) { alert("Sélectionnez votre métier"); return; }
   var msg = "Bonjour Philomene ! Je voudrais un devis pour une app IA.\n\n";
-  msg += "Metier : " + metier; if (sous) msg += " - " + sous; msg += "\n";
-  if (besoins) msg += "Besoins : " + besoins + "\n";
+  msg += "Métier : " + metier;
+  if (sous) msg += " — " + sous;
+  msg += "\n";
   if (couleurs) msg += "Couleurs : " + couleurs + "\n";
   if (info) msg += "Info : " + info + "\n";
   window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
 }
 
-setTimeout(function() {
+setTimeout(function(){
   document.getElementById("splash").classList.add("gone");
-  setTimeout(function() {
+  setTimeout(function(){
     document.getElementById("splash").style.display = "none";
-    addBot("Bonjour ! Je suis Philomene.\n\nJe cree des apps IA personnalisees pour les professionnels — chatbot, devis, galerie, tarifs et QR code — a partir de 150 euros.", [
+    addBot("Bonjour ! Je suis Philomène.\n\nJe crée des apps IA personnalisées pour les professionnels — 490€ la première année tout compris, puis 340€/an.", [
       ["Voir les tarifs", "Quels sont vos tarifs ?"],
-      ["Voir des exemples", "Montrez-moi des exemples d apps"],
-      ["Obtenir un devis", "Je veux un devis pour mon activite"],
-      ["Comment ca marche", "Comment fonctionne votre service ?"]
+      ["Voir des exemples", "Montrez-moi des exemples d'apps"],
+      ["Obtenir un devis", "Je veux un devis pour mon activité"],
+      ["Comment ça marche", "Comment fonctionne votre service ?"]
     ]);
   }, 900);
 }, 2500);
