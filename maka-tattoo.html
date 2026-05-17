@@ -539,7 +539,8 @@ function genDevis() {
     // Bouton WhatsApp
     var wa = document.createElement("a");
     wa.className = "wa-bubble";
-    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
+    var waMsgFinal = waMsg + "\n\n💬 Devis estimé par l'IA :\n" + ans;
+    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsgFinal);
     wa.target = "_blank";
     wa.textContent = "✅ Confirmer avec Marie sur WhatsApp";
     bub.appendChild(wa);
