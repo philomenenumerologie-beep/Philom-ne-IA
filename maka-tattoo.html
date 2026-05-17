@@ -573,12 +573,13 @@ function genDevis() {
     reader.readAsDataURL(photoFile);
   } else {
     // Sans photo — devis estimatif texte
-    var resume = "Le client demande un devis pour un tatouage :";
-    if (style) resume += "\n- Style : " + style;
-    if (desc) resume += "\n- Description : " + desc;
-    if (size) resume += "\n- Taille : " + size;
-    if (ems) resume += "\n- Emplacement : " + ems;
-    resume += "\n\nFais un devis estimatif précis avec le prix, la durée de séance estimée, et un conseil court. Termine en disant que Marie peut confirmer sur WhatsApp.";
+    var resume = "Le client demande un devis pour un tatouage :\n";
+    if (style) resume += "- Style : " + style + "\n";
+    if (desc) resume += "- Description : " + desc + "\n";
+    if (size) resume += "- Taille : " + size + "\n";
+    if (ems) resume += "- Emplacement : " + ems + "\n";
+    resume += "\nMarie facture 110€/heure. Temps selon taille : Micro 3-4cm: ~60€ / Mini 4-7cm: ~80-110€ / Petit 7-10cm: ~110-165€ / Simple 10cm: ~165-220€ / Elaboré 15cm: ~220-330€ / Grand 15cm+: ~330-440€\n";
+    resume += "\nTu DOIS donner un prix en euros, arrondi vers le haut. 2-3 phrases max, pas de liste. Donne durée et prix. Termine en disant que Marie confirme sur WhatsApp.";
     fetch(API + "/maka", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
