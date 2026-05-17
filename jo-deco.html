@@ -419,12 +419,65 @@ function genDevis() {
   var desc = document.getElementById("df-desc").value.trim();
   var surface = document.getElementById("df-surface").value.trim();
   if (!type && !desc) { alert("Décrivez votre projet avant d'envoyer."); return; }
-  var msg = "Bonjour Jo ! Je voudrais un devis gratuit.\n\n";
-  if (type) msg += "Travaux : " + type + "\n";
-  if (desc) msg += "Description : " + desc + "\n";
-  if (surface) msg += "Surface : " + surface + "\n";
-  msg += "\n(Photos à suivre si besoin)";
-  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+
+  // Message pour l'IA
+  var resume = "Le client demande un devis pour des travaux :";
+  if (type) resume += "\n- Type : " + type;
+  if (desc) resume += "\n- Description : " + desc;
+  if (surface) resume += "\n- Surface : " + surface;
+  resume += "\n\nFais un devis estimatif précis comme un vrai artisan : prix au m² ou forfait, durée estimée des travaux, matériaux recommandés. Reste court et direct. Termine en disant que Jo peut venir voir gratuitement pour confirmer.";
+
+  // Message WhatsApp pour confirmer
+  var waMsg = "Bonjour Jo ! Je voudrais un devis gratuit.\n\n";
+  if (type) waMsg += "Travaux : " + type + "\n";
+  if (desc) waMsg += "Description : " + desc + "\n";
+  if (surface) waMsg += "Surface : " + surface + "\n";
+  waMsg += "\n(Photos à suivre si besoin)";
+
+  // Basculer sur le chat
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+
+  addUser("Je voudrais un devis pour : " + (type || desc) + (surface ? ", " + surface : ""));
+  busy = true;
+  setTyping(true);
+
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: resume, userId: userId, systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Contactez Jo pour un devis précis.";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var av = document.createElement("div");
+    av.className = "bav";
+    av.textContent = "🎨";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    // Bouton WhatsApp pour confirmer
+    var wa = document.createElement("a");
+    wa.style.cssText = "display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:700;font-size:13px;margin-top:10px;font-family:Jost,sans-serif";
+    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
+    wa.target = "_blank";
+    wa.textContent = "✅ Confirmer avec Jo sur WhatsApp";
+    bub.appendChild(wa);
+    row.appendChild(av);
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+    busy = false;
+  });
 }
 
 function loadGalerie() {
