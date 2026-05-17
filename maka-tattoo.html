@@ -503,21 +503,13 @@ function genDevis() {
   var ems = Array.from(document.querySelectorAll(".em.sel")).map(function(e){ return e.textContent; }).join(", ");
   if (!style && !desc && !size) { alert("Remplissez au moins le style ou la description"); return; }
 
-  // Construire le résumé pour l'IA
-  var resume = "Le client demande un devis pour un tatouage :";
-  if (style) resume += "\n- Style : " + style;
-  if (desc) resume += "\n- Description : " + desc;
-  if (size) resume += "\n- Taille : " + size;
-  if (ems) resume += "\n- Emplacement : " + ems;
-  resume += "\n\nFais un devis estimatif précis avec le prix, la durée de séance estimée, et un conseil court. Termine en disant que Marie peut confirmer sur WhatsApp.";
-
-  // Construire le message WhatsApp pour plus tard
+  // Message WhatsApp
   var waMsg = "Bonjour Maka ! Je voudrais un devis.\n\n";
   if (style) waMsg += "Style : " + style + "\n";
   if (desc) waMsg += "Description : " + desc + "\n";
   if (size) waMsg += "Taille : " + size + "\n";
   if (ems) waMsg += "Emplacement : " + ems + "\n";
-  waMsg += "\n(Photo de référence à suivre si besoin)";
+  waMsg += "\n(Photo de référence à suivre dans ce chat)";
 
   // Basculer sur le chat
   document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
@@ -529,21 +521,22 @@ function genDevis() {
   busy = true;
   setTyping(true);
 
-  fetch(API + "/maka", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: resume, userId: "maka_devis", systemPrompt: SYS })
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
+  var photoFile = document.getElementById("df-photo").files[0];
+
+  function afficherDevis(ans) {
     setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Contactez Marie pour un devis précis.";
     var msgs = document.getElementById("messages");
     var row = document.createElement("div");
     row.className = "mrow bot";
     var bub = document.createElement("div");
     bub.className = "bub bot";
     bub.textContent = ans;
-    // Bouton WhatsApp pour confirmer
+    // Note photo
+    var note = document.createElement("div");
+    note.style.cssText = "margin-top:10px;font-size:12px;color:#888;font-style:italic";
+    note.textContent = "📸 N'oubliez pas d'envoyer votre photo de référence directement dans le chat WhatsApp.";
+    bub.appendChild(note);
+    // Bouton WhatsApp
     var wa = document.createElement("a");
     wa.className = "wa-bubble";
     wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
@@ -555,11 +548,48 @@ function genDevis() {
     msgs.appendChild(row);
     scrollChat();
     busy = false;
-  }).catch(function(){
-    setTyping(false);
-    addBot("Erreur de connexion, réessayez.");
-    busy = false;
-  });
+  }
+
+  if (photoFile) {
+    // Avec photo — on envoie à analyze-image
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var base64 = e.target.result;
+      var prompt = "Voici une photo de référence pour un tatouage. Style demandé : " + (style || "non précisé") + ". Description : " + (desc || "non précisée") + ". Taille : " + (size || "non précisée") + ". Emplacement : " + (ems || "non précisé") + ". Analyse la photo et fais un devis estimatif précis avec le prix et la durée de séance. Sois courte et directe comme Marie le ferait.";
+      var formData = new FormData();
+      formData.append("image", photoFile);
+      formData.append("prompt", prompt);
+      formData.append("userId", "maka_devis");
+      fetch(API + "/analyze-image", {
+        method: "POST",
+        body: formData
+      }).then(function(r){ return r.json(); })
+      .then(function(d){
+        afficherDevis(d.answer || "Contactez Marie pour un devis précis.");
+      }).catch(function(){
+        afficherDevis("Contactez Marie pour un devis précis.");
+      });
+    };
+    reader.readAsDataURL(photoFile);
+  } else {
+    // Sans photo — devis estimatif texte
+    var resume = "Le client demande un devis pour un tatouage :";
+    if (style) resume += "\n- Style : " + style;
+    if (desc) resume += "\n- Description : " + desc;
+    if (size) resume += "\n- Taille : " + size;
+    if (ems) resume += "\n- Emplacement : " + ems;
+    resume += "\n\nFais un devis estimatif précis avec le prix, la durée de séance estimée, et un conseil court. Termine en disant que Marie peut confirmer sur WhatsApp.";
+    fetch(API + "/maka", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: resume, userId: "maka_devis", systemPrompt: SYS })
+    }).then(function(r){ return r.json(); })
+    .then(function(d){
+      afficherDevis(d.answer || "Contactez Marie pour un devis précis.");
+    }).catch(function(){
+      afficherDevis("Contactez Marie pour un devis précis.");
+    });
+  }
 }
 
 // FLASHS — charge depuis /memory/maka_flashs
