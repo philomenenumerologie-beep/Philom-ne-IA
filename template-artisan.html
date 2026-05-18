@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Artisan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#f5f0e8;font-family:Jost,sans-serif;color:#1a1a1a}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* COULEURS — à personnaliser selon le client */
+:root {
+  --primary: #2c4a6e;
+  --primary2: #3a5f8a;
+  --bg: #f5f0e8;
+  --bg2: #ede8df;
+  --text: #1a1a1a;
+  --dim: #6b7280;
+  --border: rgba(44,74,110,.18);
+}
+
+#splash{position:fixed;inset:0;z-index:500;background:var(--primary);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:110px;height:110px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both;font-size:52px}
+.sp-name{font-family:'Playfair Display',serif;font-size:34px;color:var(--bg);letter-spacing:.1em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(245,240,232,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:var(--primary);padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(245,240,232,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--bg);letter-spacing:.04em}
+.tb-sub{font-size:10px;color:rgba(245,240,232,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+#tabs{background:var(--primary);display:flex;border-bottom:1px solid rgba(245,240,232,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.35);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:var(--bg);border-bottom-color:var(--bg)}
+
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* CHAT */
+#page-chat{background:var(--bg)}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:16px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:var(--text);border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.bub.user{background:var(--primary);color:var(--bg);border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid var(--primary);background:transparent;color:var(--primary);font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:var(--bg);border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid var(--border);background:#fff;font-size:15px;font-family:Jost,sans-serif;outline:none;color:var(--text)}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:var(--primary)}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:var(--primary);color:var(--bg);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+
+/* DEVIS */
+#page-devis{background:var(--bg);padding:20px 15px 36px;gap:14px}
+.df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text)}
+.df-title em{font-style:italic;color:#999;font-size:.7em;display:block}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+.df-select,.df-textarea,.df-input{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-family:Jost,sans-serif;color:var(--text);outline:none;-webkit-appearance:none}
+.df-textarea{resize:none;height:88px}
+.photo-zone{border:2px dashed rgba(44,74,110,.25);border-radius:13px;padding:20px;text-align:center;background:#fff;cursor:pointer}
+.pz-icon{font-size:30px;margin-bottom:8px}
+.photo-zone strong{color:var(--text);font-size:14px;display:block;margin-bottom:3px}
+.photo-zone p{font-size:12px;color:#aaa}
+#prev{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;justify-content:center}
+#prev img{width:70px;height:70px;object-fit:cover;border-radius:10px}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
+
+/* DEVIS CARD */
+.devis-card{background:#f9f7f2;border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-top:10px;width:100%}
+.devis-card-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.devis-section{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px}
+.devis-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text);padding:3px 0;border-bottom:1px solid rgba(44,74,110,.06)}
+.devis-line:last-child{border-bottom:none}
+.devis-line-label{flex:1;color:#444}
+.devis-line-price{font-weight:700;color:var(--text);margin-left:10px;white-space:nowrap}
+.devis-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--border)}
+.devis-total-label{font-weight:700;font-size:14px;color:var(--text)}
+.devis-total-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--primary)}
+
+/* TARIFS */
+#page-tarifs{background:var(--bg);padding:20px 15px 32px}
+.t-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px;color:var(--text)}
+.t-h em{font-style:italic;color:#999;font-size:.72em;display:block}
+.t-intro{font-size:13px;color:var(--dim);line-height:1.5;margin-bottom:18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.tcard{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
+.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text)}
+.tcard-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.tcard-badge{background:var(--primary);color:#fff;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tprices{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.tpx{background:var(--bg2);border-radius:9px;padding:8px 4px;text-align:center}
+.tplbl{font-size:9px;color:var(--dim);font-weight:500;margin-bottom:3px}
+.tpval{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text)}
+
+/* CONTACT */
+#page-contact{background:var(--bg);padding:20px 15px 32px}
+.c-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
+.c-h em{font-style:italic;color:#999;font-size:.7em;display:block}
+.c-sub{font-size:13px;color:var(--dim);margin-top:6px;margin-bottom:20px}
+.c-card{background:#fff;border-radius:16px;padding:18px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.c-item{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(44,74,110,.06)}
+.c-item:last-child{border-bottom:none}
+.c-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.c-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:3px}
+.c-val{font-size:14px;color:var(--text);font-weight:500}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">🔧</div>
+  <div class="sp-name">ARTISAN PRO</div>
+  <div class="sp-sub">Artisan &middot; Disponible 24h/24</div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🔧</div>
+    <div>
+      <div class="tb-name">Artisan Pro</div>
+      <div class="tb-sub">Assistant IA &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+    <button class="tab" onclick="showTab(this,'contact')"><span>📞</span>Contact</button>
+  </div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVIS -->
+  <div id="page-devis" class="page">
+    <div class="df-title">Devis gratuit<em>Votre projet en quelques clics</em></div>
+    <div>
+      <div class="lbl">Type de travaux</div>
+      <select class="df-select" id="df-type">
+        <option value="">Sélectionnez...</option>
+        <option>Plomberie — fuite, installation, remplacement</option>
+        <option>Électricité — tableau, prises, éclairage</option>
+        <option>Maçonnerie — mur, dalle, enduit</option>
+        <option>Menuiserie — porte, fenêtre, parquet</option>
+        <option>Carrelage — pose, dépose, joints</option>
+        <option>Chauffage — chaudière, radiateurs</option>
+        <option>Peinture — intérieure ou extérieure</option>
+        <option>Rénovation complète</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <div>
+      <div class="lbl">Description du projet</div>
+      <textarea class="df-textarea" id="df-desc" placeholder="Ex: Fuite sous l'évier de cuisine, tuyau percé..."></textarea>
+    </div>
+    <div>
+      <div class="lbl">Surface / Quantité</div>
+      <input class="df-input" id="df-surface" type="text" placeholder="Ex: 15m², 3 radiateurs, 10ml de tuyaux..."/>
+    </div>
+    <div>
+      <div class="lbl">Photo du problème (optionnel)</div>
+      <div class="photo-zone" onclick="document.getElementById('df-photo').click()">
+        <div class="pz-icon">📸</div>
+        <strong>Ajouter une photo</strong>
+        <p>Aide à mieux estimer les travaux</p>
+        <div id="prev"></div>
+      </div>
+      <input type="file" id="df-photo" accept="image/*" style="display:none" onchange="prevPhotos(this)"/>
+    </div>
+    <button class="df-btn" onclick="genDevis()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Générer mon devis IA
+    </button>
+  </div>
+
+  <!-- TARIFS -->
+  <div id="page-tarifs" class="page">
+    <div class="t-h">Tarifs<em>transparents et sans surprise</em></div>
+    <div class="t-intro">Devis gratuit et sans engagement. Déplacement offert dans un rayon de XX km.</div>
+    <div class="t-sec">Interventions</div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Petite intervention</div><div class="tcard-sub">Moins de 2 heures</div></div>
+        <div class="tcard-badge">forfait</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">À partir de</div><div class="tpval">XX€</div></div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Demi-journée</div><div class="tcard-sub">Environ 4 heures</div></div>
+        <div class="tcard-badge">forfait</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">À partir de</div><div class="tpval">XX€</div></div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name">Journée complète</div><div class="tcard-sub">8 heures sur chantier</div></div>
+        <div class="tcard-badge">forfait</div>
+      </div>
+      <div class="tprices">
+        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">À partir de</div><div class="tpval">XX€</div></div>
+      </div>
+    </div>
+    <a class="wa-btn" href="https://wa.me/33600000000?text=Bonjour%20!%20Je%20voudrais%20un%20devis%20gratuit." target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Devis gratuit sur WhatsApp
+    </a>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="page-contact" class="page">
+    <div class="c-h">Contact<em>on se parle directement</em></div>
+    <div class="c-sub">Disponible du lundi au vendredi 🔧</div>
+    <div class="c-card">
+      <div class="c-item">
+        <div class="c-icon">📍</div>
+        <div><div class="c-label">Zone d'intervention</div><div class="c-val">À renseigner</div></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">🕐</div>
+        <div><div class="c-label">Horaires</div><div class="c-val">À renseigner</div></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">📱</div>
+        <div><div class="c-label">Téléphone</div><div class="c-val">À renseigner</div></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">✉️</div>
+        <div><div class="c-label">Email</div><div class="c-val">À renseigner</div></div>
+      </div>
+    </div>
+    <a class="wa-btn" href="https://wa.me/33600000000?text=Bonjour%20!%20Je%20voudrais%20un%20devis%20gratuit." target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Nous contacter sur WhatsApp
+    </a>
+  </div>
+
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var WA = "33600000000"; // ← À remplacer par le vrai numéro
+
+// SYSTEM PROMPT — à personnaliser selon le métier
+var SYS = "Tu es l'assistant de [NOM ARTISAN], artisan [METIER] avec [X] ans d'expérience. Tu parles EN SON NOM, directement et simplement.\n\nRÈGLES :\n- Jamais de liste à puces, jamais de guide\n- Réponses courtes : 2 à 4 phrases\n- Toujours finir par proposer un devis gratuit ou une visite\n- Parle comme un artisan de terrain\n\nTu interviens dans : [ZONE D'INTERVENTION]\nTu fais : [LISTE DES PRESTATIONS]";
+
+// SYSTEM PROMPT DEVIS — génère du JSON structuré
+var SYS_DEVIS = "Tu es un artisan expert. Le client demande un devis. Réponds UNIQUEMENT en JSON valide avec ce format :\n{\"titre\":\"DEVIS [TYPE TRAVAUX] — [SURFACE/QUANTITE]\",\"materiaux\":[{\"label\":\"Nom matériau\",\"detail\":\"quantité\",\"prix\":\"XX€\"}],\"maindoeuvre\":[{\"label\":\"Type intervention\",\"detail\":\"durée\",\"prix\":\"XX€\"}],\"total\":\"XXX€\",\"duree\":\"X à X jours\"}\nPrix marché français, arrondi vers le haut. Réponds UNIQUEMENT avec le JSON.";
+
+var busy = false;
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🔧";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    withQ.forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(av);
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🔧";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(av);
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function afficherDevisCard(data, waMsg) {
+  setTyping(false);
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🔧";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.style.maxWidth = "min(92%,380px)";
+
+  var card = document.createElement("div");
+  card.className = "devis-card";
+
+  var cardTitle = document.createElement("div");
+  cardTitle.className = "devis-card-title";
+  cardTitle.textContent = "🔧 " + (data.titre || "DEVIS ESTIMATIF");
+  card.appendChild(cardTitle);
+
+  if (data.materiaux && data.materiaux.length > 0) {
+    var secMat = document.createElement("div");
+    secMat.className = "devis-section";
+    secMat.textContent = "MATÉRIAUX";
+    card.appendChild(secMat);
+    data.materiaux.forEach(function(m){
+      var line = document.createElement("div");
+      line.className = "devis-line";
+      var label = document.createElement("div");
+      label.className = "devis-line-label";
+      label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+      var price = document.createElement("div");
+      price.className = "devis-line-price";
+      price.textContent = m.prix;
+      line.appendChild(label);
+      line.appendChild(price);
+      card.appendChild(line);
+    });
+  }
+
+  if (data.maindoeuvre && data.maindoeuvre.length > 0) {
+    var secMO = document.createElement("div");
+    secMO.className = "devis-section";
+    secMO.textContent = "MAIN D'ŒUVRE";
+    card.appendChild(secMO);
+    data.maindoeuvre.forEach(function(m){
+      var line = document.createElement("div");
+      line.className = "devis-line";
+      var label = document.createElement("div");
+      label.className = "devis-line-label";
+      label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+      var price = document.createElement("div");
+      price.className = "devis-line-price";
+      price.textContent = m.prix;
+      line.appendChild(label);
+      line.appendChild(price);
+      card.appendChild(line);
+    });
+  }
+
+  var total = document.createElement("div");
+  total.className = "devis-total";
+  var totalLabel = document.createElement("div");
+  totalLabel.className = "devis-total-label";
+  totalLabel.textContent = data.duree ? "Total estimé (" + data.duree + ")" : "Total estimé";
+  var totalPrice = document.createElement("div");
+  totalPrice.className = "devis-total-price";
+  totalPrice.textContent = data.total || "Sur devis";
+  total.appendChild(totalLabel);
+  total.appendChild(totalPrice);
+  card.appendChild(total);
+  bub.appendChild(card);
+
+  var note = document.createElement("div");
+  note.style.cssText = "margin-top:8px;font-size:12px;color:#888;font-style:italic";
+  note.textContent = "Devis estimatif — visite gratuite pour confirmer.";
+  bub.appendChild(note);
+
+  var waMsgFinal = waMsg + "\n\n💬 Devis estimé : " + (data.titre || "") + " — Total : " + (data.total || "à confirmer");
+  var wa = document.createElement("a");
+  wa.style.cssText = "display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:700;font-size:13px;margin-top:10px;font-family:Jost,sans-serif";
+  wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsgFinal);
+  wa.target = "_blank";
+  wa.textContent = "✅ Confirmer sur WhatsApp";
+  bub.appendChild(wa);
+
+  row.appendChild(av);
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+  busy = false;
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "artisan_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var av = document.createElement("div");
+    av.className = "bav";
+    av.textContent = "🔧";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    if (low.indexOf("devis") >= 0 || low.indexOf("prix") >= 0 || low.indexOf("rdv") >= 0) {
+      var wa = document.createElement("a");
+      wa.style.cssText = "display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:700;font-size:13px;margin-top:10px;font-family:Jost,sans-serif";
+      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je voudrais un devis gratuit.");
+      wa.target = "_blank";
+      wa.textContent = "📱 Nous contacter sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(av);
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+function prevPhotos(input) {
+  var prev = document.getElementById("prev");
+  prev.innerHTML = "";
+  Array.from(input.files).forEach(function(f){
+    var img = document.createElement("img");
+    img.src = URL.createObjectURL(f);
+    prev.appendChild(img);
+  });
+}
+
+function genDevis() {
+  var type = document.getElementById("df-type").value;
+  var desc = document.getElementById("df-desc").value.trim();
+  var surface = document.getElementById("df-surface").value.trim();
+  if (!type && !desc) { alert("Décrivez votre projet avant de générer le devis."); return; }
+
+  var waMsg = "Bonjour ! Je voudrais un devis gratuit.\n\n";
+  if (type) waMsg += "Travaux : " + type + "\n";
+  if (desc) waMsg += "Description : " + desc + "\n";
+  if (surface) waMsg += "Quantité : " + surface + "\n";
+
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+
+  addUser("Devis pour : " + (type || desc) + (surface ? " — " + surface : ""));
+  busy = true;
+  setTyping(true);
+
+  var resume = "Génère un devis pour ces travaux :\n";
+  if (type) resume += "- Type : " + type + "\n";
+  if (desc) resume += "- Description : " + desc + "\n";
+  if (surface) resume += "- Quantité/surface : " + surface + "\n";
+  resume += "Inclus matériaux et main d'oeuvre. Prix marché français, arrondi vers le haut.";
+
+  var photoFile = document.getElementById("df-photo").files[0];
+
+  function demanderDevisIA(promptFinal) {
+    fetch(API + "/vitrine", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: promptFinal, userId: "artisan_devis_" + Date.now(), systemPrompt: SYS_DEVIS })
+    }).then(function(r){ return r.json(); })
+    .then(function(d){
+      try {
+        var raw = (d && d.answer) ? d.answer : "{}";
+        var clean = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+        var data = JSON.parse(clean);
+        afficherDevisCard(data, waMsg);
+      } catch(e) {
+        setTyping(false);
+        addBot("Je vais passer voir votre chantier pour vous faire un devis précis. Contactez-moi sur WhatsApp !");
+        busy = false;
+      }
+    }).catch(function(){
+      setTyping(false);
+      addBot("Erreur de connexion, réessayez.");
+      busy = false;
+    });
+  }
+
+  if (photoFile) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var formData = new FormData();
+      formData.append("image", photoFile);
+      formData.append("prompt", "Analyse cette photo et décris le problème pour aider à faire un devis : " + resume);
+      formData.append("userId", "artisan_photo");
+      fetch(API + "/analyze-image", {
+        method: "POST",
+        body: formData
+      }).then(function(r){ return r.json(); })
+      .then(function(d){
+        var analyse = (d && d.answer) ? d.answer : "";
+        demanderDevisIA(resume + "\nAnalyse photo : " + analyse);
+      }).catch(function(){
+        demanderDevisIA(resume);
+      });
+    };
+    reader.readAsDataURL(photoFile);
+  } else {
+    demanderDevisIA(resume);
+  }
+}
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bonjour ! Je suis l'assistant de [NOM ARTISAN].\n\nJe peux répondre à vos questions, vous donner un devis estimatif ou vous mettre en contact directement.", [
+      ["Nos services", "Quels travaux faites-vous ?"],
+      ["Devis gratuit", "Je voudrais un devis gratuit"],
+      ["Délais", "Quels sont vos délais ?"],
+      ["Zone", "Quelle est votre zone d'intervention ?"]
+    ]);
+  }, 900);
+}, 2500);
+</script>
+</body>
+</html>
