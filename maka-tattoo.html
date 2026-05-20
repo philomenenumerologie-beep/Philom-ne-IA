@@ -432,7 +432,7 @@ function send(txt) {
     bub.className = "bub bot";
     bub.textContent = ans;
     var low = txt.toLowerCase();
-    if (low.indexOf("rendez") >= 0 || low.indexOf("rdv") >= 0) {
+    if (low.indexOf("rendez") >= 0 || low.indexOf("rdv") >= 0 || low.indexOf("retouche") >= 0 || low.indexOf("lundi") >= 0 || low.indexOf("vendredi") >= 0 || low.indexOf("mercredi") >= 0 || low.indexOf("organise") >= 0 || low.indexOf("whatsapp") >= 0 || low.indexOf("jour") >= 0) {
       var wa = document.createElement("a");
       wa.className = "wa-bubble";
       wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous");
