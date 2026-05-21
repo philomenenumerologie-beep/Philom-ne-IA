@@ -80,6 +80,17 @@ header{background:#111;border-bottom:1px solid rgba(245,239,228,.1);padding:16px
 
   <div class="content">
     <div class="add-card">
+      <div class="card-title">📢 Message du moment</div>
+      <div style="margin-bottom:14px">
+        <div class="lbl">Votre message (soirée flash, événement...)</div>
+        <textarea class="inp" id="msg-texte" placeholder="Ex: Soirée Flash demain 22 mai de 17h à 22h ! Sans rendez-vous, petit budget 60-80€ 🎉" style="height:100px;resize:none"></textarea>
+      </div>
+      <div class="status" id="msg-status"></div>
+      <button class="add-btn" onclick="saveMessage()">💾 Sauvegarder le message</button>
+      <button class="add-btn" style="margin-top:8px;background:rgba(255,107,107,.2);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)" onclick="deleteMessage()">🗑️ Supprimer le message</button>
+    </div>
+
+    <div class="add-card">
       <div class="card-title">Ajouter un flash</div>
       <div style="margin-bottom:14px">
         <div class="lbl">Nom du flash</div>
@@ -125,6 +136,7 @@ function checkPwd() {
   if (val === PWD) {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('admin-app').classList.add('show');
+    loadMessage();
     loadFlashs();
   } else {
     document.getElementById('login-err').style.display = 'block';
@@ -234,6 +246,41 @@ function deleteFlash(id) {
       });
     })
     .then(function(){ loadFlashs(); });
+}
+
+function saveMessage() {
+  var texte = document.getElementById('msg-texte').value.trim();
+  var s = document.getElementById('msg-status');
+  fetch(API + '/memory/maka_config', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ value: { message: texte } })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    s.textContent = texte ? 'Message sauvegardé ! 🖤' : 'Message supprimé !';
+    s.className = 'status ok';
+    s.style.display = 'block';
+    setTimeout(function(){ s.style.display = 'none'; }, 3000);
+  }).catch(function(){
+    s.textContent = 'Erreur de connexion';
+    s.className = 'status err';
+    s.style.display = 'block';
+  });
+}
+
+function deleteMessage() {
+  document.getElementById('msg-texte').value = '';
+  saveMessage();
+}
+
+function loadMessage() {
+  fetch(API + '/memory/maka_config')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.value && d.value.message) {
+        document.getElementById('msg-texte').value = d.value.message;
+      }
+    }).catch(function(){});
 }
 
 function loadFlashs() {
