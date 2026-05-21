@@ -38,6 +38,12 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
+/* BANNIERE MESSAGE */
+#msg-banniere{display:none;background:#111;color:#EDE0CC;padding:10px 16px;font-size:13px;text-align:center;border-bottom:1px solid rgba(237,224,204,.2);flex-shrink:0;line-height:1.5}
+
+/* BANNIERE */
+#msg-banniere{display:none;background:#111;color:#EDE0CC;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid rgba(237,224,204,.2);flex-shrink:0;line-height:1.5}
+
 /* CHAT */
 #page-chat{background:#EDE0CC}
 #messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
@@ -172,6 +178,12 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
     <button class="tab" onclick="showTab(this,'flashs')"><span>⚡</span>Flashs</button>
     <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
   </div>
+
+  <!-- BANNIERE -->
+  <div id="msg-banniere"></div>
+
+  <!-- BANNIERE MESSAGE DU MOMENT -->
+  <div id="msg-banniere"></div>
 
   <!-- CHAT -->
   <div id="page-chat" class="page active">
@@ -646,6 +658,28 @@ function ouvrirFlash(f) {
 function fermerModal() {
   document.getElementById("overlay").classList.remove("open");
 }
+
+// Charger le message du moment
+fetch(API + "/memory/maka_config")
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.value && d.value.message && d.value.message.trim()) {
+      var b = document.getElementById("msg-banniere");
+      b.textContent = "📢 " + d.value.message;
+      b.style.display = "block";
+    }
+  }).catch(function(){});
+
+// Charger le message du moment
+fetch(API + "/memory/maka_config")
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.value && d.value.message && d.value.message.trim()) {
+      var b = document.getElementById("msg-banniere");
+      b.textContent = "📢 " + d.value.message;
+      b.style.display = "block";
+    }
+  }).catch(function(){});
 
 setTimeout(function(){
   document.getElementById("splash").classList.add("gone");
