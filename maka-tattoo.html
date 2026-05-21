@@ -38,9 +38,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
-/* BANNIERE MESSAGE */
-#msg-banniere{display:none;background:#111;color:#EDE0CC;padding:10px 16px;font-size:13px;text-align:center;border-bottom:1px solid rgba(237,224,204,.2);flex-shrink:0;line-height:1.5}
-
 /* BANNIERE */
 #msg-banniere{display:none;background:#111;color:#EDE0CC;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid rgba(237,224,204,.2);flex-shrink:0;line-height:1.5}
 
@@ -178,9 +175,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
     <button class="tab" onclick="showTab(this,'flashs')"><span>⚡</span>Flashs</button>
     <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
   </div>
-
-  <!-- BANNIERE -->
-  <div id="msg-banniere"></div>
 
   <!-- BANNIERE MESSAGE DU MOMENT -->
   <div id="msg-banniere"></div>
@@ -341,7 +335,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 <script>
 var WA = "32472803127";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise (3-5 phrases max). TARIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. WhatsApp 0472 80 31 27 Instagram @Maka.ink. Pour RDV orienter vers WhatsApp. RETOUCHES - REGLE ABSOLUE: Tu parles EXACTEMENT comme Marie, pas comme un service client. Exemple de bonne reponse: 'Bien sur ! Chez moi chaque tatouage a droit a une retouche gratuite dans les 2 mois qui suivent ta seance. C est pour repasser la ou un trait s est estompe, une couleur n a pas pris comme prevu, ou si un ancien tattoo ressort apres un cover. Par contre c est pas pour modifier le design ou ajouter des details qu on avait oublies hein ! Les retouches se font UNIQUEMENT le premier lundi du mois, de 10h a 20h - c est une journee sans RDV dediee aux retouches. Tu m envoies une photo sur WhatsApp et on organise ca ensemble. Si tu viens pas le jour J tu perds tes retouches par contre. Et si ta peau a vraiment du mal avec l encre et qu il faut repasser, ca peut etre payant selon le travail - je regarde ca au cas par cas.' JAMAIS dire 3 mois, c est 2 mois. JAMAIS parler de facon formelle ou administrative. SOINS: Eviter le soleil absolument. Hydrater le tatouage. Ne pas gratter meme si ca demange. Le soin influence directement le rendu final. Marie se porte garante de son travail pas de l entretien du client.";
+var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise (3-5 phrases max). Tu reponds a toutes les questions comme une vraie assistante tatouage - soins, douleur, styles, retouches, tarifs. Tu n orientes vers WhatsApp QUE pour les RDV, devis et reservations de flash. TARIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. WhatsApp 0472 80 31 27 Instagram @Maka.ink. RETOUCHES (texte officiel de Marie): Apres chaque tatouage, une retouche gratuite est incluse pendant les deux mois suivant la seance. Les retouches ont uniquement pour but de corriger de petits defauts eventuels, tels qu un trait estompe ou une couleur ayant mal cicatrise. Les retouches ne permettent en aucun cas de modifier le modele initial. Les seances de retouche ont lieu uniquement le premier lundi de chaque mois, de 10h a 18h, lors d une journee sans rendez-vous. Les retouches peuvent egalement etre realisees lors d un autre rendez-vous tatouage prevu dans l annee - c est la seule exception a la limite de deux mois. En cas de question envoyer un message via WhatsApp. SOINS: Hydrater le tatouage tous les jours avec une creme adaptee. Eviter le soleil et les bains pendant la cicatrisation (3 semaines). Ne pas gratter meme si ca demange - c est normal. Nettoyer delicatement a l eau tiede les premiers jours. Le soin influence directement le rendu final. DOULEUR: Ca depend de l emplacement - les cotes et les pieds sont plus sensibles, les bras et cuisses moins. Ca ressemble a une eraflure repetee. La plupart des gens le gerent tres bien. STYLES: Marie fait du minimaliste, linework, floral, lettrage, blackwork, geometrique, cover. Son style est doux et feminin.";
 var busy = false;
 
 function showTab(btn, n) {
@@ -443,12 +437,16 @@ function send(txt) {
     var bub = document.createElement("div");
     bub.className = "bub bot";
     bub.textContent = ans;
-    var wa = document.createElement("a");
-    wa.className = "wa-bubble";
-    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous");
-    wa.target = "_blank";
-    wa.textContent = "Contacter Marie sur WhatsApp";
-    bub.appendChild(wa);
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("rdv") >= 0 || low.indexOf("rendez") >= 0 || low.indexOf("reserver") >= 0 || low.indexOf("réserver") >= 0 || low.indexOf("appointment") >= 0;
+    if (needWA) {
+      var wa = document.createElement("a");
+      wa.className = "wa-bubble";
+      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous");
+      wa.target = "_blank";
+      wa.textContent = "Contacter Marie sur WhatsApp";
+      bub.appendChild(wa);
+    }
     row.appendChild(mkAv());
     row.appendChild(bub);
     msgs.appendChild(row);
@@ -658,17 +656,6 @@ function ouvrirFlash(f) {
 function fermerModal() {
   document.getElementById("overlay").classList.remove("open");
 }
-
-// Charger le message du moment
-fetch(API + "/memory/maka_config")
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if (d.value && d.value.message && d.value.message.trim()) {
-      var b = document.getElementById("msg-banniere");
-      b.textContent = "📢 " + d.value.message;
-      b.style.display = "block";
-    }
-  }).catch(function(){});
 
 // Charger le message du moment
 fetch(API + "/memory/maka_config")
