@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -104,18 +103,15 @@ header{background:#111;border-bottom:1px solid rgba(245,239,228,.1);padding:16px
       <button class="add-btn" id="add-btn" onclick="addFlash()">➕ Ajouter ce flash</button>
     </div>
 
-```
-<div class="list-card">
-  <div class="card-title">
-    Mes flashs
-    <span class="count-badge" id="count-badge">0</span>
-  </div>
-  <div class="flash-list" id="flash-list">
-    <div class="loading">Chargement…</div>
-  </div>
-</div>
-```
-
+    <div class="list-card">
+      <div class="card-title">
+        Mes flashs
+        <span class="count-badge" id="count-badge">0</span>
+      </div>
+      <div class="flash-list" id="flash-list">
+        <div class="loading">Chargement…</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -145,14 +141,30 @@ function logout() {
 function handlePhoto(input) {
   var file = input.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { alert('Photo trop grande ! Max 2MB'); return; }
   var reader = new FileReader();
   reader.onload = function(e) {
-    photoBase64 = e.target.result;
-    var prev = document.getElementById('photo-preview');
-    prev.src = photoBase64;
-    prev.style.display = 'block';
-    document.getElementById('upload-zone').style.borderColor = 'rgba(107,203,119,.5)';
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxSize = 800;
+      var w = img.width;
+      var h = img.height;
+      if (w > h) {
+        if (w > maxSize) { h = h * maxSize / w; w = maxSize; }
+      } else {
+        if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+      var prev = document.getElementById('photo-preview');
+      prev.src = photoBase64;
+      prev.style.display = 'block';
+      document.getElementById('upload-zone').style.borderColor = 'rgba(107,203,119,.5)';
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
@@ -266,6 +278,5 @@ function loadFlashs() {
     });
 }
 </script>
-
 </body>
 </html>
