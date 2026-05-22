@@ -241,15 +241,13 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
         <div class="em" onclick="this.classList.toggle('sel')">Autre</div>
       </div>
     </div>
+
     <div>
-      <div class="lbl">Photo (optionnel)</div>
-      <div class="photo-zone" onclick="document.getElementById('df-photo').click()">
-        <div class="pz-icon">📷</div>
-        <strong>Ajouter une photo</strong>
-        <p>Référence ou croquis</p>
-        <div id="prev"></div>
+      <div class="lbl">Couleur</div>
+      <div class="em-wrap">
+        <div class="em" id="col-noir" onclick="selCouleur('noir')">Noir &amp; Gris</div>
+        <div class="em" id="col-couleur" onclick="selCouleur('couleur')">Couleur</div>
       </div>
-      <input type="file" id="df-photo" accept="image/*" multiple style="display:none" onchange="prevPhotos(this)"/>
     </div>
     <button class="df-btn" onclick="genDevis()">📱 Envoyer sur WhatsApp</button>
   </div>
@@ -308,14 +306,17 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
     <div class="fcard">
       <div class="fcard-top"><div class="fcard-name">Forfait 1</div><div class="fcard-price">220€</div></div>
       <div class="fcard-items"><div class="fcard-item">1 micro</div><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div></div>
+      <div class="fcard-gift">🎁 + 1 micro gratuit</div>
     </div>
     <div class="fcard">
       <div class="fcard-top"><div class="fcard-name">Forfait 2</div><div class="fcard-price">280€</div></div>
       <div class="fcard-items"><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div><div class="fcard-item">1 simple</div></div>
+      <div class="fcard-gift">🎁 + 1 micro gratuit</div>
     </div>
     <div class="fcard">
       <div class="fcard-top"><div class="fcard-name">Forfait 3</div><div class="fcard-price">330€</div></div>
       <div class="fcard-items"><div class="fcard-item">1 mini</div><div class="fcard-item">1 petit</div><div class="fcard-item">1 élaboré</div></div>
+      <div class="fcard-gift">🎁 + 1 micro gratuit</div>
     </div>
     <a class="twa" href="https://wa.me/32472803127?text=Bonjour%20Maka%20!" target="_blank">📱 Demander un devis</a>
   </div>
@@ -335,7 +336,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 <script>
 var WA = "32472803127";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise. REGLE ABSOLUE: Tu reponds completement a toutes les questions sans jamais dire d envoyer un message WhatsApp sauf si la personne demande explicitement un RDV ou une reservation. Pour les soins, la douleur, les retouches, les styles - tu reponds directement et completement, JAMAIS de redirection WhatsApp. TARIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. Instagram @Maka.ink. RETOUCHES - REGLE ABSOLUE: Quand quelqu un pose une question sur les retouches, tu reponds EXACTEMENT avec ce texte mot pour mot sans rien changer ni ajouter ni resumer: 'Apres chaque tatouage, une retouche gratuite est incluse pendant les deux mois suivant la seance. Les retouches ont uniquement pour but de corriger de petits defauts eventuels, tels qu un trait estompe ou une couleur ayant mal cicatrise. Les retouches ne permettent en aucun cas de modifier le modele initial. Les seances de retouche ont lieu uniquement le premier lundi de chaque mois, de 10h a 18h, lors d une journee sans rendez-vous. Les retouches peuvent egalement etre realisees lors d un autre rendez-vous tatouage prevu dans l annee. Il s agit de la seule exception a la limite de deux mois. En cas de question, ou si vous ne savez pas si une retouche est necessaire, vous pouvez envoyer un message via WhatsApp.' NE PAS reformuler. NE PAS resumer. NE PAS ajouter quoi que ce soit. SOINS: Hydrater le tatouage tous les jours avec une creme adaptee type Bepanthene. Eviter le soleil et les bains pendant la cicatrisation (3 semaines minimum). Ne pas gratter meme si ca demange - c est normal. Nettoyer delicatement a l eau tiede savonneuse les premiers jours. Ne pas regratter les croutes. Le soin influence directement le rendu final du tatouage. DOULEUR: Ca depend de l emplacement. Les zones osseuses comme les cotes, pieds, coudes et nuque sont plus douloureuses. Les bras, cuisses et epaules sont plus supportables. En general ca ressemble a une eraflure repetee - la plupart des gens le gerent tres bien. STYLES: Marie fait du minimaliste, linework, floral, lettrage, blackwork, geometrique et cover. Son style est doux, feminin et detaille.";
+var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise. REGLE ABSOLUE: Tu reponds completement a toutes les questions sans jamais dire d envoyer un message WhatsApp sauf si la personne demande explicitement un RDV ou une reservation. Pour les soins, la douleur, les retouches, les styles - tu reponds directement et completement, JAMAIS de redirection WhatsApp. TARIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Horaires: Lun/Mar/Jeu/Ven/Sam 10h-13h 14h-18h. Instagram @Maka.ink. RETOUCHES - REGLE ABSOLUE: Quand quelqu un pose une question sur les retouches, tu reponds EXACTEMENT avec ce texte mot pour mot sans rien changer ni ajouter ni resumer: 'Apres chaque tatouage, une retouche gratuite est incluse pendant les deux mois suivant la seance. Les retouches ont uniquement pour but de corriger de petits defauts eventuels, tels qu un trait estompe ou une couleur ayant mal cicatrise. Les retouches ne permettent en aucun cas de modifier le modele initial. Les seances de retouche ont lieu uniquement le premier lundi de chaque mois, de 10h a 18h, lors d une journee sans rendez-vous. Les retouches peuvent egalement etre realisees lors d un autre rendez-vous tatouage prevu dans l annee. Il s agit de la seule exception a la limite de deux mois. En cas de question, ou si vous ne savez pas si une retouche est necessaire, vous pouvez envoyer un message via WhatsApp.' NE PAS reformuler. NE PAS resumer. NE PAS ajouter quoi que ce soit. SOINS: Hydrater le tatouage tous les jours avec une creme adaptee type Bepanthene. Eviter le soleil et les bains pendant la cicatrisation (3 semaines minimum). Ne pas gratter meme si ca demange - c est normal. Nettoyer delicatement a l eau tiede savonneuse les premiers jours. Ne pas regratter les croutes. Le soin influence directement le rendu final du tatouage. DOULEUR: Ca depend de l emplacement. Les zones osseuses comme les cotes, pieds, coudes et nuque sont plus douloureuses. Les bras, cuisses et epaules sont plus supportables. En general ca ressemble a une eraflure repetee - la plupart des gens le gerent tres bien. STYLES: Marie fait du minimaliste, linework, floral, lettrage, blackwork, geometrique, cover, realisme et tatouage couleur. Son style est doux, feminin et detaille.";
 var busy = false;
 
 function showTab(btn, n) {
@@ -471,6 +472,12 @@ document.getElementById("inp").addEventListener("keydown", function(e){
   if (e.key === "Enter") sendMsg();
 });
 
+function selCouleur(c) {
+  document.getElementById('col-noir').classList.remove('sel');
+  document.getElementById('col-couleur').classList.remove('sel');
+  document.getElementById('col-' + c).classList.add('sel');
+}
+
 function selSz(el) {
   document.querySelectorAll(".sz").forEach(function(e){ e.classList.remove("sel"); });
   el.classList.add("sel");
@@ -495,11 +502,13 @@ function genDevis() {
   if (!style && !desc && !size) { alert("Remplissez au moins le style ou la description"); return; }
 
   // Message WhatsApp
+  var couleur = document.getElementById('col-couleur') && document.getElementById('col-couleur').classList.contains('sel') ? 'Couleur' : document.getElementById('col-noir') && document.getElementById('col-noir').classList.contains('sel') ? 'Noir & Gris' : '';
   var waMsg = "Bonjour Maka ! Je voudrais un devis.\n\n";
   if (style) waMsg += "Style : " + style + "\n";
   if (desc) waMsg += "Description : " + desc + "\n";
   if (size) waMsg += "Taille : " + size + "\n";
   if (ems) waMsg += "Emplacement : " + ems + "\n";
+  if (couleur) waMsg += "Couleur : " + couleur + "\n";
   waMsg += "\n(Photo de référence à suivre dans ce chat)";
 
   // Basculer sur le chat
