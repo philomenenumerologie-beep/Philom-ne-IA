@@ -386,6 +386,7 @@ html,body{height:100%;overflow:hidden;background:#F7EDE8;font-family:'DM Sans',s
 
 <script>
 var WA = "33600000000";
+var API = "https://philo-backend-by2c.onrender.com";
 
 // Données galerie
 var MODELES = [
@@ -494,14 +495,14 @@ function send(txt){
   var bub=document.createElement("div"); bub.className="bub user"; bub.textContent=txt;
   row.appendChild(bub); msgs.appendChild(row); scrollChat();
   busy=true; setTyping(true);
-  fetch("https://api.anthropic.com/v1/messages",{
+  fetch(API+"/vitrine",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYS,messages:[{role:"user",content:txt}]})
+    body:JSON.stringify({message:txt,userId:"luna_"+Date.now(),systemPrompt:SYS})
   }).then(function(r){ return r.json(); })
   .then(function(d){
     setTyping(false);
-    var ans=(d.content&&d.content[0]&&d.content[0].text)?d.content[0].text:"Je suis là pour vous aider !";
+    var ans=(d&&d.answer)?d.answer:"Je suis là pour vous aider !";
     var row2=document.createElement("div"); row2.className="mrow bot";
     var bub2=document.createElement("div"); bub2.className="bub bot"; bub2.textContent=ans;
     var low=txt.toLowerCase();
