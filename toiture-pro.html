@@ -158,6 +158,18 @@ html,body{height:100%;overflow:hidden;background:#1E2A38;font-family:'DM Sans',s
 .fcard-note{font-size:11px;color:rgba(255,255,255,.5);margin-top:8px;font-style:italic}
 .twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:'DM Sans',sans-serif;margin-top:6px;box-shadow:0 4px 14px rgba(37,211,102,.25)}
 
+/* ─── DEVIS CARD ─── */
+.devis-card{background:var(--slate2);border:1.5px solid var(--ardoise);border-radius:14px;padding:14px;margin-top:10px;width:100%}
+.devis-card-title{font-size:11px;font-weight:700;color:var(--ardoise2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(74,111,165,.3)}
+.devis-section{font-size:10px;font-weight:700;color:rgba(240,237,232,.4);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px}
+.devis-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(240,237,232,.06)}
+.devis-line:last-child{border-bottom:none}
+.devis-line-label{flex:1;color:rgba(240,237,232,.7)}
+.devis-line-price{font-weight:700;color:var(--cream);margin-left:10px;white-space:nowrap}
+.devis-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--ardoise)}
+.devis-total-label{font-weight:700;font-size:14px;color:var(--cream)}
+.devis-total-price{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--ardoise2)}
+
 /* ─── OVERLAY ─── */
 #overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center}
 #overlay.open{display:flex}
@@ -707,6 +719,98 @@ function selUrgence(c) {
   }
 }
 
+var SYS_DEVIS = "Tu es un expert couvreur professionnel. Le client demande un devis détaillé. Tu dois répondre UNIQUEMENT en JSON valide avec ce format exact :\n{\"titre\":\"DEVIS REMPLACEMENT TUILES — 15 UNITÉS\",\"materiaux\":[{\"label\":\"Tuiles terre cuite\",\"detail\":\"15 unités\",\"prix\":\"120€\"},{\"label\":\"Crochets inox\",\"detail\":\"30 unités\",\"prix\":\"18€\"}],\"maindoeuvre\":[{\"label\":\"Dépose anciennes tuiles\",\"detail\":\"1h\",\"prix\":\"50€\"},{\"label\":\"Repose et vérification\",\"detail\":\"2h\",\"prix\":\"120€\"},{\"label\":\"Déplacement\",\"detail\":\"forfait\",\"prix\":\"70€\"}],\"total\":\"378€\",\"duree\":\"demi-journée\"}\nRègles : prix réalistes marché français couverture, toujours arrondi vers le haut, matériaux professionnels. Réponds UNIQUEMENT avec le JSON, rien d'autre.";
+
+function afficherDevisCard(data, waMsg) {
+  setTyping(false);
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.style.maxWidth = "min(92%,380px)";
+
+  var card = document.createElement("div");
+  card.className = "devis-card";
+
+  var cardTitle = document.createElement("div");
+  cardTitle.className = "devis-card-title";
+  cardTitle.textContent = "🏠 " + (data.titre || "DEVIS ESTIMATIF");
+  card.appendChild(cardTitle);
+
+  if (data.materiaux && data.materiaux.length > 0) {
+    var secMat = document.createElement("div");
+    secMat.className = "devis-section";
+    secMat.textContent = "FOURNITURES";
+    card.appendChild(secMat);
+    data.materiaux.forEach(function(m){
+      var line = document.createElement("div");
+      line.className = "devis-line";
+      var label = document.createElement("div");
+      label.className = "devis-line-label";
+      label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+      var price = document.createElement("div");
+      price.className = "devis-line-price";
+      price.textContent = m.prix;
+      line.appendChild(label);
+      line.appendChild(price);
+      card.appendChild(line);
+    });
+  }
+
+  if (data.maindoeuvre && data.maindoeuvre.length > 0) {
+    var secMO = document.createElement("div");
+    secMO.className = "devis-section";
+    secMO.textContent = "MAIN D'ŒUVRE";
+    card.appendChild(secMO);
+    data.maindoeuvre.forEach(function(m){
+      var line = document.createElement("div");
+      line.className = "devis-line";
+      var label = document.createElement("div");
+      label.className = "devis-line-label";
+      label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+      var price = document.createElement("div");
+      price.className = "devis-line-price";
+      price.textContent = m.prix;
+      line.appendChild(label);
+      line.appendChild(price);
+      card.appendChild(line);
+    });
+  }
+
+  var total = document.createElement("div");
+  total.className = "devis-total";
+  var totalLabel = document.createElement("div");
+  totalLabel.className = "devis-total-label";
+  totalLabel.textContent = data.duree ? "Total estimé (" + data.duree + ")" : "Total estimé";
+  var totalPrice = document.createElement("div");
+  totalPrice.className = "devis-total-price";
+  totalPrice.textContent = data.total || "Sur devis";
+  total.appendChild(totalLabel);
+  total.appendChild(totalPrice);
+  card.appendChild(total);
+  bub.appendChild(card);
+
+  var note = document.createElement("div");
+  note.style.cssText = "margin-top:8px;font-size:12px;color:rgba(240,237,232,.4);font-style:italic";
+  note.textContent = "Devis estimatif — le couvreur confirme gratuitement sur place.";
+  bub.appendChild(note);
+
+  var waMsgFinal = waMsg + "\n\n💬 Devis estimé :\n" + (data.titre||"") + "\nTotal : " + (data.total||"à confirmer") + " — " + (data.duree||"");
+  var wa = document.createElement("a");
+  wa.style.cssText = "display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:700;font-size:13px;margin-top:10px;font-family:'DM Sans',sans-serif";
+  wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsgFinal);
+  wa.target = "_blank";
+  wa.textContent = "✅ Envoyer la demande au couvreur";
+  bub.appendChild(wa);
+
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+  busy = false;
+}
+
 function genDevis() {
   var type = document.getElementById("df-type").value;
   var desc = document.getElementById("df-desc").value.trim();
@@ -735,43 +839,30 @@ function genDevis() {
   busy = true;
   setTyping(true);
 
-  var resume = "Le client demande un devis pour :\n";
+  var resume = "Génère un devis détaillé pour ces travaux de toiture :\n";
   if (type) resume += "- Type : " + type + "\n";
   if (desc) resume += "- Description : " + desc + "\n";
   if (size) resume += "- Surface : " + size + "\n";
   if (mats) resume += "- Matériau : " + mats + "\n";
   if (urgTxt) resume += "- Urgence : " + urgTxt + "\n";
-  resume += "\nDonne une estimation indicative en 3-4 phrases maximum. Cite une fourchette de prix si pertinent. Insiste sur le fait que seule la visite permet un devis précis. Termine en invitant à confirmer avec le couvreur sur WhatsApp.";
+  resume += "Inclus les fournitures professionnelles avec quantités et prix, et la main d'oeuvre. Prix marché français couverture, toujours arrondi vers le haut.";
 
   fetch("https://philo-backend-by2c.onrender.com/maka", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: resume, userId: "toiture_devis", systemPrompt: SYS })
+    body: JSON.stringify({ message: resume, userId: "toiture_devis_" + Date.now(), systemPrompt: SYS_DEVIS })
   }).then(function(r){ return r.json(); })
   .then(function(d){
-    setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Contactez le couvreur pour un devis précis.";
-    var msgs = document.getElementById("messages");
-    var row = document.createElement("div");
-    row.className = "mrow bot";
-    var bub = document.createElement("div");
-    bub.className = "bub bot";
-    bub.textContent = ans;
-    var note = document.createElement("div");
-    note.style.cssText = "margin-top:10px;font-size:12px;color:rgba(240,237,232,.45);font-style:italic";
-    note.textContent = "📸 Envoyez des photos de votre toiture directement dans le chat WhatsApp.";
-    bub.appendChild(note);
-    var wa = document.createElement("a");
-    wa.className = "wa-bubble";
-    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
-    wa.target = "_blank";
-    wa.textContent = "✅ Envoyer la demande au couvreur";
-    bub.appendChild(wa);
-    row.appendChild(mkAv());
-    row.appendChild(bub);
-    msgs.appendChild(row);
-    scrollChat();
-    busy = false;
+    try {
+      var raw = (d && d.answer) ? d.answer : "{}";
+      var clean = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+      var data = JSON.parse(clean);
+      afficherDevisCard(data, waMsg);
+    } catch(e) {
+      setTyping(false);
+      addBot("Le couvreur viendra confirmer le devis gratuitement sur place. Contactez-le sur WhatsApp !");
+      busy = false;
+    }
   }).catch(function(){
     setTyping(false);
     busy = false;
