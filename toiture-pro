@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Toiture Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#1E2A38;font-family:'DM Sans',sans-serif;color:#F0EDE8}
+
+:root{
+  --slate:#1E2A38;
+  --slate2:#253347;
+  --slate3:#2E3E52;
+  --ardoise:#4A6FA5;
+  --ardoise2:#5C85BC;
+  --cream:#F0EDE8;
+  --cream2:#D8D2C8;
+  --orange:#E07B39;
+  --green:#4CAF82;
+  --border:rgba(240,237,232,.1);
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes roofDrop{from{opacity:0;transform:translateY(-30px) scaleY(.8)}to{opacity:1;transform:translateY(0) scaleY(1)}}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:500;background:var(--slate);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-icon{width:100px;height:100px;border-radius:20px;background:var(--ardoise);display:flex;align-items:center;justify-content:center;margin-bottom:22px;animation:roofDrop .8s cubic-bezier(.16,1,.3,1) .3s both;box-shadow:0 12px 40px rgba(74,111,165,.4)}
+.sp-icon svg{width:56px;height:56px}
+.sp-name{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--cream);letter-spacing:-.01em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .6s both}
+.sp-sub{font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .8s both}
+.sp-bar{width:60px;height:3px;background:var(--ardoise);border-radius:2px;margin-top:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) 1s both}
+
+/* APP */
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
+/* TOPBAR */
+#topbar{background:var(--slate2);padding:14px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.tb-av{width:46px;height:46px;border-radius:14px;background:var(--ardoise);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(74,111,165,.35)}
+.tb-av svg{width:26px;height:26px}
+.tb-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--cream);letter-spacing:-.01em}
+.tb-sub{font-size:10px;color:rgba(240,237,232,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.tb-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+.tb-badge{font-size:9px;font-weight:600;color:var(--green);letter-spacing:.08em;text-transform:uppercase}
+
+/* TABS */
+#tabs{background:var(--slate2);display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(240,237,232,.3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif}
+.tab span{font-size:15px}
+.tab.active{color:var(--cream);border-bottom-color:var(--ardoise2)}
+
+/* BANNER */
+#msg-banniere{display:none;background:var(--orange);color:#fff;padding:9px 16px;font-size:12px;font-weight:600;text-align:center;border-bottom:1px solid rgba(0,0,0,.1);flex-shrink:0;line-height:1.5}
+
+/* PAGE */
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* ─── CHAT ─── */
+#page-chat{background:var(--slate)}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:34px;height:34px;border-radius:11px;background:var(--ardoise);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;box-shadow:0 3px 10px rgba(74,111,165,.3)}
+.bav svg{width:18px;height:18px}
+.bub{max-width:min(80%,320px);padding:12px 15px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:18px}
+.bub.bot{background:var(--slate3);color:var(--cream);border-top-left-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.bub.user{background:var(--ardoise);color:#fff;border-top-right-radius:4px;box-shadow:0 2px 12px rgba(74,111,165,.3)}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:20px;border:1.5px solid var(--ardoise2);background:transparent;color:var(--ardoise2);font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .18s}
+.qb:hover{background:var(--ardoise);color:#fff;border-color:var(--ardoise)}
+.tybub{background:var(--slate3);border-radius:18px;border-top-left-radius:4px;padding:13px 15px;display:flex;gap:5px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:var(--ardoise2);animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:var(--slate2);border-top:1px solid var(--border);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:24px;border:1.5px solid var(--border);background:var(--slate3);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;color:var(--cream)}
+#inp::placeholder{color:rgba(240,237,232,.3)}
+#inp:focus{border-color:var(--ardoise)}
+#snd{width:46px;height:46px;border-radius:14px;border:none;background:var(--ardoise);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(74,111,165,.35);transition:background .2s}
+#snd:hover{background:var(--ardoise2)}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:11px;padding:11px;font-weight:700;font-size:13px;font-family:'DM Sans',sans-serif;text-decoration:none;margin-top:10px}
+.urgence-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--orange);color:#fff;border-radius:11px;padding:11px;font-weight:700;font-size:13px;font-family:'DM Sans',sans-serif;text-decoration:none;margin-top:6px}
+
+/* ─── DEVIS ─── */
+#page-devis{background:var(--slate);padding:20px 15px 40px;gap:14px}
+.df-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--cream);line-height:1.1}
+.df-title em{font-style:italic;color:rgba(240,237,232,.3);font-size:.65em;display:block;font-family:'DM Sans',sans-serif;font-weight:400;margin-top:4px;letter-spacing:.02em}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(240,237,232,.4);margin-bottom:7px;font-family:'DM Sans',sans-serif}
+.df-select,.df-textarea{width:100%;padding:12px 15px;border-radius:13px;border:1.5px solid var(--border);background:var(--slate2);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--cream);outline:none;-webkit-appearance:none;transition:border .2s}
+.df-select:focus,.df-textarea:focus{border-color:var(--ardoise)}
+.df-textarea{resize:none;height:88px}
+.df-select option{background:var(--slate2)}
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.sz{padding:10px 4px;border-radius:12px;border:1.5px solid var(--border);background:var(--slate2);font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;text-align:center;cursor:pointer;color:rgba(240,237,232,.6);line-height:1.4;transition:all .18s}
+.sz small{font-size:10px;color:rgba(240,237,232,.3);display:block}
+.sz.sel{background:var(--ardoise);color:#fff;border-color:var(--ardoise);box-shadow:0 4px 12px rgba(74,111,165,.35)}
+.em-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.em{padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--slate2);font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;color:rgba(240,237,232,.6);transition:all .18s}
+.em.sel{background:var(--ardoise);color:#fff;border-color:var(--ardoise)}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:16px;font-weight:700;font-size:15px;font-family:'DM Sans',sans-serif;border:none;width:100%;cursor:pointer;box-shadow:0 4px 14px rgba(37,211,102,.3)}
+.urgence-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--orange);color:#fff;border-radius:14px;padding:14px;font-weight:700;font-size:14px;font-family:'DM Sans',sans-serif;border:none;width:100%;cursor:pointer;text-decoration:none;box-shadow:0 4px 14px rgba(224,123,57,.3)}
+
+/* ─── SERVICES ─── */
+#page-services{background:var(--slate);padding:20px 15px 40px;gap:0}
+.sv-h{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--cream);line-height:1.1;margin-bottom:4px}
+.sv-h em{font-style:italic;color:rgba(240,237,232,.3);font-size:.65em;display:block;font-family:'DM Sans',sans-serif;font-weight:400;margin-top:4px}
+.sv-intro{font-size:13px;color:rgba(240,237,232,.5);margin-top:8px;margin-bottom:20px;line-height:1.6}
+.sv-sec{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(240,237,232,.3);margin:18px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.sv-card{background:var(--slate2);border-radius:16px;padding:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+.sv-icon{width:46px;height:46px;border-radius:12px;background:var(--slate3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.sv-body{}
+.sv-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.sv-desc{font-size:12px;color:rgba(240,237,232,.5);line-height:1.6}
+.sv-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.sv-tag{font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(74,111,165,.2);color:var(--ardoise2);font-weight:500;border:1px solid rgba(74,111,165,.25)}
+.sv-urgence{background:rgba(224,123,57,.12);border-radius:16px;padding:16px;margin-bottom:10px;border:1.5px solid rgba(224,123,57,.3);display:flex;gap:14px;align-items:flex-start}
+.sv-urgence .sv-icon{background:rgba(224,123,57,.15)}
+.sv-urgence .sv-name{color:var(--orange)}
+.sv-cta{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:'DM Sans',sans-serif;margin-top:6px;box-shadow:0 4px 14px rgba(37,211,102,.25)}
+
+/* ─── TARIFS ─── */
+#page-tarifs{background:var(--slate);padding:20px 15px 40px}
+.t-h{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--cream);line-height:1.1;margin-bottom:4px}
+.t-h em{font-style:italic;color:rgba(240,237,232,.3);font-size:.65em;display:block;font-family:'DM Sans',sans-serif;font-weight:400;margin-top:4px}
+.t-intro{font-size:13px;color:rgba(240,237,232,.5);line-height:1.5;margin:8px 0 18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(240,237,232,.3);margin:18px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.tcard{background:var(--slate2);border-radius:16px;padding:16px;margin-bottom:10px;border:1px solid var(--border)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.tcard-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--cream)}
+.tcard-sub{font-size:11px;color:rgba(240,237,232,.4);margin-top:3px}
+.tcard-badge{background:var(--ardoise);color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tprices{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tpx{background:var(--slate3);border-radius:10px;padding:9px 4px;text-align:center}
+.tplbl{font-size:9px;color:rgba(240,237,232,.4);font-weight:500;margin-bottom:3px}
+.tpval{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--cream)}
+.tbonus{margin-top:9px;font-size:11px;color:rgba(240,237,232,.4);font-style:italic;text-align:center}
+.tbonus b{color:var(--ardoise2);font-style:normal}
+.tcard-note{margin-top:10px;font-size:11px;color:rgba(240,237,232,.35);line-height:1.5;padding:9px;background:var(--slate3);border-radius:9px}
+.fcard{background:var(--ardoise);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 6px 20px rgba(74,111,165,.3)}
+.fcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.fcard-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff}
+.fcard-price{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:rgba(255,255,255,.9)}
+.fcard-items{display:flex;flex-direction:column;gap:4px}
+.fcard-item{font-size:12px;color:rgba(255,255,255,.65);padding-left:10px}
+.fcard-note{font-size:11px;color:rgba(255,255,255,.5);margin-top:8px;font-style:italic}
+.twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:'DM Sans',sans-serif;margin-top:6px;box-shadow:0 4px 14px rgba(37,211,102,.25)}
+
+/* ─── OVERLAY ─── */
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center}
+#overlay.open{display:flex}
+#mbox{background:var(--slate2);border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);border-top:1px solid var(--border)}
+.mbox-ico{font-size:52px;text-align:center;margin-bottom:12px}
+.mbox-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;text-align:center;margin-bottom:4px;color:var(--cream)}
+.mbox-desc{text-align:center;font-size:14px;color:rgba(240,237,232,.5);margin-bottom:20px;line-height:1.5}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:'DM Sans',sans-serif;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 14px rgba(37,211,102,.3)}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:rgba(240,237,232,.4);cursor:pointer;font-family:'DM Sans',sans-serif;border:none;background:none;width:100%}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-icon">
+    <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- House/roof icon -->
+      <path d="M28 8 L6 28 L11 28 L11 48 L45 48 L45 28 L50 28 Z" fill="rgba(255,255,255,0.9)"/>
+      <path d="M18 48 L18 34 Q18 30 22 30 L34 30 Q38 30 38 34 L38 48 Z" fill="rgba(74,111,165,0.8)"/>
+      <path d="M6 28 L28 8 L50 28 Z" fill="white" opacity="0.3"/>
+    </svg>
+  </div>
+  <div class="sp-name">TOITURE PRO</div>
+  <div class="sp-sub">Couvreur &middot; Zinguerie &middot; Rénovation</div>
+  <div class="sp-bar"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">
+      <svg viewBox="0 0 56 56" fill="none">
+        <path d="M28 8 L6 28 L11 28 L11 46 L45 46 L45 28 L50 28 Z" fill="white" opacity="0.9"/>
+        <path d="M18 46 L18 33 Q18 29 22 29 L34 29 Q38 29 38 33 L38 46 Z" fill="rgba(30,42,56,0.7)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="tb-name">Toiture Pro</div>
+      <div class="tb-sub">Assistant IA &middot; Disponible 24h/24</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-dot"></div>
+      <div class="tb-badge">En ligne</div>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'services')"><span>🏠</span>Services</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+  </div>
+
+  <div id="msg-banniere">🚨 Fortes pluies annoncées — Vérifiez votre toiture avant l'hiver !</div>
+
+  <!-- ─── CHAT ─── -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Votre question sur votre toiture..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DEVIS ─── -->
+  <div id="page-devis" class="page">
+    <div class="df-title">Devis gratuit<em>Réponse sous 24h par votre couvreur</em></div>
+
+    <div>
+      <div class="lbl">Type de travaux</div>
+      <select class="df-select" id="df-type">
+        <option value="">Sélectionnez...</option>
+        <option>Réparation fuite / infiltration</option>
+        <option>Remplacement de tuiles / ardoises</option>
+        <option>Rénovation complète de toiture</option>
+        <option>Pose toiture neuve</option>
+        <option>Zinguerie (gouttières, chéneaux)</option>
+        <option>Mousse / nettoyage toiture</option>
+        <option>Velux / fenêtre de toit</option>
+        <option>Isolation sous-toiture</option>
+        <option>Cheminée / souche</option>
+        <option>Toiture terrasse / étanchéité</option>
+        <option>Autre / diagnostic</option>
+      </select>
+    </div>
+
+    <div>
+      <div class="lbl">Description du problème</div>
+      <textarea class="df-textarea" id="df-desc" placeholder="Ex: Infiltration au niveau de la chambre depuis les pluies de la semaine dernière..."></textarea>
+    </div>
+
+    <div>
+      <div class="lbl">Surface approximative</div>
+      <div class="size-grid">
+        <div class="sz" onclick="selSz(this)">Petite<small>&lt; 50 m²</small></div>
+        <div class="sz" onclick="selSz(this)">Moyenne<small>50-100 m²</small></div>
+        <div class="sz" onclick="selSz(this)">Grande<small>100-200 m²</small></div>
+        <div class="sz" onclick="selSz(this)">Très grande<small>200 m²+</small></div>
+        <div class="sz" onclick="selSz(this)">Je ne sais pas<small>Le couvreur évalue</small></div>
+        <div class="sz" onclick="selSz(this)">Urgent<small>Fuite active</small></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="lbl">Type de matériau</div>
+      <div class="em-wrap">
+        <div class="em" onclick="this.classList.toggle('sel')">Tuiles terre cuite</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Ardoise naturelle</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Ardoise fibrociment</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Zinc / acier</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Bac acier</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Bitume / shingle</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Je ne sais pas</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="lbl">Urgence</div>
+      <div class="em-wrap" id="urgence-wrap">
+        <div class="em" id="urg-non" onclick="selUrgence('non')">Pas urgent</div>
+        <div class="em" id="urg-semaine" onclick="selUrgence('semaine')">Cette semaine</div>
+        <div class="em sel" id="urg-urgent" onclick="selUrgence('urgent')" style="background:rgba(224,123,57,0.2);border-color:var(--orange);color:var(--orange)">🚨 Urgent</div>
+      </div>
+    </div>
+
+    <button class="df-btn" onclick="genDevis()">📱 Envoyer ma demande sur WhatsApp</button>
+    <a class="urgence-btn" href="https://wa.me/33600000000?text=URGENT%20-%20J%27ai%20une%20fuite%20active%20sur%20ma%20toiture" target="_blank">🚨 Fuite urgente — Appel direct</a>
+  </div>
+
+  <!-- ─── SERVICES ─── -->
+  <div id="page-services" class="page">
+    <div style="padding:20px 15px 0">
+      <div class="sv-h">Services<em>tous types de toitures</em></div>
+      <div class="sv-intro">Artisan qualifié RGE, plus de 15 ans d'expérience. Devis gratuit et sans engagement.</div>
+    </div>
+    <div style="padding:0 15px 40px">
+
+      <div class="sv-sec">Intervention d'urgence</div>
+      <div class="sv-urgence">
+        <div class="sv-icon">🚨</div>
+        <div class="sv-body">
+          <div class="sv-name">Fuite &amp; Dégâts immédiats</div>
+          <div class="sv-desc">Intervention rapide en cas de fuite active, tempête, tuile cassée ou infiltration soudaine. Bâchage d'urgence et réparation provisoire.</div>
+          <div class="sv-tags"><span class="sv-tag" style="background:rgba(224,123,57,.15);color:var(--orange);border-color:rgba(224,123,57,.3)">Intervention J+1</span><span class="sv-tag" style="background:rgba(224,123,57,.15);color:var(--orange);border-color:rgba(224,123,57,.3)">Devis immédiat</span></div>
+        </div>
+      </div>
+
+      <div class="sv-sec">Réparation &amp; Entretien</div>
+      <div class="sv-card">
+        <div class="sv-icon">🔧</div>
+        <div class="sv-body">
+          <div class="sv-name">Réparation de tuiles / ardoises</div>
+          <div class="sv-desc">Remplacement de tuiles cassées, déplacées ou manquantes. Repose à l'identique ou changement de matériau.</div>
+          <div class="sv-tags"><span class="sv-tag">Toutes surfaces</span><span class="sv-tag">Garantie 10 ans</span></div>
+        </div>
+      </div>
+      <div class="sv-card">
+        <div class="sv-icon">💧</div>
+        <div class="sv-body">
+          <div class="sv-name">Traitement infiltrations</div>
+          <div class="sv-desc">Diagnostic précis de l'origine des fuites, traitement de l'étanchéité et prévention des récidives.</div>
+          <div class="sv-tags"><span class="sv-tag">Diagnostic gratuit</span></div>
+        </div>
+      </div>
+      <div class="sv-card">
+        <div class="sv-icon">🌿</div>
+        <div class="sv-body">
+          <div class="sv-name">Nettoyage &amp; démoussage</div>
+          <div class="sv-desc">Nettoyage haute pression, démoussage et application de traitement hydrofuge pour prolonger la durée de vie de votre toiture.</div>
+          <div class="sv-tags"><span class="sv-tag">Traitement hydrofuge</span><span class="sv-tag">Durée 5-8 ans</span></div>
+        </div>
+      </div>
+
+      <div class="sv-sec">Rénovation &amp; Neuf</div>
+      <div class="sv-card">
+        <div class="sv-icon">🏗️</div>
+        <div class="sv-body">
+          <div class="sv-name">Rénovation complète</div>
+          <div class="sv-desc">Dépose totale de l'ancienne couverture, purge de la charpente si nécessaire, pose d'un écran sous-toiture et repose de la couverture neuve.</div>
+          <div class="sv-tags"><span class="sv-tag">Tuile</span><span class="sv-tag">Ardoise</span><span class="sv-tag">Zinc</span><span class="sv-tag">Bac acier</span></div>
+        </div>
+      </div>
+      <div class="sv-card">
+        <div class="sv-icon">🪟</div>
+        <div class="sv-body">
+          <div class="sv-name">Velux &amp; fenêtres de toit</div>
+          <div class="sv-desc">Pose et remplacement de fenêtres de toit toutes marques. Raccord d'étanchéité soigné, garantie fabricant incluse.</div>
+          <div class="sv-tags"><span class="sv-tag">Velux agréé</span><span class="sv-tag">Pose &amp; raccord</span></div>
+        </div>
+      </div>
+
+      <div class="sv-sec">Zinguerie</div>
+      <div class="sv-card">
+        <div class="sv-icon">🌀</div>
+        <div class="sv-body">
+          <div class="sv-name">Gouttières &amp; chéneaux</div>
+          <div class="sv-desc">Pose, remplacement et entretien de gouttières zinc, PVC ou alu. Nettoyage et débouchage de descentes pluviales.</div>
+          <div class="sv-tags"><span class="sv-tag">Zinc</span><span class="sv-tag">PVC</span><span class="sv-tag">Aluminium</span></div>
+        </div>
+      </div>
+      <div class="sv-card">
+        <div class="sv-icon">🏚️</div>
+        <div class="sv-body">
+          <div class="sv-name">Cheminées &amp; souches</div>
+          <div class="sv-desc">Habillage zinc, réfection des bavettes et joints de cheminée, traitement des points singuliers pour une étanchéité parfaite.</div>
+          <div class="sv-tags"><span class="sv-tag">Étanchéité garantie</span></div>
+        </div>
+      </div>
+
+      <a class="sv-cta" href="https://wa.me/33600000000?text=Bonjour%20!%20Je%20souhaite%20un%20devis%20pour%20ma%20toiture." target="_blank">📱 Demander un devis gratuit</a>
+    </div>
+  </div>
+
+  <!-- ─── TARIFS ─── -->
+  <div id="page-tarifs" class="page">
+    <div style="padding:20px 15px 0">
+      <div class="t-h">Tarifs<em>indicatifs &amp; transparents</em></div>
+      <div class="t-intro">Devis définitif gratuit après visite. Prix selon accessibilité, matériaux et surface. TVA 10% applicable sur rénovation.</div>
+    </div>
+    <div style="padding:0 15px 40px">
+
+      <div class="t-sec">Réparations courantes</div>
+      <div class="tcard">
+        <div class="tcard-top">
+          <div><div class="tcard-name">Remplacement tuiles / ardoises</div><div class="tcard-sub">Par pièce posée</div></div>
+          <div class="tcard-badge">Réparation</div>
+        </div>
+        <div class="tprices">
+          <div class="tpx"><div class="tplbl">Tuile unité</div><div class="tpval">15-35€</div></div>
+          <div class="tpx"><div class="tplbl">Ardoise unité</div><div class="tpval">20-50€</div></div>
+          <div class="tpx"><div class="tplbl">Déplacement</div><div class="tpval">60-90€</div></div>
+        </div>
+        <div class="tcard-note">Minimum de facturation 1h de main d'œuvre. Tarif dégressif à partir de 10 pièces.</div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div><div class="tcard-name">Nettoyage &amp; démoussage</div><div class="tcard-sub">Traitement hydrofuge inclus</div></div>
+          <div class="tcard-badge">Entretien</div>
+        </div>
+        <div class="tprices">
+          <div class="tpx"><div class="tplbl">Petit toit</div><div class="tpval">400€</div></div>
+          <div class="tpx"><div class="tplbl">Moyen</div><div class="tpval">700€</div></div>
+          <div class="tpx"><div class="tplbl">Grand</div><div class="tpval">1100€+</div></div>
+        </div>
+        <div class="tbonus">Durée d'effet : <b>5 à 8 ans</b></div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div><div class="tcard-name">Gouttières &amp; zinguerie</div><div class="tcard-sub">Fourniture et pose</div></div>
+          <div class="tcard-badge">Zinguerie</div>
+        </div>
+        <div class="tprices">
+          <div class="tpx"><div class="tplbl">Gouttière PVC/m</div><div class="tpval">25-40€</div></div>
+          <div class="tpx"><div class="tplbl">Gouttière zinc/m</div><div class="tpval">45-80€</div></div>
+          <div class="tpx"><div class="tplbl">Descente/m</div><div class="tpval">20-35€</div></div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div><div class="tcard-name">Velux &amp; fenêtre de toit</div><div class="tcard-sub">Pose + raccord étanchéité</div></div>
+          <div class="tcard-badge">Pose</div>
+        </div>
+        <div class="tprices">
+          <div class="tpx"><div class="tplbl">Remplacement</div><div class="tpval">350€+</div></div>
+          <div class="tpx"><div class="tplbl">Création</div><div class="tpval">600€+</div></div>
+          <div class="tpx"><div class="tplbl">+ Velux</div><div class="tpval">400-800€</div></div>
+        </div>
+        <div class="tcard-note">Prix fourniture hors de ce tarif, selon modèle choisi.</div>
+      </div>
+
+      <div class="t-sec">Rénovation complète (au m²)</div>
+      <div class="fcard">
+        <div class="fcard-top"><div class="fcard-name">Tuile terre cuite</div><div class="fcard-price">65-120€/m²</div></div>
+        <div class="fcard-items">
+          <div class="fcard-item">Dépose &amp; évacuation incluses</div>
+          <div class="fcard-item">Écran sous-toiture</div>
+          <div class="fcard-item">Tuiles &amp; accessoires fournis</div>
+          <div class="fcard-item">Faîtage &amp; finitions</div>
+        </div>
+        <div class="fcard-note">Selon pente, accessibilité et modèle de tuile</div>
+      </div>
+      <div class="fcard" style="background:var(--slate3);box-shadow:0 6px 20px rgba(0,0,0,.25)">
+        <div class="fcard-top"><div class="fcard-name">Ardoise naturelle</div><div class="fcard-price">90-160€/m²</div></div>
+        <div class="fcard-items">
+          <div class="fcard-item">Ardoise d'Angers ou Espagne</div>
+          <div class="fcard-item">Liteaux &amp; écran HPV</div>
+          <div class="fcard-item">Zinguerie sur mesure</div>
+        </div>
+        <div class="fcard-note">Durée de vie : 60-100 ans avec entretien</div>
+      </div>
+      <div class="fcard" style="background:var(--slate3);box-shadow:0 6px 20px rgba(0,0,0,.25)">
+        <div class="fcard-top"><div class="fcard-name">Bac acier / zinc</div><div class="fcard-price">50-130€/m²</div></div>
+        <div class="fcard-items">
+          <div class="fcard-item">Idéal pente faible</div>
+          <div class="fcard-item">Isolation possible en sous-face</div>
+          <div class="fcard-item">Grande durabilité</div>
+        </div>
+      </div>
+
+      <div class="t-sec">Aides &amp; financements</div>
+      <div class="tcard">
+        <div class="tcard-top"><div><div class="tcard-name">MaPrimeRénov' &amp; CEE</div><div class="tcard-sub">Artisan certifié RGE</div></div><div class="tcard-badge">Éligible</div></div>
+        <div style="font-size:12px;color:rgba(240,237,232,.5);line-height:1.6">Travaux d'isolation sous-toiture éligibles aux aides de l'État. Demandez votre simulation lors du devis.</div>
+      </div>
+
+      <a class="twa" href="https://wa.me/33600000000?text=Bonjour%20!%20Je%20souhaite%20un%20devis%20pour%20ma%20toiture." target="_blank">📱 Devis gratuit sans engagement</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- OVERLAY SERVICES -->
+<div id="overlay" onclick="fermerModal()">
+  <div id="mbox" onclick="event.stopPropagation()">
+    <div class="mbox-ico" id="mbox-ico"></div>
+    <div class="mbox-name" id="mbox-name"></div>
+    <div class="mbox-desc" id="mbox-desc"></div>
+    <a class="mbox-wa" id="mbox-wa" href="#" target="_blank">📱 Demander un devis</a>
+    <button class="mbox-cancel" onclick="fermerModal()">Fermer</button>
+  </div>
+</div>
+
+<script>
+var WA = "33600000000";
+
+var SYS = `Tu es l'assistant IA de Toiture Pro, entreprise de couverture artisanale dirigée par un couvreur professionnel qualifié RGE.
+
+PERSONNALITÉ: Professionnel, rassurant, sérieux. Tu parles comme un expert de la toiture, pas un commercial. Tu es honnête sur les limites : tu ne vois pas la toiture, seul le couvreur peut poser un diagnostic fiable.
+
+RÈGLE ABSOLUE: Tu peux expliquer et informer, mais tu ne donnes JAMAIS de conseils de réparation à faire soi-même sur une toiture (dangereux). Pour toute intervention, tu renvoies toujours vers le couvreur. Pour les urgences (fuite active), tu diriges immédiatement vers le contact WhatsApp.
+
+DOMAINE D'EXPERTISE — tu connais parfaitement :
+- Matériaux : tuile terre cuite (canal, romane, plate, mécanique), ardoise naturelle (Angers, Espagne, Galice), ardoise fibrociment, zinc, bac acier, shingle bitumé, toiture terrasse, EPDM
+- Pathologies : infiltrations, condensation, pontage capillaire, glissement de tuile, faîtage défaillant, noue bouchée, solin décollé, gouttière fendue, remontée capillaire
+- Techniques : lattage, contre-lattage, chevron, pannes, sablière, fermette, écran HPV, pare-vapeur, isolation par l'extérieur (ITE), isolation sarking
+- Zinguerie : chéneau, noue, abergement, bavette, solin, rive, égout, faîtage zinc
+- Réglementation : DTU 40.11 (ardoise), DTU 40.21 (tuile), DTU 40.41 (bac acier), règles d'accessibilité toiture, certification RGE, MaPrimeRénov', TVA 10% rénovation
+- Entretien : cycle de nettoyage (5-8 ans), mousse, lichen, hydrofuge, désinfection
+
+TARIFS INDICATIFS :
+- Remplacement tuile : 15-35€/pièce posée
+- Remplacement ardoise : 20-50€/pièce posée  
+- Déplacement : 60-90€
+- Nettoyage démoussage : 400-1100€ selon surface (traitement hydrofuge inclus)
+- Gouttière PVC : 25-40€/ml, zinc : 45-80€/ml
+- Velux remplacement : 350€+ (hors fourniture)
+- Rénovation tuile : 65-120€/m²
+- Rénovation ardoise naturelle : 90-160€/m²
+- Rénovation bac acier : 50-130€/m²
+
+SOINS / ENTRETIEN (tu peux informer sans risque) :
+- Faire inspecter la toiture tous les 5 ans minimum
+- Ne pas marcher sur les tuiles sans protection
+- Nettoyer les gouttières 2x/an (printemps/automne)
+- Surveiller l'état du faîtage et des noues après tempête
+- Une toiture saine protège aussi l'isolation et la charpente
+
+Pour toute question sur un RDV, un devis, une intervention : renvoie vers WhatsApp.
+Pour une fuite active en cours : urgence absolue, WhatsApp ou téléphone immédiat.`;
+
+var busy = false;
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.innerHTML = '<svg viewBox="0 0 56 56" fill="none"><path d="M28 10 L8 28 L13 28 L13 45 L43 45 L43 28 L48 28 Z" fill="white" opacity="0.9"/><path d="M19 45 L19 33 Q19 29 23 29 L33 29 Q37 29 37 33 L37 45 Z" fill="rgba(30,42,56,0.6)"/></svg>';
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [
+      ["Tarifs","Quels sont les tarifs ?"],
+      ["Infiltration","J'ai une infiltration, que faire ?"],
+      ["Matériaux","Tuile ou ardoise, quelle différence ?"],
+      ["Entretien","Comment entretenir sa toiture ?"],
+      ["Aides","Quelles aides financières ?"],
+      ["RDV","Comment prendre rendez-vous ?"]
+    ].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function isUrgent(txt) {
+  var low = txt.toLowerCase();
+  return low.indexOf("fuite") >= 0 || low.indexOf("urgent") >= 0 || low.indexOf("inondation") >= 0 || low.indexOf("eau coule") >= 0 || low.indexOf("tempête") >= 0 || low.indexOf("dégât") >= 0;
+}
+function isRdv(txt) {
+  var low = txt.toLowerCase();
+  return low.indexOf("rdv") >= 0 || low.indexOf("rendez") >= 0 || low.indexOf("reserver") >= 0 || low.indexOf("réserver") >= 0 || low.indexOf("devis") >= 0 || low.indexOf("intervention") >= 0;
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+
+  fetch("https://philo-backend-by2c.onrender.com/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "toiture_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+
+    if (isUrgent(txt)) {
+      var ua = document.createElement("a");
+      ua.className = "urgence-bubble";
+      ua.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("🚨 URGENT — J'ai une fuite active sur ma toiture");
+      ua.target = "_blank";
+      ua.textContent = "🚨 Contacter le couvreur en urgence";
+      bub.appendChild(ua);
+    } else if (isRdv(txt)) {
+      var wa = document.createElement("a");
+      wa.className = "wa-bubble";
+      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je voudrais prendre rendez-vous pour un devis toiture.");
+      wa.target = "_blank";
+      wa.textContent = "📱 Contacter le couvreur sur WhatsApp";
+      bub.appendChild(wa);
+    }
+
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+function selSz(el) {
+  document.querySelectorAll(".sz").forEach(function(e){ e.classList.remove("sel"); });
+  el.classList.add("sel");
+}
+
+function selUrgence(c) {
+  ["non","semaine","urgent"].forEach(function(id){
+    var el = document.getElementById("urg-"+id);
+    el.classList.remove("sel");
+    el.style.background = "";
+    el.style.borderColor = "";
+    el.style.color = "";
+  });
+  var sel = document.getElementById("urg-"+c);
+  sel.classList.add("sel");
+  if (c === "urgent") {
+    sel.style.background = "rgba(224,123,57,0.2)";
+    sel.style.borderColor = "var(--orange)";
+    sel.style.color = "var(--orange)";
+  }
+}
+
+function genDevis() {
+  var type = document.getElementById("df-type").value;
+  var desc = document.getElementById("df-desc").value.trim();
+  var sz = document.querySelector(".sz.sel");
+  var size = sz ? sz.childNodes[0].textContent.trim() : "";
+  var mats = Array.from(document.querySelectorAll(".em.sel")).map(function(e){ return e.textContent; }).join(", ");
+  var urg = document.querySelector("#urgence-wrap .em.sel");
+  var urgTxt = urg ? urg.textContent : "";
+
+  if (!type && !desc) { alert("Remplissez au moins le type de travaux ou une description"); return; }
+
+  var waMsg = "Bonjour ! Je souhaite un devis pour ma toiture.\n\n";
+  if (type) waMsg += "Type de travaux : " + type + "\n";
+  if (desc) waMsg += "Description : " + desc + "\n";
+  if (size) waMsg += "Surface : " + size + "\n";
+  if (mats) waMsg += "Matériau : " + mats + "\n";
+  if (urgTxt) waMsg += "Urgence : " + urgTxt + "\n";
+  waMsg += "\n(Photos de la toiture à suivre dans le chat)";
+
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+
+  addUser("Je voudrais un devis pour : " + (type || desc) + (size ? " — " + size : "") + (mats ? " (" + mats + ")" : ""));
+  busy = true;
+  setTyping(true);
+
+  var resume = "Le client demande un devis pour :\n";
+  if (type) resume += "- Type : " + type + "\n";
+  if (desc) resume += "- Description : " + desc + "\n";
+  if (size) resume += "- Surface : " + size + "\n";
+  if (mats) resume += "- Matériau : " + mats + "\n";
+  if (urgTxt) resume += "- Urgence : " + urgTxt + "\n";
+  resume += "\nDonne une estimation indicative en 3-4 phrases maximum. Cite une fourchette de prix si pertinent. Insiste sur le fait que seule la visite permet un devis précis. Termine en invitant à confirmer avec le couvreur sur WhatsApp.";
+
+  fetch("https://philo-backend-by2c.onrender.com/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: resume, userId: "toiture_devis", systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Contactez le couvreur pour un devis précis.";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var note = document.createElement("div");
+    note.style.cssText = "margin-top:10px;font-size:12px;color:rgba(240,237,232,.45);font-style:italic";
+    note.textContent = "📸 Envoyez des photos de votre toiture directement dans le chat WhatsApp.";
+    bub.appendChild(note);
+    var wa = document.createElement("a");
+    wa.className = "wa-bubble";
+    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
+    wa.target = "_blank";
+    wa.textContent = "✅ Envoyer la demande au couvreur";
+    bub.appendChild(wa);
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    busy = false;
+  });
+}
+
+function fermerModal() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+// Banner d'urgence saisonnière
+var mois = new Date().getMonth();
+var b = document.getElementById("msg-banniere");
+if (mois >= 9 || mois <= 1) {
+  b.textContent = "🍂 Avant l'hiver : faites inspecter votre toiture avant les tempêtes !";
+  b.style.display = "block";
+} else if (mois >= 5 && mois <= 7) {
+  b.textContent = "☀️ Eté : profitez du beau temps pour réparer avant les pluies d'automne.";
+  b.style.display = "block";
+}
+
+// INIT
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bonjour ! Je suis l'assistant de Toiture Pro.\n\nJe peux vous informer sur les matériaux, les tarifs, les pathologies courantes ou vous aider à préparer votre demande de devis.\n\nQue puis-je faire pour vous ?", true);
+  }, 900);
+}, 2500);
+</script>
+</body>
+</html>
