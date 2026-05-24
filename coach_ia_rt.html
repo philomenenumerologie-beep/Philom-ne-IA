@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
@@ -23,126 +22,124 @@ body {
   height: 100vh; display: flex; flex-direction: column;
   overflow: hidden; position: relative;
 }
-
-/* TERRAIN */
 #pitch { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .pitch-bg {
-width: 100%; height: 100%;
-background: repeating-linear-gradient(180deg, #1a4a1a 0px, #1a4a1a 40px, #1e5c1e 40px, #1e5c1e 80px);
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(180deg, #1a4a1a 0px, #1a4a1a 40px, #1e5c1e 40px, #1e5c1e 80px);
 }
 .pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #overlay { position: fixed; inset: 0; z-index: 1; background: rgba(0,0,0,0.55); }
 
 /* LOGIN */
 #loginScreen {
-position: fixed; inset: 0; z-index: 100;
-display: flex; flex-direction: column;
-align-items: center; justify-content: center; padding: 24px;
-background: rgba(0,0,0,0.7);
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 24px;
+  background: rgba(0,0,0,0.7);
 }
 .login-card {
-background: rgba(255,255,255,0.1);
-border: 1px solid rgba(204,0,0,0.4);
-border-radius: 20px; padding: 28px 24px;
-width: 100%; max-width: 380px;
-box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(204,0,0,0.4);
+  border-radius: 20px; padding: 28px 24px;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  backdrop-filter: blur(20px);
 }
 .login-logo { text-align: center; margin-bottom: 20px; }
 .login-badge { margin-bottom: 10px; }
 .login-title {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 26px; font-weight: 800; color: #fff;
-text-transform: uppercase; letter-spacing: 0.05em;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px; font-weight: 800; color: #fff;
+  text-transform: uppercase; letter-spacing: 0.05em;
 }
-.login-club { font-size: 13px; color: var(–red2); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+.login-club { font-size: 13px; color: var(--red2); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
 .login-label { display: block; font-size: 12px; color: #ffaaaa; margin-bottom: 8px; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.08em; }
 .login-input {
-width: 100%; background: rgba(255,255,255,0.12);
-border: 1px solid rgba(204,0,0,0.4); border-radius: 12px;
-padding: 14px 16px; color: #fff; -webkit-text-fill-color: #fff;
-font-size: 16px; font-family: ‘DM Sans’, sans-serif;
-outline: none; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
+  width: 100%; background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(204,0,0,0.4); border-radius: 12px;
+  padding: 14px 16px; color: #fff; -webkit-text-fill-color: #fff;
+  font-size: 16px; font-family: 'DM Sans', sans-serif;
+  outline: none; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
 }
 .login-input::placeholder { text-transform: none; letter-spacing: 0; color: rgba(255,255,255,0.4); }
 .login-btn {
-width: 100%; padding: 14px; background: var(–red);
-border: none; border-radius: 12px; color: #fff;
-font-size: 16px; font-weight: 700; cursor: pointer;
-font-family: ‘DM Sans’, sans-serif;
-box-shadow: 0 4px 16px var(–red-glow);
+  width: 100%; padding: 14px; background: var(--red);
+  border: none; border-radius: 12px; color: #fff;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 16px var(--red-glow);
 }
 .login-error {
-margin-top: 12px; padding: 10px 14px;
-background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3);
-border-radius: 10px; color: #f85149; font-size: 13px; text-align: center; display: none;
+  margin-top: 12px; padding: 10px 14px;
+  background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3);
+  border-radius: 10px; color: #f85149; font-size: 13px; text-align: center; display: none;
 }
 
 /* TOPBAR */
 #topbar {
-position: relative; z-index: 10;
-display: flex; align-items: center; justify-content: space-between;
-padding: 10px 16px;
-background: linear-gradient(135deg, rgba(10,0,0,0.98), rgba(40,0,0,0.98));
-border-bottom: 3px solid var(–red);
-box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(10,0,0,0.98), rgba(40,0,0,0.98));
+  border-bottom: 3px solid var(--red);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.8);
 }
 .logo-area { display: flex; align-items: center; gap: 12px; }
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 18px; font-weight: 800; color: #fff;
-letter-spacing: 0.08em; text-transform: uppercase;
-text-shadow: 0 0 10px rgba(204,0,0,0.8);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 800; color: #fff;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(204,0,0,0.8);
 }
-.logo-club { font-size: 11px; color: var(–red2); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+.logo-club { font-size: 11px; color: var(--red2); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
 .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ffaaaa; }
 .dot-green { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
 /* BANNIERE */
 #anniversary {
-position: relative; z-index: 9;
-text-align: center; padding: 4px;
-background: linear-gradient(90deg, transparent, rgba(204,0,0,0.4), transparent);
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 11px; color: rgba(255,200,200,0.8);
-letter-spacing: 0.2em; text-transform: uppercase;
+  position: relative; z-index: 9;
+  text-align: center; padding: 4px;
+  background: linear-gradient(90deg, transparent, rgba(204,0,0,0.4), transparent);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; color: rgba(255,200,200,0.8);
+  letter-spacing: 0.2em; text-transform: uppercase;
 }
 
 /* TABS MODE */
 #modeBar {
-position: relative; z-index: 9;
-display: flex; background: rgba(10,0,0,0.9);
-border-bottom: 1px solid rgba(204,0,0,0.2);
+  position: relative; z-index: 9;
+  display: flex; background: rgba(10,0,0,0.9);
+  border-bottom: 1px solid rgba(204,0,0,0.2);
 }
 .mode-tab {
-flex: 1; padding: 10px; text-align: center;
-font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 14px; font-weight: 700;
-color: rgba(255,255,255,0.5); cursor: pointer;
-letter-spacing: 0.05em; text-transform: uppercase;
-border-bottom: 3px solid transparent;
-transition: all 0.2s;
+  flex: 1; padding: 10px; text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700;
+  color: rgba(255,255,255,0.5); cursor: pointer;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
 }
-.mode-tab.active { color: #fff; border-bottom-color: var(–red); }
+.mode-tab.active { color: #fff; border-bottom-color: var(--red); }
 
 /* CATEGORIES */
 #catBar {
-position: relative; z-index: 9;
-display: flex; gap: 8px; padding: 8px 14px;
-background: rgba(5,0,0,0.8);
-border-bottom: 1px solid rgba(204,0,0,0.15);
-overflow-x: auto; scrollbar-width: none;
+  position: relative; z-index: 9;
+  display: flex; gap: 8px; padding: 8px 14px;
+  background: rgba(5,0,0,0.8);
+  border-bottom: 1px solid rgba(204,0,0,0.15);
+  overflow-x: auto; scrollbar-width: none;
 }
 #catBar::-webkit-scrollbar { display: none; }
 .cat-chip {
-padding: 5px 12px; border-radius: 20px;
-background: rgba(255,255,255,0.07); border: 1px solid rgba(204,0,0,0.2);
-color: #ffaaaa; font-family: ‘Barlow Condensed’, sans-serif;
-font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+  padding: 5px 12px; border-radius: 20px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(204,0,0,0.2);
+  color: #ffaaaa; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
 }
-.cat-chip.active { background: var(–red); border-color: var(–red); color: #fff; }
+.cat-chip.active { background: var(--red); border-color: var(--red); color: #fff; }
 
 /* SECTIONS */
 #sectionCoach { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
@@ -150,38 +147,38 @@ font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
 
 /* CHAT */
 #chat, #chatPrepa {
-flex: 1; overflow-y: auto;
-padding: 16px 14px 120px; position: relative; z-index: 2;
+  flex: 1; overflow-y: auto;
+  padding: 16px 14px 120px; position: relative; z-index: 2;
 }
-
 .bubble-wrap { display: flex; margin-bottom: 14px; animation: fadeUp 0.3s ease; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
 .avatar {
-width: 32px; height: 32px; border-radius: 50%;
-background: rgba(0,0,0,0.7); border: 1.5px solid var(–red);
-display: flex; align-items: center; justify-content: center;
-flex-shrink: 0; margin-right: 8px; margin-top: 2px; overflow: hidden;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(0,0,0,0.7); border: 1.5px solid var(--red);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-right: 8px; margin-top: 2px; overflow: hidden;
 }
 .bubble {
-max-width: min(85%, 360px); padding: 11px 14px; border-radius: 16px;
-font-size: 14px; line-height: 1.6; white-space: pre-wrap;
+  max-width: min(85%, 360px); padding: 11px 14px; border-radius: 16px;
+  font-size: 14px; line-height: 1.6; white-space: pre-wrap;
 }
 .bubble.bot {
-background: rgba(20,0,0,0.92); border: 1px solid rgba(204,0,0,0.2);
-border-top-left-radius: 4px; color: #fff; -webkit-text-fill-color: #fff;
+  background: rgba(20,0,0,0.92); border: 1px solid rgba(204,0,0,0.2);
+  border-top-left-radius: 4px; color: #fff; -webkit-text-fill-color: #fff;
 }
 .bubble.user {
-background: rgba(100,0,0,0.8); border: 1px solid rgba(204,0,0,0.4);
-border-top-right-radius: 4px; color: #fff; -webkit-text-fill-color: #fff;
+  background: rgba(100,0,0,0.8); border: 1px solid rgba(204,0,0,0.4);
+  border-top-right-radius: 4px; color: #fff; -webkit-text-fill-color: #fff;
 }
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .qa-btn {
-padding: 8px 12px; background: rgba(204,0,0,0.15);
-border: 1px solid rgba(204,0,0,0.3); border-radius: 20px;
-color: #fff; font-size: 13px; cursor: pointer; font-family: ‘DM Sans’, sans-serif;
+  padding: 8px 12px; background: rgba(204,0,0,0.15);
+  border: 1px solid rgba(204,0,0,0.3); border-radius: 20px;
+  color: #fff; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif;
 }
+.qa-btn:hover { background: rgba(204,0,0,0.3); }
 
 /* SCHEMA */
 .schema-wrap { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(204,0,0,0.3); }
@@ -191,60 +188,57 @@ color: #fff; font-size: 13px; cursor: pointer; font-family: ‘DM Sans’, sans-
 .schema-legend { display: flex; gap: 12px; padding: 6px 12px 8px; background: rgba(0,0,0,0.4); font-size: 10px; color: rgba(255,255,255,0.6); flex-wrap: wrap; }
 .legend-item { display: flex; align-items: center; gap: 4px; }
 
-/* PREPA PHYSIQUE */
-.result-card {
-background: rgba(30,0,0,0.8); border: 1px solid rgba(204,0,0,0.3);
-border-radius: 14px; padding: 14px; margin-top: 10px;
+/* EXCEL GUIDE CARD */
+.excel-guide-card {
+  margin-top: 10px;
+  background: rgba(0, 60, 20, 0.6);
+  border: 1px solid rgba(80, 200, 100, 0.3);
+  border-radius: 12px;
+  padding: 12px 14px;
 }
-.card-title { font-size: 12px; font-weight: 700; color: var(–red2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
-.player-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-.player-table th { background: var(–red); color: #fff; padding: 6px 8px; font-size: 11px; text-align: left; font-weight: 600; }
-.player-table td { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid rgba(204,0,0,0.15); color: #fff; -webkit-text-fill-color: #fff; }
-.player-table tr:nth-child(even) td { background: rgba(204,0,0,0.08); }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
-.badge-green { background: rgba(46,160,67,0.2); color: #4ade80; }
-.badge-orange { background: rgba(255,165,0,0.2); color: #ffa500; }
-.badge-red { background: rgba(204,0,0,0.2); color: #ff6666; }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-.stat-box { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px 12px; border: 1px solid rgba(204,0,0,0.2); }
-.stat-label { font-size: 10px; color: #ffaaaa; text-transform: uppercase; letter-spacing: 0.05em; }
-.stat-value { font-size: 18px; font-weight: 700; color: #fff; margin-top: 2px; }
-.stat-unit { font-size: 12px; color: #ffaaaa; }
-.prog-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(204,0,0,0.15); font-size: 13px; color: #fff; }
-.prog-num { width: 24px; height: 24px; border-radius: 50%; background: var(–red); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.excel-guide-title {
+  font-size: 12px; font-weight: 700; color: #4ade80;
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+}
+.excel-guide-example {
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  font-style: italic; background: rgba(0,0,0,0.3);
+  border-radius: 8px; padding: 8px 10px; margin-top: 6px;
+  border-left: 3px solid #4ade80;
+  white-space: pre-wrap;
+}
 
 /* TYPING */
 .typing { display:flex; gap:4px; padding:12px 14px; }
-.typing span { width:6px; height:6px; border-radius:50%; background:var(–dim); animation: bounce 1.2s infinite; }
+.typing span { width:6px; height:6px; border-radius:50%; background:var(--dim); animation: bounce 1.2s infinite; }
 .typing span:nth-child(2){animation-delay:0.2s}
 .typing span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
 /* COMPOSER */
 #composer {
-position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-padding: 10px 12px 18px;
-background: linear-gradient(to top, rgba(10,0,0,0.97) 70%, transparent);
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+  padding: 10px 12px 18px;
+  background: linear-gradient(to top, rgba(10,0,0,0.97) 70%, transparent);
 }
 .composer-inner {
-display: flex; align-items: center; gap: 8px;
-background: rgba(30,0,0,0.95); border: 1px solid rgba(204,0,0,0.3);
-border-radius: 22px; padding: 8px 12px;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(30,0,0,0.95); border: 1px solid rgba(204,0,0,0.3);
+  border-radius: 22px; padding: 8px 12px;
 }
 .composer-input {
-flex: 1; background: transparent; border: none; outline: none;
-color: #fff; -webkit-text-fill-color: #fff;
-font-size: 15px; font-family: ‘DM Sans’, sans-serif;
+  flex: 1; background: transparent; border: none; outline: none;
+  color: #fff; -webkit-text-fill-color: #fff;
+  font-size: 15px; font-family: 'DM Sans', sans-serif;
 }
 .composer-input::placeholder { color: #ffaaaa; -webkit-text-fill-color: #ffaaaa; }
 .send-btn {
-width: 38px; height: 38px; border-radius: 50%;
-background: var(–red); border: none; color: #fff;
-font-size: 16px; display: flex; align-items: center; justify-content: center;
-cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(–red-glow);
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--red); border: none; color: #fff;
+  font-size: 16px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(--red-glow);
 }
 </style>
-
 </head>
 <body>
 
@@ -264,7 +258,6 @@ cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(–red-glow);
 <div id="overlay"></div>
 
 <!-- LOGIN -->
-
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">
@@ -302,7 +295,6 @@ cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(–red-glow);
 </div>
 
 <!-- TOPBAR -->
-
 <header id="topbar">
   <div class="logo-area">
     <svg width="46" height="46" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -332,14 +324,12 @@ cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(–red-glow);
 <div id="anniversary">✦ 80 ans d'histoire • 1946 – 2026 ✦</div>
 
 <!-- TABS -->
-
 <div id="modeBar">
   <div class="mode-tab active" onclick="switchMode('coach', this)">⚽ Coach Football</div>
   <div class="mode-tab" onclick="switchMode('prepa', this)">💪 Prépa Physique</div>
 </div>
 
 <!-- SECTION COACH -->
-
 <div id="sectionCoach">
   <div id="catBar">
     <div class="cat-chip" onclick="selectCat(this,'U6/U7')">U6/U7</div>
@@ -355,13 +345,11 @@ cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px var(–red-glow);
 </div>
 
 <!-- SECTION PREPA PHYSIQUE -->
-
 <div id="sectionPrepa">
   <div id="chatPrepa"><div id="messagesPrepa"></div></div>
 </div>
 
 <!-- COMPOSER -->
-
 <div id="composer">
   <div class="composer-inner">
     <input class="composer-input" id="userInput" placeholder="Ex: séance dribble, 12 joueurs, 1h…" type="text"/>
@@ -384,9 +372,18 @@ localStorage.setItem("rt_user_id", userId.replace("rt_",""));
 let isLoading = false;
 let currentMode = "coach";
 
+// Flag : on attend une réponse Excel de l'utilisateur
+let waitingForExcelData = false;
+let excelDataType = null; // "tests" | "presence" | null
+
+// ===== SVG LOGO AVATAR =====
+const avatarSVG = `<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg>`;
+
 // ===== MODE SWITCH =====
 function switchMode(mode, el) {
   currentMode = mode;
+  waitingForExcelData = false;
+  excelDataType = null;
   document.querySelectorAll(".mode-tab").forEach(t => t.classList.remove("active"));
   el.classList.add("active");
   if (mode === "coach") {
@@ -398,12 +395,12 @@ function switchMode(mode, el) {
     document.getElementById("sectionPrepa").style.display = "flex";
     document.getElementById("userInput").placeholder = "Ex: Test bip Yanis niveau 12 palier 3…";
     if (document.getElementById("messagesPrepa").children.length === 0) {
-      addBotMsgPrepa("Bonjour ! 💪 Je suis votre assistant préparation physique de Risquons-Tout Mouscron.\n\nEntrez vos résultats de tests ou demandez un programme personnalisé !", true);
+      addBotMsgPrepa("Bienvenue ! 💪 Je suis votre assistant préparation physique de Risquons-Tout Mouscron.\n\nEntrez vos résultats de tests ou demandez un programme personnalisé !", true);
     }
   }
 }
 
-// ===== SCHEMA SVG PRO =====
+// ===== SCHEMA SVG =====
 function buildProSchema(schema) {
   if (!schema) return null;
   const W = 320, H = 220;
@@ -553,7 +550,7 @@ function addBotMsg(text, schema, withActions) {
   }
   const avatar = document.createElement("div");
   avatar.className = "avatar";
-  avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg>';
+  avatar.innerHTML = avatarSVG;
   wrap.appendChild(avatar);
   wrap.appendChild(bubble);
   messages.appendChild(wrap);
@@ -578,7 +575,7 @@ function setTyping(on) {
     const wrap = document.createElement("div");
     wrap.className = "bubble-wrap bot";
     wrap.id = "typingIndicator";
-    wrap.innerHTML = '<div class="avatar"><svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg></div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+    wrap.innerHTML = '<div class="avatar">' + avatarSVG + '</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
     container.appendChild(wrap);
     scrollEl.scrollTop = scrollEl.scrollHeight;
   } else {
@@ -591,12 +588,13 @@ function setTyping(on) {
 const chatPrepa = document.getElementById("chatPrepa");
 const messagesPrepa = document.getElementById("messagesPrepa");
 
-function addBotMsgPrepa(text, withActions) {
+function addBotMsgPrepa(text, withActions, extraHtml) {
   const wrap = document.createElement("div");
   wrap.className = "bubble-wrap bot";
   const bubble = document.createElement("div");
   bubble.className = "bubble bot";
   bubble.textContent = text;
+  if (extraHtml) bubble.insertAdjacentHTML("beforeend", extraHtml);
   if (withActions) {
     const actions = document.createElement("div");
     actions.className = "quick-actions";
@@ -605,12 +603,12 @@ function addBotMsgPrepa(text, withActions) {
       '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe seniors\')">⏱️ Mini Cooper</button>' +
       '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine\')">📋 Programme</button>' +
       '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression équipe ce mois\')">📈 Progression</button>' +
-      '<button class="qa-btn" onclick="exportExcel()">📊 Télécharger Excel</button>';
+      '<button class="qa-btn" onclick="startExcelFlow()">📊 Télécharger Excel</button>';
     bubble.appendChild(actions);
   }
   const avatar = document.createElement("div");
   avatar.className = "avatar";
-  avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#111" stroke="#cc0000" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-family="Arial Black" font-size="28" font-weight="900" fill="white">RT</text></svg>';
+  avatar.innerHTML = avatarSVG;
   wrap.appendChild(avatar);
   wrap.appendChild(bubble);
   messagesPrepa.appendChild(wrap);
@@ -628,41 +626,195 @@ function addUserMsgPrepa(text) {
   chatPrepa.scrollTop = chatPrepa.scrollHeight;
 }
 
-// ===== EXPORT EXCEL =====
-function exportExcel() {
-  // Récupère tout le texte des bulles de la prépa
-  const bubbles = document.querySelectorAll("#messagesPrepa .bubble.bot");
-  let lastTable = null;
+// ===== FLOW EXCEL : GUIDE + COLLECTE + GÉNÉRATION =====
 
-  bubbles.forEach(bubble => {
-    const text = bubble.textContent;
-    // Cherche les lignes avec | qui forment un tableau
-    const lines = text.split("\n").filter(l => l.includes("|") && !l.match(/^[-|]+$/));
-    if (lines.length > 1) lastTable = lines;
-  });
+function startExcelFlow() {
+  // Demande le TYPE de données à exporter
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap bot";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+  bubble.textContent = "📊 Parfait ! Quel type de données voulez-vous exporter ?";
 
-  if (!lastTable || lastTable.length < 2) {
-    alert("Aucun tableau trouvé ! Demandez d'abord un test ou un rapport.");
-    return;
+  const actions = document.createElement("div");
+  actions.className = "quick-actions";
+  actions.innerHTML =
+    '<button class="qa-btn" onclick="askExcelData(\'tests\')">🏃 Résultats de tests physiques</button>' +
+    '<button class="qa-btn" onclick="askExcelData(\'presence\')">✅ Feuille de présence</button>' +
+    '<button class="qa-btn" onclick="askExcelData(\'les deux\')">📋 Les deux</button>';
+  bubble.appendChild(actions);
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.innerHTML = avatarSVG;
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  messagesPrepa.appendChild(wrap);
+  chatPrepa.scrollTop = chatPrepa.scrollHeight;
+}
+
+function askExcelData(type) {
+  excelDataType = type;
+  waitingForExcelData = true;
+
+  // Message utilisateur simulé
+  addUserMsgPrepa(type === "tests" ? "Résultats de tests physiques" : type === "presence" ? "Feuille de présence" : "Les deux");
+
+  // Guide de saisie selon le type
+  const wrap = document.createElement("div");
+  wrap.className = "bubble-wrap bot";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+
+  let guideText = "";
+  let exampleText = "";
+
+  if (type === "tests") {
+    guideText = "✏️ Tapez vos résultats de tests en texte libre ci-dessous.\nIndiquez le nom du joueur, le type de test et le résultat. Je m'occupe du reste !";
+    exampleText =
+      "Exemples :\n" +
+      "• Yanis — Bip Test niveau 12 palier 3\n" +
+      "• Mehdi — Mini Cooper 2800m\n" +
+      "• Kevin — Sprint 30m en 4.2s\n" +
+      "• Sofia — Bip Test niveau 9 palier 5\n\n" +
+      "Vous pouvez lister autant de joueurs que vous voulez !";
+  } else if (type === "presence") {
+    guideText = "✏️ Tapez la liste de présence de votre séance en texte libre.\nPrécisez la date si besoin. Je formate tout !";
+    exampleText =
+      "Exemples :\n" +
+      "• Séance du 24/05 — U13\n" +
+      "• Yanis : présent\n" +
+      "• Mehdi : absent (blessé)\n" +
+      "• Kevin : présent\n" +
+      "• Sofia : retard 10min\n\n" +
+      "Ou en une ligne : Présents : Yanis, Kevin, Sofia / Absents : Mehdi";
+  } else {
+    guideText = "✏️ Tapez d'abord vos résultats de tests, puis la liste de présence.\nSéparez les deux par une ligne vide ou un tiret. Je crée deux feuilles dans le même fichier Excel !";
+    exampleText =
+      "Exemple :\n" +
+      "TESTS — Séance 24/05\n" +
+      "Yanis — Bip Test niveau 12 palier 3\n" +
+      "Mehdi — Mini Cooper 2800m\n\n" +
+      "PRÉSENCE — Séance 24/05\n" +
+      "Présents : Yanis, Kevin, Sofia\n" +
+      "Absents : Mehdi (blessé)";
   }
 
-  // Parse le tableau
-  const rows = lastTable.map(line =>
-    line.split("|").map(cell => cell.trim()).filter(cell => cell !== "")
-  ).filter(row => row.length > 0);
+  bubble.textContent = guideText;
+  bubble.insertAdjacentHTML("beforeend",
+    '<div class="excel-guide-card">' +
+    '<div class="excel-guide-title">📝 Format attendu</div>' +
+    '<div class="excel-guide-example">' + exampleText + '</div>' +
+    '</div>'
+  );
 
-  // Crée le workbook Excel
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(rows);
+  // Bouton annuler
+  const actions = document.createElement("div");
+  actions.className = "quick-actions";
+  actions.style.marginTop = "10px";
+  actions.innerHTML = '<button class="qa-btn" onclick="cancelExcelFlow()" style="border-color:rgba(255,100,100,0.4);color:#ff9999;">✕ Annuler</button>';
+  bubble.appendChild(actions);
 
-  // Style largeur colonnes
-  ws["!cols"] = rows[0].map(() => ({ wch: 20 }));
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.innerHTML = avatarSVG;
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  messagesPrepa.appendChild(wrap);
+  chatPrepa.scrollTop = chatPrepa.scrollHeight;
 
-  XLSX.utils.book_append_sheet(wb, ws, "Résultats");
+  // Focus sur l'input
+  document.getElementById("userInput").placeholder = "Tapez vos données ici… (ex: Yanis bip test niveau 12 palier 3)";
+  document.getElementById("userInput").focus();
+}
 
-  // Télécharge
-  const date = new Date().toLocaleDateString("fr-FR").replace(/\//g, "-");
-  XLSX.writeFile(wb, "RT_Mouscron_Resultats_" + date + ".xlsx");
+function cancelExcelFlow() {
+  waitingForExcelData = false;
+  excelDataType = null;
+  document.getElementById("userInput").placeholder = "Ex: Test bip Yanis niveau 12 palier 3…";
+  addBotMsgPrepa("Annulé. Que puis-je faire pour vous ?", false);
+}
+
+// ===== GÉNÉRATION EXCEL VIA IA =====
+async function generateExcelFromText(userText) {
+  // Appel IA pour parser les données
+  setTyping(true);
+
+  const systemPrompt = `Tu es un assistant de club de football. 
+L'utilisateur te donne des données en texte libre (résultats de tests physiques et/ou feuilles de présence).
+Tu dois retourner UNIQUEMENT un JSON valide (pas de markdown, pas d'explication) avec cette structure :
+
+{
+  "sheets": [
+    {
+      "name": "Nom de la feuille",
+      "headers": ["Colonne1", "Colonne2", "Colonne3"],
+      "rows": [
+        ["valeur1", "valeur2", "valeur3"],
+        ...
+      ]
+    }
+  ],
+  "summary": "Un court message de confirmation en français (max 1 phrase)"
+}
+
+Pour les tests physiques : colonnes = Joueur, Type de test, Résultat, Date (si mentionnée), Remarques
+Pour la présence : colonnes = Joueur, Statut (Présent/Absent/Retard), Remarques, Date
+Si les deux types : crée deux feuilles séparées.
+Invente des valeurs manquantes plausibles si besoin (ex: date = aujourd'hui si non précisée).`;
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userText }]
+      })
+    });
+
+    const data = await resp.json();
+    setTyping(false);
+
+    const raw = data.content.map(i => i.text || "").join("");
+    let parsed;
+    try {
+      const clean = raw.replace(/```json|```/g, "").trim();
+      parsed = JSON.parse(clean);
+    } catch {
+      addBotMsgPrepa("Je n'ai pas pu analyser vos données. Réessayez avec un format plus simple (ex: Yanis — Bip Test niveau 12).", false);
+      return;
+    }
+
+    // Construire le fichier Excel
+    const wb = XLSX.utils.book_new();
+    parsed.sheets.forEach(sheet => {
+      const wsData = [sheet.headers, ...sheet.rows];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      ws["!cols"] = sheet.headers.map(() => ({ wch: 22 }));
+      XLSX.utils.book_append_sheet(wb, ws, sheet.name.slice(0, 31));
+    });
+
+    const date = new Date().toLocaleDateString("fr-FR").replace(/\//g, "-");
+    XLSX.writeFile(wb, "RT_Mouscron_" + date + ".xlsx");
+
+    // Confirmation dans le chat
+    addBotMsgPrepa(
+      "✅ " + (parsed.summary || "Fichier Excel généré avec succès !") + "\n\nLe téléchargement a démarré automatiquement. 📥",
+      false
+    );
+
+  } catch (e) {
+    setTyping(false);
+    addBotMsgPrepa("Erreur lors de la génération Excel. Vérifiez votre connexion et réessayez.", false);
+  }
+
+  // Reset
+  waitingForExcelData = false;
+  excelDataType = null;
+  document.getElementById("userInput").placeholder = "Ex: Test bip Yanis niveau 12 palier 3…";
 }
 
 // ===== SEND =====
@@ -695,6 +847,16 @@ async function sendMessage(text) {
 async function sendMessagePrepa(text) {
   if (!text || isLoading) return;
   if (!clubKey) { loginScreen.style.display = "flex"; return; }
+
+  // Si on attend des données Excel → générer le fichier
+  if (waitingForExcelData) {
+    addUserMsgPrepa(text);
+    isLoading = true;
+    await generateExcelFromText(text);
+    isLoading = false;
+    return;
+  }
+
   addUserMsgPrepa(text);
   isLoading = true;
   setTyping(true);
