@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Coach IA — Assistant Football</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root {
   --green: #2ea043;
@@ -23,20 +23,19 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
 
 #topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; background: linear-gradient(135deg, rgba(0,35,0,0.98), rgba(0,60,0,0.98)); border-bottom: 2px solid rgba(46,160,67,0.5); box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
 .logo-area { display: flex; align-items: center; gap: 12px; }
-.ball-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid var(–green); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 16px var(–green-glow); }
-.logo-name { font-family: ‘Barlow Condensed’, sans-serif; font-size: 19px; font-weight: 800; color: #fff; letter-spacing: 0.08em; text-transform: uppercase; text-shadow: 0 0 10px rgba(46,160,67,0.7); line-height: 1.1; }
+.ball-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 16px var(--green-glow); }
+.logo-name { font-family: 'Barlow Condensed', sans-serif; font-size: 19px; font-weight: 800; color: #fff; letter-spacing: 0.08em; text-transform: uppercase; text-shadow: 0 0 10px rgba(46,160,67,0.7); line-height: 1.1; }
 .logo-sub { font-size: 11px; color: #4ade80; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
 
-#trialBadge { display: flex; align-items: center; gap: 7px; background: rgba(46,160,67,0.15); border: 1px solid rgba(46,160,67,0.45); border-radius: 20px; padding: 5px 12px; font-family: ‘Barlow Condensed’, sans-serif; font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em; transition: all 0.4s; }
+#trialBadge { display: flex; align-items: center; gap: 7px; background: rgba(46,160,67,0.15); border: 1px solid rgba(46,160,67,0.45); border-radius: 20px; padding: 5px 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em; transition: all 0.4s; }
 .dots { display: flex; gap: 4px; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(–green2); box-shadow: 0 0 6px var(–green2); transition: all 0.4s; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green2); box-shadow: 0 0 6px var(--green2); transition: all 0.4s; }
 .dot.used { background: rgba(255,255,255,0.12); box-shadow: none; }
 
 #catBar { position: relative; z-index: 9; display: flex; gap: 8px; padding: 9px 14px; background: rgba(0,12,0,0.85); border-bottom: 1px solid rgba(255,255,255,0.07); overflow-x: auto; scrollbar-width: none; }
 #catBar::-webkit-scrollbar { display: none; }
-.cat-chip { padding: 5px 13px; border-radius: 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(46,160,67,0.2); color: var(–dim); font-family: ‘Barlow Condensed’, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-.cat-chip:hover { border-color: var(–green); color: #4ade80; }
-.cat-chip.active { background: var(–green); border-color: var(–green); color: #fff; }
+.cat-chip { padding: 5px 13px; border-radius: 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(46,160,67,0.2); color: var(--dim); font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.cat-chip.active { background: var(--green); border-color: var(--green); color: #fff; }
 
 #chat { flex: 1; overflow-y: auto; padding: 16px 14px 120px; position: relative; z-index: 2; }
 #chat::-webkit-scrollbar { width: 3px; }
@@ -46,29 +45,28 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .bubble-wrap.bot { justify-content: flex-start; }
 .bubble-wrap.user { justify-content: flex-end; }
-.avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1.5px solid var(–green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 16px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1.5px solid var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 8px; margin-top: 2px; font-size: 16px; }
 .bubble { max-width: min(86%, 380px); padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
 .bubble.bot { background: rgba(0,18,0,0.93); border: 1px solid rgba(46,160,67,0.2); border-top-left-radius: 4px; color: #e8f5e8; }
 .bubble.user { background: rgba(15,45,15,0.9); border: 1px solid rgba(46,160,67,0.3); border-top-right-radius: 4px; color: #c8e6c8; }
 
 .hero-card { background: linear-gradient(135deg, rgba(46,160,67,0.14), rgba(0,25,0,0.6)); border: 1px solid rgba(46,160,67,0.35); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-.hero-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 22px; font-weight: 800; color: #4ade80; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; color: #4ade80; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
 .hero-sub { font-size: 13px; color: #8aba8a; margin-bottom: 14px; line-height: 1.5; }
 .features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
 .feat { display: flex; align-items: flex-start; gap: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; }
 .feat-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 .feat-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
 .feat-desc { font-size: 12px; color: #789a78; line-height: 1.4; }
-.free-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(46,160,67,0.2); border: 1px solid rgba(46,160,67,0.5); border-radius: 20px; padding: 6px 14px; font-family: ‘Barlow Condensed’, sans-serif; font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em; }
+.free-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(46,160,67,0.2); border: 1px solid rgba(46,160,67,0.5); border-radius: 20px; padding: 6px 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; color: #4ade80; letter-spacing: 0.06em; }
 
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.qa-btn { padding: 8px 13px; background: rgba(255,255,255,0.07); border: 1px solid rgba(46,160,67,0.3); border-radius: 20px; color: #e0f0e0; font-size: 13px; cursor: pointer; font-family: ‘DM Sans’, sans-serif; transition: all 0.2s; }
-.qa-btn:hover { background: rgba(46,160,67,0.18); border-color: var(–green2); }
+.qa-btn { padding: 8px 13px; background: rgba(255,255,255,0.07); border: 1px solid rgba(46,160,67,0.3); border-radius: 20px; color: #e0f0e0; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
 
 .ex-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(46,160,67,0.2); border-radius: 12px; margin-top: 10px; overflow: hidden; }
 .ex-card-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; background: rgba(46,160,67,0.1); border-bottom: 1px solid rgba(46,160,67,0.15); }
-.ex-card-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 14px; font-weight: 700; color: #4ade80; letter-spacing: 0.05em; text-transform: uppercase; }
-.ex-card-dur { font-size: 11px; color: var(–dim); background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.ex-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: #4ade80; letter-spacing: 0.05em; text-transform: uppercase; }
+.ex-card-dur { font-size: 11px; color: var(--dim); background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
 .ex-card-body { padding: 10px 14px; }
 .ex-line { font-size: 13px; color: #c8e6c8; line-height: 1.7; padding: 2px 0; }
 .ex-line.consigne { color: #a0c8a0; padding-left: 8px; border-left: 2px solid rgba(46,160,67,0.4); margin: 3px 0; }
@@ -82,58 +80,65 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
 .schema-legend { display: flex; gap: 12px; padding: 6px 12px 8px; background: rgba(0,0,0,0.4); font-size: 10px; color: rgba(255,255,255,0.6); flex-wrap: wrap; }
 .legend-item { display: flex; align-items: center; gap: 4px; }
 
+/* GUIDE CARD */
+.guide-card { margin-top: 10px; background: rgba(0,40,10,0.7); border: 1px solid rgba(46,160,67,0.35); border-radius: 12px; padding: 12px 14px; }
+.guide-card-title { font-size: 12px; font-weight: 700; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.guide-card-example { font-size: 12px; color: rgba(255,255,255,0.7); font-style: italic; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 10px; margin-top: 6px; border-left: 3px solid #4ade80; white-space: pre-wrap; }
+
+/* PDF PREVIEW */
+.pdf-preview { margin-top: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(46,160,67,0.3); border-radius: 12px; overflow: hidden; }
+.pdf-preview-header { padding: 8px 12px; background: rgba(46,160,67,0.15); font-size: 11px; color: #4ade80; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+.pdf-btn { padding: 4px 12px; background: var(--green); border: none; border-radius: 10px; color: #fff; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.pdf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.pdf-table th { background: rgba(46,160,67,0.3); color: #fff; padding: 6px 8px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.pdf-table td { padding: 6px 8px; color: #c8e6c8; border-bottom: 1px solid rgba(46,160,67,0.1); }
+.pdf-table tr:nth-child(even) td { background: rgba(46,160,67,0.06); }
+
+/* BOUTON ECOUTER */
+.speak-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 5px 12px; background: rgba(46,160,67,0.12); border: 1px solid rgba(46,160,67,0.3); border-radius: 20px; color: #4ade80; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.speak-btn.speaking { background: rgba(46,160,67,0.25); border-color: var(--green); }
+
 .typing { display:flex; gap:4px; padding:4px 0; }
-.typing span { width:6px; height:6px; border-radius:50%; background:var(–dim); animation: bounce 1.2s infinite; }
+.typing span { width:6px; height:6px; border-radius:50%; background:var(--dim); animation: bounce 1.2s infinite; }
 .typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
 #composer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 10px 12px 20px; background: linear-gradient(to top, rgba(0,10,0,0.98) 70%, transparent); }
 .composer-inner { display: flex; align-items: center; gap: 8px; background: rgba(0,18,0,0.95); border: 1px solid rgba(46,160,67,0.2); border-radius: 22px; padding: 8px 12px; }
-#userInput { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 15px; font-family: ‘DM Sans’, sans-serif; caret-color: var(–green); }
-#userInput::placeholder { color: var(–dim); }
-.send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(–green); border: none; color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 14px var(–green-glow); transition: transform 0.15s; }
-.send-btn:hover { transform: scale(1.08); }
+#userInput { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 15px; font-family: 'DM Sans', sans-serif; }
+#userInput::placeholder { color: var(--dim); }
+.send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--green); border: none; color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 14px var(--green-glow); }
 
-/* ===== PAYWALL ===== */
+/* PAYWALL */
 #paywall { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); align-items: flex-end; justify-content: center; }
 #paywall.open { display: flex; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
 .pw-sheet { width: 100%; max-width: 480px; background: linear-gradient(180deg, #081808, #040c04); border: 1px solid rgba(46,160,67,0.4); border-radius: 28px 28px 0 0; padding: 20px 18px 36px; animation: sheetUp 0.4s cubic-bezier(0.34,1.4,0.64,1); overflow-y: auto; max-height: 92vh; }
 @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-
 .pw-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 0 auto 16px; }
 .pw-emoji { font-size: 40px; text-align: center; display: block; margin-bottom: 8px; }
-.pw-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 28px; font-weight: 800; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 6px; }
+.pw-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 6px; }
 .pw-title span { color: #4ade80; }
 .pw-sub { font-size: 13px; color: #789a78; text-align: center; margin-bottom: 18px; line-height: 1.5; }
-
-/* Plans */
 .plans { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .plan { border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); position: relative; }
-.plan.popular { border-color: var(–green); background: linear-gradient(135deg, rgba(46,160,67,0.14), rgba(46,160,67,0.03)); }
-.pop-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(–green); color: #fff; font-family: ‘Barlow Condensed’, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 12px; border-radius: 20px; white-space: nowrap; }
+.plan.popular { border-color: var(--green); background: linear-gradient(135deg, rgba(46,160,67,0.14), rgba(46,160,67,0.03)); }
+.pop-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--green); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 12px; border-radius: 20px; white-space: nowrap; }
 .plan-left { display: flex; flex-direction: column; gap: 1px; }
-.plan-name { font-family: ‘Barlow Condensed’, sans-serif; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
+.plan-name { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
 .plan-desc { font-size: 11px; color: #789a78; }
 .plan-right { text-align: right; flex-shrink: 0; }
-.plan-amount { font-family: ‘Barlow Condensed’, sans-serif; font-size: 22px; font-weight: 800; color: #4ade80; }
+.plan-amount { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; color: #4ade80; }
 .plan-period { font-size: 10px; color: #789a78; }
 .plan-annual { font-size: 10px; color: #4ade80; opacity: 0.8; }
-
-/* Features */
 .pw-feats { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
 .pw-feat { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #c8e6c8; }
 .pw-feat-icon { color: #4ade80; font-size: 14px; flex-shrink: 0; }
-
 .annual-note { text-align: center; font-size: 12px; color: #4ade80; margin-bottom: 14px; background: rgba(46,160,67,0.1); border: 1px solid rgba(46,160,67,0.25); border-radius: 10px; padding: 8px; }
-
-.wa-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; background: #25D366; border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700; font-family: ‘Barlow Condensed’, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; text-decoration: none; box-shadow: 0 6px 28px rgba(37,211,102,0.45); transition: all 0.2s; }
-.wa-btn:hover { transform: translateY(-2px); }
+.wa-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; background: #25D366; border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; text-decoration: none; box-shadow: 0 6px 28px rgba(37,211,102,0.45); }
 .wa-btn svg { width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
 .pw-note { text-align: center; font-size: 11px; color: #3a5a3a; margin-top: 10px; }
 </style>
-
 </head>
 <body>
 
@@ -151,8 +156,6 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
   </svg>
 </div>
 <div id="overlay"></div>
-
-<!-- TOPBAR -->
 
 <header id="topbar">
   <div class="logo-area">
@@ -172,8 +175,6 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
   </div>
 </header>
 
-<!-- CATBAR -->
-
 <div id="catBar">
   <div class="cat-chip" onclick="selectCat(this,'U6/U7')">U6/U7</div>
   <div class="cat-chip active" onclick="selectCat(this,'U8/U9')">U8/U9</div>
@@ -185,11 +186,7 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
   <div class="cat-chip" onclick="selectCat(this,'Seniors')">Seniors</div>
 </div>
 
-<!-- CHAT -->
-
 <div id="chat"><div id="messages"></div></div>
-
-<!-- COMPOSER -->
 
 <div id="composer">
   <div class="composer-inner">
@@ -198,101 +195,48 @@ body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: 
   </div>
 </div>
 
-<!-- PAYWALL -->
-
 <div id="paywall">
   <div class="pw-sheet">
     <div class="pw-handle"></div>
     <span class="pw-emoji">🏆</span>
     <div class="pw-title">Coach IA<br/><span>illimité</span></div>
     <div class="pw-sub">3 essais utilisés — choisissez votre formule !</div>
-
-```
-<div class="plans">
-
-  <div class="plan">
-    <div class="plan-left">
-      <div class="plan-name">💎 Solo</div>
-      <div class="plan-desc">1 coach</div>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-left"><div class="plan-name">💎 Solo</div><div class="plan-desc">1 coach</div></div>
+        <div class="plan-right"><div class="plan-amount">5€</div><div class="plan-period">/mois</div><div class="plan-annual">ou 50€/an</div></div>
+      </div>
+      <div class="plan popular">
+        <div class="pop-badge">⭐ Idéal pour débuter</div>
+        <div class="plan-left"><div class="plan-name">💎 Mini Club</div><div class="plan-desc">5 coachs</div></div>
+        <div class="plan-right"><div class="plan-amount">9€</div><div class="plan-period">/mois</div><div class="plan-annual">ou 90€/an</div></div>
+      </div>
+      <div class="plan">
+        <div class="plan-left"><div class="plan-name">💎 Club</div><div class="plan-desc">10 coachs</div></div>
+        <div class="plan-right"><div class="plan-amount">15€</div><div class="plan-period">/mois</div><div class="plan-annual">ou 150€/an</div></div>
+      </div>
+      <div class="plan">
+        <div class="plan-left"><div class="plan-name">💎 Club Pro</div><div class="plan-desc">20 coachs</div></div>
+        <div class="plan-right"><div class="plan-amount">25€</div><div class="plan-period">/mois</div><div class="plan-annual">ou 250€/an</div></div>
+      </div>
+      <div class="plan">
+        <div class="plan-left"><div class="plan-name">💎 Club Max</div><div class="plan-desc">Illimité</div></div>
+        <div class="plan-right"><div class="plan-amount">39€</div><div class="plan-period">/mois</div><div class="plan-annual">ou 390€/an</div></div>
+      </div>
     </div>
-    <div class="plan-right">
-      <div class="plan-amount">5€</div>
-      <div class="plan-period">/mois</div>
-      <div class="plan-annual">ou 50€/an</div>
+    <div class="annual-note">✅ 2 mois offerts avec l'abonnement annuel</div>
+    <div class="pw-feats">
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Séances complètes générées automatiquement</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Schémas d'exercices inclus</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Messages parents rédigés automatiquement</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> PDF tests physiques aux couleurs du club</div>
+      <div class="pw-feat"><span class="pw-feat-icon">✅</span> Accès depuis votre téléphone partout</div>
     </div>
-  </div>
-
-  <div class="plan popular">
-    <div class="pop-badge">⭐ Idéal pour débuter</div>
-    <div class="plan-left">
-      <div class="plan-name">💎 Mini Club</div>
-      <div class="plan-desc">5 coachs</div>
-    </div>
-    <div class="plan-right">
-      <div class="plan-amount">9€</div>
-      <div class="plan-period">/mois</div>
-      <div class="plan-annual">ou 90€/an</div>
-    </div>
-  </div>
-
-  <div class="plan">
-    <div class="plan-left">
-      <div class="plan-name">💎 Club</div>
-      <div class="plan-desc">10 coachs</div>
-    </div>
-    <div class="plan-right">
-      <div class="plan-amount">15€</div>
-      <div class="plan-period">/mois</div>
-      <div class="plan-annual">ou 150€/an</div>
-    </div>
-  </div>
-
-  <div class="plan">
-    <div class="plan-left">
-      <div class="plan-name">💎 Club Pro</div>
-      <div class="plan-desc">20 coachs</div>
-    </div>
-    <div class="plan-right">
-      <div class="plan-amount">25€</div>
-      <div class="plan-period">/mois</div>
-      <div class="plan-annual">ou 250€/an</div>
-    </div>
-  </div>
-
-  <div class="plan">
-    <div class="plan-left">
-      <div class="plan-name">💎 Club Max</div>
-      <div class="plan-desc">Illimité</div>
-    </div>
-    <div class="plan-right">
-      <div class="plan-amount">39€</div>
-      <div class="plan-period">/mois</div>
-      <div class="plan-annual">ou 390€/an</div>
-    </div>
-  </div>
-
-</div>
-
-<div class="annual-note">✅ 2 mois offerts avec l'abonnement annuel</div>
-
-<div class="pw-feats">
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Séances complètes générées automatiquement</div>
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Schémas d'exercices inclus</div>
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Messages parents rédigés automatiquement</div>
-  <div class="pw-feat"><span class="pw-feat-icon">✅</span> Accès depuis votre téléphone partout</div>
-</div>
-
-<a class="wa-btn"
-   href="https://wa.me/33617123910?text=Bonjour%20!%20Je%20veux%20m%27abonner%20%C3%A0%20Coach%20IA%20%F0%9F%9A%80%20Quelle%20formule%20me%20conseillez-vous%20%3F"
-   target="_blank">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-  </svg>
-  Choisir ma formule sur WhatsApp
-</a>
-<div class="pw-note">🔒 Réponse en moins de 5 min · Accès immédiat</div>
-```
-
+    <a class="wa-btn" href="https://wa.me/33617123910?text=Bonjour%20!%20Je%20veux%20m%27abonner%20%C3%A0%20Coach%20IA%20%F0%9F%9A%80%20Quelle%20formule%20me%20conseillez-vous%20%3F" target="_blank">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Choisir ma formule sur WhatsApp
+    </a>
+    <div class="pw-note">🔒 Réponse en moins de 5 min · Accès immédiat</div>
   </div>
 </div>
 
@@ -302,225 +246,372 @@ const COACH_URL = API_BASE + "/coach";
 const CLUB_KEY = "DEMO-CLUB-0000";
 const MAX_FREE = 3;
 
-// PAS de localStorage pour les essais → reset à chaque session
 let usedTrials = 0;
 let categorie = "U8/U9";
 let isLoading = false;
+let waitingForParents = false;
+let waitingForTests = false;
+let lastTestData = null;
+let currentUtterance = null;
 
 let deviceId = localStorage.getItem("demo_device_id");
 if (!deviceId) { deviceId = "device_" + Math.random().toString(36).slice(2,12); localStorage.setItem("demo_device_id", deviceId); }
 let userId = "demo_" + (localStorage.getItem("demo_user_id") || Math.random().toString(36).slice(2,10));
 localStorage.setItem("demo_user_id", userId.replace("demo_",""));
 
+// Précharger les voix TTS
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+}
+
 function updateBadge() {
-  const rem = MAX_FREE - usedTrials;
+  var rem = MAX_FREE - usedTrials;
   document.getElementById('trialText').textContent = rem + (rem > 1 ? ' ESSAIS' : ' ESSAI');
-  for (let i = 1; i <= 3; i++) document.getElementById('d'+i).classList.toggle('used', i > rem);
-  const b = document.getElementById('trialBadge');
+  for (var i = 1; i <= 3; i++) document.getElementById('d'+i).classList.toggle('used', i > rem);
+  var b = document.getElementById('trialBadge');
   if (rem === 0) { b.style.background='rgba(255,80,80,0.15)'; b.style.borderColor='rgba(255,80,80,0.4)'; b.style.color='#ff7070'; }
   else if (rem === 1) { b.style.background='rgba(255,165,0,0.15)'; b.style.borderColor='rgba(255,165,0,0.4)'; b.style.color='#ffb040'; }
 }
 
 function showPaywall() { document.getElementById('paywall').classList.add('open'); }
 
-// Changement catégorie → PAS d'essai consommé
+// ===== CATEGORIE =====
 function selectCat(el, cat) {
-  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.cat-chip').forEach(function(c) { c.classList.remove('active'); });
   el.classList.add('active');
   categorie = cat;
-  addBot('Catégorie <strong>' + cat + '</strong> sélectionnée ⚽<br/>Quel thème de séance ce soir ?');
+  var greetings = {
+    'U6/U7':   'les U6/U7 — les petits ! 🌟',
+    'U8/U9':   'les U8/U9 — on va s\'amuser ! ⚽',
+    'U10/U11': 'les U10/U11 — belle catégorie ! 🏃',
+    'U12/U13': 'les U12/U13 — on monte en niveau ! 💥',
+    'U14/U15': 'les U14/U15 — la tactique commence ! 🧠',
+    'U16/U17': 'les U16/U17 — niveau avancé ! ⚡',
+    'U18':     'les U18 — presque des seniors ! 🔥',
+    'Seniors': 'les Seniors — on sort le grand jeu ! 🏆'
+  };
+  var label = greetings[cat] || cat;
+  addBot('Bonjour Coach ! 👋<br/>Aujourd\'hui c\'est <strong>' + label + '</strong><br/><br/>Qu\'est-ce qu\'on travaille ?<div class="quick-actions" style="margin-top:10px"><button class="qa-btn" onclick="sendMessage(\'dribble, 13 joueurs, 1h\')">🏃 Dribble</button><button class="qa-btn" onclick="sendMessage(\'passe en triangle, 10 joueurs, 45min\')">⚡ Passe</button><button class="qa-btn" onclick="sendMessage(\'tir au but, 14 joueurs, 1h\')">🎯 Tir</button><button class="qa-btn" onclick="sendMessage(\'pressing collectif, 12 joueurs, 1h\')">💥 Pressing</button><button class="qa-btn" onclick="startParentsFlow()">📢 Parents</button><button class="qa-btn" onclick="startTestsFlow()">💪 Tests PDF</button></div>', null, false);
+  document.getElementById('userInput').placeholder = 'Ex: dribble, 13 joueurs, 1h…';
+  document.getElementById('userInput').focus();
 }
 
-// SCHEMA
+// ===== TTS =====
+function speakText(btn, text) {
+  if (!window.speechSynthesis) return;
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    document.querySelectorAll('.speak-btn').forEach(function(b) { b.classList.remove('speaking'); b.textContent = '🔊 Écouter'; });
+    currentUtterance = null;
+    return;
+  }
+  var tmp = document.createElement('div');
+  tmp.innerHTML = text;
+  var clean = (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+  var utt = new SpeechSynthesisUtterance(clean);
+  utt.lang = 'fr-FR';
+  utt.rate = 0.95;
+  var voices = window.speechSynthesis.getVoices();
+  var frVoice = voices.find(function(v) { return v.lang && v.lang.startsWith('fr'); });
+  if (frVoice) utt.voice = frVoice;
+  currentUtterance = utt;
+  btn.classList.add('speaking');
+  btn.textContent = '⏹ Stop';
+  utt.onend = function() { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; currentUtterance = null; };
+  utt.onerror = function() { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; currentUtterance = null; };
+  window.speechSynthesis.speak(utt);
+}
+
+// ===== SCHEMA =====
 function buildSchema(schema) {
   if (!schema) return null;
-  const W = 320, H = 220;
-  const px = p => 10 + p * (W-20) / 100;
-  const py = p => 10 + p * (H-20) / 100;
-  let defs = '<defs><marker id="aB" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="white" opacity="0.9"/></marker><marker id="aM" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4ade80"/></marker></defs>';
-  let els = [];
+  var W = 320, H = 220;
+  var px = function(p) { return 10 + p * (W-20) / 100; };
+  var py = function(p) { return 10 + p * (H-20) / 100; };
+  var defs = '<defs><marker id="aB" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="white" opacity="0.9"/></marker><marker id="aM" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4ade80"/></marker></defs>';
+  var els = [];
   els.push('<defs><pattern id="gr" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#1a4a1a"/><rect width="40" height="20" fill="#1e5c1e"/></pattern></defs>');
   els.push('<rect width="'+W+'" height="'+H+'" fill="url(#gr)" rx="8"/>');
   els.push('<rect x="5" y="5" width="'+(W-10)+'" height="'+(H-10)+'" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" rx="3"/>');
-  const pos = {};
-  if (schema.players) schema.players.forEach(p => { pos[p.id] = [px(p.x), py(p.y)]; });
-  if (schema.plots) schema.plots.forEach((p,i) => { pos["plot_"+i] = [px(p.x), py(p.y)]; });
-  if (schema.goal) { const gx=px(schema.goal.x),gy=py(schema.goal.y); els.push('<rect x="'+(gx-22)+'" y="'+(gy-6)+'" width="44" height="12" fill="none" stroke="white" stroke-width="2" rx="1"/>'); els.push('<text x="'+gx+'" y="'+(gy+22)+'" text-anchor="middle" font-size="8" fill="white" font-weight="bold">BUT</text>'); }
-  if (schema.ball_paths) schema.ball_paths.forEach(p => { const f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="white" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#aB)"/>'); });
-  if (schema.player_paths) schema.player_paths.forEach(p => { const f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="#4ade80" stroke-width="2" marker-end="url(#aM)"/>'); });
-  if (schema.plots) schema.plots.forEach(p => { const x=px(p.x),y=py(p.y); els.push('<polygon points="'+x+','+(y-7)+' '+(x-5)+','+(y+4)+' '+(x+5)+','+(y+4)+'" fill="#f0a500" stroke="white" stroke-width="0.5"/>'); });
-  if (schema.players) schema.players.forEach(p => { const x=px(p.x),y=py(p.y); els.push('<circle cx="'+x+'" cy="'+y+'" r="10" fill="#2ea043" stroke="white" stroke-width="1.5"/>'); els.push('<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="8" font-weight="bold" fill="white">'+p.id+'</text>'); });
+  var pos = {};
+  if (schema.players) schema.players.forEach(function(p) { pos[p.id] = [px(p.x), py(p.y)]; });
+  if (schema.plots) schema.plots.forEach(function(p,i) { pos["plot_"+i] = [px(p.x), py(p.y)]; });
+  if (schema.goal) { var gx=px(schema.goal.x),gy=py(schema.goal.y); els.push('<rect x="'+(gx-22)+'" y="'+(gy-6)+'" width="44" height="12" fill="none" stroke="white" stroke-width="2" rx="1"/>'); els.push('<text x="'+gx+'" y="'+(gy+22)+'" text-anchor="middle" font-size="8" fill="white" font-weight="bold">BUT</text>'); }
+  if (schema.ball_paths) schema.ball_paths.forEach(function(p) { var f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="white" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#aB)"/>'); });
+  if (schema.player_paths) schema.player_paths.forEach(function(p) { var f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="#4ade80" stroke-width="2" marker-end="url(#aM)"/>'); });
+  if (schema.plots) schema.plots.forEach(function(p) { var x=px(p.x),y=py(p.y); els.push('<polygon points="'+x+','+(y-7)+' '+(x-5)+','+(y+4)+' '+(x+5)+','+(y+4)+'" fill="#f0a500" stroke="white" stroke-width="0.5"/>'); });
+  if (schema.players) schema.players.forEach(function(p) { var x=px(p.x),y=py(p.y); els.push('<circle cx="'+x+'" cy="'+y+'" r="10" fill="#2ea043" stroke="white" stroke-width="1.5"/>'); els.push('<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="8" font-weight="bold" fill="white">'+p.id+'</text>'); });
   if (schema.distance) { els.push('<rect x="5" y="'+(H-18)+'" width="'+(W-10)+'" height="14" fill="rgba(0,0,0,0.6)" rx="2"/>'); els.push('<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.9)">'+schema.distance+'</text>'); }
   return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+defs+els.join("")+'</svg>';
 }
 
 function renderSchema(schema) {
   if (!schema) return "";
-  const svg = buildSchema(schema);
+  var svg = buildSchema(schema);
   if (!svg) return "";
   return '<div class="schema-wrap"><div class="schema-header">📐 Schéma de l\'exercice</div>'+(schema.description?'<div class="schema-desc">'+schema.description+'</div>':'')+'<div class="schema-svg-box">'+svg+'</div><div class="schema-legend"><div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#2ea043" stroke="white" stroke-width="1"/></svg> Joueur</div><div class="legend-item"><svg width="14" height="14"><polygon points="7,1 2,12 12,12" fill="#f0a500"/></svg> Plot</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="white" stroke-width="2.5" stroke-dasharray="5,3"/></svg> Ballon</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#4ade80" stroke-width="2"/></svg> Déplacement</div></div></div>';
 }
 
-// PARSEUR MARKDOWN
+// ===== MARKDOWN =====
 function parseMarkdown(text) {
-  const hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Match|Conclusion|Objectif|Matériel|Consignes|Durée|Joueurs)/i.test(text);
+  var hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Match|Conclusion|Objectif|Matériel|Consignes|Durée|Joueurs)/i.test(text);
   if (!hasStruct) {
-    const html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
+    var html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
     return '<div class="rt-text-block">'+html+'</div>';
   }
-  const lines = text.split('\n');
-  let cards = [], currentCard = null, introLines = [], inIntro = true;
-  lines.forEach(line => {
-    const boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h))\))?$/i);
-    const boldColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
+  var lines = text.split('\n');
+  var cards = [], currentCard = null, introLines = [], inIntro = true;
+  lines.forEach(function(line) {
+    var boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h))\))?$/i);
+    var boldColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
     if (boldTitle) {
       inIntro = false;
       if (currentCard) cards.push(currentCard);
       currentCard = { title: boldTitle[1].trim(), dur: boldTitle[3]||'', lines: [] };
     } else if (boldColon) {
-      const val = boldColon[2].replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-      const key = boldColon[1];
+      var val = boldColon[2].replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+      var key = boldColon[1];
       if (currentCard) currentCard.lines.push({ text: '<strong>'+key+' :</strong> '+val, consigne: false });
       else introLines.push('<div class="ex-line"><strong>'+key+' :</strong> '+val+'</div>');
     } else {
-      const clean = line.replace(/^\s*[-–•\d\.]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').trim();
+      var clean = line.replace(/^\s*[-–•\d\.]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').trim();
       if (!clean) return;
-      const isConsigne = /^\s{2,}/.test(line) || (/^\s*[-–\d]/.test(line) && currentCard && currentCard.lines.some(l => l.text.includes('Consignes')));
+      var isConsigne = /^\s{2,}/.test(line) || (/^\s*[-–\d]/.test(line) && currentCard && currentCard.lines.some(function(l) { return l.text.includes('Consignes'); }));
       if (inIntro) introLines.push('<div class="ex-line">'+clean+'</div>');
       else if (currentCard) currentCard.lines.push({ text: clean, consigne: isConsigne });
     }
   });
   if (currentCard) cards.push(currentCard);
-
-  let html = '';
+  var html = '';
   if (introLines.length) html += '<div style="margin-bottom:8px">'+introLines.join('')+'</div>';
-  cards.forEach(card => {
-    const t = card.title.toLowerCase();
-    const emoji = t.includes('échauffement')||t.includes('echauffement') ? '🔥 '
-      : t.includes('exercice 1') ? '⚡ ' : t.includes('exercice 2') ? '💥 '
-      : t.includes('exercice 3') ? '🎯 ' : t.includes('match')||t.includes('jeu') ? '🏁 '
-      : t.includes('conclusion') ? '✅ ' : t.includes('tir') ? '🎯 '
-      : t.includes('dribble') ? '🏃 ' : t.includes('passe') ? '⚡ '
-      : t.includes('pressing') ? '💥 ' : '';
+  cards.forEach(function(card) {
+    var t = card.title.toLowerCase();
+    var emoji = t.includes('échauffement')||t.includes('echauffement') ? '🔥 ' : t.includes('exercice 1') ? '⚡ ' : t.includes('exercice 2') ? '💥 ' : t.includes('exercice 3') ? '🎯 ' : t.includes('match')||t.includes('jeu') ? '🏁 ' : t.includes('conclusion') ? '✅ ' : t.includes('tir') ? '🎯 ' : t.includes('dribble') ? '🏃 ' : t.includes('passe') ? '⚡ ' : t.includes('pressing') ? '💥 ' : '';
     html += '<div class="ex-card"><div class="ex-card-header"><span class="ex-card-title">'+emoji+card.title+'</span>';
     if (card.dur) html += '<span class="ex-card-dur">'+card.dur+'</span>';
     html += '</div><div class="ex-card-body">';
-    card.lines.forEach(l => { html += '<div class="ex-line'+(l.consigne?' consigne':'')+'">'+l.text+'</div>'; });
+    card.lines.forEach(function(l) { html += '<div class="ex-line'+(l.consigne?' consigne':'')+'">'+l.text+'</div>'; });
     html += '</div></div>';
   });
   return html;
 }
 
-// CHAT
-const msgs = document.getElementById('messages');
-const chatEl = document.getElementById('chat');
+// ===== CHAT =====
+var msgs = document.getElementById('messages');
+var chatEl = document.getElementById('chat');
 
-function addBot(html, schema) {
-  const w = document.createElement('div'); w.className = 'bubble-wrap bot';
-  const av = document.createElement('div'); av.className = 'avatar'; av.textContent = '⚽';
-  const b = document.createElement('div'); b.className = 'bubble bot';
+function addBot(html, schema, withSpeak) {
+  var w = document.createElement('div'); w.className = 'bubble-wrap bot';
+  var av = document.createElement('div'); av.className = 'avatar'; av.textContent = '⚽';
+  var b = document.createElement('div'); b.className = 'bubble bot';
   b.innerHTML = html;
   if (schema) b.insertAdjacentHTML('beforeend', renderSchema(schema));
+  // Bouton écouter (par défaut oui, sauf si withSpeak=false explicitement)
+  if (withSpeak !== false) {
+    var sb = document.createElement('button');
+    sb.className = 'speak-btn';
+    sb.textContent = '🔊 Écouter';
+    sb.onclick = function() { speakText(this, b.innerHTML); };
+    b.appendChild(sb);
+  }
   w.appendChild(av); w.appendChild(b);
   msgs.appendChild(w);
-  setTimeout(() => { w.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+  setTimeout(function() { chatEl.scrollTop = chatEl.scrollHeight; }, 100);
 }
+
 function addUser(text) {
-  const w = document.createElement('div'); w.className = 'bubble-wrap user';
-  const b = document.createElement('div'); b.className = 'bubble user'; b.textContent = text;
+  var w = document.createElement('div'); w.className = 'bubble-wrap user';
+  var b = document.createElement('div'); b.className = 'bubble user'; b.textContent = text;
   w.appendChild(b); msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
 }
 function showTyping() {
-  const w = document.createElement('div'); w.className = 'bubble-wrap bot'; w.id = 'typing';
+  var w = document.createElement('div'); w.className = 'bubble-wrap bot'; w.id = 'typing';
   w.innerHTML = '<div class="avatar">⚽</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
   msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
 }
-function hideTyping() { const t = document.getElementById('typing'); if(t) t.remove(); }
+function hideTyping() { var t = document.getElementById('typing'); if(t) t.remove(); }
 
-// SEND — essai consommé seulement sur vraie demande
+// ===== FLOW PARENTS =====
+function startParentsFlow() {
+  waitingForParents = true;
+  waitingForTests = false;
+  document.getElementById('userInput').placeholder = 'Ex: convocation samedi 10h, annulation jeudi…';
+  document.getElementById('userInput').focus();
+  addBot('📢 <strong>Message aux parents</strong><br/><br/>Dites-moi ce que vous voulez communiquer, je rédige le message pour vous !<div class="guide-card"><div class="guide-card-title">📝 Exemples</div><div class="guide-card-example">• Convocation match samedi 10h terrain nord\n• Annulation séance jeudi cause pluie\n• Info tournoi dimanche, prévoir crampons\n• Rappel cotisation avant fin du mois</div></div><div class="quick-actions" style="margin-top:10px"><button class="qa-btn" onclick="cancelFlow()" style="border-color:rgba(255,100,100,0.3);color:#ff9999;">✕ Annuler</button></div>', null, false);
+}
+
+// ===== FLOW TESTS PDF =====
+function startTestsFlow() {
+  waitingForTests = true;
+  waitingForParents = false;
+  document.getElementById('userInput').placeholder = 'Ex: Yanis bip test niveau 12 palier 3…';
+  document.getElementById('userInput').focus();
+  addBot('💪 <strong>Tests physiques → PDF</strong><br/><br/>Entrez les résultats de vos joueurs, je génère un PDF mis en page aux couleurs du club !<div class="guide-card"><div class="guide-card-title">📝 Format attendu</div><div class="guide-card-example">• Yanis — Bip Test niveau 12 palier 3\n• Mehdi — Mini Cooper 2800m\n• Kevin — Sprint 30m en 4.2s\n• Sofia — Bip Test niveau 9 palier 5\n\nAutant de joueurs que vous voulez !</div></div><div class="quick-actions" style="margin-top:10px"><button class="qa-btn" onclick="cancelFlow()" style="border-color:rgba(255,100,100,0.3);color:#ff9999;">✕ Annuler</button></div>', null, false);
+}
+
+function cancelFlow() {
+  waitingForParents = false;
+  waitingForTests = false;
+  document.getElementById('userInput').placeholder = 'Ex: séance dribble, 12 joueurs, 1h…';
+  addBot('Annulé ! Que puis-je faire pour vous ? ⚽', null, false);
+}
+
+// ===== PDF =====
+function generateTestsPDF(rows, cat) {
+  if (!window.jspdf) { alert('PDF non disponible, réessayez dans 2 secondes.'); return null; }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  var W = 210, H = 297;
+  doc.setFillColor(10, 30, 10); doc.rect(0, 0, W, H, 'F');
+  doc.setFillColor(46, 160, 67); doc.rect(0, 0, W, 28, 'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(20);
+  doc.text('COACH IA', 14, 12);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text('Assistant Football', 14, 18);
+  var today = new Date().toLocaleDateString('fr-FR');
+  doc.text('Catégorie : ' + cat, W-14, 12, {align:'right'});
+  doc.text('Date : ' + today, W-14, 18, {align:'right'});
+  doc.setFillColor(20,50,20); doc.rect(0,28,W,12,'F');
+  doc.setTextColor(220,240,220); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text('RÉSULTATS DES TESTS PHYSIQUES', W/2, 36, {align:'center'});
+  var colX = [14,65,115,150,185];
+  var headers = ['Joueur','Type de test','Résultat','Niveau','Remarques'];
+  var y = 50;
+  doc.setFillColor(46,160,67); doc.rect(14,y-6,W-28,8,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  headers.forEach(function(h,i) { doc.text(h, colX[i]+1, y-0.5); });
+  y += 6;
+  rows.forEach(function(row, idx) {
+    var bg = idx%2===0 ? [15,40,15] : [20,50,20];
+    doc.setFillColor(bg[0],bg[1],bg[2]); doc.rect(14,y-5,W-28,8,'F');
+    doc.setTextColor(220,240,220); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    row.forEach(function(cell,i) { doc.text(String(cell||'').slice(0,22), colX[i]+1, y); });
+    y += 8;
+    if (y > H-20) { doc.addPage(); doc.setFillColor(10,30,10); doc.rect(0,0,W,H,'F'); y=20; }
+  });
+  doc.setDrawColor(46,160,67); doc.setLineWidth(0.5); doc.line(14,H-16,W-14,H-16);
+  doc.setTextColor(100,160,100); doc.setFontSize(8);
+  doc.text('Généré par Coach IA · coachia.fr', W/2, H-10, {align:'center'});
+  return doc;
+}
+
+function downloadPDF() {
+  if (!lastTestData) return;
+  var doc = generateTestsPDF(lastTestData.rows, lastTestData.cat);
+  if (!doc) return;
+  var date = new Date().toLocaleDateString('fr-FR').replace(/\//g,'-');
+  doc.save('CoachIA_Tests_' + lastTestData.cat.replace('/','') + '_' + date + '.pdf');
+}
+
+function printPDF() {
+  if (!lastTestData) return;
+  var doc = generateTestsPDF(lastTestData.rows, lastTestData.cat);
+  if (!doc) return;
+  var blob = doc.output('blob');
+  var url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+}
+
+function showTestsResult(rows) {
+  lastTestData = { rows: rows, cat: categorie };
+  var tableHTML = '<div class="pdf-preview"><div class="pdf-preview-header"><span>📋 Résultats — '+categorie+'</span></div><table class="pdf-table"><thead><tr><th>Joueur</th><th>Test</th><th>Résultat</th><th>Niveau</th></tr></thead><tbody>';
+  rows.forEach(function(r) { tableHTML += '<tr><td>'+(r[0]||'')+'</td><td>'+(r[1]||'')+'</td><td>'+(r[2]||'')+'</td><td>'+(r[3]||'')+'</td></tr>'; });
+  tableHTML += '</tbody></table></div><div class="quick-actions" style="margin-top:10px"><button class="qa-btn" onclick="downloadPDF()">⬇️ Télécharger PDF</button><button class="qa-btn" onclick="printPDF()">🖨️ Ouvrir / Imprimer</button></div>';
+  addBot('✅ <strong>'+rows.length+' joueur(s) traité(s) !</strong><br/>'+tableHTML, null, false);
+}
+
+// ===== SEND =====
 async function sendMessage(text) {
   if (!text || isLoading) return;
-  if (usedTrials >= MAX_FREE) { showPaywall(); return; }
 
-  addUser(text);
-  isLoading = true;
-  showTyping();
-  usedTrials++;
-  updateBadge();
-
-  try {
-    const resp = await fetch(COACH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, userId, categorie, clubKey: CLUB_KEY, deviceId })
-    });
-    const data = await resp.json();
-    hideTyping();
-    if (!resp.ok) {
-      addBot('❌ ' + (data.error || 'Erreur de connexion.'), null);
-    } else {
-      addBot(parseMarkdown(data.answer || 'Pas de réponse.'), data.schema || null);
-    }
-  } catch(e) {
-    hideTyping();
-    addBot('❌ Erreur de connexion. Réessayez.', null);
+  // Flow parents
+  if (waitingForParents) {
+    waitingForParents = false;
+    document.getElementById('userInput').placeholder = 'Ex: séance dribble, 12 joueurs, 1h…';
+    addUser(text);
+    isLoading = true; showTyping();
+    try {
+      var prompt = 'Rédige un message WhatsApp professionnel et clair pour les parents d\'une équipe ' + categorie + ' à propos de : ' + text + '. Message court, direct, sans fautes, avec émoji approprié.';
+      var resp = await fetch(COACH_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message:prompt, userId, categorie, clubKey:CLUB_KEY, deviceId}) });
+      var data = await resp.json();
+      hideTyping();
+      addBot(parseMarkdown(data.answer || 'Pas de réponse.'), null, true);
+    } catch(e) { hideTyping(); addBot('❌ Erreur de connexion.', null, false); }
+    isLoading = false;
+    return;
   }
-  isLoading = false;
 
+  // Flow tests PDF
+  if (waitingForTests) {
+    waitingForTests = false;
+    document.getElementById('userInput').placeholder = 'Ex: séance dribble, 12 joueurs, 1h…';
+    addUser(text);
+    isLoading = true; showTyping();
+    try {
+      var today = new Date().toLocaleDateString('fr-FR');
+      var prompt = 'Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans texte avant ou après. Format : {"rows":[["Joueur","Type de test","Résultat","Niveau","Remarques"],...]}. La première ligne DOIT être l\'en-tête exactement. Niveau = Excellent/Bon/Moyen/Faible. Date : ' + today + '. Données : ' + text;
+      var resp = await fetch(API_BASE + '/prepa', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message:prompt, userId:userId+'_tests', categorie, clubKey:CLUB_KEY, deviceId}) });
+      var data = await resp.json();
+      hideTyping();
+      var raw = (data.answer||'').replace(/```json/g,'').replace(/```/g,'').trim();
+      var match = raw.match(/\{[\s\S]*\}/);
+      var parsed = JSON.parse(match ? match[0] : raw);
+      var rows = (parsed.rows||[]).slice(1);
+      if (rows.length === 0) { addBot('Aucun résultat détecté. Réessayez.', null, false); }
+      else { showTestsResult(rows); }
+    } catch(e) { hideTyping(); addBot('❌ Erreur lors de la génération.', null, false); }
+    isLoading = false;
+    return;
+  }
+
+  // Demande normale
+  if (usedTrials >= MAX_FREE) { showPaywall(); return; }
+  addUser(text);
+  isLoading = true; showTyping();
+  usedTrials++; updateBadge();
+  try {
+    var resp = await fetch(COACH_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message:'Catégorie : '+categorie+'. '+text, userId, categorie, clubKey:CLUB_KEY, deviceId}) });
+    var data = await resp.json();
+    hideTyping();
+    if (!resp.ok) { addBot('❌ '+(data.error||'Erreur de connexion.'), null, false); }
+    else { addBot(parseMarkdown(data.answer||'Pas de réponse.'), data.schema||null, true); }
+  } catch(e) { hideTyping(); addBot('❌ Erreur de connexion. Réessayez.', null, false); }
+  isLoading = false;
   if (usedTrials >= MAX_FREE) {
-    setTimeout(() => {
-      addBot('💡 <strong>C\'était votre dernier essai gratuit !</strong><br/>Choisissez votre formule pour continuer sans limite 👇', null);
+    setTimeout(function() {
+      addBot('💡 <strong>C\'était votre dernier essai gratuit !</strong><br/>Choisissez votre formule pour continuer sans limite 👇', null, false);
       setTimeout(showPaywall, 800);
     }, 300);
   }
 }
 
-// WELCOME
+// ===== WELCOME =====
 function showWelcome() {
-  const w = document.createElement('div'); w.className = 'bubble-wrap bot';
-  const av = document.createElement('div'); av.className = 'avatar'; av.textContent = '⚽';
-  const b = document.createElement('div'); b.className = 'bubble bot';
-  b.innerHTML = `
-    <div class="hero-card">
-      <div class="hero-title">Votre Coach IA Football ⚡</div>
-      <div class="hero-sub">En 10 secondes, je génère tout ce dont vous avez besoin. Dites-moi ce que vous voulez — je m'occupe du reste.</div>
-      <div class="features">
-        <div class="feat"><div class="feat-icon">🏃</div><div><div class="feat-title">Séances complètes sur mesure</div><div class="feat-desc">Dribble, passe, tir, pressing… Thème + joueurs + durée — exercices, schémas et consignes générés automatiquement.</div></div></div>
-        <div class="feat"><div class="feat-icon">📢</div><div><div class="feat-title">Messages parents en 1 clic</div><div class="feat-desc">Convocation, annulation, info match — prêts à envoyer directement.</div></div></div>
-        <div class="feat"><div class="feat-icon">🎯</div><div><div class="feat-title">Adapté à votre catégorie</div><div class="feat-desc">De U6 aux Seniors — chaque exercice calibré pour l'âge et le niveau.</div></div></div>
-      </div>
-      <div class="free-pill">🎁 3 ESSAIS GRATUITS · SANS INSCRIPTION</div>
-    </div>
-    Testez maintenant 👇
-    <div class="quick-actions">
-      <button class="qa-btn" onclick="sendMessage('Séance dribble, 12 joueurs, 1h')">🏃 Dribble</button>
-      <button class="qa-btn" onclick="sendMessage('Séance passe en triangle, 10 joueurs, 45min')">⚡ Passe</button>
-      <button class="qa-btn" onclick="sendMessage('Séance tir au but, 14 joueurs, 1h')">🎯 Tir</button>
-      <button class="qa-btn" onclick="sendMessage('Séance pressing collectif, 16 joueurs, 1h')">💥 Pressing</button>
-      <button class="qa-btn" onclick="sendMessage('Message convocation match samedi 10h')">📢 Parents</button>
-    </div>`;
+  var w = document.createElement('div'); w.className = 'bubble-wrap bot';
+  var av = document.createElement('div'); av.className = 'avatar'; av.textContent = '⚽';
+  var b = document.createElement('div'); b.className = 'bubble bot';
+  b.innerHTML = '<div class="hero-card"><div class="hero-title">Votre Coach IA Football ⚡</div><div class="hero-sub">En 10 secondes, je génère tout ce dont vous avez besoin. Dites-moi ce que vous voulez — je m\'occupe du reste.</div><div class="features"><div class="feat"><div class="feat-icon">🏃</div><div><div class="feat-title">Séances complètes sur mesure</div><div class="feat-desc">Dribble, passe, tir, pressing… exercices, schémas et consignes générés automatiquement.</div></div></div><div class="feat"><div class="feat-icon">📢</div><div><div class="feat-title">Messages parents en 1 clic</div><div class="feat-desc">Convocation, annulation, info match — prêts à envoyer directement.</div></div></div><div class="feat"><div class="feat-icon">💪</div><div><div class="feat-title">PDF tests physiques</div><div class="feat-desc">Entrez vos résultats, obtenez un PDF mis en page aux couleurs du club.</div></div></div></div><div class="free-pill">🎁 3 ESSAIS GRATUITS · SANS INSCRIPTION</div></div>Testez maintenant 👇<div class="quick-actions"><button class="qa-btn" onclick="sendMessage(\'Séance dribble, 12 joueurs, 1h\')">🏃 Dribble</button><button class="qa-btn" onclick="sendMessage(\'Séance passe en triangle, 10 joueurs, 45min\')">⚡ Passe</button><button class="qa-btn" onclick="sendMessage(\'Séance tir au but, 14 joueurs, 1h\')">🎯 Tir</button><button class="qa-btn" onclick="sendMessage(\'Séance pressing collectif, 16 joueurs, 1h\')">💥 Pressing</button><button class="qa-btn" onclick="startParentsFlow()">📢 Message parents</button><button class="qa-btn" onclick="startTestsFlow()">💪 Tests physiques PDF</button></div>';
   w.appendChild(av); w.appendChild(b);
   msgs.appendChild(w); chatEl.scrollTop = chatEl.scrollHeight;
 }
 
 // EVENTS
-document.getElementById('sendBtn').addEventListener('click', () => {
-  const inp = document.getElementById('userInput');
-  const t = inp.value.trim(); if (!t) return;
+document.getElementById('sendBtn').addEventListener('click', function() {
+  var inp = document.getElementById('userInput');
+  var t = inp.value.trim(); if (!t) return;
   inp.value = ''; sendMessage(t);
 });
-document.getElementById('userInput').addEventListener('keydown', e => {
+document.getElementById('userInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
-    const inp = document.getElementById('userInput');
-    const t = inp.value.trim(); if (!t) return;
+    var inp = document.getElementById('userInput');
+    var t = inp.value.trim(); if (!t) return;
     inp.value = ''; sendMessage(t);
   }
 });
 
-// INIT
 updateBadge();
 showWelcome();
 </script>
-
 </body>
 </html>
