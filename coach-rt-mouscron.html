@@ -494,21 +494,22 @@ var messagesPrepa = document.getElementById("messagesPrepa");
 function addBotMsgPrepa(text, withActions, extraHtml) {
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
   var bubble = document.createElement("div"); bubble.className = "bubble bot";
-  bubble.textContent = text;
+  bubble.innerHTML = parseMarkdown(text);
   if (extraHtml) bubble.insertAdjacentHTML("beforeend", extraHtml);
   if (withActions) {
     var actions = document.createElement("div"); actions.className = "quick-actions";
     actions.innerHTML =
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test bip équipe U13 aujourd\'hui\')">🏃 Test Bip</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe seniors\')">⏱️ Mini Cooper</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine\')">📋 Programme</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression équipe ce mois\')">📈 Progression</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test bip équipe \' + categorie + \' aujourd\'hui\')">🏃 Test Bip</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe \' + categorie)">⏱️ Mini Cooper</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine pour \' + categorie)">📋 Programme</button>' +
+      '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression \' + categorie + \' ce mois\')">📈 Progression</button>' +
       '<button class="qa-btn" onclick="startExcelFlow()">📊 Télécharger Excel</button>';
     bubble.appendChild(actions);
   }
   var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
   wrap.appendChild(avatar); wrap.appendChild(bubble);
-  messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
+  messagesPrepa.appendChild(wrap);
+  setTimeout(function() { wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
 
 function addUserMsgPrepa(text) {
