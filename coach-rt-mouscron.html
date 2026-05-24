@@ -465,7 +465,10 @@ function addBotMsg(text, schema, withActions) {
   var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
   wrap.appendChild(avatar); wrap.appendChild(bubble);
   messages.appendChild(wrap);
-  chat.scrollTop = chat.scrollHeight;
+  // Scroller au début de la nouvelle bulle (pas en bas)
+  setTimeout(function() {
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 function addUserMsg(text) {
