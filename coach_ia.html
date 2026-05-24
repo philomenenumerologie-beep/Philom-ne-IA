@@ -298,6 +298,16 @@ function selectCat(el, cat) {
 }
 
 // ===== TTS =====
+function speakCardEl(btn) {
+  // Lit le texte de la carte parente (ex-card-body) sans le bouton lui-même
+  var card = btn.closest('.ex-card');
+  if (!card) return;
+  var text = card.textContent || card.innerText || '';
+  // Enlever "Écouter" et "Stop" du texte lu
+  text = text.replace(/🔊\s*Écouter/g,'').replace(/⏹\s*Stop/g,'').replace(/\s+/g,' ').trim();
+  speakText(btn, text);
+}
+
 function speakText(btn, text) {
   if (!window.speechSynthesis) return;
   if (window.speechSynthesis.speaking) {
@@ -392,6 +402,7 @@ function parseMarkdown(text) {
     if (card.dur) html += '<span class="ex-card-dur">'+card.dur+'</span>';
     html += '</div><div class="ex-card-body">';
     card.lines.forEach(function(l) { html += '<div class="ex-line'+(l.consigne?' consigne':'')+'">'+l.text+'</div>'; });
+    html += '<button class="speak-btn" style="margin-top:8px" onclick="speakCardEl(this)">🔊 Écouter</button>';
     html += '</div></div>';
   });
   return html;
