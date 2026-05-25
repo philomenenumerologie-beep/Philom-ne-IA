@@ -361,10 +361,26 @@ function parseMarkdown(text) {
     var h = line.match(/^#{1,3}\s+(.+)$/);
     if (h) { flushCard(); currentCard = { title: h[1].trim(), dur: '', body: '' }; return; }
 
-    var boldTitle = line.match(/^\*\*([^*:]+)\*\*\s*(\((\d+\s*(?:min|h))\))?\s*$/i);
+    // **Titre** seul ou **Titre (duree)**
+    var boldTitle = line.match(/^\*\*([^*]+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h))\))?\s*$/i);
     if (boldTitle) { flushCard(); currentCard = { title: boldTitle[1].trim(), dur: boldTitle[3]||'', body: '' }; return; }
 
-    if (!line.trim()) return;
+    // Texte brut type "Exercice 1 : Pressing (20 min)" ou "Echauffement (10 minutes)"
+    var tl = line.trim();
+    var isCardTitle = false;
+    var keywords = ['exercice', 'echauffement', 'chauffement', 'match final', 'jeu final', 'conclusion', 'fin de', 'retour au calme'];
+    var tll = tl.toLowerCase();
+    for (var ki = 0; ki < keywords.length; ki++) {
+      if (tll.indexOf(keywords[ki]) === 0) { isCardTitle = true; break; }
+    }
+    if (isCardTitle && tl.length < 90) {
+      var durMatch = tl.match(/(\(\d+\s*(?:minutes?|min|heures?|h)\))/i);
+      var dur2 = durMatch ? durMatch[1].replace(/[()]/g,'').trim() : '';
+      var title2 = tl.replace(/\s*\(\d+\s*(?:minutes?|min|heures?|h)\)/i, '').replace(/[:.]+$/, '').trim();
+      flushCard(); currentCard = { title: title2, dur: dur2, body: '' }; return;
+    }
+
+    if (!tl) return;
     addLine(line);
   });
 
