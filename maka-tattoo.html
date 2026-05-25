@@ -13,14 +13,12 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-
 #splash{position:fixed;inset:0;z-index:500;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
 #splash.gone{opacity:0;pointer-events:none}
 .sp-logo{width:110px;height:110px;border-radius:50%;background:#EDE0CC;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
 .sp-logo svg{width:60px;height:54px}
 .sp-name{font-family:'Playfair Display',serif;font-size:34px;color:#EDE0CC;letter-spacing:.1em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
 .sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(237,224,204,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
-
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 #topbar{background:#111;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(237,224,204,.08);flex-shrink:0}
 .tb-av{width:44px;height:44px;border-radius:50%;background:#EDE0CC;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -28,20 +26,14 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#EDE0CC;letter-spacing:.04em}
 .tb-sub{font-size:10px;color:rgba(237,224,204,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
-
 #tabs{background:#111;display:flex;border-bottom:1px solid rgba(237,224,204,.1);flex-shrink:0}
 .tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(237,224,204,.35);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
 .tab span{font-size:14px}
 .tab.active{color:#EDE0CC;border-bottom-color:#EDE0CC}
-
 .page{flex:1;overflow-y:auto;display:none;flex-direction:column}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
-
-/* BANNIERE */
 #msg-banniere{display:none;background:#111;color:#EDE0CC;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid rgba(237,224,204,.2);flex-shrink:0;line-height:1.5}
-
-/* CHAT */
 #page-chat{background:#EDE0CC}
 #messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
 .mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
@@ -65,8 +57,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 #inp:focus{border-color:#111}
 #snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#EDE0CC;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
-
-/* DEVIS */
 #page-devis{background:#EDE0CC;padding:20px 15px 36px;gap:14px}
 .df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700}
 .df-title em{font-style:italic;color:#999;font-size:.7em;display:block}
@@ -80,15 +70,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .em-wrap{display:flex;flex-wrap:wrap;gap:7px}
 .em{padding:7px 12px;border-radius:22px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:#555}
 .em.sel{background:#111;color:#EDE0CC;border-color:#111}
-.photo-zone{border:2px dashed rgba(0,0,0,.15);border-radius:13px;padding:20px;text-align:center;background:#fff;cursor:pointer}
-.pz-icon{font-size:30px;margin-bottom:8px}
-.photo-zone strong{color:#111;font-size:14px;display:block;margin-bottom:3px}
-.photo-zone p{font-size:12px;color:#aaa}
-#prev{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;justify-content:center}
-#prev img{width:70px;height:70px;object-fit:cover;border-radius:10px}
 .df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
-
-/* FLASHS */
 #page-flashs{background:#EDE0CC;padding:20px 15px 32px}
 .fl-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700}
 .fl-h em{font-style:italic;color:#999;font-size:.7em;display:block}
@@ -107,8 +89,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .fl-note{margin-top:14px;padding:13px;background:#fff;border-radius:13px;font-size:13px;color:#666;line-height:1.6;text-align:center}
 .fl-empty{text-align:center;padding:40px 20px;color:#888;font-size:14px}
 .fl-empty-icon{font-size:40px;margin-bottom:12px}
-
-/* TARIFS */
 #page-tarifs{background:#EDE0CC;padding:20px 15px 32px}
 .t-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px}
 .t-h em{font-style:italic;color:#999;font-size:.72em;display:block}
@@ -123,8 +103,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .tpx{background:#EDE0CC;border-radius:9px;padding:8px 4px;text-align:center}
 .tplbl{font-size:9px;color:#888;font-weight:500;margin-bottom:3px}
 .tpval{font-family:'Playfair Display',serif;font-size:14px;font-weight:700}
-.tbonus{margin-top:8px;font-size:11px;color:#888;font-style:italic;text-align:center}
-.tbonus b{color:#111;font-style:normal}
 .fcard{background:#111;color:#EDE0CC;border-radius:15px;padding:15px;margin-bottom:9px}
 .fcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
 .fcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700}
@@ -133,8 +111,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .fcard-item{font-size:12px;color:rgba(237,224,204,.55);padding-left:10px}
 .fcard-gift{font-size:11px;color:#D4C5B0;margin-top:8px;font-style:italic}
 .twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
-
-/* OVERLAY */
 #overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
 #overlay.open{display:flex}
 #mbox{background:#EDE0CC;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
@@ -176,7 +152,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
     <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
   </div>
 
-  <!-- BANNIERE MESSAGE DU MOMENT -->
   <div id="msg-banniere"></div>
 
   <!-- CHAT -->
@@ -241,7 +216,6 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
         <div class="em" onclick="this.classList.toggle('sel')">Autre</div>
       </div>
     </div>
-
     <div>
       <div class="lbl">Couleur</div>
       <div class="em-wrap">
@@ -268,7 +242,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
   <!-- TARIFS -->
   <div id="page-tarifs" class="page">
     <div class="t-h">Tarifs<em>complets et transparents</em></div>
-    <div class="t-intro">Consultation, dessin et retouche inclus dans tous les prix.</div>
+    <div class="t-intro">Voici les prix concernant les modèles et styles de Maka.</div>
 
     <div class="t-sec">Flashs disponibles</div>
     <div class="tcard">
@@ -296,10 +270,12 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
       </div>
     </div>
     <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Projet personnalisé</div><div class="tcard-sub">Sur mesure, selon votre idée</div></div><div class="tcard-badge">Sur devis</div></div>
+      <div class="tcard-top"><div><div class="tcard-name">Projet personnalisé</div><div class="tcard-sub">Sur mesure, réalisme, +15cm...</div></div><div class="tcard-badge">Sur devis</div></div>
       <div class="tprices">
-        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Contactez Marie</div><div class="tpval" style="font-size:16px">WhatsApp 📱</div></div>
+        <div class="tpx"><div class="tplbl">Noir &amp; Gris</div><div class="tpval">100€/h</div></div>
+        <div class="tpx"><div class="tplbl">Couleur</div><div class="tpval">150€/h</div></div>
       </div>
+      <a class="twa" href="https://wa.me/32472803127?text=Bonjour%20Maka%20!%20Je%20voudrais%20un%20devis%20pour%20un%20grand%20projet." target="_blank" style="margin-top:12px">📱 Contacter Maka</a>
     </div>
 
     <div class="t-sec">Forfaits Patchwork</div>
@@ -336,7 +312,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 <script>
 var WA = "32472803127";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras, pas de tirets listes - uniquement du texte simple et naturel. REGLE ABSOLUE: Tu reponds completement a toutes les questions sans jamais dire d envoyer un message WhatsApp sauf si la personne demande explicitement un RDV ou une reservation. Pour les soins, la douleur, les retouches, les styles - tu reponds directement et completement, JAMAIS de redirection WhatsApp. PRESENTATION: Bienvenue chez Maka Tattoo, salon de tatouage et piercing situe au 25 place Gerard Kasiers a Mouscron. Marie vous accueille du lundi au samedi de 10h a 13h et de 14h a 18h. Instagram @Maka.ink. Pour les tarifs precis, oriente vers l onglet Tarifs de l app ou WhatsApp. TARIFS INDICATIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. RETOUCHES - REGLE ABSOLUE: Quand quelqu un pose une question sur les retouches, tu reponds EXACTEMENT avec ce texte mot pour mot sans rien changer ni ajouter ni resumer: 'Apres chaque tatouage, une retouche gratuite est incluse pendant les deux mois suivant la seance. Les retouches ont uniquement pour but de corriger de petits defauts eventuels, tels qu un trait estompe ou une couleur ayant mal cicatrise. Les retouches ne permettent en aucun cas de modifier le modele initial. Les seances de retouche ont lieu uniquement le premier lundi de chaque mois, de 10h a 18h, lors d une journee sans rendez-vous. Les retouches peuvent egalement etre realisees lors d un autre rendez-vous tatouage prevu dans l annee. Il s agit de la seule exception a la limite de deux mois. En cas de question, ou si vous ne savez pas si une retouche est necessaire, vous pouvez envoyer un message via WhatsApp.' NE PAS reformuler. NE PAS resumer. NE PAS ajouter quoi que ce soit. SOINS: Hydrater le tatouage tous les jours avec une creme adaptee type Bepanthene. Eviter le soleil et les bains pendant la cicatrisation (3 semaines minimum). Ne pas gratter meme si ca demange - c est normal. Ne pas regratter les croutes. Le soin influence directement le rendu final du tatouage. DOULEUR: Ca depend de l emplacement. Les zones osseuses comme les cotes, pieds, coudes et nuque sont plus douloureuses. Les bras, cuisses et epaules sont plus supportables. En general ca ressemble a une eraflure repetee - la plupart des gens le gerent tres bien. STYLES: Marie fait du minimaliste, linework, floral, lettrage, blackwork, geometrique, cover, realisme et tatouage couleur. Son style est doux, feminin et detaille.";
+var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras, pas de tirets listes - uniquement du texte simple et naturel. REGLE ABSOLUE: Tu reponds completement a toutes les questions sans jamais dire d envoyer un message WhatsApp sauf si la personne demande explicitement un RDV ou une reservation. Pour les soins, la douleur, les retouches, les styles - tu reponds directement et completement, JAMAIS de redirection WhatsApp. PRESENTATION: Bienvenue chez Maka Tattoo, salon de tatouage et piercing situe au 25 place Gerard Kasiers a Mouscron. Maka vous accueille du lundi au samedi de 10h a 13h et de 14h a 18h. Instagram @Maka.ink. Pour les tarifs precis, oriente vers l onglet Tarifs de l app ou WhatsApp. TARIFS INDICATIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Grands projets +15cm: 100 euros/h Noir et Gris, 150 euros/h Couleur. RETOUCHES - REGLE ABSOLUE: Quand quelqu un pose une question sur les retouches, tu reponds EXACTEMENT avec ce texte mot pour mot sans rien changer ni ajouter ni resumer: 'Apres chaque tatouage, une retouche gratuite est incluse pendant les deux mois suivant la seance. Les retouches ont uniquement pour but de corriger de petits defauts eventuels, tels qu un trait estompe ou une couleur ayant mal cicatrise. Les retouches ne permettent en aucun cas de modifier le modele initial. Les seances de retouche ont lieu uniquement le premier lundi de chaque mois, de 10h a 18h, lors d une journee sans rendez-vous. Les retouches peuvent egalement etre realisees lors d un autre rendez-vous tatouage prevu dans l annee. Il s agit de la seule exception a la limite de deux mois. En cas de question, ou si vous ne savez pas si une retouche est necessaire, vous pouvez envoyer un message via WhatsApp.' NE PAS reformuler. NE PAS resumer. NE PAS ajouter quoi que ce soit. SOINS: Hydrater le tatouage tous les jours avec une creme adaptee type Bepanthene. Eviter le soleil et les bains pendant la cicatrisation (3 semaines minimum). Ne pas gratter meme si ca demange - c est normal. Ne pas regratter les croutes. Le soin influence directement le rendu final du tatouage. DOULEUR: Ca depend de l emplacement. Les zones osseuses comme les cotes, pieds, coudes et nuque sont plus douloureuses. Les bras, cuisses et epaules sont plus supportables. En general ca ressemble a une eraflure repetee - la plupart des gens le gerent tres bien. STYLES: Maka fait du minimaliste, linework, floral, lettrage, blackwork, geometrique, cover, realisme et tatouage couleur. Son style est doux, feminin et detaille.";
 var busy = false;
 
 function showTab(btn, n) {
@@ -371,7 +347,7 @@ function addBot(txt, withQ) {
   if (withQ) {
     var qw = document.createElement("div");
     qw.className = "qbtns";
-    [["Tarifs","Quels sont les tarifs ?"],["Soins","Comment soigner mon tatouage ?"],["Douleur","Est-ce que ça fait mal ?"],["Retouches","Comment fonctionnent les retouches ?"],["RDV","Comment prendre rendez-vous ?"]].forEach(function(it){
+    [["Soins","Comment soigner mon tatouage ?"],["Douleur","Est-ce que ca fait mal ?"],["Retouches","Comment fonctionnent les retouches ?"],["RDV","Comment prendre rendez-vous ?"]].forEach(function(it){
       var b = document.createElement("button");
       b.className = "qb";
       b.textContent = it[0];
@@ -431,7 +407,7 @@ function send(txt) {
   }).then(function(r){ return r.json(); })
   .then(function(d){
     setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
+    var ans = (d && d.answer) ? d.answer : "Je suis la pour vous aider !";
     var msgs = document.getElementById("messages");
     var row = document.createElement("div");
     row.className = "mrow bot";
@@ -445,7 +421,7 @@ function send(txt) {
       wa.className = "wa-bubble";
       wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous");
       wa.target = "_blank";
-      wa.textContent = "Contacter Marie sur WhatsApp";
+      wa.textContent = "Contacter Maka sur WhatsApp";
       bub.appendChild(wa);
     }
     row.appendChild(mkAv());
@@ -455,7 +431,7 @@ function send(txt) {
     busy = false;
   }).catch(function(){
     setTyping(false);
-    addBot("Erreur de connexion, réessayez.");
+    addBot("Erreur de connexion, reessayez.");
     busy = false;
   });
 }
@@ -483,16 +459,6 @@ function selSz(el) {
   el.classList.add("sel");
 }
 
-function prevPhotos(input) {
-  var prev = document.getElementById("prev");
-  prev.innerHTML = "";
-  Array.from(input.files).forEach(function(f){
-    var img = document.createElement("img");
-    img.src = URL.createObjectURL(f);
-    prev.appendChild(img);
-  });
-}
-
 function genDevis() {
   var style = document.getElementById("df-style").value;
   var desc = document.getElementById("df-desc").value.trim();
@@ -500,28 +466,17 @@ function genDevis() {
   var size = sz ? sz.childNodes[0].textContent.trim() : "";
   var ems = Array.from(document.querySelectorAll(".em.sel")).map(function(e){ return e.textContent; }).join(", ");
   if (!style && !desc && !size) { alert("Remplissez au moins le style ou la description"); return; }
-
-  // Message WhatsApp
-  var couleur = document.getElementById('col-couleur') && document.getElementById('col-couleur').classList.contains('sel') ? 'Couleur' : document.getElementById('col-noir') && document.getElementById('col-noir').classList.contains('sel') ? 'Noir & Gris' : '';
+  var couleur = document.getElementById('col-couleur').classList.contains('sel') ? 'Couleur' : document.getElementById('col-noir').classList.contains('sel') ? 'Noir & Gris' : '';
   var waMsg = "Bonjour Maka ! Je voudrais un devis.\n\n";
   if (style) waMsg += "Style : " + style + "\n";
   if (desc) waMsg += "Description : " + desc + "\n";
   if (size) waMsg += "Taille : " + size + "\n";
   if (ems) waMsg += "Emplacement : " + ems + "\n";
   if (couleur) waMsg += "Couleur : " + couleur + "\n";
-  waMsg += "\n(Photo de référence à suivre dans ce chat)";
-
-  // Basculer sur le chat
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
-  document.getElementById("page-chat").classList.add("active");
-  document.querySelector(".tab").classList.add("active");
-
-  // Ouvrir directement WhatsApp
+  waMsg += "\n(Photo de reference a suivre dans ce chat)";
   window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg), "_blank");
 }
 
-// FLASHS — charge depuis /memory/maka_flashs
 function loadFlashs() {
   var grid = document.getElementById("fl-grid");
   grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">⏳</div>Chargement...</div>';
@@ -530,7 +485,7 @@ function loadFlashs() {
     .then(function(d){
       var flashs = d.value || [];
       if (flashs.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🖤</div>Les flashs arrivent bientôt !</div>';
+        grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🖤</div>Les flashs arrivent bientot !</div>';
         document.getElementById("fl-note").style.display = "none";
         return;
       }
@@ -564,7 +519,7 @@ function loadFlashs() {
       });
       document.getElementById("fl-note").style.display = "block";
     }).catch(function(){
-      grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🖤</div>Les flashs arrivent bientôt !</div>';
+      grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🖤</div>Les flashs arrivent bientot !</div>';
     });
 }
 
@@ -584,7 +539,7 @@ function ouvrirFlash(f) {
   }
   document.getElementById("mbox-name").textContent = f.nom;
   document.getElementById("mbox-price").innerHTML = "<b>" + f.prix + "</b>";
-  var msg = "Bonjour Maka ! Je suis intéressé(e) par le flash " + f.nom + " (" + f.prix + "). Je voudrais le réserver !";
+  var msg = "Bonjour Maka ! Je suis interesse(e) par le flash " + f.nom + " (" + f.prix + "). Je voudrais le reserver !";
   document.getElementById("mbox-wa").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
   document.getElementById("overlay").classList.add("open");
 }
@@ -593,7 +548,6 @@ function fermerModal() {
   document.getElementById("overlay").classList.remove("open");
 }
 
-// Charger le message du moment
 fetch(API + "/memory/maka_config")
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -608,7 +562,7 @@ setTimeout(function(){
   document.getElementById("splash").classList.add("gone");
   setTimeout(function(){
     document.getElementById("splash").style.display = "none";
-    addBot("Bienvenue chez Maka Tattoo, salon de tatouage et piercing situé au 25 place Gérard Kasiers à Mouscron ! 🖤\n\nJe suis votre assistante disponible 24h/24. Je peux vous aider avec les tarifs, les soins, les retouches ou répondre à toutes vos questions.", true);
+    addBot("Bienvenue chez Maka Tattoo, salon de tatouage et piercing situé au 25 place Gérard Kasiers à Mouscron ! 🖤\n\nJe suis votre assistante disponible 24h/24. Je peux vous aider avec les soins, les retouches ou répondre à toutes vos questions.", true);
   }, 900);
 }, 2500);
 </script>
