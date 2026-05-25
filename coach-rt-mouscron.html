@@ -21,22 +21,15 @@
   --border: rgba(204,0,0,0.3);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  color: #fff; font-family: 'DM Sans', sans-serif;
-  height: 100vh; display: flex; flex-direction: column;
-  overflow: hidden; position: relative;
-  -webkit-touch-callout: none;
-}
+body { color: #fff; font-family: 'DM Sans', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; -webkit-touch-callout: none; }
 .bubble { -webkit-user-select: text; user-select: text; -webkit-touch-callout: none; }
-.qa-btn, .send-btn, .mode-tab, .cat-chip, .login-btn {
-  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
-}
+.qa-btn, .send-btn, .mode-tab, .cat-chip, .login-btn { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
 #pitch { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .pitch-bg { width: 100%; height: 100%; background: repeating-linear-gradient(180deg, #1a4a1a 0px, #1a4a1a 40px, #1e5c1e 40px, #1e5c1e 80px); }
 .pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #overlay { position: fixed; inset: 0; z-index: 1; background: rgba(0,0,0,0.55); }
 
-/* LOGIN */
 #loginScreen { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,0.7); }
 .login-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(204,0,0,0.4); border-radius: 20px; padding: 28px 24px; width: 100%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: blur(20px); }
 .login-logo { text-align: center; margin-bottom: 20px; }
@@ -49,7 +42,6 @@ body {
 .login-btn { width: 100%; padding: 14px; background: var(--red); border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px var(--red-glow); }
 .login-error { margin-top: 12px; padding: 10px 14px; background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); border-radius: 10px; color: #f85149; font-size: 13px; text-align: center; display: none; }
 
-/* TOPBAR */
 #topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: linear-gradient(135deg, rgba(10,0,0,0.98), rgba(40,0,0,0.98)); border-bottom: 3px solid var(--red); box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 .logo-area { display: flex; align-items: center; gap: 12px; }
 .logo-text { display: flex; flex-direction: column; }
@@ -61,23 +53,20 @@ body {
 
 #anniversary { position: relative; z-index: 9; text-align: center; padding: 4px; background: linear-gradient(90deg, transparent, rgba(204,0,0,0.4), transparent); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; color: rgba(255,200,200,0.8); letter-spacing: 0.2em; text-transform: uppercase; }
 
-/* TABS */
 #modeBar { position: relative; z-index: 9; display: flex; background: rgba(10,0,0,0.9); border-bottom: 1px solid rgba(204,0,0,0.2); }
-.mode-tab { flex: 1; padding: 10px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.5); cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.mode-tab { flex: 1; padding: 10px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 3px solid transparent; transition: all 0.2s; }
 .mode-tab.active { color: #fff; border-bottom-color: var(--red); }
 
-/* CATEGORIES */
 #catBar { position: relative; z-index: 9; display: flex; gap: 8px; padding: 8px 14px; background: rgba(5,0,0,0.8); border-bottom: 1px solid rgba(204,0,0,0.15); overflow-x: auto; scrollbar-width: none; }
 #catBar::-webkit-scrollbar { display: none; }
 .cat-chip { padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(204,0,0,0.2); color: #ffaaaa; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .cat-chip.active { background: var(--red); border-color: var(--red); color: #fff; }
 
-/* SECTIONS */
 #sectionCoach { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-#sectionPrepa { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+#sectionAdmin { display: none; flex-direction: column; flex: 1; overflow: hidden; }
 
-/* CHAT */
-#chat, #chatPrepa { flex: 1; overflow-y: auto; padding: 16px 14px 120px; position: relative; z-index: 2; }
+#chat, #chatAdmin { flex: 1; overflow-y: auto; padding: 16px 14px 120px; position: relative; z-index: 2; }
+
 .bubble-wrap { display: flex; margin-bottom: 14px; animation: fadeUp 0.3s ease; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .bubble-wrap.bot { justify-content: flex-start; }
@@ -87,7 +76,6 @@ body {
 .bubble.bot { background: rgba(20,0,0,0.92); border: 1px solid rgba(204,0,0,0.2); border-top-left-radius: 4px; color: #fff; -webkit-text-fill-color: #fff; }
 .bubble.user { background: rgba(100,0,0,0.8); border: 1px solid rgba(204,0,0,0.4); border-top-right-radius: 4px; color: #fff; -webkit-text-fill-color: #fff; }
 
-/* EXERCISE CARDS */
 .ex-card { background: rgba(40,0,0,0.6); border: 1px solid rgba(204,0,0,0.3); border-radius: 12px; margin-top: 10px; overflow: hidden; }
 .ex-card-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; background: rgba(204,0,0,0.15); border-bottom: 1px solid rgba(204,0,0,0.2); }
 .ex-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: #ff6666; letter-spacing: 0.05em; text-transform: uppercase; }
@@ -98,14 +86,12 @@ body {
 .rt-text-block { font-size: 14px; color: #ffdddd; line-height: 1.7; white-space: pre-wrap; }
 .rt-text-block strong { color: #fff; font-weight: 600; }
 
-/* BOUTON ECOUTER */
 .speak-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 5px 12px; background: rgba(204,0,0,0.15); border: 1px solid rgba(204,0,0,0.35); border-radius: 20px; color: #ff9999; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
 .speak-btn.speaking { background: rgba(204,0,0,0.3); border-color: var(--red); }
 
 .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .qa-btn { padding: 8px 12px; background: rgba(204,0,0,0.15); border: 1px solid rgba(204,0,0,0.3); border-radius: 20px; color: #fff; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
 
-/* SCHEMA */
 .schema-wrap { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(204,0,0,0.3); }
 .schema-header { padding: 8px 12px; background: rgba(204,0,0,0.2); font-size: 11px; color: #ff6666; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
 .schema-desc { padding: 5px 12px 8px; background: rgba(0,0,0,0.4); font-size: 12px; color: #ffaaaa; font-style: italic; }
@@ -113,18 +99,21 @@ body {
 .schema-legend { display: flex; gap: 12px; padding: 6px 12px 8px; background: rgba(0,0,0,0.4); font-size: 10px; color: rgba(255,255,255,0.6); flex-wrap: wrap; }
 .legend-item { display: flex; align-items: center; gap: 4px; }
 
-/* EXCEL */
-.excel-guide-card { margin-top: 10px; background: rgba(0,60,20,0.6); border: 1px solid rgba(80,200,100,0.3); border-radius: 12px; padding: 12px 14px; }
-.excel-guide-title { font-size: 12px; font-weight: 700; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-.excel-guide-example { font-size: 12px; color: rgba(255,255,255,0.7); font-style: italic; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 10px; margin-top: 6px; border-left: 3px solid #4ade80; white-space: pre-wrap; }
+.guide-card { margin-top: 10px; background: rgba(0,60,20,0.6); border: 1px solid rgba(80,200,100,0.3); border-radius: 12px; padding: 12px 14px; }
+.guide-card-title { font-size: 12px; font-weight: 700; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.guide-card-example { font-size: 12px; color: rgba(255,255,255,0.7); font-style: italic; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 10px; margin-top: 6px; border-left: 3px solid #4ade80; white-space: pre-wrap; }
 
-/* TYPING */
+.prepa-table-wrap { margin-top: 8px; overflow-x: auto; border-radius: 8px; border: 1px solid rgba(204,0,0,0.25); }
+.prepa-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.prepa-table th { background: rgba(204,0,0,0.3); color: #fff; padding: 6px 8px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.prepa-table td { padding: 6px 8px; color: #ffdddd; border-bottom: 1px solid rgba(204,0,0,0.1); }
+.prepa-table tr:nth-child(even) td { background: rgba(204,0,0,0.06); }
+
 .typing { display:flex; gap:4px; padding:12px 14px; }
 .typing span { width:6px; height:6px; border-radius:50%; background:var(--dim); animation: bounce 1.2s infinite; }
 .typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
-/* COMPOSER */
 #composer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 10px 12px 18px; background: linear-gradient(to top, rgba(10,0,0,0.97) 70%, transparent); }
 .composer-inner { display: flex; align-items: center; gap: 8px; background: rgba(30,0,0,0.95); border: 1px solid rgba(204,0,0,0.3); border-radius: 22px; padding: 8px 12px; }
 .composer-input { flex: 1; background: transparent; border: none; outline: none; color: #fff; -webkit-text-fill-color: #fff; font-size: 15px; font-family: 'DM Sans', sans-serif; }
@@ -168,15 +157,15 @@ body {
           <text x="50" y="55" text-anchor="middle" font-family="Arial Black" font-size="30" font-weight="900" fill="white">RT</text>
           <line x1="25" y1="62" x2="75" y2="62" stroke="#cc0000" stroke-width="1.5"/>
           <text x="50" y="73" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#cc0000" letter-spacing="1">MOUSCRON</text>
-          <text x="50" y="22" text-anchor="middle" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.6)">1946 • 2026</text>
+          <text x="50" y="22" text-anchor="middle" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.6)">1946 2026</text>
         </svg>
       </div>
       <div class="login-title">Coach IA</div>
       <div class="login-club">Risquons-Tout Mouscron</div>
     </div>
-    <label class="login-label">Clé d'accès du club</label>
+    <label class="login-label">Cle d'acces du club</label>
     <input class="login-input" id="clubKeyInput" type="text" placeholder="Ex: RT-MOUSCRON-2026" autocomplete="off"/>
-    <button class="login-btn" id="loginBtn">Accéder ⚽</button>
+    <button class="login-btn" id="loginBtn">Acceder</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
@@ -207,11 +196,11 @@ body {
   <div class="status"><div class="dot-green"></div>En ligne</div>
 </header>
 
-<div id="anniversary">✦ 80 ans d'histoire • 1946 – 2026 ✦</div>
+<div id="anniversary">80 ans d'histoire 1946 - 2026</div>
 
 <div id="modeBar">
-  <div class="mode-tab active" onclick="switchMode('coach', this)">⚽ Coach Football</div>
-  <div class="mode-tab" onclick="switchMode('prepa', this)">💪 Prépa Physique</div>
+  <div class="mode-tab active" onclick="switchMode('coach', this)">COACH ET PREPA</div>
+  <div class="mode-tab" onclick="switchMode('admin', this)">ADMIN ET PARENTS</div>
 </div>
 
 <div id="sectionCoach">
@@ -228,14 +217,14 @@ body {
   <div id="chat"><div id="messages"></div></div>
 </div>
 
-<div id="sectionPrepa">
-  <div id="chatPrepa"><div id="messagesPrepa"></div></div>
+<div id="sectionAdmin">
+  <div id="chatAdmin"><div id="messagesAdmin"></div></div>
 </div>
 
 <div id="composer">
   <div class="composer-inner">
-    <input class="composer-input" id="userInput" placeholder="Ex: séance dribble, 12 joueurs, 1h…" type="text"/>
-    <button class="send-btn" id="sendBtn">➤</button>
+    <input class="composer-input" id="userInput" placeholder="Ex: seance dribble, 12 joueurs, 1h..." type="text"/>
+    <button class="send-btn" id="sendBtn">&#10148;</button>
   </div>
 </div>
 
@@ -253,9 +242,12 @@ var isLoading = false;
 var currentMode = "coach";
 var waitingForExcelData = false;
 var excelDataType = null;
+var waitingForAdmin = false;
+var currentAdminType = null;
+var waitingForTest = false;
+var currentTestType = null;
 var currentUtterance = null;
 
-// Précharger voix TTS
 if (window.speechSynthesis) {
   window.speechSynthesis.getVoices();
   window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
@@ -267,22 +259,20 @@ var avatarSVG = '<svg width="28" height="28" viewBox="0 0 100 100"><circle cx="5
 function speakCardEl(btn) {
   var card = btn.closest('.ex-card');
   if (!card) return;
-  var text = (card.textContent || card.innerText || '').replace(/🔊\s*Écouter/g,'').replace(/⏹\s*Stop/g,'').replace(/\s+/g,' ').trim();
+  var text = (card.textContent || card.innerText || '').replace(/Ecouter/g,'').replace(/Stop/g,'').replace(/\s+/g,' ').trim();
   speakText(btn, text);
 }
-
 function speakBubbleEl(btn) {
   var bubble = btn.closest('.bubble');
   if (!bubble) return;
-  var text = (bubble.textContent || bubble.innerText || '').replace(/🔊\s*Écouter/g,'').replace(/⏹\s*Stop/g,'').replace(/\s+/g,' ').trim();
+  var text = (bubble.textContent || bubble.innerText || '').replace(/Ecouter/g,'').replace(/Stop/g,'').replace(/\s+/g,' ').trim();
   speakText(btn, text);
 }
-
 function speakText(btn, text) {
   if (!window.speechSynthesis) return;
   if (window.speechSynthesis.speaking) {
     window.speechSynthesis.cancel();
-    document.querySelectorAll('.speak-btn').forEach(function(b) { b.classList.remove('speaking'); b.textContent = '🔊 Écouter'; });
+    document.querySelectorAll('.speak-btn').forEach(function(b) { b.classList.remove('speaking'); b.textContent = 'Ecouter'; });
     currentUtterance = null;
     return;
   }
@@ -292,54 +282,99 @@ function speakText(btn, text) {
   var frVoice = voices.find(function(v) { return v.lang && v.lang.startsWith('fr'); });
   if (frVoice) utt.voice = frVoice;
   currentUtterance = utt;
-  btn.classList.add('speaking'); btn.textContent = '⏹ Stop';
-  utt.onend = function() { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; currentUtterance = null; };
-  utt.onerror = function() { btn.classList.remove('speaking'); btn.textContent = '🔊 Écouter'; currentUtterance = null; };
+  btn.classList.add('speaking'); btn.textContent = 'Stop';
+  utt.onend = function() { btn.classList.remove('speaking'); btn.textContent = 'Ecouter'; currentUtterance = null; };
+  utt.onerror = function() { btn.classList.remove('speaking'); btn.textContent = 'Ecouter'; currentUtterance = null; };
   window.speechSynthesis.speak(utt);
 }
 
 // ===== MARKDOWN PARSER =====
 function parseMarkdown(text) {
-  var hasStruct = /\*\*(Séance|Échauffement|Echauffement|Exercice|Match|Conclusion|Objectif|Matériel|Consignes|Durée|Joueurs)/i.test(text);
-  if (!hasStruct) {
-    var html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
-    return '<div class="rt-text-block">'+html+'</div>';
-  }
   var lines = text.split('\n');
-  var cards = [], currentCard = null, introLines = [], inIntro = true;
-  lines.forEach(function(line) {
-    var boldTitle = line.match(/^\*\*(.+?)\*\*\s*(\((\d+\s*(?:minutes?|min|heures?|h))\))?$/i);
-    var boldColon = line.match(/^\*\*(.+?)\s*:\*\*\s*(.*)$/);
-    if (boldTitle) {
-      inIntro = false;
-      if (currentCard) cards.push(currentCard);
-      currentCard = { title: boldTitle[1].trim(), dur: boldTitle[3]||'', lines: [] };
-    } else if (boldColon) {
-      var val = boldColon[2].replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-      var key = boldColon[1];
-      if (currentCard) currentCard.lines.push({ text: '<strong>'+key+' :</strong> '+val, consigne: false });
-      else introLines.push('<div class="ex-line"><strong>'+key+' :</strong> '+val+'</div>');
-    } else {
-      var clean = line.replace(/^\s*[-–•\d\.]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').trim();
-      if (!clean) return;
-      var isConsigne = /^\s{2,}/.test(line) || (/^\s*[-–\d]/.test(line) && currentCard && currentCard.lines.some(function(l) { return l.text.includes('Consignes'); }));
-      if (inIntro) introLines.push('<div class="ex-line">'+clean+'</div>');
-      else if (currentCard) currentCard.lines.push({ text: clean, consigne: isConsigne });
-    }
-  });
-  if (currentCard) cards.push(currentCard);
   var html = '';
-  if (introLines.length) html += '<div style="margin-bottom:8px">'+introLines.join('')+'</div>';
-  cards.forEach(function(card) {
-    var t = card.title.toLowerCase();
-    var emoji = t.includes('échauffement')||t.includes('echauffement') ? '🔥 ' : t.includes('exercice 1') ? '⚡ ' : t.includes('exercice 2') ? '💥 ' : t.includes('exercice 3') ? '🎯 ' : t.includes('match')||t.includes('jeu') ? '🏁 ' : t.includes('conclusion') ? '✅ ' : t.includes('tir') ? '🎯 ' : t.includes('dribble') ? '🏃 ' : t.includes('passe') ? '⚡ ' : t.includes('pressing') ? '💥 ' : '';
-    html += '<div class="ex-card"><div class="ex-card-header"><span class="ex-card-title">'+emoji+card.title+'</span>';
-    if (card.dur) html += '<span class="ex-card-dur">'+card.dur+'</span>';
+  var currentCard = null;
+  var tableLines = [];
+  var inTable = false;
+
+  function flushCard() {
+    if (!currentCard) return;
+    var t = currentCard.title.toLowerCase();
+    var emoji = t.indexOf('echauffement') >= 0 || t.indexOf('chauffement') >= 0 ? '&#128293; '
+      : t.indexOf('exercice 1') >= 0 ? '&#9889; '
+      : t.indexOf('exercice 2') >= 0 ? '&#128165; '
+      : t.indexOf('exercice 3') >= 0 ? '&#127919; '
+      : t.indexOf('match') >= 0 || t.indexOf('jeu') >= 0 ? '&#127937; '
+      : t.indexOf('conclusion') >= 0 ? '&#9989; '
+      : t.indexOf('lundi') >= 0 || t.indexOf('mardi') >= 0 || t.indexOf('mercredi') >= 0 || t.indexOf('jeudi') >= 0 || t.indexOf('vendredi') >= 0 || t.indexOf('samedi') >= 0 || t.indexOf('dimanche') >= 0 ? '&#128197; '
+      : t.indexOf('bip') >= 0 ? '&#127939; '
+      : t.indexOf('cooper') >= 0 ? '&#9201; '
+      : t.indexOf('sprint') >= 0 ? '&#9889; ' : '';
+    html += '<div class="ex-card"><div class="ex-card-header"><span class="ex-card-title">' + emoji + currentCard.title + '</span>';
+    if (currentCard.dur) html += '<span class="ex-card-dur">' + currentCard.dur + '</span>';
     html += '</div><div class="ex-card-body">';
-    card.lines.forEach(function(l) { html += '<div class="ex-line'+(l.consigne?' consigne':'')+'">'+l.text+'</div>'; });
-    html += '<button class="speak-btn" onclick="speakCardEl(this)">🔊 Écouter</button>';
+    html += currentCard.body;
+    html += '<button class="speak-btn" onclick="speakCardEl(this)">Ecouter</button>';
     html += '</div></div>';
+    currentCard = null;
+  }
+
+  function flushTable() {
+    var dataLines = tableLines.filter(function(l) { return !l.match(/^[\s|\-]+$/); });
+    if (dataLines.length >= 2) {
+      var tableHtml = '<div class="prepa-table-wrap"><table class="prepa-table">';
+      dataLines.forEach(function(l, i) {
+        var cells = l.split('|').map(function(c) { return c.trim(); }).filter(function(c) { return c !== ''; });
+        if (cells.length === 0) return;
+        if (i === 0) {
+          tableHtml += '<thead><tr>';
+          cells.forEach(function(c) { tableHtml += '<th>' + c + '</th>'; });
+          tableHtml += '</tr></thead><tbody>';
+        } else {
+          tableHtml += '<tr>';
+          cells.forEach(function(c) { tableHtml += '<td>' + c + '</td>'; });
+          tableHtml += '</tr>';
+        }
+      });
+      tableHtml += '</tbody></table></div>';
+      if (currentCard) currentCard.body += tableHtml;
+      else html += tableHtml;
+    }
+    tableLines = []; inTable = false;
+  }
+
+  function addLine(line) {
+    var clean = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    clean = clean.replace(/^\s*[-]\s*/, '').trim();
+    if (!clean) return;
+    var lineHtml = '<div class="ex-line">' + clean + '</div>';
+    if (currentCard) currentCard.body += lineHtml;
+    else html += lineHtml;
+  }
+
+  lines.forEach(function(line) {
+    if (line.trim().charAt(0) === '|') {
+      if (!inTable) { inTable = true; tableLines = []; }
+      tableLines.push(line.trim());
+      return;
+    } else if (inTable) { flushTable(); }
+
+    var h = line.match(/^#{1,3}\s+(.+)$/);
+    if (h) { flushCard(); currentCard = { title: h[1].trim(), dur: '', body: '' }; return; }
+
+    var boldTitle = line.match(/^\*\*([^*:]+)\*\*\s*(\((\d+\s*(?:min|h))\))?\s*$/i);
+    if (boldTitle) { flushCard(); currentCard = { title: boldTitle[1].trim(), dur: boldTitle[3]||'', body: '' }; return; }
+
+    if (!line.trim()) return;
+    addLine(line);
   });
+
+  if (inTable) flushTable();
+  flushCard();
+
+  if (!html) {
+    var safe = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>');
+    return '<div class="rt-text-block">' + safe + '</div>';
+  }
   return html;
 }
 
@@ -349,48 +384,46 @@ function buildProSchema(schema) {
   var W = 320, H = 220;
   var px = function(p) { return 10 + p * (W-20) / 100; };
   var py = function(p) { return 10 + p * (H-20) / 100; };
-  var PLAYER_COLOR = "#cc0000", PLOT_COLOR = "#ffffff", BALL_PATH = "#ffffff", MOVE_PATH = "#ff6666";
-  var defs = '<defs><marker id="arrowBall" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="'+BALL_PATH+'" opacity="0.9"/></marker><marker id="arrowMove" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="'+MOVE_PATH+'"/></marker></defs>';
-  var elements = [];
-  elements.push('<rect width="'+W+'" height="'+H+'" fill="#1a4a1a" rx="8"/>');
-  elements.push('<defs><pattern id="grassRT" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#1a4a1a"/><rect width="40" height="20" fill="#1e5c1e"/></pattern></defs>');
-  elements.push('<rect width="'+W+'" height="'+H+'" fill="url(#grassRT)" rx="8"/>');
-  elements.push('<rect x="5" y="5" width="'+(W-10)+'" height="'+(H-10)+'" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" rx="3"/>');
+  var PC = "#cc0000", PLOT = "#ffffff", BALL = "#ffffff", MOVE = "#ff6666";
+  var defs = '<defs><marker id="aB" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="'+BALL+'" opacity="0.9"/></marker><marker id="aM" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="'+MOVE+'"/></marker></defs>';
+  var els = [];
+  els.push('<defs><pattern id="gRT" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#1a4a1a"/><rect width="40" height="20" fill="#1e5c1e"/></pattern></defs>');
+  els.push('<rect width="'+W+'" height="'+H+'" fill="url(#gRT)" rx="8"/>');
+  els.push('<rect x="5" y="5" width="'+(W-10)+'" height="'+(H-10)+'" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" rx="3"/>');
   var pos = {};
   if (schema.players) schema.players.forEach(function(p) { pos[p.id] = [px(p.x), py(p.y)]; });
   if (schema.plots) schema.plots.forEach(function(p,i) { pos["plot_"+i] = [px(p.x), py(p.y)]; });
-  if (schema.goal) { var gx=px(schema.goal.x),gy=py(schema.goal.y); elements.push('<rect x="'+(gx-22)+'" y="'+(gy-6)+'" width="44" height="12" fill="none" stroke="white" stroke-width="2" rx="1"/>'); elements.push('<text x="'+gx+'" y="'+(gy+22)+'" text-anchor="middle" font-size="8" fill="white" font-weight="bold">BUT</text>'); }
-  if (schema.ball_paths) schema.ball_paths.forEach(function(path) { var f=pos[path.from],t=pos[path.to]; if(!f||!t)return; elements.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="'+BALL_PATH+'" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#arrowBall)"/>'); });
-  if (schema.player_paths) schema.player_paths.forEach(function(path) { var f=pos[path.from],t=pos[path.to]; if(!f||!t)return; elements.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="'+MOVE_PATH+'" stroke-width="2" marker-end="url(#arrowMove)"/>'); });
-  if (schema.plots) schema.plots.forEach(function(p) { var x=px(p.x),y=py(p.y); elements.push('<polygon points="'+x+','+(y-7)+' '+(x-5)+','+(y+4)+' '+(x+5)+','+(y+4)+'" fill="'+PLOT_COLOR+'" stroke="rgba(0,0,0,0.3)" stroke-width="0.5"/>'); });
-  if (schema.players) schema.players.forEach(function(p) { var x=px(p.x),y=py(p.y); elements.push('<circle cx="'+x+'" cy="'+y+'" r="10" fill="'+PLAYER_COLOR+'" stroke="white" stroke-width="1.5"/>'); elements.push('<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="8" font-weight="bold" fill="white">'+p.id+'</text>'); });
-  if (schema.distance) { elements.push('<rect x="5" y="'+(H-18)+'" width="'+(W-10)+'" height="14" fill="rgba(0,0,0,0.6)" rx="2"/>'); elements.push('<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.9)">'+schema.distance+'</text>'); }
-  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+defs+elements.join("")+'</svg>';
+  if (schema.goal) { var gx=px(schema.goal.x),gy=py(schema.goal.y); els.push('<rect x="'+(gx-22)+'" y="'+(gy-6)+'" width="44" height="12" fill="none" stroke="white" stroke-width="2" rx="1"/>'); els.push('<text x="'+gx+'" y="'+(gy+22)+'" text-anchor="middle" font-size="8" fill="white" font-weight="bold">BUT</text>'); }
+  if (schema.ball_paths) schema.ball_paths.forEach(function(p) { var f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="'+BALL+'" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#aB)"/>'); });
+  if (schema.player_paths) schema.player_paths.forEach(function(p) { var f=pos[p.from],t=pos[p.to]; if(!f||!t)return; els.push('<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+t[0]+'" y2="'+t[1]+'" stroke="'+MOVE+'" stroke-width="2" marker-end="url(#aM)"/>'); });
+  if (schema.plots) schema.plots.forEach(function(p) { var x=px(p.x),y=py(p.y); els.push('<polygon points="'+x+','+(y-7)+' '+(x-5)+','+(y+4)+' '+(x+5)+','+(y+4)+'" fill="'+PLOT+'" stroke="rgba(0,0,0,0.3)" stroke-width="0.5"/>'); });
+  if (schema.players) schema.players.forEach(function(p) { var x=px(p.x),y=py(p.y); els.push('<circle cx="'+x+'" cy="'+y+'" r="10" fill="'+PC+'" stroke="white" stroke-width="1.5"/>'); els.push('<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="8" font-weight="bold" fill="white">'+p.id+'</text>'); });
+  if (schema.distance) { els.push('<rect x="5" y="'+(H-18)+'" width="'+(W-10)+'" height="14" fill="rgba(0,0,0,0.6)" rx="2"/>'); els.push('<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.9)">'+schema.distance+'</text>'); }
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+defs+els.join("")+'</svg>';
 }
-
 function renderSchema(schema) {
   if (!schema) return "";
-  var svgHtml = buildProSchema(schema);
-  if (!svgHtml) return "";
-  return '<div class="schema-wrap"><div class="schema-header">📐 Schéma de l\'exercice</div>'+(schema.description?'<div class="schema-desc">'+schema.description+'</div>':'')+'<div class="schema-svg-box">'+svgHtml+'</div><div class="schema-legend"><div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#cc0000" stroke="white" stroke-width="1"/></svg> Joueur</div><div class="legend-item"><svg width="14" height="14"><polygon points="7,1 2,12 12,12" fill="white"/></svg> Plot</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="white" stroke-width="2.5" stroke-dasharray="5,3"/></svg> Ballon</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#ff6666" stroke-width="2"/></svg> Déplacement</div></div></div>';
+  var s = buildProSchema(schema);
+  if (!s) return "";
+  return '<div class="schema-wrap"><div class="schema-header">Schema de l\'exercice</div>'+(schema.description?'<div class="schema-desc">'+schema.description+'</div>':'')+'<div class="schema-svg-box">'+s+'</div><div class="schema-legend"><div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#cc0000" stroke="white" stroke-width="1"/></svg> Joueur</div><div class="legend-item"><svg width="14" height="14"><polygon points="7,1 2,12 12,12" fill="white"/></svg> Plot</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="white" stroke-width="2.5" stroke-dasharray="5,3"/></svg> Ballon</div><div class="legend-item"><svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="#ff6666" stroke-width="2"/></svg> Deplacement</div></div></div>';
 }
 
-// ===== MODE SWITCH =====
+// ===== SWITCH MODE =====
 function switchMode(mode, el) {
   currentMode = mode;
-  waitingForExcelData = false; excelDataType = null;
+  waitingForExcelData = false; waitingForAdmin = false; waitingForTest = false;
   document.querySelectorAll(".mode-tab").forEach(function(t) { t.classList.remove("active"); });
   el.classList.add("active");
   if (mode === "coach") {
     document.getElementById("sectionCoach").style.display = "flex";
-    document.getElementById("sectionPrepa").style.display = "none";
-    document.getElementById("userInput").placeholder = "Ex: séance dribble, 12 joueurs, 1h…";
+    document.getElementById("sectionAdmin").style.display = "none";
+    document.getElementById("userInput").placeholder = "Ex: seance dribble, 12 joueurs, 1h...";
   } else {
     document.getElementById("sectionCoach").style.display = "none";
-    document.getElementById("sectionPrepa").style.display = "flex";
-    document.getElementById("userInput").placeholder = "Ex: Test bip Yanis niveau 12 palier 3…";
-    if (document.getElementById("messagesPrepa").children.length === 0) {
-      addBotMsgPrepa("Bienvenue ! 💪 Je suis votre assistant préparation physique de Risquons-Tout Mouscron.\n\nEntrez vos résultats de tests ou demandez un programme personnalisé !", true);
+    document.getElementById("sectionAdmin").style.display = "flex";
+    document.getElementById("userInput").placeholder = "Tapez votre demande...";
+    if (document.getElementById("messagesAdmin").children.length === 0) {
+      showAdminWelcome();
     }
   }
 }
@@ -403,18 +436,17 @@ var loginError = document.getElementById("loginError");
 
 async function tryLogin() {
   var key = clubKeyInput.value.trim().toUpperCase();
-  if (!key) { loginError.textContent = "Entrez votre clé."; loginError.style.display = "block"; return; }
-  loginBtn.textContent = "Vérification…"; loginBtn.disabled = true; loginError.style.display = "none";
+  if (!key) { loginError.textContent = "Entrez votre cle."; loginError.style.display = "block"; return; }
+  loginBtn.textContent = "Verification..."; loginBtn.disabled = true; loginError.style.display = "none";
   try {
-    var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:"Bonjour", userId, categorie, clubKey:key, deviceId}) });
+    var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:"Bonjour", userId:userId, categorie:categorie, clubKey:key, deviceId:deviceId}) });
     var data = await resp.json();
-    if (!resp.ok) { loginError.textContent = data.error||"Clé invalide."; loginError.style.display="block"; loginBtn.textContent="Accéder ⚽"; loginBtn.disabled=false; return; }
+    if (!resp.ok) { loginError.textContent = data.error||"Cle invalide."; loginError.style.display="block"; loginBtn.textContent="Acceder"; loginBtn.disabled=false; return; }
     clubKey = key; localStorage.setItem("rt_club_key", clubKey);
     loginScreen.style.display = "none";
-    addBotMsg("Bienvenue Coach ! ⚽\n\nJe suis Coach IA, votre assistant football de Risquons-Tout Mouscron.\n\nChoisissez votre catégorie et dites-moi ce que vous voulez travailler !", null, true);
-  } catch(e) { loginError.textContent="Erreur de connexion."; loginError.style.display="block"; loginBtn.textContent="Accéder ⚽"; loginBtn.disabled=false; }
+    addBotMsg("Bienvenue Coach !\n\nJe suis Coach IA, votre assistant de Risquons-Tout Mouscron.\n\nChoisissez votre categorie et dites-moi ce que vous voulez travailler !", null, true);
+  } catch(e) { loginError.textContent="Erreur de connexion."; loginError.style.display="block"; loginBtn.textContent="Acceder"; loginBtn.disabled=false; }
 }
-
 loginBtn.addEventListener("click", tryLogin);
 clubKeyInput.addEventListener("keydown", function(e) { if (e.key==="Enter") tryLogin(); });
 if (clubKey) { clubKeyInput.value = clubKey; tryLogin(); }
@@ -424,14 +456,13 @@ function selectCat(el, cat) {
   el.classList.add("active");
   categorie = cat;
   var greetings = {
-    'U6/U7':'les U6/U7 — les petits ! 🌟','U8/U9':'les U8/U9 — on va s\'amuser ! ⚽',
-    'U10/U11':'les U10/U11 — belle catégorie ! 🏃','U12/U13':'les U12/U13 — on monte en niveau ! 💥',
-    'U14/U15':'les U14/U15 — la tactique commence ! 🧠','U16/U17':'les U16/U17 — niveau avancé ! ⚡',
-    'U18':'les U18 — presque des seniors ! 🔥','Seniors':'les Seniors — on sort le grand jeu ! 🏆'
+    'U6/U7':'les U6/U7 les petits !','U8/U9':'les U8/U9 on va s\'amuser !',
+    'U10/U11':'les U10/U11 belle categorie !','U12/U13':'les U12/U13 on monte en niveau !',
+    'U14/U15':'les U14/U15 la tactique commence !','U16/U17':'les U16/U17 niveau avance !',
+    'U18':'les U18 presque des seniors !','Seniors':'les Seniors on sort le grand jeu !'
   };
-  var label = greetings[cat] || cat;
-  addBotMsg('Bonjour Coach ! 👋\nAujourd\'hui c\'est ' + label + '\n\nQu\'est-ce qu\'on travaille ?', null, true);
-  document.getElementById("userInput").placeholder = "Ex: dribble, 13 joueurs, 1h…";
+  addBotMsg("Bonjour Coach !\nAujourd'hui c'est " + (greetings[cat]||cat) + "\n\nQu'est-ce qu'on travaille ?", null, true);
+  document.getElementById("userInput").placeholder = "Ex: dribble, 13 joueurs, 1h...";
 }
 
 // ===== CHAT COACH =====
@@ -441,34 +472,31 @@ var messages = document.getElementById("messages");
 function addBotMsg(text, schema, withActions) {
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
   var bubble = document.createElement("div"); bubble.className = "bubble bot";
-  // Utiliser le parser markdown
   bubble.innerHTML = parseMarkdown(text);
   if (schema) bubble.insertAdjacentHTML("beforeend", renderSchema(schema));
   if (withActions) {
     var actions = document.createElement("div"); actions.className = "quick-actions";
     actions.innerHTML =
-      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs 1h\')">🏃 Dribble</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance passe triangle 10 joueurs 45min\')">⚡ Passe</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">🎯 Tir</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">🛡️ Pressing</button>' +
-      '<button class="qa-btn" onclick="sendMessage(\'Redige message WhatsApp convocation match samedi 10h\')">📢 Parents</button>';
+      '<button class="qa-btn" onclick="sendMessage(\'Seance dribble 12 joueurs 1h\')">Dribble</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance passe triangle 10 joueurs 45min\')">Passe</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance tir au but 14 joueurs 1h\')">Tir</button>' +
+      '<button class="qa-btn" onclick="sendMessage(\'Seance pressing collectif 1h\')">Pressing</button>' +
+      '<button class="qa-btn" onclick="startTestFlow(\'bip\')">Bip Test</button>' +
+      '<button class="qa-btn" onclick="startTestFlow(\'cooper\')">Mini Cooper</button>' +
+      '<button class="qa-btn" onclick="startTestFlow(\'sprint\')">Sprint 30m</button>';
     bubble.appendChild(actions);
   }
-  // Bouton écouter global si pas de cartes individuelles
   var hasCards = bubble.querySelector('.ex-card');
   if (!hasCards) {
     var sb = document.createElement("button"); sb.className = "speak-btn";
-    sb.textContent = "🔊 Écouter";
+    sb.textContent = "Ecouter";
     sb.onclick = function() { speakBubbleEl(this); };
     bubble.appendChild(sb);
   }
   var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
   wrap.appendChild(avatar); wrap.appendChild(bubble);
   messages.appendChild(wrap);
-  // Scroller au début de la nouvelle bulle (pas en bas)
-  setTimeout(function() {
-    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+  setTimeout(function() { wrap.scrollIntoView({ behavior:'smooth', block:'start' }); }, 100);
 }
 
 function addUserMsg(text) {
@@ -478,8 +506,8 @@ function addUserMsg(text) {
 }
 
 function setTyping(on) {
-  var container = currentMode === "coach" ? messages : document.getElementById("messagesPrepa");
-  var scrollEl = currentMode === "coach" ? chat : document.getElementById("chatPrepa");
+  var container = currentMode === "coach" ? messages : document.getElementById("messagesAdmin");
+  var scrollEl = currentMode === "coach" ? chat : document.getElementById("chatAdmin");
   if (on) {
     var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot"; wrap.id = "typingIndicator";
     wrap.innerHTML = '<div class="avatar">'+avatarSVG+'</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
@@ -487,136 +515,242 @@ function setTyping(on) {
   } else { var t = document.getElementById("typingIndicator"); if(t) t.remove(); }
 }
 
-// ===== CHAT PREPA =====
-var chatPrepa = document.getElementById("chatPrepa");
-var messagesPrepa = document.getElementById("messagesPrepa");
+// ===== CHAT ADMIN =====
+var chatAdmin = document.getElementById("chatAdmin");
+var messagesAdmin = document.getElementById("messagesAdmin");
 
-function addBotMsgPrepa(text, withActions, extraHtml) {
+function addBotMsgAdmin(text, withActions) {
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
   var bubble = document.createElement("div"); bubble.className = "bubble bot";
   bubble.innerHTML = parseMarkdown(text);
-  if (extraHtml) bubble.insertAdjacentHTML("beforeend", extraHtml);
   if (withActions) {
     var actions = document.createElement("div"); actions.className = "quick-actions";
     actions.innerHTML =
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test bip équipe \' + categorie + \' aujourd\'hui\')">🏃 Test Bip</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Test Mini Cooper équipe \' + categorie)">⏱️ Mini Cooper</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Programme semaine prochaine pour \' + categorie)">📋 Programme</button>' +
-      '<button class="qa-btn" onclick="sendMessagePrepa(\'Rapport progression \' + categorie + \' ce mois\')">📈 Progression</button>' +
-      '<button class="qa-btn" onclick="startExcelFlow()">📊 Télécharger Excel</button>';
+      '<button class="qa-btn" onclick="startAdminFlow(\'match\')">Convocation match</button>' +
+      '<button class="qa-btn" onclick="startAdminFlow(\'deplacement\')">Deplacement</button>' +
+      '<button class="qa-btn" onclick="startAdminFlow(\'annulation\')">Annulation</button>' +
+      '<button class="qa-btn" onclick="startAdminFlow(\'info\')">Info generale</button>' +
+      '<button class="qa-btn" onclick="startAdminFlow(\'presence\')">Feuille de presence</button>' +
+      '<button class="qa-btn" onclick="startExcelFlow()">Export Excel</button>';
     bubble.appendChild(actions);
   }
+  var sb = document.createElement("button"); sb.className = "speak-btn";
+  sb.textContent = "Ecouter";
+  sb.onclick = function() { speakBubbleEl(this); };
+  bubble.appendChild(sb);
   var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
   wrap.appendChild(avatar); wrap.appendChild(bubble);
-  messagesPrepa.appendChild(wrap);
-  setTimeout(function() { wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+  messagesAdmin.appendChild(wrap);
+  setTimeout(function() { wrap.scrollIntoView({ behavior:'smooth', block:'start' }); }, 100);
 }
 
-function addUserMsgPrepa(text) {
+function addUserMsgAdmin(text) {
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap user";
   var bubble = document.createElement("div"); bubble.className = "bubble user"; bubble.textContent = text;
-  wrap.appendChild(bubble); messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
+  wrap.appendChild(bubble); messagesAdmin.appendChild(wrap); chatAdmin.scrollTop = chatAdmin.scrollHeight;
+}
+
+function showAdminWelcome() {
+  addBotMsgAdmin("Bonjour Coach !\n\nJe gere tout l'administratif pour vous. Que voulez-vous faire ?", true);
+}
+
+// ===== FLOW ADMIN PARENTS =====
+function startAdminFlow(type) {
+  waitingForAdmin = true; currentAdminType = type;
+  var questions = {
+    'match': "Convocation match\n\nDonnez-moi les infos :\n- Heure du match\n- Lieu / terrain\n- Adversaire\n- Heure de rendez-vous",
+    'deplacement': "Deplacement\n\nDonnez-moi les infos :\n- Destination\n- Heure de depart\n- Lieu de rendez-vous\n- Heure de retour estimee",
+    'annulation': "Annulation seance\n\nPourquoi l'annulation ? Quelle seance ? (date, heure)",
+    'info': "Info generale\n\nQue voulez-vous communiquer aux parents ?",
+    'presence': "Feuille de presence\n\nDonnez-moi la liste :\n- Date de la seance\n- Presents\n- Absents\n- Retards"
+  };
+  var examples = {
+    'match': "Ex: Match samedi 15h, terrain Mouscron, adversaire FC Tournai, RDV 14h",
+    'deplacement': "Ex: Deplacement Bruges dimanche, depart 9h parking club, retour 18h",
+    'annulation': "Ex: Annulation seance jeudi, terrain detrempé suite aux pluies",
+    'info': "Ex: Rappel cotisation avant fin du mois",
+    'presence': "Ex: Seance 24/05 - Presents: Yanis, Kevin - Absents: Mehdi (blesse) - Retard: Lucas"
+  };
+  addUserMsgAdmin(type === 'match' ? 'Convocation match' : type === 'deplacement' ? 'Deplacement' : type === 'annulation' ? 'Annulation' : type === 'info' ? 'Info generale' : 'Presence');
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
+  var bubble = document.createElement("div"); bubble.className = "bubble bot";
+  bubble.innerHTML = parseMarkdown(questions[type]||"Que voulez-vous communiquer ?");
+  bubble.insertAdjacentHTML("beforeend", '<div class="guide-card"><div class="guide-card-title">Exemple</div><div class="guide-card-example">'+(examples[type]||'')+'</div></div>');
+  var acts = document.createElement("div"); acts.className = "quick-actions"; acts.style.marginTop = "10px";
+  acts.innerHTML = '<button class="qa-btn" onclick="cancelFlow()" style="border-color:rgba(255,100,100,0.4);color:#ff9999;">Annuler</button>';
+  bubble.appendChild(acts);
+  var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
+  wrap.appendChild(avatar); wrap.appendChild(bubble); messagesAdmin.appendChild(wrap);
+  setTimeout(function() { wrap.scrollIntoView({ behavior:'smooth', block:'start' }); }, 100);
+  document.getElementById("userInput").placeholder = "Tapez les infos ici...";
+  document.getElementById("userInput").focus();
+}
+
+// ===== FLOW TEST PHYSIQUE =====
+function startTestFlow(type) {
+  waitingForTest = true; currentTestType = type;
+  var label = type === 'bip' ? 'Bip Test' : type === 'cooper' ? 'Mini Cooper' : 'Sprint 30m';
+  var example = type === 'bip' ? "- Yanis niveau 12 palier 3\n- Mehdi niveau 10 palier 5\n- Kevin niveau 8 palier 2"
+    : type === 'cooper' ? "- Yanis 2850m\n- Mehdi 2600m\n- Kevin 3100m"
+    : "- Yanis 4.2s\n- Mehdi 4.5s\n- Kevin 3.9s";
+  addUserMsg(label + " - " + categorie);
+  var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
+  var bubble = document.createElement("div"); bubble.className = "bubble bot";
+  bubble.textContent = "Entrez les resultats du " + label + " pour " + categorie + " - je les analyse et genere le PDF !";
+  bubble.insertAdjacentHTML("beforeend", '<div class="guide-card"><div class="guide-card-title">Format attendu</div><div class="guide-card-example">'+example+'</div></div>');
+  var acts = document.createElement("div"); acts.className = "quick-actions"; acts.style.marginTop = "10px";
+  acts.innerHTML = '<button class="qa-btn" onclick="cancelFlow()" style="border-color:rgba(255,100,100,0.4);color:#ff9999;">Annuler</button>';
+  bubble.appendChild(acts);
+  var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
+  wrap.appendChild(avatar); wrap.appendChild(bubble); messages.appendChild(wrap);
+  setTimeout(function() { wrap.scrollIntoView({ behavior:'smooth', block:'start' }); }, 100);
+  document.getElementById("userInput").placeholder = "Tapez les resultats ici...";
+  document.getElementById("userInput").focus();
+}
+
+function cancelFlow() {
+  waitingForAdmin = false; currentAdminType = null;
+  waitingForTest = false; currentTestType = null;
+  waitingForExcelData = false; excelDataType = null;
+  document.getElementById("userInput").placeholder = currentMode === "coach" ? "Ex: seance dribble, 12 joueurs, 1h..." : "Tapez votre demande...";
+  if (currentMode === "coach") addBotMsg("Annule. Que voulez-vous travailler ?", null, false);
+  else addBotMsgAdmin("Annule. Que puis-je faire pour vous ?", false);
 }
 
 // ===== EXCEL FLOW =====
 function startExcelFlow() {
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
   var bubble = document.createElement("div"); bubble.className = "bubble bot";
-  bubble.textContent = "📊 Parfait ! Quel type de données voulez-vous exporter ?";
+  bubble.textContent = "Quel type de donnees voulez-vous exporter ?";
   var actions = document.createElement("div"); actions.className = "quick-actions";
-  actions.innerHTML = '<button class="qa-btn" onclick="askExcelData(\'tests\')">🏃 Tests physiques</button><button class="qa-btn" onclick="askExcelData(\'presence\')">✅ Présence</button><button class="qa-btn" onclick="askExcelData(\'les deux\')">📋 Les deux</button>';
+  actions.innerHTML = '<button class="qa-btn" onclick="askExcelData(\'tests\')">Tests physiques</button><button class="qa-btn" onclick="askExcelData(\'presence\')">Presence</button><button class="qa-btn" onclick="askExcelData(\'les deux\')">Les deux</button>';
   bubble.appendChild(actions);
   var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
-  wrap.appendChild(avatar); wrap.appendChild(bubble); messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
+  wrap.appendChild(avatar); wrap.appendChild(bubble); messagesAdmin.appendChild(wrap); chatAdmin.scrollTop = chatAdmin.scrollHeight;
 }
 
 function askExcelData(type) {
   excelDataType = type; waitingForExcelData = true;
-  addUserMsgPrepa(type === "tests" ? "Tests physiques" : type === "presence" ? "Présence" : "Les deux");
-  var guideText = type === "tests" ?
-    "✏️ Tapez les résultats en texte libre — je m'occupe du reste !" :
-    type === "presence" ?
-    "✏️ Tapez la liste de présence — je formate tout !" :
-    "✏️ Tapez d'abord les tests puis la présence, séparés par une ligne vide.";
-  var exampleText = type === "tests" ?
-    "• Yanis — Bip Test niveau 12 palier 3\n• Mehdi — Mini Cooper 2800m\n• Kevin — Sprint 30m en 4.2s" :
-    type === "presence" ?
-    "• Yanis : présent\n• Mehdi : absent (blessé)\n• Sofia : retard 10min" :
-    "TESTS\nYanis — Bip Test niveau 12\nMehdi — Mini Cooper 2800m\n\nPRÉSENCE\nPrésents : Yanis, Sofia\nAbsents : Mehdi";
+  addUserMsgAdmin(type === "tests" ? "Tests physiques" : type === "presence" ? "Presence" : "Les deux");
+  var guideText = type === "tests" ? "Tapez les resultats en texte libre - je m'occupe du reste !"
+    : type === "presence" ? "Tapez la liste de presence - je formate tout !"
+    : "Tapez d'abord les tests puis la presence, separes par une ligne vide.";
+  var exampleText = type === "tests" ? "- Yanis Bip Test niveau 12 palier 3\n- Mehdi Mini Cooper 2800m\n- Kevin Sprint 30m en 4.2s"
+    : type === "presence" ? "- Yanis : present\n- Mehdi : absent (blesse)\n- Sofia : retard 10min"
+    : "TESTS\nYanis Bip Test niveau 12\nMehdi Mini Cooper 2800m\n\nPRESENCE\nPresents: Yanis, Sofia\nAbsents: Mehdi";
   var wrap = document.createElement("div"); wrap.className = "bubble-wrap bot";
   var bubble = document.createElement("div"); bubble.className = "bubble bot";
   bubble.textContent = guideText;
-  bubble.insertAdjacentHTML("beforeend", '<div class="excel-guide-card"><div class="excel-guide-title">📝 Format attendu</div><div class="excel-guide-example">'+exampleText+'</div></div>');
-  var actions = document.createElement("div"); actions.className = "quick-actions"; actions.style.marginTop = "10px";
-  actions.innerHTML = '<button class="qa-btn" onclick="cancelExcelFlow()" style="border-color:rgba(255,100,100,0.4);color:#ff9999;">✕ Annuler</button>';
-  bubble.appendChild(actions);
+  bubble.insertAdjacentHTML("beforeend", '<div class="guide-card"><div class="guide-card-title">Format attendu</div><div class="guide-card-example">'+exampleText+'</div></div>');
+  var acts = document.createElement("div"); acts.className = "quick-actions"; acts.style.marginTop = "10px";
+  acts.innerHTML = '<button class="qa-btn" onclick="cancelFlow()" style="border-color:rgba(255,100,100,0.4);color:#ff9999;">Annuler</button>';
+  bubble.appendChild(acts);
   var avatar = document.createElement("div"); avatar.className = "avatar"; avatar.innerHTML = avatarSVG;
-  wrap.appendChild(avatar); wrap.appendChild(bubble); messagesPrepa.appendChild(wrap); chatPrepa.scrollTop = chatPrepa.scrollHeight;
-  document.getElementById("userInput").placeholder = "Tapez vos données ici…";
+  wrap.appendChild(avatar); wrap.appendChild(bubble); messagesAdmin.appendChild(wrap); chatAdmin.scrollTop = chatAdmin.scrollHeight;
+  document.getElementById("userInput").placeholder = "Tapez vos donnees ici...";
   document.getElementById("userInput").focus();
-}
-
-function cancelExcelFlow() {
-  waitingForExcelData = false; excelDataType = null;
-  document.getElementById("userInput").placeholder = "Ex: Test bip Yanis niveau 12 palier 3…";
-  addBotMsgPrepa("Annulé. Que puis-je faire pour vous ?", false);
 }
 
 async function generateExcelFromText(userText) {
   setTyping(true);
   var today = new Date().toLocaleDateString("fr-FR");
-  var prompt = "Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans texte avant ou après. Format exact : {\"sheets\":[{\"name\":\"Nom\",\"headers\":[\"Col1\",\"Col2\"],\"rows\":[[\"val1\",\"val2\"]]}],\"summary\":\"phrase courte\"}. Tests physiques : headers = Joueur, Type de test, Résultat, Date, Remarques. Présence : headers = Joueur, Statut (Présent/Absent/Retard), Remarques, Date. Si les deux types : deux feuilles séparées. Date si non précisée : " + today + ". Données à traiter : " + userText;
+  var prompt = "Reponds UNIQUEMENT avec un JSON valide, sans markdown, sans texte avant ou apres. Format exact : {\"sheets\":[{\"name\":\"Nom\",\"headers\":[\"Col1\",\"Col2\"],\"rows\":[[\"val1\",\"val2\"]]}],\"summary\":\"phrase courte\"}. Tests physiques : headers = Joueur, Type de test, Resultat, Date, Remarques. Presence : headers = Joueur, Statut (Present/Absent/Retard), Remarques, Date. Si les deux types : deux feuilles separees. Date si non precisee : " + today + ". Donnees : " + userText;
   try {
-    var resp = await fetch(API_BASE + "/prepa", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:prompt, userId:userId+"_excel", categorie, clubKey, deviceId}) });
+    var resp = await fetch(API_BASE + "/prepa", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:prompt, userId:userId+"_excel", categorie:categorie, clubKey:clubKey, deviceId:deviceId}) });
     var data = await resp.json();
     setTyping(false);
-    if (!resp.ok) { addBotMsgPrepa("Erreur serveur : " + (data.error||"Problème de connexion."), false); return; }
+    if (!resp.ok) { addBotMsgAdmin("Erreur : " + (data.error||"Connexion impossible."), false); return; }
     var raw = (data.answer||"").replace(/```json/g,"").replace(/```/g,"").trim();
     var match = raw.match(/\{[\s\S]*\}/);
     var parsed = JSON.parse(match ? match[0] : raw);
-    if (!parsed.sheets || parsed.sheets.length === 0) { addBotMsgPrepa("Aucune donnée détectée. Vérifiez votre saisie.", false); return; }
+    if (!parsed.sheets || parsed.sheets.length === 0) { addBotMsgAdmin("Aucune donnee detectee. Verifiez votre saisie.", false); return; }
     var wb = XLSX.utils.book_new();
     parsed.sheets.forEach(function(sheet) {
       var wsData = [sheet.headers].concat(sheet.rows);
       var ws = XLSX.utils.aoa_to_sheet(wsData);
       ws["!cols"] = sheet.headers.map(function() { return {wch:22}; });
-      XLSX.utils.book_append_sheet(wb, ws, (sheet.name||"Données").slice(0,31));
+      XLSX.utils.book_append_sheet(wb, ws, (sheet.name||"Donnees").slice(0,31));
     });
     var date = new Date().toLocaleDateString("fr-FR").replace(/\//g,"-");
     XLSX.writeFile(wb, "RT_Mouscron_" + date + ".xlsx");
-    addBotMsgPrepa("✅ " + (parsed.summary||"Fichier Excel généré !") + "\n\nLe téléchargement a démarré. 📥", false);
-  } catch(e) { setTyping(false); addBotMsgPrepa("Erreur de connexion. Réessayez.", false); }
+    addBotMsgAdmin("Fichier Excel genere ! Le telechargement a demarre. " + (parsed.summary||""), false);
+  } catch(e) { setTyping(false); addBotMsgAdmin("Erreur de connexion. Reessayez.", false); }
   waitingForExcelData = false; excelDataType = null;
-  document.getElementById("userInput").placeholder = "Ex: Test bip Yanis niveau 12 palier 3…";
+  document.getElementById("userInput").placeholder = "Tapez votre demande...";
 }
 
 // ===== SEND =====
 async function sendMessage(text) {
   if (!text || isLoading) return;
   if (!clubKey) { loginScreen.style.display = "flex"; return; }
+
+  if (waitingForTest) {
+    waitingForTest = false;
+    var label = currentTestType === 'bip' ? 'Bip Test' : currentTestType === 'cooper' ? 'Mini Cooper' : 'Sprint 30m';
+    var tc = currentTestType; currentTestType = null;
+    addUserMsg(text); isLoading = true; setTyping(true);
+    document.getElementById("userInput").placeholder = "Ex: seance dribble, 12 joueurs, 1h...";
+    try {
+      var prompt = "Analyse ces resultats de " + label + " pour l'equipe " + categorie + " de Risquons-Tout Mouscron. Presente un tableau clair avec : Joueur, Resultat, Niveau (Excellent/Bon/Moyen/Faible), Recommandations. Resultats : " + text;
+      var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:prompt, userId:userId, categorie:categorie, clubKey:clubKey, deviceId:deviceId}) });
+      var data = await resp.json();
+      setTyping(false);
+      addBotMsg(data.answer||"Pas de reponse.", null, false);
+    } catch(e) { setTyping(false); addBotMsg("Erreur de connexion.", null, false); }
+    isLoading = false;
+    return;
+  }
+
   addUserMsg(text); isLoading = true; setTyping(true);
   try {
-    var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:"Catégorie : "+categorie+". "+text, userId, categorie, clubKey, deviceId}) });
+    var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:"Categorie : "+categorie+". "+text, userId:userId, categorie:categorie, clubKey:clubKey, deviceId:deviceId}) });
     var data = await resp.json();
     setTyping(false);
-    if (!resp.ok) { addBotMsg("Erreur : "+(data.error||"Problème de connexion."), null, false); }
-    else { addBotMsg(data.answer||"Pas de réponse.", data.schema||null, false); }
+    if (!resp.ok) { addBotMsg("Erreur : "+(data.error||"Connexion impossible."), null, false); }
+    else { addBotMsg(data.answer||"Pas de reponse.", data.schema||null, false); }
   } catch(e) { setTyping(false); addBotMsg("Erreur de connexion.", null, false); }
   isLoading = false;
 }
 
-async function sendMessagePrepa(text) {
+async function sendMessageAdmin(text) {
   if (!text || isLoading) return;
   if (!clubKey) { loginScreen.style.display = "flex"; return; }
-  if (waitingForExcelData) { addUserMsgPrepa(text); isLoading = true; await generateExcelFromText(text); isLoading = false; return; }
-  addUserMsgPrepa(text); isLoading = true; setTyping(true);
+
+  if (waitingForExcelData) {
+    addUserMsgAdmin(text); isLoading = true;
+    await generateExcelFromText(text);
+    isLoading = false; return;
+  }
+
+  if (waitingForAdmin) {
+    waitingForAdmin = false;
+    var atype = currentAdminType; currentAdminType = null;
+    addUserMsgAdmin(text); isLoading = true; setTyping(true);
+    document.getElementById("userInput").placeholder = "Tapez votre demande...";
+    var prompts = {
+      'match': "Redige un message WhatsApp clair pour convoquer les parents de l'equipe " + categorie + " de Risquons-Tout Mouscron a un match. Infos : " + text + ". Message court avec emojis.",
+      'deplacement': "Redige un message WhatsApp pour informer les parents d'un deplacement avec l'equipe " + categorie + ". Infos : " + text + ". Message clair avec emojis.",
+      'annulation': "Redige un message WhatsApp pour annoncer l'annulation d'une seance de l'equipe " + categorie + ". Infos : " + text + ". Message court avec emojis.",
+      'info': "Redige un message WhatsApp informatif pour les parents de l'equipe " + categorie + " : " + text + ". Message clair avec emojis.",
+      'presence': "Formate proprement cette feuille de presence pour l'equipe " + categorie + " : " + text + ". Presente clairement presents, absents, retards avec totaux."
+    };
+    try {
+      var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:prompts[atype]||text, userId:userId+"_admin", categorie:categorie, clubKey:clubKey, deviceId:deviceId}) });
+      var data = await resp.json();
+      setTyping(false);
+      addBotMsgAdmin(data.answer||"Pas de reponse.", false);
+    } catch(e) { setTyping(false); addBotMsgAdmin("Erreur de connexion.", false); }
+    isLoading = false;
+    return;
+  }
+
+  addUserMsgAdmin(text); isLoading = true; setTyping(true);
   try {
-    var resp = await fetch(API_BASE + "/prepa", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:text, userId:userId+"_prepa", categorie, clubKey, deviceId}) });
+    var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:text, userId:userId+"_admin", categorie:categorie, clubKey:clubKey, deviceId:deviceId}) });
     var data = await resp.json();
     setTyping(false);
-    if (!resp.ok) { addBotMsgPrepa("Erreur : "+(data.error||"Problème de connexion."), false); }
-    else { addBotMsgPrepa(data.answer||"Pas de réponse.", false); }
-  } catch(e) { setTyping(false); addBotMsgPrepa("Erreur de connexion.", false); }
+    addBotMsgAdmin(data.answer||"Pas de reponse.", false);
+  } catch(e) { setTyping(false); addBotMsgAdmin("Erreur de connexion.", false); }
   isLoading = false;
 }
 
@@ -624,13 +758,13 @@ var userInput = document.getElementById("userInput");
 document.getElementById("sendBtn").addEventListener("click", function() {
   var text = userInput.value.trim(); if (!text) return;
   userInput.value = "";
-  if (currentMode === "coach") sendMessage(text); else sendMessagePrepa(text);
+  if (currentMode === "coach") sendMessage(text); else sendMessageAdmin(text);
 });
 userInput.addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     var text = userInput.value.trim(); if (!text) return;
     userInput.value = "";
-    if (currentMode === "coach") sendMessage(text); else sendMessagePrepa(text);
+    if (currentMode === "coach") sendMessage(text); else sendMessageAdmin(text);
   }
 });
 </script>
