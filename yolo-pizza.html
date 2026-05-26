@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Yolo Pizza</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#1a1a1a;font-family:'Nunito',sans-serif;color:#fff}
+
+:root{
+  --green:#2ECC71;
+  --yellow:#F1C40F;
+  --dark:#1a1a1a;
+  --card:#242424;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:500;background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-pizza{font-size:80px;animation:spin 3s linear infinite;margin-bottom:16px}
+.sp-name{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:.1em;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fadeUp .7s .3s both}
+.sp-sub{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:8px;animation:fadeUp .7s .5s both}
+
+/* APP */
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
+/* TOPBAR */
+#topbar{background:#111;padding:12px 16px 10px;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--green);flex-shrink:0}
+.tb-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.tb-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tb-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+/* TABS */
+#tabs{background:#111;display:flex;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Nunito',sans-serif}
+.tab span{font-size:16px}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* PAGES */
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* CHAT */
+#page-chat{background:#1a1a1a}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--yellow));display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:16px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:18px}
+.bub.bot{background:var(--card);color:#fff;border-top-left-radius:4px}
+.bub.user{background:linear-gradient(135deg,var(--green),#27ae60);color:#fff;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer}
+.tybub{background:var(--card);border-radius:18px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px}
+.tybub span{width:6px;height:6px;border-radius:50%;background:var(--green);animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+
+/* COMPOSER */
+#composer{padding:10px 14px 22px;background:#111;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(255,255,255,.1);background:var(--card);font-size:15px;font-family:'Nunito',sans-serif;outline:none;color:#fff}
+#inp::placeholder{color:rgba(255,255,255,.3)}
+#inp:focus{border-color:var(--green)}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--green),var(--yellow));color:#111;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-weight:900}
+
+/* MENU */
+#page-menu{background:#1a1a1a;padding:16px 14px 32px;gap:12px}
+.menu-header{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.06em;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.menu-sub{font-size:13px;color:rgba(255,255,255,.4);margin-top:2px;margin-bottom:8px}
+.menu-cat{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);margin:12px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(241,196,15,.2)}
+.pizza-card{background:var(--card);border-radius:16px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(255,255,255,.05);cursor:pointer;transition:all .2s}
+.pizza-card:active{border-color:var(--green);transform:scale(.98)}
+.pizza-left{flex:1}
+.pizza-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.05em;color:#fff}
+.pizza-desc{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;line-height:1.4}
+.pizza-price{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);flex-shrink:0}
+.pizza-emoji{font-size:32px;flex-shrink:0}
+
+/* PANIER */
+.cart-bar{background:#111;border-top:1px solid rgba(255,255,255,.08);padding:12px 14px;display:none;flex-shrink:0}
+.cart-bar.visible{display:block}
+.cart-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),var(--yellow));border:none;border-radius:14px;color:#111;font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.cart-count{background:#111;color:var(--yellow);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900}
+
+/* TARIFS */
+#page-tarifs{background:#1a1a1a;padding:16px 14px 32px;gap:10px}
+.t-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.06em;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.t-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:8px}
+.t-card{background:var(--card);border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,.05)}
+.t-card-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.05em;color:#fff;margin-bottom:4px}
+.t-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
+.t-row:last-child{border:none}
+.t-row-name{color:rgba(255,255,255,.7)}
+.t-row-price{color:var(--yellow);font-weight:700}
+.t-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:800;font-size:14px;font-family:'Nunito',sans-serif;margin-top:8px}
+
+/* OVERLAY PANIER */
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center}
+#overlay.open{display:flex}
+#mbox{background:#1e1e1e;border-radius:24px 24px 0 0;padding:24px 18px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);max-height:85vh;overflow-y:auto}
+.mbox-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em;margin-bottom:16px;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mbox-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.mbox-item-name{font-size:14px;color:#fff}
+.mbox-item-price{color:var(--yellow);font-weight:700;font-size:14px}
+.mbox-item-qty{display:flex;align-items:center;gap:10px}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qty-val{font-weight:700;min-width:20px;text-align:center}
+.mbox-total{display:flex;justify-content:space-between;padding:14px 0;font-weight:800;font-size:16px}
+.mbox-total-price{color:var(--yellow);font-family:'Bebas Neue',sans-serif;font-size:22px}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;font-weight:800;font-size:15px;font-family:'Nunito',sans-serif;text-decoration:none;margin-bottom:10px;border:none;width:100%;cursor:pointer}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:rgba(255,255,255,.4);cursor:pointer;border:none;background:none;width:100%;font-family:'Nunito',sans-serif}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-pizza">🍕</div>
+  <div class="sp-name">YOLO PIZZA</div>
+  <div class="sp-sub">Pizzeria &middot; Livraison &middot; Sur place</div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-logo">🍕</div>
+    <div>
+      <div class="tb-name">YOLO PIZZA</div>
+      <div class="tb-sub">Pizzeria &middot; Ouvert jusqu'a 23h</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'menu')"><span>🍕</span>Menu</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+  </div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div id="page-menu" class="page">
+    <div class="menu-header">Notre Menu</div>
+    <div class="menu-sub">Appuyez sur une pizza pour commander</div>
+
+    <div class="menu-cat">Nos Pizzas</div>
+
+    <div class="pizza-card" onclick="addToCart('Margherita','Tomate, mozzarella, basilic','10.90')">
+      <div class="pizza-emoji">🍕</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Margherita</div>
+        <div class="pizza-desc">Tomate, mozzarella, basilic frais</div>
+      </div>
+      <div class="pizza-price">10.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Regina','Tomate, mozzarella, jambon, champignons','12.90')">
+      <div class="pizza-emoji">🍕</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Regina</div>
+        <div class="pizza-desc">Tomate, mozzarella, jambon, champignons</div>
+      </div>
+      <div class="pizza-price">12.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('4 Fromages','Mozzarella, gorgonzola, chevre, parmesan','13.90')">
+      <div class="pizza-emoji">🧀</div>
+      <div class="pizza-left">
+        <div class="pizza-name">4 Fromages</div>
+        <div class="pizza-desc">Mozzarella, gorgonzola, chevre, parmesan</div>
+      </div>
+      <div class="pizza-price">13.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Yolo Special','Tomate, mozzarella, pepperoni, jalapenos, miel','14.90')">
+      <div class="pizza-emoji">🔥</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Yolo Special</div>
+        <div class="pizza-desc">Pepperoni, jalapenos, miel — notre signature !</div>
+      </div>
+      <div class="pizza-price">14.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Vegetariana','Tomate, mozzarella, poivrons, olives, courgette','12.90')">
+      <div class="pizza-emoji">🥦</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Vegetariana</div>
+        <div class="pizza-desc">Poivrons, olives, courgette, tomates cerises</div>
+      </div>
+      <div class="pizza-price">12.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Diavola','Tomate, mozzarella, salami piquant, piment','13.90')">
+      <div class="pizza-emoji">😈</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Diavola</div>
+        <div class="pizza-desc">Salami piquant, piment rouge, basilic</div>
+      </div>
+      <div class="pizza-price">13.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Calzone','Tomate, mozzarella, jambon, ricotta, oeuf','14.90')">
+      <div class="pizza-emoji">🫓</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Calzone</div>
+        <div class="pizza-desc">Pizza fermee, jambon, ricotta, oeuf</div>
+      </div>
+      <div class="pizza-price">14.90€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Saumon','Creme, mozzarella, saumon fume, aneth','15.90')">
+      <div class="pizza-emoji">🐟</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Saumon</div>
+        <div class="pizza-desc">Creme, saumon fume, aneth, citron</div>
+      </div>
+      <div class="pizza-price">15.90€</div>
+    </div>
+
+    <div class="menu-cat">Boissons</div>
+
+    <div class="pizza-card" onclick="addToCart('Coca-Cola','33cl','2.50')">
+      <div class="pizza-emoji">🥤</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Coca-Cola</div>
+        <div class="pizza-desc">33cl bien frais</div>
+      </div>
+      <div class="pizza-price">2.50€</div>
+    </div>
+
+    <div class="pizza-card" onclick="addToCart('Eau minerale','50cl','1.50')">
+      <div class="pizza-emoji">💧</div>
+      <div class="pizza-left">
+        <div class="pizza-name">Eau minerale</div>
+        <div class="pizza-desc">50cl</div>
+      </div>
+      <div class="pizza-price">1.50€</div>
+    </div>
+  </div>
+
+  <!-- TARIFS -->
+  <div id="page-tarifs" class="page">
+    <div class="t-title">Tarifs</div>
+    <div class="t-sub">Prix pour une pizza standard (30cm)</div>
+
+    <div class="t-card">
+      <div class="t-card-name">Pizzas Classiques</div>
+      <div class="t-row"><span class="t-row-name">Margherita</span><span class="t-row-price">10.90€</span></div>
+      <div class="t-row"><span class="t-row-name">Regina</span><span class="t-row-price">12.90€</span></div>
+      <div class="t-row"><span class="t-row-name">4 Fromages</span><span class="t-row-price">13.90€</span></div>
+      <div class="t-row"><span class="t-row-name">Vegetariana</span><span class="t-row-price">12.90€</span></div>
+      <div class="t-row"><span class="t-row-name">Diavola</span><span class="t-row-price">13.90€</span></div>
+    </div>
+
+    <div class="t-card">
+      <div class="t-card-name">Pizzas Speciales</div>
+      <div class="t-row"><span class="t-row-name">Yolo Special</span><span class="t-row-price">14.90€</span></div>
+      <div class="t-row"><span class="t-row-name">Calzone</span><span class="t-row-price">14.90€</span></div>
+      <div class="t-row"><span class="t-row-name">Saumon</span><span class="t-row-price">15.90€</span></div>
+    </div>
+
+    <div class="t-card">
+      <div class="t-card-name">Boissons</div>
+      <div class="t-row"><span class="t-row-name">Coca-Cola 33cl</span><span class="t-row-price">2.50€</span></div>
+      <div class="t-row"><span class="t-row-name">Eau minerale 50cl</span><span class="t-row-price">1.50€</span></div>
+    </div>
+
+    <a class="t-wa" href="https://wa.me/32400000000?text=Bonjour%20Yolo%20Pizza%20!" target="_blank">
+      📱 Commander sur WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- CART BAR -->
+<div class="cart-bar" id="cart-bar">
+  <button class="cart-btn" onclick="ouvrirPanier()">
+    🛒 Voir mon panier
+    <div class="cart-count" id="cart-count">0</div>
+  </button>
+</div>
+
+<!-- OVERLAY PANIER -->
+<div id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div id="mbox">
+    <div class="mbox-title">Mon Panier 🛒</div>
+    <div id="mbox-items"></div>
+    <div class="mbox-total">
+      <span>Total</span>
+      <span class="mbox-total-price" id="mbox-total">0.00€</span>
+    </div>
+    <button class="mbox-wa" onclick="commanderWA()">📱 Commander sur WhatsApp</button>
+    <button class="mbox-cancel" onclick="fermerModal()">Continuer mes achats</button>
+  </div>
+</div>
+
+<script>
+var WA = "32400000000";
+var API = "https://philo-backend-by2c.onrender.com";
+var SYS = "Tu es l'assistante IA de Yolo Pizza, une pizzeria moderne et sympa. Reponds en francais, souriant et concis. JAMAIS de markdown, pas d'asterisques, pas de tirets. Texte simple et naturel. PRESENTATION: Yolo Pizza, pizzeria ouverte tous les jours de 11h a 14h30 et de 18h a 23h. Livraison et sur place disponibles. MENU: Margherita 10.90, Regina 12.90, 4 Fromages 13.90, Yolo Special 14.90 (notre signature pepperoni jalapenos miel), Vegetariana 12.90, Diavola 13.90, Calzone 14.90, Saumon 15.90. Boissons: Coca 2.50, Eau 1.50. Pour commander, oriente vers l'onglet Menu de l'app ou WhatsApp. Reponds directement aux questions sur les ingredients, allergenes, delais de livraison (30-45 min), reservation de table.";
+var busy = false;
+var cart = [];
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+  // Afficher cart bar sur menu
+  var cb = document.getElementById("cart-bar");
+  if (n === "menu" && cart.length > 0) cb.classList.add("visible");
+  else if (n !== "menu") cb.classList.remove("visible");
+}
+
+// CART
+function addToCart(name, desc, price) {
+  var existing = cart.find(function(i){ return i.name === name; });
+  if (existing) { existing.qty++; }
+  else { cart.push({ name: name, price: parseFloat(price), qty: 1 }); }
+  updateCartBar();
+  // Feedback visuel
+  var cb = document.getElementById("cart-bar");
+  cb.classList.add("visible");
+}
+
+function updateCartBar() {
+  var total = cart.reduce(function(s,i){ return s + i.qty; }, 0);
+  document.getElementById("cart-count").textContent = total;
+}
+
+function ouvrirPanier() {
+  var items = document.getElementById("mbox-items");
+  items.innerHTML = "";
+  cart.forEach(function(item, idx) {
+    var row = document.createElement("div");
+    row.className = "mbox-item";
+    row.innerHTML =
+      '<div class="mbox-item-name">' + item.name + '</div>' +
+      '<div class="mbox-item-qty">' +
+        '<button class="qty-btn" onclick="changeQty(' + idx + ',-1)">-</button>' +
+        '<span class="qty-val">' + item.qty + '</span>' +
+        '<button class="qty-btn" onclick="changeQty(' + idx + ',1)">+</button>' +
+      '</div>' +
+      '<div class="mbox-item-price">' + (item.price * item.qty).toFixed(2) + 'EUR</div>';
+    items.appendChild(row);
+  });
+  var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+  document.getElementById("mbox-total").textContent = total.toFixed(2) + "EUR";
+  document.getElementById("overlay").classList.add("open");
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  updateCartBar();
+  if (cart.length === 0) { fermerModal(); document.getElementById("cart-bar").classList.remove("visible"); return; }
+  ouvrirPanier();
+}
+
+function commanderWA() {
+  var msg = "Bonjour Yolo Pizza ! Je voudrais commander :\n\n";
+  cart.forEach(function(i){ msg += "- " + i.qty + "x " + i.name + " (" + (i.price*i.qty).toFixed(2) + "EUR)\n"; });
+  var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+  msg += "\nTOTAL : " + total.toFixed(2) + "EUR\n\nMerci !";
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function fermerModal() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+// CHAT
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🍕";
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["Menu","Quelles pizzas avez-vous ?"],["Horaires","Vous etes ouverts quand ?"],["Livraison","Vous livrez ?"],["Commander","Je veux commander"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  // Si commande -> aller sur menu
+  var low = txt.toLowerCase();
+  if (low.indexOf("commander") >= 0 || low.indexOf("menu") >= 0 || low.indexOf("pizza") >= 0) {
+    addUser(txt);
+    setTimeout(function(){
+      var tabs = document.querySelectorAll(".tab");
+      showTab(tabs[1], "menu");
+      addBot("Voila notre menu ! Appuyez sur la pizza de votre choix pour l'ajouter au panier.", false);
+    }, 300);
+    return;
+  }
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "yolo_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis la pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, reessayez.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+// SPLASH
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Benvenuto chez Yolo Pizza ! Bienvenue ! 🍕\n\nJe suis votre assistante disponible 24h/24. Je peux vous aider avec notre menu, nos horaires ou prendre votre commande.", true);
+  }, 900);
+}, 2500);
+</script>
+</body>
+</html>
