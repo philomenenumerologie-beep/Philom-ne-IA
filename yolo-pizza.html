@@ -96,7 +96,7 @@ html,body{height:100%;overflow:hidden;background:#1a1a1a;font-family:'Nunito',sa
 .cart-count{background:#111;color:var(--yellow);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900}
 
 /* TARIFS */
-#page-tarifs{background:#1a1a1a;padding:16px 14px 32px;gap:10px}
+#page-infos{background:#1a1a1a;padding:16px 14px 32px;gap:10px}
 .t-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.06em;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .t-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:8px}
 .t-card{background:var(--card);border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,.05)}
@@ -145,7 +145,7 @@ html,body{height:100%;overflow:hidden;background:#1a1a1a;font-family:'Nunito',sa
   <div id="tabs">
     <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
     <button class="tab" onclick="showTab(this,'menu')"><span>🍕</span>Menu</button>
-    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+    <button class="tab" onclick="showTab(this,'infos')"><span>📍</span>Infos</button>
   </div>
 
   <!-- CHAT -->
@@ -260,31 +260,44 @@ html,body{height:100%;overflow:hidden;background:#1a1a1a;font-family:'Nunito',sa
     </div>
   </div>
 
-  <!-- TARIFS -->
-  <div id="page-tarifs" class="page">
-    <div class="t-title">Tarifs</div>
-    <div class="t-sub">Prix pour une pizza standard (30cm)</div>
+  <!-- INFOS -->
+  <div id="page-infos" class="page">
+    <div class="t-title">Infos pratiques</div>
+    <div class="t-sub">Tout ce qu'il faut savoir</div>
 
     <div class="t-card">
-      <div class="t-card-name">Pizzas Classiques</div>
-      <div class="t-row"><span class="t-row-name">Margherita</span><span class="t-row-price">10.90€</span></div>
-      <div class="t-row"><span class="t-row-name">Regina</span><span class="t-row-price">12.90€</span></div>
-      <div class="t-row"><span class="t-row-name">4 Fromages</span><span class="t-row-price">13.90€</span></div>
-      <div class="t-row"><span class="t-row-name">Vegetariana</span><span class="t-row-price">12.90€</span></div>
-      <div class="t-row"><span class="t-row-name">Diavola</span><span class="t-row-price">13.90€</span></div>
+      <div class="t-card-name">📍 Adresse</div>
+      <div class="t-row"><span class="t-row-name">12 Rue de la Pizza, Mouscron</span></div>
+      <div class="t-row"><span class="t-row-name">Belgique, 7700</span></div>
+      <a href="https://maps.google.com/?q=Mouscron" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(46,204,113,0.15);border:1px solid var(--green);border-radius:12px;padding:12px;color:var(--green);font-weight:700;font-size:14px;text-decoration:none;margin-top:10px">
+        🗺️ Ouvrir dans Google Maps
+      </a>
     </div>
 
     <div class="t-card">
-      <div class="t-card-name">Pizzas Speciales</div>
-      <div class="t-row"><span class="t-row-name">Yolo Special</span><span class="t-row-price">14.90€</span></div>
-      <div class="t-row"><span class="t-row-name">Calzone</span><span class="t-row-price">14.90€</span></div>
-      <div class="t-row"><span class="t-row-name">Saumon</span><span class="t-row-price">15.90€</span></div>
+      <div class="t-card-name">🕐 Horaires</div>
+      <div class="t-row"><span class="t-row-name">Lundi - Vendredi</span><span class="t-row-price">11h - 14h30</span></div>
+      <div class="t-row"><span class="t-row-name">Lundi - Vendredi</span><span class="t-row-price">18h - 23h</span></div>
+      <div class="t-row"><span class="t-row-name">Samedi - Dimanche</span><span class="t-row-price">11h - 23h</span></div>
     </div>
 
     <div class="t-card">
-      <div class="t-card-name">Boissons</div>
-      <div class="t-row"><span class="t-row-name">Coca-Cola 33cl</span><span class="t-row-price">2.50€</span></div>
-      <div class="t-row"><span class="t-row-name">Eau minerale 50cl</span><span class="t-row-price">1.50€</span></div>
+      <div class="t-card-name">🛵 Livraison</div>
+      <div class="t-row"><span class="t-row-name">Delai moyen</span><span class="t-row-price">30-45 min</span></div>
+      <div class="t-row"><span class="t-row-name">Livraison gratuite</span><span class="t-row-price">des 20€</span></div>
+      <div class="t-row"><span class="t-row-name">Zone de livraison</span><span class="t-row-price">5km</span></div>
+    </div>
+
+    <div class="t-card">
+      <div class="t-card-name">📞 Contact</div>
+      <a href="tel:+32400000000" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);text-decoration:none">
+        <span style="color:rgba(255,255,255,.7);font-size:13px">Telephone</span>
+        <span style="color:var(--yellow);font-weight:700;font-size:13px">+32 400 00 00 00</span>
+      </a>
+      <a href="https://wa.me/32400000000" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;text-decoration:none">
+        <span style="color:rgba(255,255,255,.7);font-size:13px">WhatsApp</span>
+        <span style="color:#25D366;font-weight:700;font-size:13px">Ecrire un message</span>
+      </a>
     </div>
 
     <a class="t-wa" href="https://wa.me/32400000000?text=Bonjour%20Yolo%20Pizza%20!" target="_blank">
