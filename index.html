@@ -27,35 +27,29 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
   --border:rgba(0,0,0,.09);
 }
 
-/* SPLASH */
 #splash{position:fixed;inset:0;z-index:500;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
 #splash.gone{opacity:0;pointer-events:none}
 .sp-name{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:var(--gold);letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
 .sp-bar{width:2px;height:44px;background:linear-gradient(180deg,transparent,var(--gold),transparent);margin:18px auto;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
 .sp-sub{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.45);animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
 
-/* APP */
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 
-/* TOPBAR */
 #topbar{background:var(--white);padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 1px 12px rgba(0,0,0,.06)}
 .tb-gem{width:44px;height:44px;border-radius:12px;background:#111;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#111;letter-spacing:.04em}
 .tb-sub{font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
 
-/* TABS */
 #tabs{background:var(--white);display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
 .tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
 .tab span{font-size:14px}
 .tab.active{color:#111;border-bottom-color:var(--gold)}
 
-/* PAGE */
 .page{flex:1;overflow-y:auto;display:none;flex-direction:column}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
-/* ── CHAT ── */
 #page-chat{background:var(--bg)}
 #messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
 .mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
@@ -79,7 +73,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 #snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
 
-/* ── DEVIS ── */
 #page-devis{background:var(--bg);padding:20px 15px 36px;gap:14px}
 .df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text)}
 .df-title em{font-style:italic;color:var(--gold-dim);font-size:.7em;display:block}
@@ -97,7 +90,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 .pack-item{font-size:13px;color:var(--text-mid);display:flex;align-items:center;gap:8px;padding:4px 0}
 .pack-item::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
 
-/* ── GALERIE ── */
 #page-galerie{background:var(--bg);padding:20px 15px 32px}
 .g-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
 .g-title em{font-style:italic;color:var(--text-muted);font-size:.72em;display:block}
@@ -117,7 +109,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 .g-prix-sub{font-size:11px;color:var(--text-muted)}
 .g-new{position:absolute;top:14px;right:14px;background:#111;color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
 
-/* ── TARIFS ── */
 #page-tarifs{background:var(--bg);padding:20px 15px 32px}
 .t-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
 .t-title em{font-style:italic;color:var(--text-muted);font-size:.72em;display:block}
@@ -139,17 +130,17 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 .tcard-items{display:flex;flex-direction:column;gap:5px;margin-top:10px}
 .tcard-item{font-size:13px;color:var(--text-mid);display:flex;align-items:center;gap:8px}
 .tcard-item::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
-.eco-badge{display:inline-block;background:#E8F5E9;color:#2E7D32;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;letter-spacing:.05em}
-.promo-card{background:linear-gradient(135deg,#111 0%,#222 100%);border-radius:16px;padding:18px;margin-bottom:10px;position:relative;overflow:hidden}
-.promo-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(201,168,76,.1)}
-.promo-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px}
-.promo-desc{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px}
+
+/* PROMO CARDS — style clair comme les tcard */
+.promo-card{background:var(--white);border:1.5px solid var(--gold);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.promo-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold-dim);margin-bottom:4px}
+.promo-desc{font-size:12px;color:var(--text-muted);margin-bottom:12px}
 .promo-prices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.promo-px{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid rgba(201,168,76,.2)}
-.promo-lbl{font-size:9px;color:rgba(201,168,76,.6);margin-bottom:3px;letter-spacing:.1em;text-transform:uppercase}
-.promo-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold)}
-.promo-unit{font-size:9px;color:rgba(255,255,255,.3)}
-.promo-save{text-align:center;font-size:11px;color:rgba(201,168,76,.7);font-style:italic}
+.promo-px{background:var(--bg2);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
+.promo-lbl{font-size:9px;color:var(--text-muted);margin-bottom:3px;letter-spacing:.1em;text-transform:uppercase}
+.promo-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#111}
+.promo-unit{font-size:9px;color:var(--text-muted)}
+.promo-save{text-align:center;font-size:11px;color:var(--gold-dim);font-style:italic;font-weight:600}
 </style>
 </head>
 <body>
@@ -254,7 +245,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
-
       <div class="g-card" onclick="ouvrirApp(1)">
         <div class="g-new">Nouveau</div>
         <div class="g-card-top">
@@ -269,7 +259,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
-
       <div class="g-card" onclick="ouvrirApp(2)">
         <div class="g-new">Nouveau</div>
         <div class="g-card-top">
@@ -284,7 +273,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
-
       <div class="g-card" onclick="ouvrirApp(3)">
         <div class="g-card-top">
           <div class="g-card-ico" style="background:#1e3a5f">⚽</div>
@@ -298,7 +286,6 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">50€ à 390€/an</div><div class="g-prix-sub">Selon nombre de coachs</div></div><span style="font-size:20px">👉</span></div>
       </div>
-
       <div class="g-card" onclick="ouvrirApp(4)">
         <div class="g-card-top">
           <div class="g-card-ico" style="background:#134e4a">🎨</div>
