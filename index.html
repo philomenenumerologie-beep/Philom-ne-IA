@@ -7,118 +7,149 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-serif;color:#f0ecff}
+html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-serif;color:#111}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
-#splash{position:fixed;inset:0;z-index:500;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
-#splash.gone{opacity:0;pointer-events:none}
-.sp-name{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:#c9a84c;letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
-.sp-bar{width:2px;height:44px;background:linear-gradient(180deg,transparent,#c9a84c,transparent);margin:18px auto;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
-.sp-sub{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.4);animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+:root{
+  --gold:#C9A84C;
+  --gold-light:#E8C96A;
+  --gold-dim:#9A7A35;
+  --bg:#FAFAF7;
+  --bg2:#F3F0E8;
+  --white:#FFFFFF;
+  --text:#111111;
+  --text-mid:#555555;
+  --text-muted:#999999;
+  --border:rgba(0,0,0,.09);
+}
 
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:500;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-name{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:var(--gold);letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-bar{width:2px;height:44px;background:linear-gradient(180deg,transparent,var(--gold),transparent);margin:18px auto;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.45);animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+/* APP */
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 
-#topbar{background:rgba(10,10,10,.98);padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(201,168,76,.2);flex-shrink:0}
-.tb-gem{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#c9a84c;letter-spacing:.04em}
-.tb-sub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+/* TOPBAR */
+#topbar{background:var(--white);padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 1px 12px rgba(0,0,0,.06)}
+.tb-gem{width:44px;height:44px;border-radius:12px;background:#111;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#111;letter-spacing:.04em}
+.tb-sub{font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
 
-#tabs{background:rgba(10,10,10,.98);display:flex;border-bottom:1px solid rgba(201,168,76,.15);flex-shrink:0}
-.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.28);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+/* TABS */
+#tabs{background:var(--white);display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
 .tab span{font-size:14px}
-.tab.active{color:#c9a84c;border-bottom-color:#c9a84c}
+.tab.active{color:#111;border-bottom-color:var(--gold)}
 
+/* PAGE */
 .page{flex:1;overflow-y:auto;display:none;flex-direction:column}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
-/* CHAT */
-#page-chat{background:#0a0a0a}
+/* ── CHAT ── */
+#page-chat{background:var(--bg)}
 #messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
 .mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
 .mrow.bot{justify-content:flex-start;gap:8px}
 .mrow.user{justify-content:flex-end}
-.bav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:15px}
+.bav{width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:15px}
 .bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
-.bub.bot{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#f0ecff;border-top-left-radius:4px}
-.bub.user{background:#c9a84c;color:#fff;border-top-right-radius:4px}
+.bub.bot{background:var(--white);color:var(--text);border-top-left-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid var(--border)}
+.bub.user{background:#111;color:#fff;border-top-right-radius:4px}
 .qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.qb{padding:7px 12px;border-radius:22px;border:1.5px solid rgba(201,168,76,.4);background:rgba(201,168,76,.08);color:#c9a84c;font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
-.tybub{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px}
-.tybub span{width:6px;height:6px;border-radius:50%;background:#c9a84c;animation:bounce 1.2s infinite}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid var(--gold);background:rgba(201,168,76,.06);color:var(--gold-dim);font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer;transition:all .18s}
+.qb:active{background:var(--gold);color:#fff}
+.tybub{background:var(--white);border:1px solid var(--border);border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:bounce 1.2s infinite}
 .tybub span:nth-child(2){animation-delay:.2s}
 .tybub span:nth-child(3){animation-delay:.4s}
-#composer{padding:10px 14px 22px;background:#0a0a0a;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+#composer{padding:10px 14px 22px;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0}
 .crow{display:flex;gap:10px;align-items:center}
-#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(201,168,76,.3);background:rgba(255,255,255,.06);font-size:15px;font-family:Jost,sans-serif;outline:none;color:#f0ecff}
-#inp::placeholder{color:rgba(255,255,255,.28)}
-#inp:focus{border-color:#c9a84c}
-#snd{width:46px;height:46px;border-radius:50%;border:none;background:#c9a84c;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid var(--border);background:var(--white);font-size:15px;font-family:Jost,sans-serif;outline:none;color:var(--text)}
+#inp:focus{border-color:var(--gold)}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
 
-/* DEVIS */
-#page-devis{background:#0a0a0a;padding:20px 15px 36px;gap:14px}
-.df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#f0ecff}
-.df-title em{font-style:italic;color:#c9a84c;font-size:.7em;display:block}
-.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:7px}
-.df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(201,168,76,.2);background:rgba(255,255,255,.06);font-size:14px;font-family:Jost,sans-serif;color:#f0ecff;outline:none;-webkit-appearance:none}
-.df-select option{background:#111;color:#f0ecff}
+/* ── DEVIS ── */
+#page-devis{background:var(--bg);padding:20px 15px 36px;gap:14px}
+.df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text)}
+.df-title em{font-style:italic;color:var(--gold-dim);font-size:.7em;display:block}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px}
+.df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid var(--border);background:var(--white);font-size:14px;font-family:Jost,sans-serif;color:var(--text);outline:none;-webkit-appearance:none}
+.df-select:focus,.df-textarea:focus{border-color:var(--gold)}
 .df-textarea{resize:none;height:100px}
 .color-wrap{display:flex;flex-wrap:wrap;gap:8px}
-.col-btn{padding:8px 14px;border-radius:22px;border:1.5px solid rgba(201,168,76,.2);background:rgba(255,255,255,.04);font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px}
-.col-btn.sel{border-color:#c9a84c;background:rgba(201,168,76,.15);color:#c9a84c}
+.col-btn{padding:8px 14px;border-radius:22px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:var(--text-mid);display:flex;align-items:center;gap:6px;transition:all .18s}
+.col-btn.sel{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--gold-dim)}
 .col-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
+.pack-card{background:var(--white);border:1.5px solid var(--gold);border-radius:16px;padding:16px;margin-bottom:4px}
+.pack-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold-dim);margin-bottom:12px}
+.pack-item{font-size:13px;color:var(--text-mid);display:flex;align-items:center;gap:8px;padding:4px 0}
+.pack-item::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
 
-/* PACK INCLUS */
-.pack-card{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:16px;padding:16px;margin-bottom:4px}
-.pack-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#c9a84c;margin-bottom:12px}
-.pack-item{font-size:13px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:8px;padding:4px 0}
-.pack-item::before{content:"✓";color:#c9a84c;font-weight:700;flex-shrink:0}
-
-/* GALERIE */
-#page-galerie{background:#0a0a0a;padding:20px 15px 32px}
-.g-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#f0ecff}
-.g-title em{font-style:italic;color:#c9a84c;font-size:.7em;display:block}
-.g-sub{font-size:13px;color:rgba(255,255,255,.45);margin-top:6px;margin-bottom:18px}
+/* ── GALERIE ── */
+#page-galerie{background:var(--bg);padding:20px 15px 32px}
+.g-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
+.g-title em{font-style:italic;color:var(--text-muted);font-size:.72em;display:block}
+.g-sub{font-size:13px;color:var(--text-muted);margin-top:6px;margin-bottom:18px}
 .g-grid{display:flex;flex-direction:column;gap:12px}
-.g-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;cursor:pointer;position:relative}
-.g-card:active{opacity:.8}
+.g-card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:18px;cursor:pointer;position:relative;box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .18s}
+.g-card:active{transform:scale(.98)}
 .g-card-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
 .g-card-ico{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.g-card-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#f0ecff}
-.g-card-type{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.g-card-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text)}
+.g-card-type{font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .g-features{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.g-feat{font-size:12px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:7px}
-.g-feat::before{content:"✓";color:#c9a84c;font-weight:700}
-.g-prix{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
-.g-prix-val{font-family:'Playfair Display',serif;font-size:18px;color:#c9a84c;font-weight:700}
-.g-prix-sub{font-size:11px;color:rgba(255,255,255,.35)}
-.g-new{position:absolute;top:14px;right:14px;background:#c9a84c;color:#111;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
+.g-feat{font-size:12px;color:var(--text-mid);display:flex;align-items:center;gap:7px}
+.g-feat::before{content:"✓";color:var(--gold);font-weight:700}
+.g-prix{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border)}
+.g-prix-val{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold-dim);font-weight:700}
+.g-prix-sub{font-size:11px;color:var(--text-muted)}
+.g-new{position:absolute;top:14px;right:14px;background:#111;color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
 
-/* TARIFS */
-#page-tarifs{background:#0a0a0a;padding:20px 15px 32px}
-.t-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#f0ecff}
-.t-title em{font-style:italic;color:#c9a84c;font-size:.72em;display:block}
-.t-intro{font-size:13px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:6px;margin-bottom:18px}
-.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.7);margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(201,168,76,.2)}
-.tcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:16px;margin-bottom:10px}
+/* ── TARIFS ── */
+#page-tarifs{background:var(--bg);padding:20px 15px 32px}
+.t-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
+.t-title em{font-style:italic;color:var(--text-muted);font-size:.72em;display:block}
+.t-intro{font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:6px;margin-bottom:18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(201,168,76,.25)}
+.tcard{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
 .tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
-.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#f0ecff}
-.tcard-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
-.tcard-badge{background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text)}
+.tcard-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+.tcard-badge{background:#111;color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tcard-badge.gold{background:var(--gold);color:#111}
 .tprices{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.tpx{background:rgba(0,0,0,.3);border-radius:9px;padding:10px 8px;text-align:center;border:1px solid rgba(255,255,255,.06)}
-.tplbl{font-size:9px;color:rgba(255,255,255,.4);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.tpval{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#c9a84c}
-.tpunit{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
-.t-note{font-size:12px;color:rgba(255,255,255,.35);text-align:center;margin-top:4px;font-style:italic}
+.tpx{background:var(--bg2);border-radius:9px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
+.tplbl{font-size:9px;color:var(--text-muted);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.tpval{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#111}
+.tpunit{font-size:10px;color:var(--text-muted);margin-top:1px}
+.t-note{font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px;font-style:italic}
 .t-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
+.tcard-items{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.tcard-item{font-size:13px;color:var(--text-mid);display:flex;align-items:center;gap:8px}
+.tcard-item::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
+.eco-badge{display:inline-block;background:#E8F5E9;color:#2E7D32;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;letter-spacing:.05em}
+.promo-card{background:linear-gradient(135deg,#111 0%,#222 100%);border-radius:16px;padding:18px;margin-bottom:10px;position:relative;overflow:hidden}
+.promo-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(201,168,76,.1)}
+.promo-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.promo-desc{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px}
+.promo-prices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.promo-px{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid rgba(201,168,76,.2)}
+.promo-lbl{font-size:9px;color:rgba(201,168,76,.6);margin-bottom:3px;letter-spacing:.1em;text-transform:uppercase}
+.promo-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold)}
+.promo-unit{font-size:9px;color:rgba(255,255,255,.3)}
+.promo-save{text-align:center;font-size:11px;color:rgba(201,168,76,.7);font-style:italic}
 </style>
 </head>
 <body>
@@ -133,7 +164,7 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
   <div id="topbar">
     <div class="tb-gem">✨</div>
     <div>
-      <div class="tb-name">Philomene I.A.</div>
+      <div class="tb-name">Philomène I.A.</div>
       <div class="tb-sub">Assistants IA sur mesure</div>
     </div>
     <div class="tb-dot"></div>
@@ -161,7 +192,6 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
   <!-- DEVIS -->
   <div id="page-devis" class="page">
     <div class="df-title">Votre devis<em>en 2 minutes</em></div>
-
     <div class="pack-card">
       <div class="pack-title">✨ Pack complet inclus</div>
       <div class="pack-item">Chatbot IA — répond à vos clients 24h/24</div>
@@ -171,7 +201,6 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
       <div class="pack-item">QR Code carte de visite</div>
       <div class="pack-item">Page admin privée pour gérer votre contenu</div>
     </div>
-
     <div>
       <div class="lbl">Votre métier</div>
       <select class="df-select" id="df-metier" onchange="updateSousMetier()">
@@ -184,12 +213,10 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
         <option value="autre">Autre activité</option>
       </select>
     </div>
-
     <div id="sous-metier-block" style="display:none">
       <div class="lbl">Spécialité</div>
       <select class="df-select" id="df-sous"></select>
     </div>
-
     <div>
       <div class="lbl">Couleurs souhaitées</div>
       <div class="color-wrap">
@@ -202,12 +229,10 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
         <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:conic-gradient(red,orange,yellow,green,blue,violet)"></div>Mes couleurs</div>
       </div>
     </div>
-
     <div>
       <div class="lbl">Informations complémentaires</div>
       <textarea class="df-textarea" id="df-info" placeholder="Ex: Je suis coiffeuse à Lyon, je veux une app rose et sobre..."></textarea>
     </div>
-
     <button class="df-btn" onclick="genDevisPhilo()">📱 Envoyer ma demande sur WhatsApp</button>
   </div>
 
@@ -216,14 +241,10 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
     <div class="g-title">Réalisations<em>nos apps en production</em></div>
     <div class="g-sub">Appuyez sur une app pour en savoir plus ✨</div>
     <div class="g-grid">
-
       <div class="g-card" onclick="ouvrirApp(0)">
         <div class="g-card-top">
-          <div class="g-card-ico" style="background:linear-gradient(135deg,#111,#333)">🖤</div>
-          <div>
-            <div class="g-card-name">Maka Tattoo</div>
-            <div class="g-card-type">Tatouage · Belgique</div>
-          </div>
+          <div class="g-card-ico" style="background:#111">🖤</div>
+          <div><div class="g-card-name">Maka Tattoo</div><div class="g-card-type">Tatouage · Belgique</div></div>
         </div>
         <div class="g-features">
           <div class="g-feat">Chatbot IA spécialisé tatouage</div>
@@ -231,41 +252,29 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
           <div class="g-feat">Devis automatique sur WhatsApp</div>
           <div class="g-feat">Admin pour gérer ses flashs</div>
         </div>
-        <div class="g-prix">
-          <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
-          <span style="font-size:20px">👉</span>
-        </div>
+        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
 
       <div class="g-card" onclick="ouvrirApp(1)">
         <div class="g-new">Nouveau</div>
         <div class="g-card-top">
-          <div class="g-card-ico" style="background:linear-gradient(135deg,#1E2A38,#253347)">🏠</div>
-          <div>
-            <div class="g-card-name">Toiture Pro</div>
-            <div class="g-card-type">Couvreur · Artisan</div>
-          </div>
+          <div class="g-card-ico" style="background:#1E2A38">🏠</div>
+          <div><div class="g-card-name">Toiture Pro</div><div class="g-card-type">Couvreur · Artisan</div></div>
         </div>
         <div class="g-features">
-          <div class="g-feat">Chatbot expert toiture & matériaux</div>
+          <div class="g-feat">Chatbot expert toiture &amp; matériaux</div>
           <div class="g-feat">Devis automatique sur WhatsApp</div>
           <div class="g-feat">Bouton urgence fuite intégré</div>
-          <div class="g-feat">Page services & tarifs détaillés</div>
+          <div class="g-feat">Page services &amp; tarifs détaillés</div>
         </div>
-        <div class="g-prix">
-          <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
-          <span style="font-size:20px">👉</span>
-        </div>
+        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
 
       <div class="g-card" onclick="ouvrirApp(2)">
         <div class="g-new">Nouveau</div>
         <div class="g-card-top">
-          <div class="g-card-ico" style="background:linear-gradient(135deg,#2C1810,#4A2820)">🌸</div>
-          <div>
-            <div class="g-card-name">Lumière Esthétique</div>
-            <div class="g-card-type">Esthéticienne · Beauté</div>
-          </div>
+          <div class="g-card-ico" style="background:#2C1810">🌸</div>
+          <div><div class="g-card-name">Lumière Esthétique</div><div class="g-card-type">Esthéticienne · Beauté</div></div>
         </div>
         <div class="g-features">
           <div class="g-feat">Chatbot Sofia — conseil beauté 24h/24</div>
@@ -273,19 +282,13 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
           <div class="g-feat">Catalogue cils, ongles, visage, massage</div>
           <div class="g-feat">Design rose blush ultra élégant</div>
         </div>
-        <div class="g-prix">
-          <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
-          <span style="font-size:20px">👉</span>
-        </div>
+        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
 
       <div class="g-card" onclick="ouvrirApp(3)">
         <div class="g-card-top">
-          <div class="g-card-ico" style="background:linear-gradient(135deg,#1e3a5f,#1e40af)">⚽</div>
-          <div>
-            <div class="g-card-name">Coach IA Football</div>
-            <div class="g-card-type">Club sportif · Belgique</div>
-          </div>
+          <div class="g-card-ico" style="background:#1e3a5f">⚽</div>
+          <div><div class="g-card-name">Coach IA Football</div><div class="g-card-type">Club sportif · Belgique</div></div>
         </div>
         <div class="g-features">
           <div class="g-feat">Générateur de séances par catégorie</div>
@@ -293,90 +296,68 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
           <div class="g-feat">Préparation physique intégrée</div>
           <div class="g-feat">Multi-coachs selon formule</div>
         </div>
-        <div class="g-prix">
-          <div><div class="g-prix-val">50€ à 390€/an</div><div class="g-prix-sub">Selon nombre de coachs</div></div>
-          <span style="font-size:20px">👉</span>
-        </div>
+        <div class="g-prix"><div><div class="g-prix-val">50€ à 390€/an</div><div class="g-prix-sub">Selon nombre de coachs</div></div><span style="font-size:20px">👉</span></div>
       </div>
 
       <div class="g-card" onclick="ouvrirApp(4)">
         <div class="g-card-top">
-          <div class="g-card-ico" style="background:linear-gradient(135deg,#134e4a,#065f46)">🎨</div>
-          <div>
-            <div class="g-card-name">Jo Déco</div>
-            <div class="g-card-type">Peintre-décorateur · France</div>
-          </div>
+          <div class="g-card-ico" style="background:#134e4a">🎨</div>
+          <div><div class="g-card-name">Jo Déco</div><div class="g-card-type">Peintre-décorateur · France</div></div>
         </div>
         <div class="g-features">
-          <div class="g-feat">Chatbot expert bâtiment & peinture</div>
+          <div class="g-feat">Chatbot expert bâtiment &amp; peinture</div>
           <div class="g-feat">Devis automatique sur WhatsApp</div>
           <div class="g-feat">Galerie avant/après gérée en admin</div>
           <div class="g-feat">Estimation prix automatique</div>
         </div>
-        <div class="g-prix">
-          <div><div class="g-prix-val">490€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div>
-          <span style="font-size:20px">👉</span>
-        </div>
+        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
-
     </div>
   </div>
 
   <!-- TARIFS -->
   <div id="page-tarifs" class="page">
     <div class="t-title">Tarifs<em>clairs et sans surprise</em></div>
-    <div class="t-intro">Deux formules selon vos besoins. Première année incluse. Pas d'abonnement mensuel.</div>
+    <div class="t-intro">Première année incluse. Pas d'abonnement mensuel. Hébergement &amp; support inclus.</div>
 
-    <div class="t-sec">🌟 Formule Starter</div>
+    <div class="t-sec">⭐ Formule Solo</div>
     <div class="tcard">
       <div class="tcard-top">
-        <div><div class="tcard-name">✨ Starter — 1ère année</div><div class="tcard-sub">Chatbot IA + Devis + Tarifs + WhatsApp</div></div>
-        <div class="tcard-badge">Essentiel</div>
+        <div><div class="tcard-name">Complète — 1ère année</div><div class="tcard-sub">Chatbot + Devis + Galerie + Admin + QR Code</div></div>
+        <div class="tcard-badge gold">Tout inclus</div>
       </div>
       <div class="tprices">
-        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Setup + 1 an inclus</div><div class="tpval">490€</div><div class="tpunit">création + hébergement 1 an</div></div>
+        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div class="tpval">690€</div><div class="tpunit">création + hébergement</div></div>
+        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">340€</div><div class="tpunit">par an</div></div>
       </div>
-      <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px">
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Chatbot IA personnalisé 24h/24</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Devis automatique sur WhatsApp</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Page tarifs personnalisée</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Contact WhatsApp intégré</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>QR Code carte de visite</div>
+      <div class="tcard-items">
+        <div class="tcard-item">Chatbot IA personnalisé 24h/24</div>
+        <div class="tcard-item">Devis automatique sur WhatsApp</div>
+        <div class="tcard-item">Galerie photos + page admin</div>
+        <div class="tcard-item">QR Code carte de visite</div>
       </div>
     </div>
 
-    <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">🔄 Renouvellement Starter</div><div class="tcard-sub">Hébergement + mises à jour + support</div></div>
+    <div class="t-sec">👥 Formules Groupées — Économisez !</div>
+
+    <div class="promo-card">
+      <div class="promo-name">Formule Duo 👥</div>
+      <div class="promo-desc">Vous + 1 autre commerçant — chacun sa propre app</div>
+      <div class="promo-prices">
+        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">420€</div><div class="promo-unit">au lieu de 690€</div></div>
+        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">210€</div><div class="promo-unit">/ an chacun</div></div>
       </div>
-      <div class="tprices">
-        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">À partir de la 2ème année</div><div class="tpval">240€</div><div class="tpunit">par an</div></div>
-      </div>
+      <div class="promo-save">🎉 Économie de 270€ par commerçant !</div>
     </div>
 
-    <div class="t-sec">🚀 Formule Complète</div>
-    <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">✨ Complète — 1ère année</div><div class="tcard-sub">Tout le Starter + Galerie + Admin</div></div>
-        <div class="tcard-badge">Tout inclus</div>
+    <div class="promo-card">
+      <div class="promo-name">Formule Trio 👥👥👥</div>
+      <div class="promo-desc">Vous + 2 autres commerçants — chacun sa propre app</div>
+      <div class="promo-prices">
+        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">340€</div><div class="promo-unit">au lieu de 690€</div></div>
+        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">180€</div><div class="promo-unit">/ an chacun</div></div>
       </div>
-      <div class="tprices">
-        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Setup + 1 an inclus</div><div class="tpval">690€</div><div class="tpunit">création + hébergement 1 an</div></div>
-      </div>
-      <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px">
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Tout le Starter inclus</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Galerie photos / avant-après / flashs</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px"><span style="color:#c9a84c;font-weight:700">✓</span>Page admin privée pour tout gérer</div>
-      </div>
-    </div>
-
-    <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">🔄 Renouvellement Complète</div><div class="tcard-sub">Hébergement + mises à jour + support</div></div>
-      </div>
-      <div class="tprices">
-        <div class="tpx" style="grid-column:1/-1"><div class="tplbl">À partir de la 2ème année</div><div class="tpval">340€</div><div class="tpunit">par an</div></div>
-      </div>
+      <div class="promo-save">🎉 Économie de 350€ par commerçant !</div>
     </div>
 
     <div class="t-sec">⚽ Coach IA — Clubs sportifs</div>
@@ -385,15 +366,15 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
       <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">50€</div><div class="tpunit">/ an</div></div></div>
     </div>
     <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Mini Club</div><div class="tcard-sub">Jusqu'à 5 coachs connectés</div></div><div class="tcard-badge">5 coachs</div></div>
+      <div class="tcard-top"><div><div class="tcard-name">Mini Club</div><div class="tcard-sub">Jusqu'à 5 coachs</div></div><div class="tcard-badge">5 coachs</div></div>
       <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">90€</div><div class="tpunit">/ an</div></div></div>
     </div>
     <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Club</div><div class="tcard-sub">Jusqu'à 10 coachs connectés</div></div><div class="tcard-badge">10 coachs</div></div>
+      <div class="tcard-top"><div><div class="tcard-name">Club</div><div class="tcard-sub">Jusqu'à 10 coachs</div></div><div class="tcard-badge">10 coachs</div></div>
       <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">150€</div><div class="tpunit">/ an</div></div></div>
     </div>
     <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Club Pro</div><div class="tcard-sub">Jusqu'à 20 coachs connectés</div></div><div class="tcard-badge">20 coachs</div></div>
+      <div class="tcard-top"><div><div class="tcard-name">Club Pro</div><div class="tcard-sub">Jusqu'à 20 coachs</div></div><div class="tcard-badge">20 coachs</div></div>
       <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">250€</div><div class="tpunit">/ an</div></div></div>
     </div>
     <div class="tcard">
@@ -404,33 +385,32 @@ html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:Jost,sans-s
     <div class="t-note">Hébergement, mises à jour et support WhatsApp inclus dans tous les tarifs.</div>
     <a class="t-wa" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20!%20Je%20voudrais%20en%20savoir%20plus%20sur%20vos%20apps%20IA." target="_blank">📱 Nous contacter sur WhatsApp</a>
   </div>
-
 </div>
 
-<!-- MODAL APP -->
-<div id="overlay" onclick="fermerModal()" style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center">
-  <div id="mbox" onclick="event.stopPropagation()" style="background:#111;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)">
+<!-- MODAL -->
+<div id="overlay" onclick="fermerModal()" style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center">
+  <div id="mbox" onclick="event.stopPropagation()" style="background:#fff;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)">
     <div id="m-ico" style="font-size:44px;text-align:center;margin-bottom:12px"></div>
-    <div id="m-name" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-align:center;color:#f0ecff;margin-bottom:4px"></div>
-    <div id="m-type" style="text-align:center;font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px"></div>
-    <div id="m-desc" style="font-size:13px;color:rgba(255,255,255,.55);text-align:center;line-height:1.6;margin-bottom:20px"></div>
+    <div id="m-name" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-align:center;color:#111;margin-bottom:4px"></div>
+    <div id="m-type" style="text-align:center;font-size:12px;color:#999;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px"></div>
+    <div id="m-desc" style="font-size:13px;color:#555;text-align:center;line-height:1.6;margin-bottom:20px"></div>
     <a id="m-wa" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px">📱 Je veux cette app !</a>
-    <button onclick="fermerModal()" style="display:block;text-align:center;padding:12px;font-size:14px;color:rgba(255,255,255,.4);cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%">Fermer</button>
+    <button onclick="fermerModal()" style="display:block;text-align:center;padding:12px;font-size:14px;color:#999;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%">Fermer</button>
   </div>
 </div>
 
 <script>
 var WA = "33617123910";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. Reponds en francais, chaleureux et direct. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes numerotees. Texte simple uniquement. TARIFS: Formule Starter 490 euros 1ere annee (chatbot + devis WhatsApp + tarifs + contact + QR code), renouvellement 240 euros/an. Formule Complete 690 euros 1ere annee (tout le Starter + galerie photos + admin), renouvellement 340 euros/an. Clubs sportifs: solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an. Exemples: Maka Tattoo (tatoueur), Toiture Pro (couvreur), Lumiere Esthetique (estheticienne), Coach IA (football), Jo Deco (peintre). Pour toute demande orienter vers l onglet Devis ou WhatsApp.";
+var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. Reponds en francais, chaleureux et direct. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes. Texte simple uniquement. TARIFS: Formule Solo Complete 690 euros 1ere annee + 340 euros/an. Formule Duo (2 commerçants) 420 euros chacun + 210 euros/an. Formule Trio (3 commerçants) 340 euros chacun + 180 euros/an. Clubs sportifs: solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an. Pour toute demande orienter vers l onglet Devis ou WhatsApp.";
 var busy = false;
 
 var APPS = [
-  {ico:"🖤", name:"Maka Tattoo", type:"Tatouage — Belgique", desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis automatique WhatsApp et admin pour gérer ses flashs.", wa:"Je suis intéressé par une app comme Maka Tattoo !"},
-  {ico:"🏠", name:"Toiture Pro", type:"Couvreur — Artisan", desc:"App pour couvreur avec chatbot expert toiture, devis automatique WhatsApp, bouton urgence fuite et page services complète.", wa:"Je suis intéressé par une app comme Toiture Pro !"},
-  {ico:"🌸", name:"Lumière Esthétique", type:"Esthéticienne — Beauté", desc:"App élégante pour salon beauté avec chatbot Sofia, devis soins sur WhatsApp et catalogue complet cils, ongles, visage.", wa:"Je suis intéressé par une app comme Lumière Esthétique !"},
-  {ico:"⚽", name:"Coach IA Football", type:"Club sportif — Belgique", desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.", wa:"Je suis intéressé par une app Coach IA pour mon club !"},
-  {ico:"🎨", name:"Jo Déco", type:"Peintre-décorateur — France", desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.", wa:"Je suis intéressé par une app comme Jo Déco !"}
+  {ico:"🖤",name:"Maka Tattoo",type:"Tatouage — Belgique",desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis automatique WhatsApp et admin pour gérer ses flashs.",wa:"Je suis intéressé par une app comme Maka Tattoo !"},
+  {ico:"🏠",name:"Toiture Pro",type:"Couvreur — Artisan",desc:"App pour couvreur avec chatbot expert toiture, devis automatique WhatsApp, bouton urgence fuite et page services complète.",wa:"Je suis intéressé par une app comme Toiture Pro !"},
+  {ico:"🌸",name:"Lumière Esthétique",type:"Esthéticienne — Beauté",desc:"App élégante pour salon beauté avec chatbot Sofia, devis soins sur WhatsApp et catalogue complet cils, ongles, visage.",wa:"Je suis intéressé par une app comme Lumière Esthétique !"},
+  {ico:"⚽",name:"Coach IA Football",type:"Club sportif — Belgique",desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.",wa:"Je suis intéressé par une app Coach IA pour mon club !"},
+  {ico:"🎨",name:"Jo Déco",type:"Peintre-décorateur — France",desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.",wa:"Je suis intéressé par une app comme Jo Déco !"}
 ];
 
 var SOUS_METIERS = {
@@ -442,25 +422,25 @@ var SOUS_METIERS = {
   autre:["Consultant","Photographe","Formateur","Autre activité"]
 };
 
-function updateSousMetier() {
-  var metier = document.getElementById("df-metier").value;
-  var block = document.getElementById("sous-metier-block");
-  var sel = document.getElementById("df-sous");
-  if (!metier){block.style.display="none";return;}
-  var options = SOUS_METIERS[metier]||[];
+function updateSousMetier(){
+  var metier=document.getElementById("df-metier").value;
+  var block=document.getElementById("sous-metier-block");
+  var sel=document.getElementById("df-sous");
+  if(!metier){block.style.display="none";return;}
+  var options=SOUS_METIERS[metier]||[];
   sel.innerHTML='<option value="">Sélectionnez...</option>';
   options.forEach(function(o){var opt=document.createElement("option");opt.value=o;opt.textContent=o;sel.appendChild(opt);});
   block.style.display="block";
 }
 
-function ouvrirApp(i) {
-  var a = APPS[i];
-  document.getElementById("m-ico").textContent = a.ico;
-  document.getElementById("m-name").textContent = a.name;
-  document.getElementById("m-type").textContent = a.type;
-  document.getElementById("m-desc").textContent = a.desc;
-  document.getElementById("m-wa").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(a.wa);
-  document.getElementById("overlay").style.display = "flex";
+function ouvrirApp(i){
+  var a=APPS[i];
+  document.getElementById("m-ico").textContent=a.ico;
+  document.getElementById("m-name").textContent=a.name;
+  document.getElementById("m-type").textContent=a.type;
+  document.getElementById("m-desc").textContent=a.desc;
+  document.getElementById("m-wa").href="https://wa.me/"+WA+"?text="+encodeURIComponent(a.wa);
+  document.getElementById("overlay").style.display="flex";
 }
 
 function fermerModal(){document.getElementById("overlay").style.display="none";}
@@ -472,12 +452,7 @@ function showTab(btn,n){
   btn.classList.add("active");
 }
 
-function scrollChat(){
-  setTimeout(function(){
-    var c=document.getElementById("page-chat");
-    c.scrollTop=c.scrollHeight;
-  },80);
-}
+function scrollChat(){setTimeout(function(){var c=document.getElementById("page-chat");c.scrollTop=c.scrollHeight;},80);}
 
 function addBot(txt,withQ){
   var msgs=document.getElementById("messages");
