@@ -274,6 +274,20 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
       </div>
       <div class="g-card" onclick="ouvrirApp(3)">
+        <div class="g-new">Nouveau</div>
+        <div class="g-card-top">
+          <div class="g-card-ico" style="background:#C0392B">🍕</div>
+          <div><div class="g-card-name">Yolo Pizza</div><div class="g-card-type">Restaurant · Commande WhatsApp</div></div>
+        </div>
+        <div class="g-features">
+          <div class="g-feat">Chatbot qui présente la carte</div>
+          <div class="g-feat">Commande directe sur WhatsApp</div>
+          <div class="g-feat">Menu personnalisé</div>
+          <div class="g-feat">Design moderne et appétissant</div>
+        </div>
+        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 340€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
+      </div>
+      <div class="g-card" onclick="ouvrirApp(4)">
         <div class="g-card-top">
           <div class="g-card-ico" style="background:#1e3a5f">⚽</div>
           <div><div class="g-card-name">Coach IA Football</div><div class="g-card-type">Club sportif · Belgique</div></div>
@@ -389,13 +403,14 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 <script>
 var WA = "33617123910";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. Reponds en francais, chaleureux et direct. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes. Texte simple uniquement. TARIFS: Formule Solo Complete 690 euros 1ere annee + 340 euros/an. Formule Duo (2 commerçants) 420 euros chacun + 210 euros/an. Formule Trio (3 commerçants) 340 euros chacun + 180 euros/an. Clubs sportifs: solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an. Pour toute demande orienter vers l onglet Devis ou WhatsApp.";
+var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. LANGUE: Detecte automatiquement la langue du message et reponds dans la meme langue. Tu parles francais, neerlandais et anglais. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes. Texte simple uniquement. TARIFS: Formule Solo Complete 690 euros 1ere annee + 340 euros/an. Formule Duo (2 commercants) 420 euros chacun + 210 euros/an. Formule Trio (3 commercants) 340 euros chacun + 180 euros/an. Clubs sportifs: solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an. Pour toute demande orienter vers l onglet Devis ou WhatsApp.";
 var busy = false;
 
 var APPS = [
-  {ico:"🖤",name:"Maka Tattoo",type:"Tatouage — Belgique",desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis automatique WhatsApp et admin pour gérer ses flashs.",wa:"Je suis intéressé par une app comme Maka Tattoo !"},
-  {ico:"🏠",name:"Toiture Pro",type:"Couvreur — Artisan",desc:"App pour couvreur avec chatbot expert toiture, devis automatique WhatsApp, bouton urgence fuite et page services complète.",wa:"Je suis intéressé par une app comme Toiture Pro !"},
-  {ico:"🌸",name:"Lumière Esthétique",type:"Esthéticienne — Beauté",desc:"App élégante pour salon beauté avec chatbot Sofia, devis soins sur WhatsApp et catalogue complet cils, ongles, visage.",wa:"Je suis intéressé par une app comme Lumière Esthétique !"},
+  {ico:"🖤",name:"Maka Tattoo",type:"Tatouage — Belgique",desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis automatique WhatsApp et admin pour gérer ses flashs.",wa:"Je suis intéressé par une app comme Maka Tattoo !",url:"https://www.philomeneia.com/maka-tattoo.html"},
+  {ico:"🏠",name:"Toiture Pro",type:"Couvreur — Artisan",desc:"App pour couvreur avec chatbot expert toiture, devis automatique WhatsApp, bouton urgence fuite et page services complète.",wa:"Je suis intéressé par une app comme Toiture Pro !",url:"https://www.philomeneia.com/toiture-pro"},
+  {ico:"🌸",name:"Lumière Esthétique",type:"Esthéticienne — Beauté",desc:"App élégante pour salon beauté avec chatbot Sofia, devis soins sur WhatsApp et catalogue complet cils, ongles, visage.",wa:"Je suis intéressé par une app comme Lumière Esthétique !",url:"https://www.philomeneia.com/estheticienne"},
+  {ico:"🍕",name:"Yolo Pizza",type:"Restaurant — Commande WhatsApp",desc:"App pour pizzeria avec chatbot qui présente la carte, commande directe sur WhatsApp et menu personnalisé.",wa:"Je suis intéressé par une app comme Yolo Pizza !",url:"https://www.philomeneia.com/yolo-pizza.html"},
   {ico:"⚽",name:"Coach IA Football",type:"Club sportif — Belgique",desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.",wa:"Je suis intéressé par une app Coach IA pour mon club !"},
   {ico:"🎨",name:"Jo Déco",type:"Peintre-décorateur — France",desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.",wa:"Je suis intéressé par une app comme Jo Déco !"}
 ];
@@ -422,6 +437,10 @@ function updateSousMetier(){
 
 function ouvrirApp(i){
   var a=APPS[i];
+  if(a.url){
+    window.open(a.url,"_blank");
+    return;
+  }
   document.getElementById("m-ico").textContent=a.ico;
   document.getElementById("m-name").textContent=a.name;
   document.getElementById("m-type").textContent=a.type;
