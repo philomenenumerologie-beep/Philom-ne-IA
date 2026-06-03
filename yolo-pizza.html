@@ -49,7 +49,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
 }
 
 /* APP */
-#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream)}
+#app{height:100%;max-height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream);overflow:hidden}
 
 /* TOPBAR */
 #topbar{
@@ -83,7 +83,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
 .tab.active{color:#fff;border-bottom-color:var(--red)}
 
 /* PAGES */
-.page{flex:1;overflow-y:auto;display:none;flex-direction:column;-webkit-overflow-scrolling:touch}
+.page{flex:1;overflow-y:scroll;display:none;flex-direction:column;-webkit-overflow-scrolling:touch;min-height:0;max-height:100%}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
@@ -204,7 +204,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
 }
 
 /* ─── INFOS ─── */
-#page-infos{background:var(--cream);padding:0 0 44px;overflow-y:auto}
+#page-infos{background:var(--cream);padding:0 0 44px}
 
 .info-hero{
   background:var(--dark);padding:24px 16px 20px;
@@ -274,14 +274,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
   display:flex;align-items:center;justify-content:center;gap:10px;
   background:#25D366;color:#fff;border-radius:14px;padding:16px;
   text-decoration:none;font-weight:700;font-size:15px;
-  font-family:'DM Sans',sans-serif;margin:6px 16px;
+  font-family:'DM Sans',sans-serif;margin:6px 16px 0;
   box-shadow:0 4px 16px rgba(37,211,102,.3);
 }
 .order-phone{
   display:flex;align-items:center;justify-content:center;gap:10px;
   background:#fff;color:var(--dark);border-radius:14px;padding:14px;
   text-decoration:none;font-weight:700;font-size:15px;
-  font-family:'DM Sans',sans-serif;margin:0 16px;
+  font-family:'DM Sans',sans-serif;margin:8px 16px 32px;
   border:1.5px solid var(--border);
 }
 
