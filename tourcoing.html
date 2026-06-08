@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Tourcoing — Commerces & Artisans</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:#F0EDE6}
+
+:root{
+  --dark:#16161A;
+  --dark2:#1E1E24;
+  --card:#23232B;
+  --gold:#C9A84C;
+  --gold2:#E8C96A;
+  --gold-dim:#8A6F2E;
+  --cream:#F0EDE6;
+  --muted:rgba(240,237,230,.45);
+  --border:rgba(201,168,76,.18);
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* SPLASH */
+#splash{
+  position:fixed;inset:0;z-index:500;
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1s;
+}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-badge{
+  width:80px;height:80px;border-radius:50%;
+  border:1.5px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin-bottom:24px;
+  animation:fadeIn .8s .2s both;
+}
+.sp-city{
+  font-family:'Cormorant Garamond',serif;
+  font-size:44px;font-weight:300;letter-spacing:.15em;
+  color:var(--cream);
+  animation:fadeUp .8s .4s both;
+}
+.sp-city em{color:var(--gold);font-style:italic}
+.sp-sep{
+  width:40px;height:1px;background:var(--gold);
+  margin:16px auto;opacity:.5;
+  animation:fadeIn .8s .6s both;
+}
+.sp-sub{
+  font-size:10px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--muted);
+  animation:fadeUp .8s .8s both;
+}
+
+/* APP */
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--dark)}
+
+/* HEADER */
+#header{
+  background:var(--dark);
+  padding:20px 18px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.h-city{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:300;letter-spacing:.08em;color:var(--cream);
+}
+.h-city em{color:var(--gold);font-style:italic}
+.h-badge{
+  background:rgba(201,168,76,.12);
+  border:1px solid var(--border);
+  border-radius:20px;padding:4px 10px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);
+}
+.h-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+
+/* SEARCH */
+.search-wrap{position:relative}
+.search-inp{
+  width:100%;padding:11px 16px 11px 40px;
+  border-radius:12px;border:1px solid var(--border);
+  background:var(--dark2);
+  font-size:14px;font-family:'Outfit',sans-serif;
+  color:var(--cream);outline:none;
+  transition:border .2s;
+}
+.search-inp::placeholder{color:rgba(240,237,230,.3)}
+.search-inp:focus{border-color:var(--gold)}
+.search-ico{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  font-size:15px;opacity:.4;pointer-events:none;
+}
+
+/* FILTERS */
+.filters{
+  display:flex;gap:7px;padding:12px 18px;
+  overflow-x:auto;flex-shrink:0;
+}
+.filters::-webkit-scrollbar{display:none}
+.filt{
+  padding:6px 14px;border-radius:20px;
+  border:1px solid var(--border);background:transparent;
+  font-size:11px;font-family:'Outfit',sans-serif;font-weight:500;
+  color:var(--muted);cursor:pointer;white-space:nowrap;
+  transition:all .2s;letter-spacing:.05em;
+}
+.filt.active{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600}
+
+/* LIST */
+#list{flex:1;overflow-y:auto;padding:0 14px 32px}
+#list::-webkit-scrollbar{width:0}
+
+.section-label{
+  font-size:9px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--gold-dim);margin:16px 0 10px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.shop-card{
+  background:var(--card);border-radius:16px;
+  border:1px solid rgba(255,255,255,.06);
+  margin-bottom:10px;cursor:pointer;
+  transition:all .22s;overflow:hidden;
+  display:flex;align-items:stretch;
+  position:relative;
+}
+.shop-card:active{transform:scale(.98);border-color:var(--gold)}
+.shop-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--gold);opacity:0;transition:opacity .2s;
+}
+.shop-card:active::before{opacity:1}
+
+.shop-left{
+  width:72px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+  border-right:1px solid rgba(255,255,255,.05);
+}
+.shop-body{flex:1;padding:14px 14px 14px 12px}
+.shop-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:var(--cream);
+  letter-spacing:.02em;margin-bottom:3px;
+}
+.shop-type{
+  font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;opacity:.8;
+}
+.shop-desc{font-size:12px;color:var(--muted);line-height:1.55}
+.shop-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.shop-tag{
+  font-size:10px;padding:2px 8px;border-radius:20px;
+  background:rgba(201,168,76,.1);
+  border:1px solid rgba(201,168,76,.2);
+  color:rgba(201,168,76,.7);
+}
+.shop-right{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 14px 0 8px;gap:8px;
+}
+.shop-arrow{font-size:16px;color:var(--gold);opacity:.6}
+.shop-new{
+  background:var(--gold);color:var(--dark);
+  font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+
+/* MODAL */
+#overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.75);
+  display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(6px);
+}
+#overlay.open{display:flex}
+#mbox{
+  background:var(--dark2);
+  border-radius:24px 24px 0 0;
+  border-top:1px solid var(--border);
+  padding:28px 20px 48px;
+  width:100%;max-width:480px;
+  animation:slideUp .32s cubic-bezier(.16,1,.3,1);
+}
+.mbox-ico{font-size:48px;text-align:center;margin-bottom:14px}
+.mbox-type{
+  text-align:center;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;
+}
+.mbox-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:600;text-align:center;
+  color:var(--cream);letter-spacing:.04em;margin-bottom:8px;
+}
+.mbox-desc{
+  text-align:center;font-size:13px;color:var(--muted);
+  line-height:1.65;margin-bottom:20px;
+}
+.mbox-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:22px}
+.mbox-tag{
+  font-size:11px;padding:4px 12px;border-radius:20px;
+  background:rgba(201,168,76,.1);border:1px solid var(--border);
+  color:rgba(201,168,76,.8);
+}
+.mbox-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  border-radius:14px;padding:15px;
+  font-weight:600;font-size:14px;font-family:'Outfit',sans-serif;
+  text-decoration:none;margin-bottom:8px;border:none;
+  width:100%;cursor:pointer;letter-spacing:.03em;
+}
+.mbox-btn-gold{background:var(--gold);color:var(--dark)}
+.mbox-btn-wa{background:#25D366;color:#fff}
+.mbox-btn-outline{
+  background:transparent;color:var(--muted);
+  border:1px solid var(--border);font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-badge">🏙️</div>
+  <div class="sp-city">Tour<em>coing</em></div>
+  <div class="sp-sep"></div>
+  <div class="sp-sub">Commerces & Artisans locaux</div>
+</div>
+
+<div id="app">
+  <div id="header">
+    <div class="h-top">
+      <div class="h-city">Tour<em>coing</em></div>
+      <div class="h-badge">7 commerces</div>
+    </div>
+    <div class="h-sub">Découvrez les artisans et commerçants de votre ville ✨</div>
+    <div class="search-wrap">
+      <span class="search-ico">🔍</span>
+      <input class="search-inp" id="search-inp" type="text" placeholder="Rechercher un commerce..." oninput="filterShops()"/>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="filt active" onclick="setFilter('tous',this)">Tous</button>
+    <button class="filt" onclick="setFilter('beaute',this)">Beauté</button>
+    <button class="filt" onclick="setFilter('food',this)">Restauration</button>
+    <button class="filt" onclick="setFilter('bien-etre',this)">Bien-être</button>
+    <button class="filt" onclick="setFilter('art',this)">Art & Mode</button>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<div id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div id="mbox">
+    <div class="mbox-ico" id="m-ico"></div>
+    <div class="mbox-type" id="m-type"></div>
+    <div class="mbox-name" id="m-name"></div>
+    <div class="mbox-desc" id="m-desc"></div>
+    <div class="mbox-tags" id="m-tags"></div>
+    <a class="mbox-btn mbox-btn-gold" id="m-app" href="#" target="_blank">✨ Voir l'app du commerce</a>
+    <a class="mbox-btn mbox-btn-wa" id="m-wa" href="#" target="_blank">📱 Contacter sur WhatsApp</a>
+    <button class="mbox-btn mbox-btn-outline" onclick="fermerModal()">Fermer</button>
+  </div>
+</div>
+
+<script>
+var SHOPS = [
+  {
+    id: "tattoo",
+    ico: "🖤",
+    nom: "Maka Tattoo",
+    type: "Tatouage & Piercing",
+    categorie: "art",
+    desc: "Salon de tatouage et piercing haut de gamme. Style doux, féminin et détaillé. Flashs disponibles en salon.",
+    tags: ["Tatouage", "Piercing", "Flashs", "Sur mesure"],
+    app: "https://www.philomeneia.com/maka-tattoo.html",
+    wa: "https://wa.me/32472803127?text=Bonjour%20Maka%20!",
+    nouveau: false
+  },
+  {
+    id: "the",
+    ico: "🍵",
+    nom: "Maison du Thé",
+    type: "Salon de thé & Épicerie fine",
+    categorie: "food",
+    desc: "Sélection de thés du monde entier, infusions et épices rares. Dégustation sur place dans un cadre chaleureux.",
+    tags: ["Thé", "Infusions", "Épicerie fine", "Dégustation"],
+    app: "#",
+    wa: "https://wa.me/33600000000",
+    nouveau: true
+  },
+  {
+    id: "cbd",
+    ico: "🌿",
+    nom: "Green Well-Being",
+    type: "CBD & Bien-être naturel",
+    categorie: "bien-etre",
+    desc: "Produits CBD de qualité premium, huiles, fleurs et compléments naturels. Conseils personnalisés.",
+    tags: ["CBD", "Huiles", "Bien-être", "Bio"],
+    app: "#",
+    wa: "https://wa.me/33600000000",
+    nouveau: true
+  },
+  {
+    id: "esthe",
+    ico: "🌸",
+    nom: "Lumière Esthétique",
+    type: "Institut de beauté",
+    categorie: "beaute",
+    desc: "Soins visage, extensions de cils, ongles et massages. Votre beauté sublimée par des expertes passionnées.",
+    tags: ["Soins visage", "Cils", "Ongles", "Massage"],
+    app: "https://www.philomeneia.com/estheticienne",
+    wa: "https://wa.me/33600000000",
+    nouveau: false
+  },
+  {
+    id: "coiffeur",
+    ico: "✂️",
+    nom: "Studio Coiff'",
+    type: "Salon de coiffure",
+    categorie: "beaute",
+    desc: "Coupes modernes, colorations et soins capillaires pour femmes et hommes. Sur rendez-vous.",
+    tags: ["Coupe", "Coloration", "Soins", "Femme & Homme"],
+    app: "#",
+    wa: "https://wa.me/33600000000",
+    nouveau: false
+  },
+  {
+    id: "pizza",
+    ico: "🍕",
+    nom: "Yolo Pizza",
+    type: "Pizzeria artisanale",
+    categorie: "food",
+    desc: "Pizzas maison au feu de bois, livrées en 30 minutes ou à emporter. Pâte fraîche préparée chaque jour.",
+    tags: ["Pizza", "Livraison", "À emporter", "Artisanal"],
+    app: "https://www.philomeneia.com/yolo-pizza.html",
+    wa: "https://wa.me/32400000000",
+    nouveau: false
+  },
+  {
+    id: "resto",
+    ico: "🍽️",
+    nom: "Le Zinc",
+    type: "Restaurant bistrot",
+    categorie: "food",
+    desc: "Cuisine du Nord revisitée dans une ambiance bistrot authentique. Produits frais du marché, vins sélectionnés.",
+    tags: ["Bistrot", "Cuisine du Nord", "Vins", "Terrasse"],
+    app: "#",
+    wa: "https://wa.me/33600000000",
+    nouveau: false
+  }
+];
+
+var currentFilter = "tous";
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll(".filt").forEach(function(b){ b.classList.remove("active"); });
+  btn.classList.add("active");
+  renderShops();
+}
+
+function filterShops() {
+  renderShops();
+}
+
+function renderShops() {
+  var search = document.getElementById("search-inp").value.toLowerCase();
+  var list = document.getElementById("list");
+  list.innerHTML = "";
+
+  var filtered = SHOPS.filter(function(s){
+    var matchCat = currentFilter === "tous" || s.categorie === currentFilter;
+    var matchSearch = !search || 
+      s.nom.toLowerCase().includes(search) || 
+      s.type.toLowerCase().includes(search) ||
+      s.tags.some(function(t){ return t.toLowerCase().includes(search); });
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px">Aucun commerce trouvé 🔍</div>';
+    return;
+  }
+
+  var label = document.createElement("div");
+  label.className = "section-label";
+  label.textContent = filtered.length + " commerce" + (filtered.length > 1 ? "s" : "");
+  list.appendChild(label);
+
+  filtered.forEach(function(s, i){
+    var card = document.createElement("div");
+    card.className = "shop-card";
+    card.style.animation = "fadeUp .4s cubic-bezier(.16,1,.3,1) " + (i * 0.06) + "s both";
+    card.onclick = function(){ ouvrirShop(s); };
+
+    var left = document.createElement("div");
+    left.className = "shop-left";
+    left.textContent = s.ico;
+
+    var body = document.createElement("div");
+    body.className = "shop-body";
+
+    var name = document.createElement("div");
+    name.className = "shop-name";
+    name.textContent = s.nom;
+
+    var type = document.createElement("div");
+    type.className = "shop-type";
+    type.textContent = s.type;
+
+    var desc = document.createElement("div");
+    desc.className = "shop-desc";
+    desc.textContent = s.desc;
+
+    var tags = document.createElement("div");
+    tags.className = "shop-tags";
+    s.tags.slice(0,3).forEach(function(t){
+      var tag = document.createElement("span");
+      tag.className = "shop-tag";
+      tag.textContent = t;
+      tags.appendChild(tag);
+    });
+
+    body.appendChild(name);
+    body.appendChild(type);
+    body.appendChild(desc);
+    body.appendChild(tags);
+
+    var right = document.createElement("div");
+    right.className = "shop-right";
+    if (s.nouveau) {
+      var badge = document.createElement("div");
+      badge.className = "shop-new";
+      badge.textContent = "Nouveau";
+      right.appendChild(badge);
+    }
+    var arrow = document.createElement("div");
+    arrow.className = "shop-arrow";
+    arrow.textContent = "›";
+    right.appendChild(arrow);
+
+    card.appendChild(left);
+    card.appendChild(body);
+    card.appendChild(right);
+    list.appendChild(card);
+  });
+}
+
+function ouvrirShop(s) {
+  document.getElementById("m-ico").textContent = s.ico;
+  document.getElementById("m-type").textContent = s.type;
+  document.getElementById("m-name").textContent = s.nom;
+  document.getElementById("m-desc").textContent = s.desc;
+  
+  var tagsEl = document.getElementById("m-tags");
+  tagsEl.innerHTML = "";
+  s.tags.forEach(function(t){
+    var tag = document.createElement("span");
+    tag.className = "mbox-tag";
+    tag.textContent = t;
+    tagsEl.appendChild(tag);
+  });
+
+  var appBtn = document.getElementById("m-app");
+  if (s.app && s.app !== "#") {
+    appBtn.href = s.app;
+    appBtn.style.display = "flex";
+  } else {
+    appBtn.style.display = "none";
+  }
+
+  document.getElementById("m-wa").href = s.wa;
+  document.getElementById("overlay").classList.add("open");
+}
+
+function fermerModal() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+// INIT
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    renderShops();
+  }, 900);
+}, 2200);
+</script>
+</body>
+</html>
