@@ -527,26 +527,68 @@ async function sendMessageAdmin(text) {
   var intent = detectAdminIntent(text);
   addUserMsgAdmin(text); isLoading = true; setTyping(true);
 
+  var pdfTitles = { 'message': 'Message Parents — RT Mouscron', 'test': 'Résultats Tests Physiques — RT Mouscron', 'presence': 'Feuille de Présence — RT Mouscron', 'general': 'Document — RT Mouscron' };
+
+  // Ask AI to return clean JSON: { chat: "texte affiché dans le chat", pdf: "HTML pour le PDF" }
   var prompts = {
-    'message': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Le coach te donne des infos pour un message aux parents. Rédige un message WhatsApp clair, court et professionnel avec des emojis adaptés. Génère aussi une version HTML propre pour un PDF (utilise des balises <p>, <strong>, <br/>). Commence par le message WhatsApp, puis une ligne séparatrice, puis la version PDF. Voici les infos : " + text,
-    'test': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Le coach te donne des résultats de tests physiques. Analyse-les et présente un tableau HTML avec colonnes : Joueur, Résultat, Niveau (Excellent/Bon/Moyen/Faible), Recommandations. Format : réponds d'abord avec un résumé court en texte, puis le tableau HTML complet. Résultats : " + text,
-    'presence': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Le coach te donne une liste de présences. Formate-la proprement : présents, absents, retards, avec totaux. Génère un résumé texte court et un tableau HTML pour PDF. Données : " + text,
-    'general': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron, section admin. Réponds de façon utile et concise à cette demande : " + text
+    'message': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Réponds UNIQUEMENT avec un JSON valide sans markdown, sans backticks, sans texte avant ou après. Format exact : {\"chat\":\"message WhatsApp avec emojis, sauts de ligne avec \\n\",\"pdf\":\"HTML complet avec <p>, <strong>, titres pour impression\"}. Voici les infos pour le message parents : " + text,
+    'test': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Réponds UNIQUEMENT avec un JSON valide sans markdown, sans backticks, sans texte avant ou après. Format exact : {\"chat\":\"résumé court du coach avec les points clés, sauts de ligne avec \\n\",\"pdf\":\"HTML complet avec tableau <table> colonnes Joueur/Résultat/Niveau/Recommandations pour impression\"}. Résultats des tests : " + text,
+    'presence': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Réponds UNIQUEMENT avec un JSON valide sans markdown, sans backticks, sans texte avant ou après. Format exact : {\"chat\":\"résumé présents/absents/retards avec totaux, sauts de ligne avec \\n\",\"pdf\":\"HTML complet avec tableau <table> colonnes Statut/Joueur/Remarque pour impression\"}. Données de présence : " + text,
+    'general': "Tu es l'assistant Coach IA de Risquons-Tout Mouscron. Réponds UNIQUEMENT avec un JSON valide sans markdown, sans backticks. Format : {\"chat\":\"réponse utile et concise\",\"pdf\":\"\"}. Demande : " + text
   };
 
   try {
     var resp = await fetch(COACH_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message:prompts[intent], userId:userId+"_admin", categorie:"", clubKey:clubKey, deviceId:deviceId}) });
     var data = await resp.json();
     setTyping(false);
-    if (!resp.ok) { addBotMsgAdmin("Erreur : " + (data.error||"Connexion impossible."), null, null); }
-    else {
-      var answer = data.answer || "Pas de réponse.";
-      // Build PDF content from answer — extract HTML tables/paragraphs if present
-      var pdfContent = answer.replace(/\n/g, '<br/>');
-      var pdfTitles = { 'message': 'Message Parents — RT Mouscron', 'test': 'Résultats Tests Physiques — RT Mouscron', 'presence': 'Feuille de Présence — RT Mouscron', 'general': 'Document — RT Mouscron' };
-      // Show message bubble with PDF button for message/test/presence
-      if (intent !== 'general') addBotMsgAdmin(answer, pdfTitles[intent], pdfContent);
-      else addBotMsgAdmin(answer, null, null);
+    if (!resp.ok) { addBotMsgAdmin("Erreur : " + (data.error||"Connexion impossible."), null, null); return; }
+
+    var raw = (data.answer || "").trim();
+    var chatText = "", pdfHtml = "";
+
+    // Try JSON parse
+    var jsonRaw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim();
+    var jsonMatch = jsonRaw.match(/\{[\s\S]*\}/);
+    var parsedOk = false;
+    if (jsonMatch) {
+      try {
+        var parsed = JSON.parse(jsonMatch[0]);
+        chatText = (parsed.chat || "").trim();
+        pdfHtml = (parsed.pdf || "").trim();
+        var htmlFence = pdfHtml.match(/```html?\s*([\s\S]*?)```/i);
+        if (htmlFence) pdfHtml = htmlFence[1].trim();
+        parsedOk = true;
+      } catch(e2) { parsedOk = false; }
+    }
+
+    // Fallback: markdown response — extract HTML block for PDF
+    if (!parsedOk || !chatText) {
+      var htmlBlock = raw.match(/```html?\s*([\s\S]*?)```/i);
+      if (htmlBlock) {
+        pdfHtml = htmlBlock[1].trim();
+        chatText = raw.substring(0, raw.search(/```html?/i)).trim();
+      } else {
+        chatText = raw;
+        pdfHtml = "";
+      }
+      chatText = chatText
+        .replace(/```json|```html?|```/gi, '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/^#{1,3}\s+/gm, '')
+        .replace(/^---+$/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    // Build basic PDF html if still empty
+    if (!pdfHtml && chatText && intent !== 'general') {
+      pdfHtml = '<p>' + chatText.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br/>') + '</p>';
+    }
+
+    if (intent !== 'general' && pdfHtml) {
+      addBotMsgAdmin(chatText, pdfTitles[intent], pdfHtml);
+    } else {
+      addBotMsgAdmin(chatText || "Voici la réponse.", null, null);
     }
   } catch(e) { setTyping(false); addBotMsgAdmin("Erreur de connexion. Réessayez.", null, null); }
   isLoading = false;
