@@ -306,11 +306,11 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:#F0E
     </div>
 
     <div class="ai-suggestions">
-      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🎉 Événements ce week-end</button>
-      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🚌 Transports & parkings</button>
       <button class="ai-sugg" onclick="envoyerSuggestion(this)">🏛️ Histoire de Tourcoing</button>
-      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🍽️ Bonnes adresses resto</button>
-      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🛍️ Marchés & shopping</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🚌 Bus &amp; tramway Ilevia</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🗺️ Les quartiers de la ville</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🎨 Musées &amp; culture</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🛍️ Le centre-ville</button>
     </div>
 
     <div id="ai-messages">
@@ -502,69 +502,23 @@ async function envoyerMessage() {
   document.getElementById("ai-send").disabled = true;
 
   ajouterMessage("user", texte);
-  aiHistory.push({ role: "user", content: texte });
 
   aiTyping = true;
   afficherTyping();
 
   try {
-    var response = await fetch("https://api.anthropic.com/v1/messages", {
+    var response = await fetch("https://philomeneia.onrender.com/maka", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        tools: [{ type: "web_search_20250305", name: "web_search" }],
-        messages: aiHistory
+        message: texte,
+        userId: "tourcoing_" + Math.random().toString(36).slice(2,8),
+        systemPrompt: SYSTEM_PROMPT
       })
     });
 
     var data = await response.json();
-
-    // Extraire le texte de la réponse (peut contenir tool_use + text)
-    var reponse = "";
-    if (data.content) {
-      data.content.forEach(function(block) {
-        if (block.type === "text") reponse += block.text;
-      });
-    }
-
-    // Si l'IA a utilisé web_search, on a besoin de continuer la conversation
-    var hasToolUse = data.content && data.content.some(function(b){ return b.type === "tool_use"; });
-    if (hasToolUse && data.stop_reason === "tool_use") {
-      // Ajouter la réponse assistant avec tool_use au history
-      aiHistory.push({ role: "assistant", content: data.content });
-
-      // Construire les tool_results
-      var toolResults = data.content
-        .filter(function(b){ return b.type === "tool_use"; })
-        .map(function(b){ return { type: "tool_result", tool_use_id: b.id, content: "Recherche effectuée." }; });
-
-      aiHistory.push({ role: "user", content: toolResults });
-
-      // Relancer sans tools pour obtenir la réponse finale
-      var response2 = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: aiHistory
-        })
-      });
-      var data2 = await response2.json();
-      reponse = "";
-      if (data2.content) {
-        data2.content.forEach(function(block){
-          if (block.type === "text") reponse += block.text;
-        });
-      }
-      aiHistory.push({ role: "assistant", content: reponse });
-    } else {
-      aiHistory.push({ role: "assistant", content: reponse });
-    }
+    var reponse = data.answer || "";
 
     supprimerTyping();
     if (reponse) {
