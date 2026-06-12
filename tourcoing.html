@@ -23,9 +23,8 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:#F0E
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes dotPulse{0%,80%,100%{opacity:0.2}40%{opacity:1}}
 
 /* SPLASH */
 #splash{
@@ -49,184 +48,195 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:#F0E
   animation:fadeUp .8s .4s both;
 }
 .sp-city em{color:var(--gold);font-style:italic}
-.sp-sep{
-  width:40px;height:1px;background:var(--gold);
-  margin:16px auto;opacity:.5;
-  animation:fadeIn .8s .6s both;
-}
-.sp-sub{
-  font-size:10px;letter-spacing:.35em;text-transform:uppercase;
-  color:var(--muted);
-  animation:fadeUp .8s .8s both;
-}
+.sp-sep{width:40px;height:1px;background:var(--gold);margin:16px auto;opacity:.5;animation:fadeIn .8s .6s both;}
+.sp-sub{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);animation:fadeUp .8s .8s both;}
 
 /* APP */
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--dark)}
 
 /* HEADER */
-#header{
-  background:var(--dark);
-  padding:20px 18px 16px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
+#header{background:var(--dark);padding:20px 18px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.h-city{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;font-weight:300;letter-spacing:.08em;color:var(--cream);
-}
+.h-city{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:.08em;color:var(--cream);}
 .h-city em{color:var(--gold);font-style:italic}
-.h-badge{
-  background:rgba(201,168,76,.12);
-  border:1px solid var(--border);
-  border-radius:20px;padding:4px 10px;
-  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gold);
-}
+.h-badge{background:rgba(201,168,76,.12);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);}
 .h-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
-
-/* SEARCH */
 .search-wrap{position:relative}
-.search-inp{
-  width:100%;padding:11px 16px 11px 40px;
-  border-radius:12px;border:1px solid var(--border);
-  background:var(--dark2);
-  font-size:14px;font-family:'Outfit',sans-serif;
-  color:var(--cream);outline:none;
-  transition:border .2s;
-}
+.search-inp{width:100%;padding:11px 16px 11px 40px;border-radius:12px;border:1px solid var(--border);background:var(--dark2);font-size:14px;font-family:'Outfit',sans-serif;color:var(--cream);outline:none;transition:border .2s;}
 .search-inp::placeholder{color:rgba(240,237,230,.3)}
 .search-inp:focus{border-color:var(--gold)}
-.search-ico{
-  position:absolute;left:13px;top:50%;transform:translateY(-50%);
-  font-size:15px;opacity:.4;pointer-events:none;
-}
+.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.4;pointer-events:none;}
 
 /* FILTERS */
-.filters{
-  display:flex;gap:7px;padding:12px 18px;
-  overflow-x:auto;flex-shrink:0;
-}
+.filters{display:flex;gap:7px;padding:12px 18px;overflow-x:auto;flex-shrink:0;}
 .filters::-webkit-scrollbar{display:none}
-.filt{
-  padding:6px 14px;border-radius:20px;
-  border:1px solid var(--border);background:transparent;
-  font-size:11px;font-family:'Outfit',sans-serif;font-weight:500;
-  color:var(--muted);cursor:pointer;white-space:nowrap;
-  transition:all .2s;letter-spacing:.05em;
-}
+.filt{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:11px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;letter-spacing:.05em;}
 .filt.active{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600}
 
 /* LIST */
-#list{flex:1;overflow-y:auto;padding:0 14px 32px}
+#list{flex:1;overflow-y:auto;padding:0 14px 100px}
 #list::-webkit-scrollbar{width:0}
-
-.section-label{
-  font-size:9px;letter-spacing:.25em;text-transform:uppercase;
-  color:var(--gold-dim);margin:16px 0 10px;
-  display:flex;align-items:center;gap:8px;
-}
+.section-label{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-.shop-card{
-  background:var(--card);border-radius:16px;
-  border:1px solid rgba(255,255,255,.06);
-  margin-bottom:10px;cursor:pointer;
-  transition:all .22s;overflow:hidden;
-  display:flex;align-items:stretch;
-  position:relative;
-}
+.shop-card{background:var(--card);border-radius:16px;border:1px solid rgba(255,255,255,.06);margin-bottom:10px;cursor:pointer;transition:all .22s;overflow:hidden;display:flex;align-items:stretch;position:relative;}
 .shop-card:active{transform:scale(.98);border-color:var(--gold)}
-.shop-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:var(--gold);opacity:0;transition:opacity .2s;
-}
+.shop-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);opacity:0;transition:opacity .2s;}
 .shop-card:active::before{opacity:1}
-
-.shop-left{
-  width:72px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:30px;
-  border-right:1px solid rgba(255,255,255,.05);
-}
+.shop-left{width:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:30px;border-right:1px solid rgba(255,255,255,.05);}
 .shop-body{flex:1;padding:14px 14px 14px 12px}
-.shop-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:18px;font-weight:600;color:var(--cream);
-  letter-spacing:.02em;margin-bottom:3px;
-}
-.shop-type{
-  font-size:10px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:6px;opacity:.8;
-}
+.shop-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--cream);letter-spacing:.02em;margin-bottom:3px;}
+.shop-type{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;opacity:.8;}
 .shop-desc{font-size:12px;color:var(--muted);line-height:1.55}
 .shop-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.shop-tag{
-  font-size:10px;padding:2px 8px;border-radius:20px;
-  background:rgba(201,168,76,.1);
-  border:1px solid rgba(201,168,76,.2);
-  color:rgba(201,168,76,.7);
-}
-.shop-right{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:0 14px 0 8px;gap:8px;
-}
+.shop-tag{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:rgba(201,168,76,.7);}
+.shop-right{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 14px 0 8px;gap:8px;}
 .shop-arrow{font-size:16px;color:var(--gold);opacity:.6}
-.shop-new{
-  background:var(--gold);color:var(--dark);
-  font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;
-  letter-spacing:.08em;text-transform:uppercase;
-}
+.shop-new{background:var(--gold);color:var(--dark);font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:.08em;text-transform:uppercase;}
 
-/* MODAL */
-#overlay{
-  position:fixed;inset:0;z-index:300;
-  background:rgba(0,0,0,.75);
-  display:none;align-items:flex-end;justify-content:center;
-  backdrop-filter:blur(6px);
-}
+/* MODAL COMMERCE */
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);}
 #overlay.open{display:flex}
-#mbox{
+#mbox{background:var(--dark2);border-radius:24px 24px 0 0;border-top:1px solid var(--border);padding:28px 20px 48px;width:100%;max-width:480px;animation:slideUp .32s cubic-bezier(.16,1,.3,1);}
+.mbox-ico{font-size:48px;text-align:center;margin-bottom:14px}
+.mbox-type{text-align:center;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.mbox-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;text-align:center;color:var(--cream);letter-spacing:.04em;margin-bottom:8px;}
+.mbox-desc{text-align:center;font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;}
+.mbox-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:22px}
+.mbox-tag{font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(201,168,76,.1);border:1px solid var(--border);color:rgba(201,168,76,.8);}
+.mbox-btn{display:flex;align-items:center;justify-content:center;gap:10px;border-radius:14px;padding:15px;font-weight:600;font-size:14px;font-family:'Outfit',sans-serif;text-decoration:none;margin-bottom:8px;border:none;width:100%;cursor:pointer;letter-spacing:.03em;}
+.mbox-btn-gold{background:var(--gold);color:var(--dark)}
+.mbox-btn-wa{background:#25D366;color:#fff}
+.mbox-btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);font-size:13px;}
+
+/* BOUTON FLOTTANT IA */
+#ai-fab{
+  position:fixed;bottom:24px;right:50%;transform:translateX(calc(50% - 8px));
+  max-width:calc(480px - 32px);width:calc(100% - 32px);
+  z-index:200;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:var(--dark);
+  border:none;border-radius:16px;
+  padding:14px 20px;
+  font-family:'Outfit',sans-serif;font-weight:600;font-size:14px;
+  letter-spacing:.04em;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 4px 24px rgba(201,168,76,.35);
+  transition:transform .2s,box-shadow .2s;
+}
+#ai-fab:active{transform:translateX(calc(50% - 8px)) scale(.97)}
+
+/* MODAL IA */
+#ai-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,.8);
+  display:none;flex-direction:column;align-items:center;justify-content:flex-end;
+  backdrop-filter:blur(8px);
+}
+#ai-overlay.open{display:flex}
+#ai-box{
   background:var(--dark2);
   border-radius:24px 24px 0 0;
   border-top:1px solid var(--border);
-  padding:28px 20px 48px;
   width:100%;max-width:480px;
-  animation:slideUp .32s cubic-bezier(.16,1,.3,1);
+  height:82vh;
+  display:flex;flex-direction:column;
+  animation:slideUp .35s cubic-bezier(.16,1,.3,1);
 }
-.mbox-ico{font-size:48px;text-align:center;margin-bottom:14px}
-.mbox-type{
-  text-align:center;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:6px;
+.ai-header{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
 }
-.mbox-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;font-weight:600;text-align:center;
-  color:var(--cream);letter-spacing:.04em;margin-bottom:8px;
+.ai-header-left{display:flex;align-items:center;gap:12px;}
+.ai-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
 }
-.mbox-desc{
-  text-align:center;font-size:13px;color:var(--muted);
-  line-height:1.65;margin-bottom:20px;
+.ai-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--cream);}
+.ai-subtitle{font-size:10px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;}
+.ai-close{background:rgba(255,255,255,.08);border:none;color:var(--cream);font-size:18px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* SUGGESTIONS */
+.ai-suggestions{
+  padding:14px 16px;
+  display:flex;gap:8px;overflow-x:auto;flex-shrink:0;
 }
-.mbox-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:22px}
-.mbox-tag{
-  font-size:11px;padding:4px 12px;border-radius:20px;
-  background:rgba(201,168,76,.1);border:1px solid var(--border);
-  color:rgba(201,168,76,.8);
+.ai-suggestions::-webkit-scrollbar{display:none}
+.ai-sugg{
+  padding:8px 14px;border-radius:20px;
+  border:1px solid var(--border);background:rgba(201,168,76,.07);
+  font-size:12px;font-family:'Outfit',sans-serif;
+  color:rgba(240,237,230,.7);cursor:pointer;white-space:nowrap;
+  transition:all .2s;
 }
-.mbox-btn{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  border-radius:14px;padding:15px;
-  font-weight:600;font-size:14px;font-family:'Outfit',sans-serif;
-  text-decoration:none;margin-bottom:8px;border:none;
-  width:100%;cursor:pointer;letter-spacing:.03em;
+.ai-sugg:active{background:rgba(201,168,76,.2);border-color:var(--gold);}
+
+/* MESSAGES */
+#ai-messages{
+  flex:1;overflow-y:auto;padding:12px 16px;
+  display:flex;flex-direction:column;gap:12px;
 }
-.mbox-btn-gold{background:var(--gold);color:var(--dark)}
-.mbox-btn-wa{background:#25D366;color:#fff}
-.mbox-btn-outline{
-  background:transparent;color:var(--muted);
-  border:1px solid var(--border);font-size:13px;
+#ai-messages::-webkit-scrollbar{width:0}
+.msg{display:flex;flex-direction:column;max-width:85%;}
+.msg-user{align-self:flex-end;align-items:flex-end;}
+.msg-ai{align-self:flex-start;align-items:flex-start;}
+.msg-bubble{
+  padding:12px 15px;border-radius:18px;
+  font-size:14px;line-height:1.6;
 }
+.msg-user .msg-bubble{
+  background:var(--gold);color:var(--dark);
+  border-radius:18px 18px 4px 18px;
+  font-weight:500;
+}
+.msg-ai .msg-bubble{
+  background:var(--card);color:var(--cream);
+  border-radius:18px 18px 18px 4px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.msg-time{font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px;}
+
+/* TYPING */
+.typing-dots{display:flex;gap:5px;padding:4px 2px;}
+.typing-dots span{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);opacity:.3;
+  animation:dotPulse 1.4s infinite;
+}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+
+/* INPUT */
+.ai-input-wrap{
+  padding:12px 16px 32px;
+  border-top:1px solid var(--border);
+  display:flex;gap:10px;align-items:flex-end;
+  flex-shrink:0;
+}
+#ai-input{
+  flex:1;padding:12px 16px;
+  border-radius:14px;border:1px solid var(--border);
+  background:rgba(255,255,255,.06);
+  font-size:14px;font-family:'Outfit',sans-serif;
+  color:var(--cream);outline:none;resize:none;
+  max-height:100px;line-height:1.5;
+  transition:border .2s;
+}
+#ai-input::placeholder{color:rgba(240,237,230,.3)}
+#ai-input:focus{border-color:var(--gold)}
+#ai-send{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--gold);border:none;
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s;flex-shrink:0;
+}
+#ai-send:active{transform:scale(.92)}
+#ai-send:disabled{opacity:.4;cursor:default}
 </style>
 </head>
 <body>
@@ -262,6 +272,12 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:#F0E
   <div id="list"></div>
 </div>
 
+<!-- FAB IA -->
+<button id="ai-fab" onclick="ouvrirIA()">
+  🏙️ Poser une question sur Tourcoing
+</button>
+
+<!-- MODAL COMMERCE -->
 <div id="overlay" onclick="if(event.target===this)fermerModal()">
   <div id="mbox">
     <div class="mbox-ico" id="m-ico"></div>
@@ -275,92 +291,60 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:#F0E
   </div>
 </div>
 
+<!-- MODAL IA -->
+<div id="ai-overlay" onclick="if(event.target===this)fermerIA()">
+  <div id="ai-box">
+    <div class="ai-header">
+      <div class="ai-header-left">
+        <div class="ai-avatar">🏙️</div>
+        <div>
+          <div class="ai-title">Guide Tourcoing</div>
+          <div class="ai-subtitle">Votre assistant local · IA</div>
+        </div>
+      </div>
+      <button class="ai-close" onclick="fermerIA()">✕</button>
+    </div>
+
+    <div class="ai-suggestions">
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🎉 Événements ce week-end</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🚌 Transports & parkings</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🏛️ Histoire de Tourcoing</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🍽️ Bonnes adresses resto</button>
+      <button class="ai-sugg" onclick="envoyerSuggestion(this)">🛍️ Marchés & shopping</button>
+    </div>
+
+    <div id="ai-messages">
+      <div class="msg msg-ai">
+        <div class="msg-bubble">
+          Bonjour ! Je suis votre guide local pour Tourcoing. 👋<br><br>
+          Posez-moi vos questions sur la ville : événements, history, transports, bonnes adresses, commerces de proximité... Je cherche les infos en temps réel pour vous répondre au mieux !
+        </div>
+        <div class="msg-time">Maintenant</div>
+      </div>
+    </div>
+
+    <div class="ai-input-wrap">
+      <textarea id="ai-input" placeholder="Votre question sur Tourcoing..." rows="1"
+        oninput="autoResize(this)"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();envoyerMessage()}"
+      ></textarea>
+      <button id="ai-send" onclick="envoyerMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// =====================
+// DONNÉES COMMERCES
+// =====================
 var SHOPS = [
-  {
-    id: "tattoo",
-    ico: "🖤",
-    nom: "Maka Tattoo",
-    type: "Tatouage & Piercing",
-    categorie: "art",
-    desc: "Salon de tatouage et piercing haut de gamme. Style doux, féminin et détaillé. Flashs disponibles en salon.",
-    tags: ["Tatouage", "Piercing", "Flashs", "Sur mesure"],
-    app: "https://www.philomeneia.com/maka-tattoo.html",
-    wa: "https://wa.me/32472803127?text=Bonjour%20Maka%20!",
-    nouveau: false
-  },
-  {
-    id: "the",
-    ico: "🍵",
-    nom: "Maison du Thé",
-    type: "Salon de thé & Épicerie fine",
-    categorie: "food",
-    desc: "Sélection de thés du monde entier, infusions et épices rares. Dégustation sur place dans un cadre chaleureux.",
-    tags: ["Thé", "Infusions", "Épicerie fine", "Dégustation"],
-    app: "#",
-    wa: "https://wa.me/33600000000",
-    nouveau: true
-  },
-  {
-    id: "cbd",
-    ico: "🌿",
-    nom: "Green Well-Being",
-    type: "CBD & Bien-être naturel",
-    categorie: "bien-etre",
-    desc: "Produits CBD de qualité premium, huiles, fleurs et compléments naturels. Conseils personnalisés.",
-    tags: ["CBD", "Huiles", "Bien-être", "Bio"],
-    app: "#",
-    wa: "https://wa.me/33600000000",
-    nouveau: true
-  },
-  {
-    id: "esthe",
-    ico: "🌸",
-    nom: "Lumière Esthétique",
-    type: "Institut de beauté",
-    categorie: "beaute",
-    desc: "Soins visage, extensions de cils, ongles et massages. Votre beauté sublimée par des expertes passionnées.",
-    tags: ["Soins visage", "Cils", "Ongles", "Massage"],
-    app: "https://www.philomeneia.com/estheticienne",
-    wa: "https://wa.me/33600000000",
-    nouveau: false
-  },
-  {
-    id: "coiffeur",
-    ico: "✂️",
-    nom: "Studio Coiff'",
-    type: "Salon de coiffure",
-    categorie: "beaute",
-    desc: "Coupes modernes, colorations et soins capillaires pour femmes et hommes. Sur rendez-vous.",
-    tags: ["Coupe", "Coloration", "Soins", "Femme & Homme"],
-    app: "#",
-    wa: "https://wa.me/33600000000",
-    nouveau: false
-  },
-  {
-    id: "pizza",
-    ico: "🍕",
-    nom: "Yolo Pizza",
-    type: "Pizzeria artisanale",
-    categorie: "food",
-    desc: "Pizzas maison au feu de bois, livrées en 30 minutes ou à emporter. Pâte fraîche préparée chaque jour.",
-    tags: ["Pizza", "Livraison", "À emporter", "Artisanal"],
-    app: "https://www.philomeneia.com/yolo-pizza.html",
-    wa: "https://wa.me/32400000000",
-    nouveau: false
-  },
-  {
-    id: "resto",
-    ico: "🍽️",
-    nom: "Le Zinc",
-    type: "Restaurant bistrot",
-    categorie: "food",
-    desc: "Cuisine du Nord revisitée dans une ambiance bistrot authentique. Produits frais du marché, vins sélectionnés.",
-    tags: ["Bistrot", "Cuisine du Nord", "Vins", "Terrasse"],
-    app: "#",
-    wa: "https://wa.me/33600000000",
-    nouveau: false
-  }
+  {id:"tattoo",ico:"🖤",nom:"Maka Tattoo",type:"Tatouage & Piercing",categorie:"art",desc:"Salon de tatouage et piercing haut de gamme. Style doux, féminin et détaillé. Flashs disponibles en salon.",tags:["Tatouage","Piercing","Flashs","Sur mesure"],app:"https://www.philomeneia.com/maka-tattoo.html",wa:"https://wa.me/32472803127?text=Bonjour%20Maka%20!",nouveau:false},
+  {id:"the",ico:"🍵",nom:"Maison du Thé",type:"Salon de thé & Épicerie fine",categorie:"food",desc:"Sélection de thés du monde entier, infusions et épices rares. Dégustation sur place dans un cadre chaleureux.",tags:["Thé","Infusions","Épicerie fine","Dégustation"],app:"#",wa:"https://wa.me/33600000000",nouveau:true},
+  {id:"cbd",ico:"🌿",nom:"Green Well-Being",type:"CBD & Bien-être naturel",categorie:"bien-etre",desc:"Produits CBD de qualité premium, huiles, fleurs et compléments naturels. Conseils personnalisés.",tags:["CBD","Huiles","Bien-être","Bio"],app:"#",wa:"https://wa.me/33600000000",nouveau:true},
+  {id:"esthe",ico:"🌸",nom:"Lumière Esthétique",type:"Institut de beauté",categorie:"beaute",desc:"Soins visage, extensions de cils, ongles et massages. Votre beauté sublimée par des expertes passionnées.",tags:["Soins visage","Cils","Ongles","Massage"],app:"https://www.philomeneia.com/estheticienne",wa:"https://wa.me/33600000000",nouveau:false},
+  {id:"coiffeur",ico:"✂️",nom:"Studio Coiff'",type:"Salon de coiffure",categorie:"beaute",desc:"Coupes modernes, colorations et soins capillaires pour femmes et hommes. Sur rendez-vous.",tags:["Coupe","Coloration","Soins","Femme & Homme"],app:"#",wa:"https://wa.me/33600000000",nouveau:false},
+  {id:"pizza",ico:"🍕",nom:"Yolo Pizza",type:"Pizzeria artisanale",categorie:"food",desc:"Pizzas maison au feu de bois, livrées en 30 minutes ou à emporter. Pâte fraîche préparée chaque jour.",tags:["Pizza","Livraison","À emporter","Artisanal"],app:"https://www.philomeneia.com/yolo-pizza.html",wa:"https://wa.me/32400000000",nouveau:false},
+  {id:"resto",ico:"🍽️",nom:"Le Zinc",type:"Restaurant bistrot",categorie:"food",desc:"Cuisine du Nord revisitée dans une ambiance bistrot authentique. Produits frais du marché, vins sélectionnés.",tags:["Bistrot","Cuisine du Nord","Vins","Terrasse"],app:"#",wa:"https://wa.me/33600000000",nouveau:false}
 ];
 
 var currentFilter = "tous";
@@ -372,89 +356,42 @@ function setFilter(f, btn) {
   renderShops();
 }
 
-function filterShops() {
-  renderShops();
-}
+function filterShops() { renderShops(); }
 
 function renderShops() {
   var search = document.getElementById("search-inp").value.toLowerCase();
   var list = document.getElementById("list");
   list.innerHTML = "";
-
   var filtered = SHOPS.filter(function(s){
     var matchCat = currentFilter === "tous" || s.categorie === currentFilter;
-    var matchSearch = !search || 
-      s.nom.toLowerCase().includes(search) || 
-      s.type.toLowerCase().includes(search) ||
-      s.tags.some(function(t){ return t.toLowerCase().includes(search); });
+    var matchSearch = !search || s.nom.toLowerCase().includes(search) || s.type.toLowerCase().includes(search) || s.tags.some(function(t){ return t.toLowerCase().includes(search); });
     return matchCat && matchSearch;
   });
-
   if (filtered.length === 0) {
     list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px">Aucun commerce trouvé 🔍</div>';
     return;
   }
-
   var label = document.createElement("div");
   label.className = "section-label";
   label.textContent = filtered.length + " commerce" + (filtered.length > 1 ? "s" : "");
   list.appendChild(label);
-
   filtered.forEach(function(s, i){
     var card = document.createElement("div");
     card.className = "shop-card";
     card.style.animation = "fadeUp .4s cubic-bezier(.16,1,.3,1) " + (i * 0.06) + "s both";
     card.onclick = function(){ ouvrirShop(s); };
-
-    var left = document.createElement("div");
-    left.className = "shop-left";
-    left.textContent = s.ico;
-
-    var body = document.createElement("div");
-    body.className = "shop-body";
-
-    var name = document.createElement("div");
-    name.className = "shop-name";
-    name.textContent = s.nom;
-
-    var type = document.createElement("div");
-    type.className = "shop-type";
-    type.textContent = s.type;
-
-    var desc = document.createElement("div");
-    desc.className = "shop-desc";
-    desc.textContent = s.desc;
-
-    var tags = document.createElement("div");
-    tags.className = "shop-tags";
-    s.tags.slice(0,3).forEach(function(t){
-      var tag = document.createElement("span");
-      tag.className = "shop-tag";
-      tag.textContent = t;
-      tags.appendChild(tag);
-    });
-
-    body.appendChild(name);
-    body.appendChild(type);
-    body.appendChild(desc);
-    body.appendChild(tags);
-
-    var right = document.createElement("div");
-    right.className = "shop-right";
-    if (s.nouveau) {
-      var badge = document.createElement("div");
-      badge.className = "shop-new";
-      badge.textContent = "Nouveau";
-      right.appendChild(badge);
-    }
-    var arrow = document.createElement("div");
-    arrow.className = "shop-arrow";
-    arrow.textContent = "›";
-    right.appendChild(arrow);
-
-    card.appendChild(left);
-    card.appendChild(body);
-    card.appendChild(right);
+    var left = document.createElement("div"); left.className = "shop-left"; left.textContent = s.ico;
+    var body = document.createElement("div"); body.className = "shop-body";
+    var name = document.createElement("div"); name.className = "shop-name"; name.textContent = s.nom;
+    var type = document.createElement("div"); type.className = "shop-type"; type.textContent = s.type;
+    var desc = document.createElement("div"); desc.className = "shop-desc"; desc.textContent = s.desc;
+    var tags = document.createElement("div"); tags.className = "shop-tags";
+    s.tags.slice(0,3).forEach(function(t){ var tag = document.createElement("span"); tag.className = "shop-tag"; tag.textContent = t; tags.appendChild(tag); });
+    body.appendChild(name); body.appendChild(type); body.appendChild(desc); body.appendChild(tags);
+    var right = document.createElement("div"); right.className = "shop-right";
+    if (s.nouveau) { var badge = document.createElement("div"); badge.className = "shop-new"; badge.textContent = "Nouveau"; right.appendChild(badge); }
+    var arrow = document.createElement("div"); arrow.className = "shop-arrow"; arrow.textContent = "›"; right.appendChild(arrow);
+    card.appendChild(left); card.appendChild(body); card.appendChild(right);
     list.appendChild(card);
   });
 }
@@ -464,30 +401,185 @@ function ouvrirShop(s) {
   document.getElementById("m-type").textContent = s.type;
   document.getElementById("m-name").textContent = s.nom;
   document.getElementById("m-desc").textContent = s.desc;
-  
-  var tagsEl = document.getElementById("m-tags");
-  tagsEl.innerHTML = "";
-  s.tags.forEach(function(t){
-    var tag = document.createElement("span");
-    tag.className = "mbox-tag";
-    tag.textContent = t;
-    tagsEl.appendChild(tag);
-  });
-
+  var tagsEl = document.getElementById("m-tags"); tagsEl.innerHTML = "";
+  s.tags.forEach(function(t){ var tag = document.createElement("span"); tag.className = "mbox-tag"; tag.textContent = t; tagsEl.appendChild(tag); });
   var appBtn = document.getElementById("m-app");
-  if (s.app && s.app !== "#") {
-    appBtn.href = s.app;
-    appBtn.style.display = "flex";
-  } else {
-    appBtn.style.display = "none";
-  }
-
+  if (s.app && s.app !== "#") { appBtn.href = s.app; appBtn.style.display = "flex"; } else { appBtn.style.display = "none"; }
   document.getElementById("m-wa").href = s.wa;
   document.getElementById("overlay").classList.add("open");
 }
 
-function fermerModal() {
-  document.getElementById("overlay").classList.remove("open");
+function fermerModal() { document.getElementById("overlay").classList.remove("open"); }
+
+// =====================
+// IA TOURCOING
+// =====================
+var aiHistory = [];
+var aiTyping = false;
+
+var SYSTEM_PROMPT = `Tu es le Guide IA officiel de Tourcoing, une ville du Nord de la France (59200), proche de Lille et de la frontière belge.
+
+Tu réponds aux questions des habitants et visiteurs sur :
+- Les événements, sorties, animations et actualités de Tourcoing
+- L'histoire et le patrimoine de la ville (musée des Beaux-Arts, MUba, quartiers historiques, Braderie...)
+- Les transports : bus Ilevia, tramway, parkings, vélos, gare de Tourcoing
+- Les commerces, restaurants, marchés et bonnes adresses locales
+- La vie pratique : mairie, services publics, équipements sportifs, salles de spectacle
+- Les quartiers : Centre, Alsace, Croix-Rouge, Bourgogne, etc.
+- Les environs : Roubaix, Lille, Mouscron (Belgique), Villeneuve d'Ascq
+
+Tu cherches les informations en temps réel grâce à la recherche web pour donner des réponses à jour sur les événements, horaires et actualités.
+
+Réponds toujours en français, de façon chaleureuse, précise et utile. Sois concis sur mobile (3-5 phrases max sauf si la question demande un détail). Utilise des emojis avec modération pour rendre la réponse lisible.
+
+Si une question ne concerne pas Tourcoing ou la région, redirige gentiment vers le sujet de la ville.`;
+
+function ouvrirIA() {
+  document.getElementById("ai-overlay").classList.add("open");
+  document.getElementById("ai-fab").style.display = "none";
+}
+
+function fermerIA() {
+  document.getElementById("ai-overlay").classList.remove("open");
+  document.getElementById("ai-fab").style.display = "flex";
+}
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 100) + "px";
+}
+
+function envoyerSuggestion(btn) {
+  var txt = btn.textContent.replace(/^[^\s]+\s/, "");
+  document.getElementById("ai-input").value = txt;
+  envoyerMessage();
+}
+
+function ajouterMessage(role, texte) {
+  var msgs = document.getElementById("ai-messages");
+  var div = document.createElement("div");
+  div.className = "msg msg-" + role;
+  var bubble = document.createElement("div");
+  bubble.className = "msg-bubble";
+  bubble.innerHTML = texte.replace(/\n/g, "<br>");
+  var time = document.createElement("div");
+  time.className = "msg-time";
+  var now = new Date();
+  time.textContent = now.getHours() + ":" + String(now.getMinutes()).padStart(2,"0");
+  div.appendChild(bubble);
+  div.appendChild(time);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function afficherTyping() {
+  var msgs = document.getElementById("ai-messages");
+  var div = document.createElement("div");
+  div.className = "msg msg-ai";
+  div.id = "typing-indicator";
+  var bubble = document.createElement("div");
+  bubble.className = "msg-bubble";
+  bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  div.appendChild(bubble);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function supprimerTyping() {
+  var t = document.getElementById("typing-indicator");
+  if (t) t.remove();
+}
+
+async function envoyerMessage() {
+  if (aiTyping) return;
+  var input = document.getElementById("ai-input");
+  var texte = input.value.trim();
+  if (!texte) return;
+
+  input.value = "";
+  input.style.height = "auto";
+  document.getElementById("ai-send").disabled = true;
+
+  ajouterMessage("user", texte);
+  aiHistory.push({ role: "user", content: texte });
+
+  aiTyping = true;
+  afficherTyping();
+
+  try {
+    var response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: aiHistory
+      })
+    });
+
+    var data = await response.json();
+
+    // Extraire le texte de la réponse (peut contenir tool_use + text)
+    var reponse = "";
+    if (data.content) {
+      data.content.forEach(function(block) {
+        if (block.type === "text") reponse += block.text;
+      });
+    }
+
+    // Si l'IA a utilisé web_search, on a besoin de continuer la conversation
+    var hasToolUse = data.content && data.content.some(function(b){ return b.type === "tool_use"; });
+    if (hasToolUse && data.stop_reason === "tool_use") {
+      // Ajouter la réponse assistant avec tool_use au history
+      aiHistory.push({ role: "assistant", content: data.content });
+
+      // Construire les tool_results
+      var toolResults = data.content
+        .filter(function(b){ return b.type === "tool_use"; })
+        .map(function(b){ return { type: "tool_result", tool_use_id: b.id, content: "Recherche effectuée." }; });
+
+      aiHistory.push({ role: "user", content: toolResults });
+
+      // Relancer sans tools pour obtenir la réponse finale
+      var response2 = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: SYSTEM_PROMPT,
+          messages: aiHistory
+        })
+      });
+      var data2 = await response2.json();
+      reponse = "";
+      if (data2.content) {
+        data2.content.forEach(function(block){
+          if (block.type === "text") reponse += block.text;
+        });
+      }
+      aiHistory.push({ role: "assistant", content: reponse });
+    } else {
+      aiHistory.push({ role: "assistant", content: reponse });
+    }
+
+    supprimerTyping();
+    if (reponse) {
+      ajouterMessage("ai", reponse);
+    } else {
+      ajouterMessage("ai", "Désolé, je n'ai pas pu obtenir une réponse. Réessayez dans un instant.");
+    }
+
+  } catch(e) {
+    supprimerTyping();
+    ajouterMessage("ai", "Une erreur est survenue. Vérifiez votre connexion et réessayez. 🙏");
+  }
+
+  aiTyping = false;
+  document.getElementById("ai-send").disabled = false;
 }
 
 // INIT
