@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Bar'a Frites</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a0a00}
+
+:root{
+  --red:#D4A017;
+  --red2:#B8860B;
+  --cream:#FFFDF5;
+  --cream2:#F5F0DC;
+  --dark:#1A1200;
+  --green:#2E7D32;
+  --border:rgba(26,18,0,.1);
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+/* SPLASH */
+#splash{
+  position:fixed;inset:0;z-index:500;
+  background:#1A1200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .9s;
+}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-crown{font-size:72px;margin-bottom:16px;animation:fadeIn .6s .2s both}
+.sp-name{
+  font-family:'Archivo Black',sans-serif;
+  font-size:48px;color:#D4A017;letter-spacing:.05em;
+  animation:fadeUp .6s .3s both;
+  text-transform:uppercase;line-height:1;text-align:center;
+}
+.sp-sub{
+  font-family:'Libre Baskerville',serif;font-style:italic;
+  font-size:14px;color:rgba(212,160,23,.6);margin-top:10px;
+  animation:fadeUp .6s .5s both;letter-spacing:.1em;
+}
+
+/* APP */
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream);overflow:hidden}
+
+/* TOPBAR */
+#topbar{
+  background:#1A1200;
+  padding:14px 16px 12px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;
+}
+.tb-left{display:flex;align-items:center;gap:10px;flex:1}
+.tb-logo{font-size:26px;flex-shrink:0}
+.tb-name{font-family:'Archivo Black',sans-serif;font-size:20px;color:#D4A017;letter-spacing:.06em;text-transform:uppercase;}
+.tb-sub{font-size:10px;color:rgba(212,160,23,.5);letter-spacing:.1em;text-transform:uppercase;margin-top:1px;}
+.tb-dot{width:8px;height:8px;border-radius:50%;background:#A8D8A8;box-shadow:0 0 8px #A8D8A8;animation:pulse 2s infinite}
+.tb-open{font-size:9px;color:rgba(212,160,23,.5);letter-spacing:.08em;text-transform:uppercase}
+
+/* TABS */
+#tabs{background:#1A1200;display:flex;flex-shrink:0}
+.tab{flex:1;padding:11px 2px 10px;text-align:center;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;}
+.tab span{font-size:16px}
+.tab.active{color:#D4A017;border-bottom-color:#D4A017}
+
+/* PAGES */
+.page{flex:1;overflow-y:scroll;display:none;flex-direction:column;-webkit-overflow-scrolling:touch;min-height:0;max-height:100%}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* ─── MENU ─── */
+#page-menu{background:var(--cream);padding-bottom:100px}
+
+.menu-hero{background:#1A1200;padding:20px 16px 28px;position:relative;overflow:hidden;}
+.menu-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:20px;background:var(--cream);border-radius:20px 20px 0 0;}
+.menu-hero-title{font-family:'Archivo Black',sans-serif;font-size:34px;color:#D4A017;letter-spacing:.03em;text-transform:uppercase;line-height:1;}
+.menu-hero-sub{font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:rgba(212,160,23,.55);margin-top:6px;}
+
+/* FILTRES CATÉGORIES */
+.cat-filters{display:flex;gap:7px;padding:14px 16px 0;overflow-x:auto;}
+.cat-filters::-webkit-scrollbar{display:none}
+.cat-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;color:rgba(26,18,0,.5);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.cat-btn.active{background:#1A1200;color:#D4A017;border-color:#1A1200;font-weight:700}
+
+.menu-section{padding:0 16px 0}
+.menu-cat{font-family:'Archivo Black',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--red2);margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
+.menu-cat::after{content:'';flex:1;height:1px;background:rgba(212,160,23,.2)}
+
+.item-card{background:#fff;border-radius:14px;margin-bottom:8px;border:1.5px solid var(--border);overflow:hidden;display:flex;align-items:stretch;box-shadow:0 2px 8px rgba(0,0,0,.04);cursor:pointer;transition:all .18s;position:relative;}
+.item-card:active{transform:scale(.98);border-color:var(--red)}
+.item-left{flex:1;padding:13px 14px}
+.item-name{font-family:'Archivo Black',sans-serif;font-size:15px;color:var(--dark);letter-spacing:.02em;}
+.item-desc{font-size:12px;color:rgba(26,18,0,.45);margin-top:2px;line-height:1.5}
+.item-prices{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.price-chip{font-size:11px;padding:3px 8px;border-radius:8px;background:var(--cream2);color:var(--dark);font-weight:600;border:1px solid var(--border);}
+.price-chip span{color:var(--red2);font-family:'Archivo Black',sans-serif;}
+.item-right{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 14px 13px 8px;min-width:60px;}
+.item-emoji{font-size:26px;margin-bottom:4px}
+.item-add{width:30px;height:30px;border-radius:50%;background:#1A1200;border:none;color:#D4A017;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+
+/* CART BAR */
+#cart-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(255,253,245,.95);border-top:1px solid var(--border);padding:10px 16px 24px;display:none;max-width:480px;margin:0 auto;backdrop-filter:blur(10px);}
+#cart-bar.visible{display:block}
+.cart-btn{width:100%;padding:15px;background:#1A1200;border:none;border-radius:14px;color:#D4A017;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(26,18,0,.3);}
+.cart-right{display:flex;align-items:center;gap:8px}
+.cart-total{font-family:'Archivo Black',sans-serif;font-size:16px;}
+.cart-count{background:#D4A017;color:#1A1200;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;}
+
+/* ─── INFOS ─── */
+#page-infos{background:var(--cream);padding:0 0 44px}
+.info-hero{background:#1A1200;padding:24px 16px 28px;position:relative;overflow:hidden;}
+.info-hero::before{content:'👑';position:absolute;right:-10px;top:-10px;font-size:100px;opacity:.06;transform:rotate(20deg);}
+.info-hero-title{font-family:'Archivo Black',sans-serif;font-size:32px;color:#D4A017;text-transform:uppercase;letter-spacing:.03em;}
+.info-hero-sub{font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:rgba(212,160,23,.5);margin-top:6px;}
+.info-section{padding:16px 16px 0}
+.info-title{font-family:'Archivo Black',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--red2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.info-title::after{content:'';flex:1;height:1px;background:rgba(212,160,23,.2)}
+.info-card{background:#fff;border-radius:14px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+.info-row:last-child{border:none}
+.info-row-label{color:rgba(26,18,0,.5)}
+.info-row-val{color:var(--dark);font-weight:700}
+.info-row-val.open{color:var(--green)}
+.info-map-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(212,160,23,.08);border:1.5px solid rgba(212,160,23,.25);border-radius:12px;padding:13px;color:var(--red2);font-weight:700;font-size:14px;text-decoration:none;margin:0 16px 12px;}
+.order-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:16px;text-decoration:none;font-weight:700;font-size:15px;font-family:'DM Sans',sans-serif;margin:6px 16px 0;box-shadow:0 4px 16px rgba(37,211,102,.3);}
+.order-phone{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:var(--dark);border-radius:14px;padding:14px;text-decoration:none;font-weight:700;font-size:15px;font-family:'DM Sans',sans-serif;margin:8px 16px 32px;border:1.5px solid var(--border);}
+
+/* ─── MODAL ─── */
+/* SIZE PICKER */
+#size-overlay{position:fixed;inset:0;z-index:350;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+#size-overlay.open{display:flex}
+#sizebox{background:var(--cream);border-radius:24px 24px 0 0;padding:24px 16px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);}
+.sizebox-title{font-family:'Archivo Black',sans-serif;font-size:20px;color:var(--dark);margin-bottom:6px;}
+.sizebox-sub{font-size:13px;color:rgba(26,18,0,.45);margin-bottom:18px;}
+.size-options{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.size-opt{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .18s;}
+.size-opt:active{border-color:var(--red);background:#FFFBF0}
+.size-opt-label{font-weight:700;font-size:15px;color:var(--dark);}
+.size-opt-price{font-family:'Archivo Black',sans-serif;font-size:16px;color:var(--red2);}
+.sizebox-cancel{display:block;text-align:center;padding:12px;font-size:13px;color:rgba(26,18,0,.4);cursor:pointer;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif;}
+
+/* PANIER */
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+#overlay.open{display:flex}
+#mbox{background:var(--cream);border-radius:24px 24px 0 0;padding:24px 16px 48px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);max-height:88vh;overflow-y:auto;}
+.mbox-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.mbox-title{font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--dark);text-transform:uppercase;}
+.mbox-close{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.08);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mbox-type{display:flex;gap:0;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:4px;border:1.5px solid var(--border);}
+.mbox-type-btn{flex:1;padding:9px;border-radius:9px;border:none;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;color:rgba(26,18,0,.5);background:transparent;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.mbox-type-btn.active{background:#fff;color:var(--dark);box-shadow:0 2px 8px rgba(0,0,0,.1);font-weight:700}
+.mbox-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.mbox-item-name{flex:1;font-size:13px;font-weight:600;color:var(--dark)}
+.mbox-item-price{color:var(--red2);font-weight:700;font-size:13px;min-width:52px;text-align:right}
+.qty-wrap{display:flex;align-items:center;gap:8px}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:#fff;color:var(--dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qty-val{font-weight:700;min-width:18px;text-align:center;font-size:14px}
+.mbox-sep{height:1px;background:var(--border);margin:14px 0}
+.mbox-total-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.mbox-total-label{font-size:14px;color:rgba(26,18,0,.5)}
+.mbox-total-val{font-family:'Archivo Black',sans-serif;font-size:26px;color:var(--red2);}
+.mbox-note{margin:12px 0;padding:12px;background:rgba(212,160,23,.08);border-radius:10px;border:1px solid rgba(212,160,23,.2);font-size:12px;color:rgba(26,18,0,.6);line-height:1.5;}
+.mbox-wa{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:16px;font-weight:700;font-size:15px;font-family:'DM Sans',sans-serif;text-decoration:none;margin-bottom:8px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(37,211,102,.3);}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:13px;color:rgba(26,18,0,.4);cursor:pointer;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif;}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-crown">👑</div>
+  <div class="sp-name">Bar'a<br>Frites</div>
+  <div class="sp-sub">Friterie · Mouscron</div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-left">
+      <div class="tb-logo">👑</div>
+      <div>
+        <div class="tb-name">Bar'a Frites</div>
+        <div class="tb-sub">Bd du Hainaut 1 · Mouscron</div>
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+      <div class="tb-dot"></div>
+      <div class="tb-open">En ligne</div>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'menu')"><span>🍟</span>Menu</button>
+    <button class="tab" onclick="showTab(this,'infos')"><span>📍</span>Infos</button>
+  </div>
+
+  <!-- ─── MENU ─── -->
+  <div id="page-menu" class="page active">
+    <div class="menu-hero">
+      <div class="menu-hero-title">Notre Menu</div>
+      <div class="menu-hero-sub">Friterie artisanale · Fait maison</div>
+    </div>
+
+    <!-- FILTRES -->
+    <div class="cat-filters" id="cat-filters">
+      <button class="cat-btn active" onclick="setcat('tous',this)">Tout</button>
+      <button class="cat-btn" onclick="setcat('frites',this)">🍟 Frites</button>
+      <button class="cat-btn" onclick="setcat('viandes',this)">🥩 Viandes</button>
+      <button class="cat-btn" onclick="setcat('hamburgers',this)">🍔 Burgers</button>
+      <button class="cat-btn" onclick="setcat('brochettes',this)">🍡 Brochettes</button>
+      <button class="cat-btn" onclick="setcat('croquettes',this)">🧀 Croquettes</button>
+      <button class="cat-btn" onclick="setcat('sandwiches',this)">🥪 Sandwiches</button>
+      <button class="cat-btn" onclick="setcat('wraps',this)">🌯 Wraps</button>
+      <button class="cat-btn" onclick="setcat('desserts',this)">🧇 Desserts</button>
+      <button class="cat-btn" onclick="setcat('boissons',this)">🥤 Boissons</button>
+      <button class="cat-btn" onclick="setcat('alcools',this)">🍺 Alcools</button>
+    </div>
+
+    <div class="menu-section" id="menu-content"></div>
+  </div>
+
+  <!-- ─── INFOS ─── -->
+  <div id="page-infos" class="page">
+    <div style="overflow-y:scroll;-webkit-overflow-scrolling:touch;flex:1;min-height:0">
+      <div class="info-hero">
+        <div class="info-hero-title">Infos & Contact</div>
+        <div class="info-hero-sub">Bar'a Frites · Mouscron</div>
+      </div>
+
+      <div class="info-section"><div class="info-title">Horaires</div></div>
+      <div class="info-card" style="margin:0 16px 12px">
+        <div class="info-row"><span class="info-row-label">Mercredi, Jeudi, Dimanche</span><span class="info-row-val open">11h30–13h45 · 18h30–21h45</span></div>
+        <div class="info-row"><span class="info-row-label">Vendredi, Samedi</span><span class="info-row-val open">11h30–13h45 · 18h30–22h30</span></div>
+        <div class="info-row"><span class="info-row-label">Lundi & Mardi</span><span class="info-row-val closed">Fermé</span></div>
+      </div>
+
+      <div class="info-section"><div class="info-title">Adresse</div></div>
+      <div class="info-card" style="margin:0 16px 12px">
+        <div class="info-row"><span class="info-row-label">Adresse</span><span class="info-row-val">Bd du Hainaut 1</span></div>
+        <div class="info-row"><span class="info-row-label">Ville</span><span class="info-row-val">Mouscron B-7700</span></div>
+      </div>
+      <a class="info-map-btn" href="https://maps.google.com/?q=Boulevard+du+Hainaut+1+Mouscron" target="_blank">🗺️ Ouvrir dans Google Maps</a>
+
+      <div class="info-section"><div class="info-title">Contact</div></div>
+      <div class="info-card" style="margin:0 16px 12px">
+        <div class="info-row"><span class="info-row-label">Téléphone</span><span class="info-row-val">0491 891 850</span></div>
+        <div class="info-row"><span class="info-row-label">Email</span><span class="info-row-val" style="font-size:11px">barafrites01@gmail.com</span></div>
+      </div>
+
+      <a class="order-wa" href="https://wa.me/32491891850?text=Bonjour%20Bar'a%20Frites%20!" target="_blank">📱 Commander sur WhatsApp</a>
+      <a class="order-phone" href="tel:+32491891850">📞 Appeler le 0491 891 850</a>
+    </div>
+  </div>
+</div>
+
+<!-- CART BAR -->
+<div id="cart-bar">
+  <button class="cart-btn" onclick="ouvrirPanier()">
+    <span>🛒 Voir mon panier</span>
+    <div class="cart-right">
+      <div class="cart-total" id="cart-total-bar">0.00€</div>
+      <div class="cart-count" id="cart-count">0</div>
+    </div>
+  </button>
+</div>
+
+<!-- SIZE PICKER -->
+<div id="size-overlay" onclick="if(event.target===this)fermerSize()">
+  <div id="sizebox">
+    <div class="sizebox-title" id="size-title"></div>
+    <div class="sizebox-sub">Choisissez votre taille</div>
+    <div class="size-options" id="size-options"></div>
+    <button class="sizebox-cancel" onclick="fermerSize()">Annuler</button>
+  </div>
+</div>
+
+<!-- PANIER -->
+<div id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div id="mbox">
+    <div class="mbox-header">
+      <div class="mbox-title">Mon Panier</div>
+      <button class="mbox-close" onclick="fermerModal()">✕</button>
+    </div>
+    <div class="mbox-type">
+      <button class="mbox-type-btn active" id="mbtn-surplace" onclick="setType('surplace')">🪑 Sur place</button>
+      <button class="mbox-type-btn" id="mbtn-emporter" onclick="setType('emporter')">🛍️ À emporter</button>
+    </div>
+    <div id="mbox-items"></div>
+    <div class="mbox-sep"></div>
+    <div class="mbox-total-row">
+      <span class="mbox-total-label">Total</span>
+      <span class="mbox-total-val" id="mbox-total">0.00€</span>
+    </div>
+    <div class="mbox-note" id="mbox-note">📍 Sur place — Mentionnez votre numéro de table.</div>
+    <button class="mbox-wa" onclick="commanderWA()">📱 Envoyer ma commande sur WhatsApp</button>
+    <button class="mbox-cancel" onclick="fermerModal()">Continuer mes achats</button>
+  </div>
+</div>
+
+<script>
+var WA = "32491891850";
+var cart = [];
+var orderType = "surplace";
+var currentCat = "tous";
+var pendingItem = null;
+
+var typeNotes = {
+  surplace: "📍 Sur place — Mentionnez votre numéro de table.",
+  emporter: "🛍️ À emporter — Indiquez votre heure de passage."
+};
+
+// =====================
+// DONNÉES MENU
+// =====================
+var MENU = {
+  frites: {
+    label: "Frites", emoji: "🍟",
+    items: [
+      { nom: "Frites Enfant", sizes: [{l:"Nature",p:2.80},{l:"Oignons",p:3.50}] },
+      { nom: "Petite Frites", sizes: [{l:"Nature",p:3.30},{l:"Oignons",p:4.00}] },
+      { nom: "Moyenne Frites", sizes: [{l:"Nature",p:3.80},{l:"Oignons",p:5.20}] },
+      { nom: "Grande Frites", sizes: [{l:"Nature",p:4.40},{l:"Oignons",p:5.80}] },
+      { nom: "Géante Frites", sizes: [{l:"Nature",p:5.00},{l:"Oignons",p:6.40}] },
+    ]
+  },
+  viandes: {
+    label: "Viandes", emoji: "🥩",
+    items: [
+      { nom: "Fricadelle", sizes: [{l:"Seule",p:2.20},{l:"Long",p:3.70},{l:"Mitra",p:8.00}] },
+      { nom: "Fricadelle Spéciale", sizes: [{l:"Seule",p:3.40}] },
+      { nom: "Fricadelle XL", sizes: [{l:"Seule",p:4.90},{l:"Long",p:6.40},{l:"Mitra",p:10.70}] },
+      { nom: "Fricadelle Spéciale XL", sizes: [{l:"Seule",p:6.10}] },
+      { nom: "Viandelle®", sizes: [{l:"Seule",p:2.80},{l:"Long",p:4.30},{l:"Mitra",p:8.60}] },
+      { nom: "Viandelle® Spicy", sizes: [{l:"Seule",p:3.00},{l:"Long",p:4.50},{l:"Mitra",p:8.80}] },
+      { nom: "Cervelas", sizes: [{l:"Seule",p:3.60},{l:"Long",p:5.10},{l:"Mitra",p:9.40}] },
+      { nom: "Mexicanos", sizes: [{l:"Seule",p:3.20},{l:"Long",p:4.70},{l:"Mitra",p:9.00}] },
+      { nom: "Bouffe Feu®", sizes: [{l:"Seule",p:3.60},{l:"Long",p:5.10},{l:"Mitra",p:9.40}] },
+      { nom: "Boulette", sizes: [{l:"Seule",p:2.80},{l:"Long",p:4.30},{l:"Mitra",p:8.60}] },
+      { nom: "Loempia", sizes: [{l:"Seule",p:4.80}] },
+      { nom: "Mini-Loempia", sizes: [{l:"Seule",p:3.90}] },
+      { nom: "Lucifer®", sizes: [{l:"Seule",p:3.80},{l:"Long",p:5.30},{l:"Mitra",p:9.60}] },
+      { nom: "Poulycroc®", sizes: [{l:"Seule",p:3.00},{l:"Long",p:4.50},{l:"Mitra",p:8.80}] },
+      { nom: "Merguez", sizes: [{l:"Seule",p:3.20},{l:"Long",p:4.70},{l:"Mitra",p:9.00}] },
+      { nom: "Nuggets", sizes: [{l:"Seule",p:3.90}] },
+      { nom: "Chixfingers®", sizes: [{l:"Seule",p:3.90}] },
+      { nom: "Belcrunch", sizes: [{l:"Seule",p:3.50},{l:"Long",p:5.00},{l:"Mitra",p:9.30}] },
+      { nom: "Belcrunch Spéciale", sizes: [{l:"Seule",p:4.70}] },
+    ]
+  },
+  hamburgers: {
+    label: "Hamburgers", emoji: "🍔",
+    items: [
+      { nom: "Crumpy", sizes: [{l:"Rond",p:3.70},{l:"Long",p:4.40},{l:"Mitra",p:8.70}] },
+      { nom: "Double Crumpy", sizes: [{l:"Rond",p:5.80},{l:"Long",p:6.50},{l:"Mitra",p:10.80}] },
+      { nom: "Bicky Crumpy", sizes: [{l:"Rond",p:4.00},{l:"Long",p:4.70},{l:"Mitra",p:9.00}] },
+      { nom: "Double Bicky Crumpy", sizes: [{l:"Rond",p:6.10},{l:"Long",p:6.80},{l:"Mitra",p:11.10}] },
+      { nom: "Cheese Crumpy", sizes: [{l:"Rond",p:4.80},{l:"Long",p:5.50},{l:"Mitra",p:9.80}] },
+      { nom: "Double Cheese Crumpy", sizes: [{l:"Rond",p:6.90},{l:"Long",p:7.60},{l:"Mitra",p:11.90}] },
+      { nom: "Fish Burger", sizes: [{l:"Rond",p:4.50},{l:"Long",p:5.20},{l:"Mitra",p:9.50}] },
+      { nom: "Chicken Burger", sizes: [{l:"Rond",p:4.50},{l:"Long",p:5.20},{l:"Mitra",p:9.50}] },
+      { nom: "Bacon Burger", sizes: [{l:"Rond",p:4.80},{l:"Long",p:5.50},{l:"Mitra",p:9.80}] },
+      { nom: "Végé Burger", sizes: [{l:"Rond",p:4.50},{l:"Long",p:5.20},{l:"Mitra",p:9.50}] },
+      { nom: "Hambu XXL", sizes: [{l:"Rond",p:7.50},{l:"Long",p:8.20},{l:"Mitra",p:12.50}] },
+      { nom: "Pur Bœuf", sizes: [{l:"Rond",p:7.90},{l:"Long",p:8.60},{l:"Mitra",p:12.90}] },
+    ]
+  },
+  brochettes: {
+    label: "Brochettes", emoji: "🍡",
+    items: [
+      { nom: "Brochette Porc", sizes: [{l:"Seule",p:4.00},{l:"Long",p:5.50},{l:"Mitra",p:9.80}] },
+      { nom: "Brochette Bœuf", sizes: [{l:"Seule",p:6.00},{l:"Long",p:7.50},{l:"Mitra",p:11.80}] },
+      { nom: "Brochette Dinde", sizes: [{l:"Seule",p:4.20},{l:"Long",p:5.70},{l:"Mitra",p:10.00}] },
+      { nom: "Brochette Ardennaise", sizes: [{l:"Seule",p:4.50},{l:"Long",p:6.00},{l:"Mitra",p:10.30}] },
+      { nom: "Brochette Grizzly", sizes: [{l:"Seule",p:5.00},{l:"Long",p:6.50},{l:"Mitra",p:10.80}] },
+      { nom: "Brochette Poulet", sizes: [{l:"Seule",p:3.20},{l:"Long",p:4.70},{l:"Mitra",p:9.00}] },
+      { nom: "Brochette Tzigane", sizes: [{l:"Seule",p:3.80},{l:"Long",p:5.30},{l:"Mitra",p:9.60}] },
+      { nom: "Pilons de Poulet", sizes: [{l:"Seule",p:5.50}] },
+      { nom: "Mixte x6", sizes: [{l:"Seule",p:4.50},{l:"Long",p:6.00},{l:"Mitra",p:10.30}] },
+      { nom: "Brochette Poisson", sizes: [{l:"Seule",p:4.20},{l:"Long",p:5.70},{l:"Mitra",p:10.00}] },
+    ]
+  },
+  croquettes: {
+    label: "Croquettes", emoji: "🧀",
+    items: [
+      { nom: "Croquette Viande", prix: 2.50 },
+      { nom: "Croquette Fromage", prix: 1.90 },
+      { nom: "Croquette Soufflé", prix: 3.00 },
+      { nom: "Soufflé Tomate Mozza", prix: 3.00 },
+      { nom: "Croquette Crevettes", prix: 3.20 },
+      { nom: "Cheese Crack", prix: 3.10 },
+      { nom: "Ragoezi", prix: 3.50 },
+      { nom: "Stick Mozza", prix: 4.00 },
+      { nom: "Chili Cheese", prix: 4.20 },
+      { nom: "Better Ball", prix: 3.00 },
+      { nom: "Boulette Fromage", prix: 4.20 },
+    ]
+  },
+  sandwiches: {
+    label: "Sandwiches", emoji: "🥪",
+    items: [
+      { nom: "Sandwich Filet Américain", prix: 3.70 },
+      { nom: "Sandwich Thon Mayo", prix: 3.70 },
+      { nom: "Sandwich Crabe", prix: 3.70 },
+      { nom: "Sandwich Jambon", prix: 3.70 },
+      { nom: "Sandwich Fromage", prix: 3.70 },
+      { nom: "Sandwich Jambon-Fromage", prix: 3.90 },
+    ]
+  },
+  wraps: {
+    label: "Wraps", emoji: "🌯",
+    items: [
+      { nom: "Wrap Hamburger", prix: 5.20 },
+      { nom: "Wrap Fish", prix: 5.50 },
+      { nom: "Wrap Chicken", prix: 5.50 },
+      { nom: "Wrap Mexicanos", prix: 5.20 },
+    ]
+  },
+  desserts: {
+    label: "Desserts", emoji: "🧇",
+    items: [
+      { nom: "Gaufre", prix: 3.00 },
+      { nom: "Glace", prix: 3.00 },
+      { nom: "Supplément Chantilly ou Chocolat", prix: 0.50 },
+      { nom: "Menu Enfant (Frites + Viande + Sauce + Capri-Sun + Dessert + Jouet)", prix: 6.90 },
+    ]
+  },
+  boissons: {
+    label: "Boissons", emoji: "🥤",
+    items: [
+      { nom: "Capri-Sun", prix: 1.20 },
+      { nom: "Fanta Orange / Citron", prix: 2.20 },
+      { nom: "Coca-Cola / Zéro / Cherry", prix: 2.20 },
+      { nom: "Eau Plate / Pétillante", prix: 2.20 },
+      { nom: "Fuze Tea Peach", prix: 2.20 },
+      { nom: "Ice Tea Pêche / Pétillant", prix: 2.20 },
+      { nom: "Sprite®", prix: 2.20 },
+      { nom: "Tropico®", prix: 2.20 },
+      { nom: "RedBull®", prix: 3.00 },
+      { nom: "Café", prix: 2.00 },
+    ]
+  },
+  alcools: {
+    label: "Alcools", emoji: "🍺",
+    items: [
+      { nom: "Jupiler", prix: 2.50 },
+      { nom: "Leffe Blonde", prix: 4.00 },
+      { nom: "Paix Dieu / Paix Dieu Nova", prix: 5.50 },
+      { nom: "Liefmans Fruitesse Fruits Rouges", prix: 4.00 },
+      { nom: "Duvel", prix: 4.50 },
+      { nom: "Tripel Karmeliet®", prix: 4.50 },
+      { nom: "Chimay Bleue", prix: 5.00 },
+      { nom: "Brasserie Mouscronnoise Béquin", prix: 5.00 },
+      { nom: "Omer", prix: 4.50 },
+      { nom: "Maredsous Triple", prix: 4.50 },
+      { nom: "Kasteel Rouge", prix: 4.50 },
+      { nom: "Martini Blanc / Rouge", prix: 4.00 },
+      { nom: "Rhum Brun / Blanc", prix: 5.00 },
+      { nom: "Whisky", prix: 5.00 },
+      { nom: "Amaretto", prix: 5.00 },
+      { nom: "Limoncello", prix: 5.00 },
+      { nom: "Get 27", prix: 5.00 },
+      { nom: "Vodka", prix: 5.00 },
+      { nom: "Vin Rouge / Blanc / Rosé (verre)", prix: 2.80 },
+      { nom: "Vin Rouge / Blanc / Rosé (pichet 25cl)", prix: 4.50 },
+    ]
+  }
+};
+
+// =====================
+// RENDU MENU
+// =====================
+function setcat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll(".cat-btn").forEach(function(b){ b.classList.remove("active"); });
+  btn.classList.add("active");
+  renderMenu();
+}
+
+function renderMenu() {
+  var content = document.getElementById("menu-content");
+  content.innerHTML = "";
+  var cats = currentCat === "tous" ? Object.keys(MENU) : [currentCat];
+  cats.forEach(function(catKey) {
+    var cat = MENU[catKey];
+    var label = document.createElement("div");
+    label.className = "menu-cat";
+    label.textContent = cat.emoji + " " + cat.label;
+    content.appendChild(label);
+    cat.items.forEach(function(item) {
+      var card = document.createElement("div");
+      card.className = "item-card";
+      var left = document.createElement("div");
+      left.className = "item-left";
+      var name = document.createElement("div");
+      name.className = "item-name";
+      name.textContent = item.nom;
+      left.appendChild(name);
+      // Prix
+      var pricesDiv = document.createElement("div");
+      pricesDiv.className = "item-prices";
+      if (item.sizes) {
+        item.sizes.forEach(function(s) {
+          var chip = document.createElement("span");
+          chip.className = "price-chip";
+          chip.innerHTML = s.l + ' <span>' + s.p.toFixed(2) + '€</span>';
+          pricesDiv.appendChild(chip);
+        });
+      } else {
+        var chip = document.createElement("span");
+        chip.className = "price-chip";
+        chip.innerHTML = '<span>' + item.prix.toFixed(2) + '€</span>';
+        pricesDiv.appendChild(chip);
+      }
+      left.appendChild(pricesDiv);
+      var right = document.createElement("div");
+      right.className = "item-right";
+      var emoji = document.createElement("div");
+      emoji.className = "item-emoji";
+      emoji.textContent = cat.emoji;
+      var addBtn = document.createElement("button");
+      addBtn.className = "item-add";
+      addBtn.textContent = "+";
+      right.appendChild(emoji);
+      right.appendChild(addBtn);
+      card.appendChild(left);
+      card.appendChild(right);
+      // Click
+      card.onclick = function() {
+        if (item.sizes && item.sizes.length > 1) {
+          ouvrirSizePicker(item);
+        } else {
+          var price = item.sizes ? item.sizes[0].p : item.prix;
+          var label = item.sizes ? " (" + item.sizes[0].l + ")" : "";
+          addToCart(item.nom + label, price);
+        }
+      };
+      content.appendChild(card);
+    });
+  });
+}
+
+// =====================
+// SIZE PICKER
+// =====================
+function ouvrirSizePicker(item) {
+  pendingItem = item;
+  document.getElementById("size-title").textContent = item.nom;
+  var opts = document.getElementById("size-options");
+  opts.innerHTML = "";
+  item.sizes.forEach(function(s) {
+    var div = document.createElement("div");
+    div.className = "size-opt";
+    div.innerHTML = '<span class="size-opt-label">' + s.l + '</span><span class="size-opt-price">' + s.p.toFixed(2) + '€</span>';
+    div.onclick = function() {
+      addToCart(item.nom + " (" + s.l + ")", s.p);
+      fermerSize();
+    };
+    opts.appendChild(div);
+  });
+  document.getElementById("size-overlay").classList.add("open");
+}
+
+function fermerSize() {
+  document.getElementById("size-overlay").classList.remove("open");
+  pendingItem = null;
+}
+
+// =====================
+// PANIER
+// =====================
+function addToCart(name, price) {
+  var existing = cart.find(function(i){ return i.name === name; });
+  if (existing) { existing.qty++; }
+  else { cart.push({ name: name, price: price, qty: 1 }); }
+  updateCartBar();
+  document.getElementById("cart-bar").classList.add("visible");
+  ouvrirPanier();
+}
+
+function updateCartBar() {
+  var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.qty; }, 0);
+  document.getElementById("cart-count").textContent = count;
+  document.getElementById("cart-total-bar").textContent = total.toFixed(2) + "€";
+}
+
+function ouvrirPanier() {
+  var items = document.getElementById("mbox-items");
+  items.innerHTML = "";
+  cart.forEach(function(item, idx) {
+    var row = document.createElement("div");
+    row.className = "mbox-item";
+    row.innerHTML =
+      '<div class="mbox-item-name">' + item.name + '</div>' +
+      '<div class="qty-wrap">' +
+        '<button class="qty-btn" onclick="changeQty(' + idx + ',-1)">−</button>' +
+        '<span class="qty-val">' + item.qty + '</span>' +
+        '<button class="qty-btn" onclick="changeQty(' + idx + ',1)">+</button>' +
+      '</div>' +
+      '<div class="mbox-item-price">' + (item.price * item.qty).toFixed(2) + '€</div>';
+    items.appendChild(row);
+  });
+  var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+  document.getElementById("mbox-total").textContent = total.toFixed(2) + "€";
+  document.getElementById("overlay").classList.add("open");
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  updateCartBar();
+  if (cart.length === 0) {
+    fermerModal();
+    document.getElementById("cart-bar").classList.remove("visible");
+    return;
+  }
+  ouvrirPanier();
+}
+
+function commanderWA() {
+  var labels = { surplace: "Sur place", emporter: "À emporter" };
+  var msg = "Bonjour Bar'a Frites ! Je voudrais commander (" + labels[orderType] + ") :\n\n";
+  cart.forEach(function(i){ msg += "· " + i.qty + "x " + i.name + " — " + (i.price*i.qty).toFixed(2) + "€\n"; });
+  var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+  msg += "\nTOTAL : " + total.toFixed(2) + "€";
+  if (orderType === "surplace") msg += "\n\nTable n° : ";
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function setType(t) {
+  orderType = t;
+  ["surplace","emporter"].forEach(function(x){
+    var mb = document.getElementById("mbtn-"+x);
+    if(mb) mb.classList.toggle("active", x===t);
+  });
+  document.getElementById("mbox-note").textContent = typeNotes[t];
+}
+
+function fermerModal() { document.getElementById("overlay").classList.remove("open"); }
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-"+n).classList.add("active");
+  btn.classList.add("active");
+  var cb = document.getElementById("cart-bar");
+  if (n === "menu" && cart.length > 0) cb.classList.add("visible");
+  else if (n !== "menu") cb.classList.remove("visible");
+}
+
+// INIT
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    renderMenu();
+  }, 900);
+}, 2200);
+</script>
+</body>
+</html>
