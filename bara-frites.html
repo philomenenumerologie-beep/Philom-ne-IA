@@ -47,7 +47,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
 }
 
 /* APP */
-#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream);overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream)}
 
 /* TOPBAR */
 #topbar{
@@ -70,7 +70,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
 .tab.active{color:#D4A017;border-bottom-color:#D4A017}
 
 /* PAGES */
-.page{flex:1;overflow-y:scroll;display:none;flex-direction:column;-webkit-overflow-scrolling:touch;min-height:0;max-height:100%}
+.page{flex:1;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;-webkit-overflow-scrolling:touch;min-height:0;max-height:100%}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
@@ -83,10 +83,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
 .menu-hero-sub{font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:rgba(212,160,23,.55);margin-top:6px;}
 
 /* FILTRES CATÉGORIES */
-.cat-filters{display:flex;flex-wrap:wrap;gap:7px;padding:14px 16px 8px;}
+.cat-filters{display:flex;flex-wrap:nowrap;gap:8px;padding:12px 16px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.cat-filters::-webkit-scrollbar{display:none}
 .cat-filters::-webkit-scrollbar{display:none}
-.cat-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;color:rgba(26,18,0,.5);cursor:pointer;white-space:nowrap;transition:all .2s;}
-.cat-btn.active{background:#1A1200;color:#D4A017;border-color:#1A1200;font-weight:700}
+.cat-btn{padding:10px 18px;border-radius:24px;border:1.5px solid rgba(26,18,0,.15);background:#fff;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;color:rgba(26,18,0,.7);cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.cat-btn.active{background:#1A1200;color:#D4A017;border-color:#1A1200;font-weight:700;box-shadow:0 2px 8px rgba(26,18,0,.25);}
 
 .menu-section{padding:0 16px 0}
 .menu-cat{font-family:'Archivo Black',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--red2);margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
@@ -198,28 +198,23 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
     <button class="tab" onclick="showTab(this,'infos')"><span>📍</span>Infos</button>
   </div>
 
+  <!-- FILTRES FIXES -->
+  <div class="cat-filters" id="cat-filters">
+    <button class="cat-btn active" onclick="setcat('tous',this)">Tout</button>
+    <button class="cat-btn" onclick="setcat('frites',this)">🍟 Frites</button>
+    <button class="cat-btn" onclick="setcat('viandes',this)">🥩 Viandes</button>
+    <button class="cat-btn" onclick="setcat('hamburgers',this)">🍔 Burgers</button>
+    <button class="cat-btn" onclick="setcat('brochettes',this)">🍡 Brochettes</button>
+    <button class="cat-btn" onclick="setcat('croquettes',this)">🧀 Croquettes</button>
+    <button class="cat-btn" onclick="setcat('sandwiches',this)">🥪 Sandwiches</button>
+    <button class="cat-btn" onclick="setcat('wraps',this)">🌯 Wraps</button>
+    <button class="cat-btn" onclick="setcat('desserts',this)">🧇 Desserts</button>
+    <button class="cat-btn" onclick="setcat('boissons',this)">🥤 Boissons</button>
+    <button class="cat-btn" onclick="setcat('alcools',this)">🍺 Alcools</button>
+  </div>
+
   <!-- ─── MENU ─── -->
   <div id="page-menu" class="page active">
-    <div class="menu-hero">
-      <div class="menu-hero-title">Notre Menu</div>
-      <div class="menu-hero-sub">Friterie artisanale · Fait maison</div>
-    </div>
-
-    <!-- FILTRES -->
-    <div class="cat-filters" id="cat-filters">
-      <button class="cat-btn active" onclick="setcat('tous',this)">Tout</button>
-      <button class="cat-btn" onclick="setcat('frites',this)">🍟 Frites</button>
-      <button class="cat-btn" onclick="setcat('viandes',this)">🥩 Viandes</button>
-      <button class="cat-btn" onclick="setcat('hamburgers',this)">🍔 Burgers</button>
-      <button class="cat-btn" onclick="setcat('brochettes',this)">🍡 Brochettes</button>
-      <button class="cat-btn" onclick="setcat('croquettes',this)">🧀 Croquettes</button>
-      <button class="cat-btn" onclick="setcat('sandwiches',this)">🥪 Sandwiches</button>
-      <button class="cat-btn" onclick="setcat('wraps',this)">🌯 Wraps</button>
-      <button class="cat-btn" onclick="setcat('desserts',this)">🧇 Desserts</button>
-      <button class="cat-btn" onclick="setcat('boissons',this)">🥤 Boissons</button>
-      <button class="cat-btn" onclick="setcat('alcools',this)">🍺 Alcools</button>
-    </div>
-
     <div class="menu-section" id="menu-content"></div>
   </div>
 
@@ -648,8 +643,14 @@ function showTab(btn, n) {
   document.getElementById("page-"+n).classList.add("active");
   btn.classList.add("active");
   var cb = document.getElementById("cart-bar");
-  if (n === "menu" && cart.length > 0) cb.classList.add("visible");
-  else if (n !== "menu") cb.classList.remove("visible");
+  var cf = document.getElementById("cat-filters");
+  if (n === "menu") {
+    if (cart.length > 0) cb.classList.add("visible");
+    cf.style.display = "flex";
+  } else {
+    cb.classList.remove("visible");
+    cf.style.display = "none";
+  }
 }
 
 // INIT
