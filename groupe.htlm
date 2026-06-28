@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>DIRECT ACTION</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#1C1C1C;font-family:'Space Mono',monospace;color:#F0EDE8}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+@keyframes glitch{0%,100%{clip-path:inset(0 0 100% 0)}10%{clip-path:inset(30% 0 50% 0)}20%{clip-path:inset(70% 0 10% 0)}30%{clip-path:inset(10% 0 80% 0)}40%{clip-path:inset(50% 0 30% 0)}50%{clip-path:inset(80% 0 5% 0)}60%{clip-path:inset(20% 0 60% 0)}70%{clip-path:inset(60% 0 20% 0)}80%{clip-path:inset(5% 0 90% 0)}90%{clip-path:inset(90% 0 0% 0)}}
+@keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,24%,55%{opacity:.4}}
+
+/* GRAIN TEXTURE via SVG filter */
+:root{
+  --beton:#1C1C1C;
+  --beton2:#252525;
+  --beton3:#2E2E2E;
+  --papier:#F0EDE8;
+  --encre:#0A0A0A;
+  --orange:#C94F1A;
+  --orange2:#E05A20;
+  --gris:#6B6B6B;
+  --gris2:#4A4A4A;
+}
+
+svg.grain{position:fixed;width:0;height:0}
+
+/* SPLASH */
+#splash{
+  position:fixed;inset:0;z-index:500;
+  background:var(--encre);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .8s;
+  overflow:hidden;
+}
+#splash::before{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.015) 2px,rgba(255,255,255,.015) 4px);
+  pointer-events:none;
+}
+#splash.gone{opacity:0;pointer-events:none}
+
+.sp-lines{
+  width:120px;height:2px;background:var(--orange);margin-bottom:32px;
+  animation:fadeIn .5s .2s both;
+}
+.sp-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:52px;letter-spacing:.08em;
+  color:var(--papier);line-height:1;text-align:center;
+  animation:fadeIn .5s .4s both;
+  text-transform:uppercase;
+}
+.sp-name span{color:var(--orange);}
+.sp-tag{
+  font-size:9px;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--gris);margin-top:14px;
+  animation:fadeIn .5s .6s both;
+}
+.sp-bottom{
+  width:120px;height:2px;background:var(--orange);margin-top:32px;
+  animation:fadeIn .5s .8s both;
+}
+
+/* APP */
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
+/* HEADER — affiche sérigraphiée */
+#topbar{
+  background:var(--encre);
+  padding:0;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+#topbar::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.012) 3px,rgba(255,255,255,.012) 4px),
+    repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(255,255,255,.008) 3px,rgba(255,255,255,.008) 4px);
+  pointer-events:none;z-index:1;
+}
+.tb-inner{
+  position:relative;z-index:2;
+  padding:14px 16px 0;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.tb-stamp{
+  width:48px;height:48px;border:2px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+  font-size:22px;
+}
+.tb-text{flex:1}
+.tb-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:26px;letter-spacing:.06em;
+  color:var(--papier);text-transform:uppercase;line-height:1;
+}
+.tb-sub{
+  font-size:8px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--gris);margin-top:4px;
+}
+.tb-live{
+  display:flex;align-items:center;gap:5px;margin-top:6px;
+}
+.tb-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--orange);
+  box-shadow:0 0 6px var(--orange);
+  animation:flicker 4s infinite;
+}
+.tb-live-txt{font-size:8px;letter-spacing:.2em;color:var(--orange);text-transform:uppercase}
+
+/* Torn paper effect bottom of header */
+.tb-torn{
+  height:18px;margin-top:10px;
+  background:var(--encre);
+  position:relative;overflow:visible;
+}
+.tb-torn::after{
+  content:'';
+  position:absolute;bottom:-1px;left:0;right:0;height:18px;
+  background:var(--beton);
+  clip-path:polygon(0% 100%,0% 60%,1% 20%,2% 80%,3% 30%,4% 70%,5% 10%,6% 60%,7% 85%,8% 25%,9% 65%,10% 40%,11% 80%,12% 15%,13% 55%,14% 90%,15% 35%,16% 70%,17% 20%,18% 60%,19% 85%,20% 30%,21% 65%,22% 10%,23% 50%,24% 80%,25% 25%,26% 70%,27% 40%,28% 75%,29% 15%,30% 55%,31% 85%,32% 30%,33% 60%,34% 5%,35% 45%,36% 80%,37% 25%,38% 65%,39% 90%,40% 35%,41% 70%,42% 15%,43% 55%,44% 85%,45% 30%,46% 60%,47% 10%,48% 50%,49% 80%,50% 20%,51% 60%,52% 35%,53% 75%,54% 15%,55% 55%,56% 85%,57% 25%,58% 65%,59% 5%,60% 45%,61% 80%,62% 30%,63% 60%,64% 90%,65% 35%,66% 70%,67% 20%,68% 55%,69% 85%,70% 30%,71% 60%,72% 10%,73% 50%,74% 80%,75% 25%,76% 65%,77% 40%,78% 75%,79% 15%,80% 55%,81% 85%,82% 30%,83% 60%,84% 5%,85% 45%,86% 80%,87% 25%,88% 65%,89% 90%,90% 35%,91% 70%,92% 15%,93% 55%,94% 85%,95% 30%,96% 60%,97% 10%,98% 50%,99% 75%,100% 40%,100% 100%);
+}
+
+/* TABS */
+#tabs{
+  background:var(--beton2);
+  display:flex;border-bottom:1px solid var(--beton3);
+  flex-shrink:0;
+}
+.tab{
+  flex:1;padding:11px 2px 10px;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gris2);border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.tab span{font-size:15px}
+.tab.active{color:var(--papier);border-bottom-color:var(--orange)}
+.tab:hover:not(.active){color:var(--gris)}
+
+/* PAGES */
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* ===== CHAT ===== */
+#page-chat{background:var(--beton)}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+
+.mrow{display:flex;animation:msgIn .25s ease}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+
+.bav{
+  width:34px;height:34px;flex-shrink:0;margin-top:2px;
+  border:1px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;background:var(--encre);
+}
+.bub{
+  max-width:min(78%,320px);padding:11px 14px;
+  font-size:13px;line-height:1.65;white-space:pre-wrap;
+}
+.bub.bot{
+  background:var(--encre);color:var(--papier);
+  border-top-left-radius:0px;
+  border-radius:0 12px 12px 12px;
+  border-left:2px solid var(--orange);
+}
+.bub.user{
+  background:var(--orange);color:var(--papier);
+  border-radius:12px 0 12px 12px;
+  font-family:'Space Mono',monospace;
+}
+
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{
+  padding:6px 11px;border:1px solid var(--gris);
+  background:transparent;color:var(--gris);
+  font-size:11px;font-family:'Space Mono',monospace;
+  cursor:pointer;transition:all .2s;
+}
+.qb:hover{border-color:var(--orange);color:var(--orange)}
+
+.tybub{
+  background:var(--encre);border-left:2px solid var(--orange);
+  padding:12px 15px;display:flex;gap:5px;
+  border-radius:0 12px 12px 12px;
+}
+.tybub span{width:6px;height:6px;border-radius:50%;background:var(--gris);animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+
+#composer{
+  padding:10px 14px 22px;background:var(--beton2);
+  border-top:1px solid var(--beton3);flex-shrink:0;
+}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{
+  flex:1;padding:11px 14px;
+  background:var(--beton3);border:1px solid var(--gris2);
+  color:var(--papier);font-size:13px;font-family:'Space Mono',monospace;
+  outline:none;transition:border-color .2s;
+}
+#inp::placeholder{color:var(--gris2)}
+#inp:focus{border-color:var(--orange)}
+#snd{
+  width:44px;height:44px;border:none;
+  background:var(--orange);color:#fff;font-size:16px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .2s;flex-shrink:0;
+}
+#snd:hover{background:var(--orange2)}
+
+.wa-link{
+  display:flex;align-items:center;gap:8px;
+  background:#25D366;color:#fff;
+  padding:11px 14px;font-weight:700;font-size:13px;
+  font-family:'Space Mono',monospace;text-decoration:none;
+  margin-top:10px;
+}
+
+/* ===== DATES ===== */
+#page-dates{background:var(--beton);padding:20px 15px 36px;gap:0}
+
+.sec-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:32px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--papier);
+  border-bottom:2px solid var(--orange);
+  padding-bottom:8px;margin-bottom:20px;
+  line-height:1;
+}
+.sec-title small{
+  display:block;font-size:11px;letter-spacing:.2em;
+  color:var(--gris);font-family:'Space Mono',monospace;
+  font-weight:400;margin-top:4px;
+}
+
+.concert{
+  display:flex;gap:0;margin-bottom:1px;
+  background:var(--beton2);
+  border-left:3px solid var(--orange);
+  padding:14px 16px;
+  transition:background .2s;
+}
+.concert:hover{background:var(--beton3)}
+.concert.past{border-left-color:var(--gris2);opacity:.5}
+
+.c-date{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:38px;line-height:1;
+  color:var(--orange);min-width:56px;text-align:center;
+}
+.c-date small{
+  display:block;font-size:10px;letter-spacing:.2em;
+  color:var(--gris);font-family:'Space Mono',monospace;
+  font-weight:400;
+}
+.concert.past .c-date{color:var(--gris)}
+.c-sep{width:1px;background:var(--beton3);margin:0 14px;flex-shrink:0}
+.c-info h3{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:16px;letter-spacing:.05em;
+  text-transform:uppercase;margin-bottom:4px;
+}
+.c-info p{font-size:11px;color:var(--gris);line-height:1.5}
+.c-badge{
+  display:inline-block;
+  background:var(--orange);color:#fff;
+  font-size:8px;letter-spacing:.2em;padding:2px 7px;
+  margin-top:6px;text-transform:uppercase;
+  font-family:'Space Mono',monospace;
+}
+.c-badge.past{background:var(--gris2)}
+
+/* ===== DISCO ===== */
+#page-disco{background:var(--beton);padding:20px 15px 36px;gap:14px}
+
+.release{
+  display:flex;gap:14px;
+  background:var(--beton2);padding:14px;
+  border-bottom:1px solid var(--beton3);
+}
+.rel-cover{
+  width:76px;height:76px;flex-shrink:0;
+  background:var(--encre);border:1px solid var(--beton3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;position:relative;overflow:hidden;
+}
+.rel-cover::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.03) 3px,rgba(255,255,255,.03) 4px);
+}
+.rel-info h3{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:17px;letter-spacing:.05em;
+  text-transform:uppercase;margin-bottom:3px;
+}
+.rel-type{
+  font-size:9px;letter-spacing:.2em;color:var(--orange);
+  text-transform:uppercase;margin-bottom:6px;
+  font-family:'Space Mono',monospace;
+}
+.rel-desc{font-size:11px;color:var(--gris);line-height:1.5;margin-bottom:8px}
+.btn-bc{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--orange);color:var(--orange);
+  font-family:'Space Mono',monospace;font-size:10px;
+  padding:5px 10px;text-decoration:none;
+  transition:all .2s;
+}
+.btn-bc:hover{background:var(--orange);color:#fff}
+
+/* ===== BOOKING ===== */
+#page-booking{background:var(--beton);padding:20px 15px 36px;gap:14px}
+
+.lbl{
+  font-size:9px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:7px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+}
+.f-input,.f-select,.f-textarea{
+  width:100%;padding:11px 13px;
+  background:var(--encre);border:1px solid var(--beton3);
+  border-bottom:2px solid var(--gris2);
+  color:var(--papier);font-family:'Space Mono',monospace;font-size:12px;
+  outline:none;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.f-input:focus,.f-select:focus,.f-textarea:focus{border-bottom-color:var(--orange)}
+.f-input::placeholder,.f-textarea::placeholder{color:var(--gris2)}
+.f-select option{background:var(--encre)}
+.f-textarea{resize:none;height:90px}
+.f-group{display:flex;flex-direction:column}
+
+.btn-booking{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#25D366;color:#fff;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:18px;letter-spacing:.08em;
+  text-transform:uppercase;padding:16px;
+  border:none;cursor:pointer;width:100%;
+  transition:opacity .2s;
+}
+.btn-booking:hover{opacity:.9}
+
+.booking-sent{
+  background:var(--beton2);border-left:3px solid var(--orange);
+  padding:20px;text-align:center;display:none;
+}
+.booking-sent .icon{font-size:32px;margin-bottom:10px}
+.booking-sent p{font-size:12px;color:var(--gris);line-height:1.6}
+.booking-sent strong{color:var(--orange)}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-lines"></div>
+  <div class="sp-name">DIRECT<br/><span>ACTION</span></div>
+  <div class="sp-tag">Hardcore · Belgique · Est. 2020</div>
+  <div class="sp-bottom"></div>
+</div>
+
+<div id="app">
+  <!-- HEADER -->
+  <div id="topbar">
+    <div class="tb-inner">
+      <div class="tb-stamp">🤘</div>
+      <div class="tb-text">
+        <div class="tb-name">Direct Action</div>
+        <div class="tb-sub">Hardcore · Half Flemish Half Walloon · WTF Records</div>
+        <div class="tb-live">
+          <div class="tb-dot"></div>
+          <div class="tb-live-txt">Assistant IA · 24h/24</div>
+        </div>
+      </div>
+    </div>
+    <div class="tb-torn"></div>
+  </div>
+
+  <!-- BANDEAU DEMO -->
+  <div style="background:var(--orange);color:#fff;text-align:center;padding:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;flex-shrink:0;">
+    ⚠ APPLICATION DÉMO — Philomène IA
+  </div>
+
+  <!-- TABS -->
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Chat</button>
+    <button class="tab" onclick="showTab(this,'dates')"><span>📍</span>Dates</button>
+    <button class="tab" onclick="showTab(this,'disco')"><span>💿</span>Disco</button>
+    <button class="tab" onclick="showTab(this,'booking')"><span>📩</span>Booking</button>
+  </div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Pose ta question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATES -->
+  <div id="page-dates" class="page">
+    <div class="sec-title">Dates<small>Concerts & Événements</small></div>
+
+    <div class="concert">
+      <div class="c-date">12<small>JUIL</small></div>
+      <div class="c-sep"></div>
+      <div class="c-info">
+        <h3>Hardcore Fest Mouscron</h3>
+        <p>La Malterie — Mouscron, Belgique<br/>avec Doodsmist + Groinck · 20h00</p>
+        <span class="c-badge">Confirmé</span>
+      </div>
+    </div>
+
+    <div class="concert">
+      <div class="c-date">26<small>JUIL</small></div>
+      <div class="c-sep"></div>
+      <div class="c-info">
+        <h3>Summer Thrash Night</h3>
+        <p>Le Biplan — Lille, France · 20h00</p>
+        <span class="c-badge">Confirmé</span>
+      </div>
+    </div>
+
+    <div class="concert">
+      <div class="c-date">09<small>AOÛT</small></div>
+      <div class="c-sep"></div>
+      <div class="c-info">
+        <h3>Chaos in the Pit Vol.3</h3>
+        <p>Carpe Diem — Tournai, Belgique</p>
+        <span class="c-badge">Confirmé</span>
+      </div>
+    </div>
+
+    <div style="margin:20px 0 10px;font-size:9px;letter-spacing:.25em;color:var(--gris2);text-transform:uppercase">— Passé —</div>
+
+    <div class="concert past">
+      <div class="c-date">15<small>FÉV</small></div>
+      <div class="c-sep"></div>
+      <div class="c-info">
+        <h3>Luingne Hardcore Night</h3>
+        <p>Luingne, Hainaut, Belgique</p>
+        <span class="c-badge past">Terminé</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCO -->
+  <div id="page-disco" class="page">
+    <div class="sec-title">Discographie<small>Notre musique</small></div>
+
+    <div class="release">
+      <div class="rel-cover">🔥</div>
+      <div class="rel-info">
+        <div class="rel-type">LP · 30 Jan 2026 · WTF Records (WTF-088)</div>
+        <h3>Turning Point</h3>
+        <div class="rel-desc">200 exemplaires vinyle jaune flame, numérotés main. 9 titres : Intro · Do Not Quit · Progress · Forward · Vuiligheid · Not Too Late · Closure · Intimidation · Turning Point</div>
+        <a class="btn-bc" href="https://socialanxiety1.bandcamp.com" target="_blank">▶ Écouter sur Bandcamp</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING -->
+  <div id="page-booking" class="page">
+    <div class="sec-title">Booking<small>Organise un concert</small></div>
+
+    <div id="booking-form" style="display:flex;flex-direction:column;gap:12px">
+      <div class="f-group">
+        <div class="lbl">Ton nom / Structure</div>
+        <input class="f-input" id="b-nom" type="text" placeholder="Salle, asso, collectif..."/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Type d'événement</div>
+        <select class="f-select" id="b-type">
+          <option value="">— Choisir —</option>
+          <option>Concert / Show</option>
+          <option>Festival</option>
+          <option>Soirée privée</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Date envisagée</div>
+        <input class="f-input" id="b-date" type="date"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Ville / Lieu</div>
+        <input class="f-input" id="b-lieu" type="text" placeholder="Ville, salle, capacité..."/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Message</div>
+        <textarea class="f-textarea" id="b-msg" placeholder="Budget, lineup prévu, infos utiles..."></textarea>
+      </div>
+      <button class="btn-booking" onclick="submitBooking()">📱 Envoyer via WhatsApp</button>
+    </div>
+
+    <div class="booking-sent" id="booking-sent">
+      <div class="icon">🤘</div>
+      <p>Demande envoyée, <strong id="sent-nom">boss</strong>.<br/>On revient vers toi.<br/><br/>En attendant, écoute <strong>Turning Point</strong> sur Bandcamp.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var WA = "32XXXXXXXXX"; // Remplacer par le numéro du groupe
+var API = "https://philo-backend-by2c.onrender.com";
+var busy = false;
+
+fetch(API + "/ping/direct_action").catch(function(){});
+
+var SYS = "Tu es le chatbot officiel du groupe de hardcore belge Direct Action. Reponds comme un membre du groupe : direct, franc, authentique, sans chichi. Jamais de ** ni de markdown. Texte simple uniquement. Max 4 phrases par reponse.\n\nInfos groupe:\n- Direct Action : side project hardcore de membres de Day Drinker, Doodsmist et Groinck\n- Moitie flamand, moitie wallon (Half Flemish Half Walloon)\n- Base a Luingne, Hainaut, Belgique\n- Signe sur WTF Records\n- Dernier album : Turning Point, sorti le 30 janvier 2026, LP vinyle jaune flame 200 exemplaires numerotes main, WTF-088. Tracklist : Intro, Do Not Quit, Progress, Forward, Vuiligheid, Not Too Late, Closure, Intimidation, Turning Point\n- Bandcamp : socialanxiety1.bandcamp.com\n- Concerts a venir : Mouscron 12 juil, Lille 26 juil, Tournai 9 aout\n- Pour booking : onglet Booking de l app\n\nReponds en francais sauf si on parle anglais ou neerlandais.";
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🤘";
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["D'où vous venez ?","D'où vient Direct Action ?"],["Votre style ?","Décris votre style de hardcore"],["Turning Point","Parle-moi de l'album Turning Point"],["Prochain concert ?","C'est quand votre prochain concert ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "da_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "On est là. Pose ta question.";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("booking") >= 0 || low.indexOf("concert") >= 0 && (low.indexOf("organis") >= 0 || low.indexOf("booker") >= 0);
+    if (needWA) {
+      var wa = document.createElement("a");
+      wa.className = "wa-link";
+      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Salut Direct Action ! Je veux vous booker.");
+      wa.target = "_blank";
+      wa.textContent = "📱 Contacter sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion. Réessaie.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+function submitBooking() {
+  var nom = document.getElementById("b-nom").value.trim();
+  var type = document.getElementById("b-type").value;
+  var date = document.getElementById("b-date").value;
+  var lieu = document.getElementById("b-lieu").value.trim();
+  var msg = document.getElementById("b-msg").value.trim();
+  var waMsg = "Salut Direct Action ! Demande de booking.\n\n";
+  if (nom) waMsg += "Qui : " + nom + "\n";
+  if (type) waMsg += "Type : " + type + "\n";
+  if (date) waMsg += "Date : " + date + "\n";
+  if (lieu) waMsg += "Lieu : " + lieu + "\n";
+  if (msg) waMsg += "Message : " + msg;
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg), "_blank");
+  document.getElementById("booking-form").style.display = "none";
+  document.getElementById("booking-sent").style.display = "block";
+  document.getElementById("sent-nom").textContent = nom || "boss";
+}
+
+// SPLASH
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Yo. Tu veux savoir quelque chose sur Direct Action ? Nos dates, notre musique, d'où on vient... Pose ta question.", true);
+  }, 800);
+}, 2500);
+</script>
+</body>
+</html>
