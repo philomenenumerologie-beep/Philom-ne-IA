@@ -8,274 +8,91 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:#2C1810}
-
-:root{
-  --blush:#F7EDE8;
-  --rose:#E8C4BB;
-  --rose2:#D4A098;
-  --mauve:#8B6B7A;
-  --mauve2:#6B4F5E;
-  --dark:#2C1810;
-  --cream:#FBF7F5;
-  --gold:#C9A87C;
-  --border:rgba(44,24,16,.08);
-}
-
+:root{--blush:#F7EDE8;--rose:#E8C4BB;--rose2:#D4A098;--mauve:#8B6B7A;--mauve2:#6B4F5E;--dark:#2C1810;--cream:#FBF7F5;--border:rgba(44,24,16,.08);--planity:#7B5EA7;--planity2:#5C3D8F;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes shimmer{0%{opacity:.4}50%{opacity:1}100%{opacity:.4}}
-
-/* SPLASH */
-#splash{
-  position:fixed;inset:0;z-index:500;
-  background:var(--blush);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity 1.2s ease;
-}
+#splash{position:fixed;inset:0;z-index:500;background:var(--blush);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.2s ease}
 #splash.gone{opacity:0;pointer-events:none}
-.sp-circle{
-  width:120px;height:120px;border-radius:50%;
-  background:linear-gradient(145deg,var(--rose),var(--rose2));
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:28px;
-  animation:float 3s ease-in-out infinite, fadeIn .8s ease .2s both;
-  box-shadow:0 20px 60px rgba(212,160,152,.4);
-}
+.sp-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(145deg,var(--rose),var(--rose2));display:flex;align-items:center;justify-content:center;margin-bottom:28px;animation:float 3s ease-in-out infinite,fadeIn .8s ease .2s both;box-shadow:0 20px 60px rgba(212,160,152,.4)}
 .sp-circle svg{width:52px;height:52px}
-.sp-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:38px;font-weight:300;letter-spacing:.15em;
-  color:var(--dark);
-  animation:fadeUp .8s ease .5s both;
-}
+.sp-name{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;letter-spacing:.15em;color:var(--dark);animation:fadeUp .8s ease .5s both}
 .sp-name em{font-style:italic;font-weight:400}
-.sp-line{
-  width:1px;height:40px;
-  background:linear-gradient(180deg,transparent,var(--rose2),transparent);
-  margin:18px auto;
-  animation:fadeIn .8s ease .8s both;
-}
-.sp-sub{
-  font-size:10px;letter-spacing:.4em;text-transform:uppercase;
-  color:var(--mauve);
-  animation:fadeUp .8s ease 1s both;
-}
-
-/* APP */
+.sp-line{width:1px;height:40px;background:linear-gradient(180deg,transparent,var(--rose2),transparent);margin:18px auto;animation:fadeIn .8s ease .8s both}
+.sp-sub{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--mauve);animation:fadeUp .8s ease 1s both}
+.demo-banner{background:var(--planity);color:#fff;text-align:center;padding:6px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;flex-shrink:0}
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream)}
-
-/* TOPBAR */
-#topbar{
-  background:var(--cream);
-  padding:14px 18px 12px;
-  display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.tb-av{
-  width:46px;height:46px;border-radius:50%;
-  background:linear-gradient(145deg,var(--rose),var(--rose2));
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  box-shadow:0 4px 16px rgba(212,160,152,.35);
-}
+#topbar{background:var(--cream);padding:14px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.tb-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(145deg,var(--rose),var(--rose2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(212,160,152,.35)}
 .tb-av svg{width:22px;height:22px}
 .tb-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--dark);letter-spacing:.04em}
 .tb-sub{font-size:9px;color:var(--mauve);letter-spacing:.15em;text-transform:uppercase;margin-top:2px}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:6px}
 .tb-dot{width:7px;height:7px;border-radius:50%;background:#A8D8A8;box-shadow:0 0 8px #A8D8A8;animation:pulse 2s infinite}
 .tb-live{font-size:9px;color:#7DB87D;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
-
-/* TABS */
 #tabs{background:var(--cream);display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{
-  flex:1;padding:10px 2px 9px;text-align:center;
-  font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(44,24,16,.3);border:none;background:none;cursor:pointer;
-  border-bottom:2px solid transparent;transition:all .25s;
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  font-family:'Tenor Sans',sans-serif;
-}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(44,24,16,.3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Tenor Sans',sans-serif}
 .tab span{font-size:14px}
 .tab.active{color:var(--mauve2);border-bottom-color:var(--rose2)}
-
-/* BANNER */
-#msg-banniere{display:none;background:var(--mauve2);color:#fff;padding:9px 16px;font-size:12px;font-weight:600;text-align:center;flex-shrink:0;line-height:1.5;letter-spacing:.02em}
-
-/* PAGES */
 .page{flex:1;overflow-y:auto;display:none;flex-direction:column}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
-
-/* ─── CHAT ─── */
 #page-chat{background:var(--blush)}
-
-/* fond texture douce */
-#page-chat::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 20% 20%,rgba(232,196,187,.3) 0%,transparent 60%),
-             radial-gradient(ellipse at 80% 80%,rgba(139,107,122,.08) 0%,transparent 60%);
-  z-index:0;
-}
-
-#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
 .mrow{display:flex;animation:msgIn .3s cubic-bezier(.16,1,.3,1)}
 .mrow.bot{justify-content:flex-start;gap:8px}
 .mrow.user{justify-content:flex-end}
-.bav{
-  width:34px;height:34px;border-radius:50%;
-  background:linear-gradient(145deg,var(--rose),var(--rose2));
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
-  box-shadow:0 3px 10px rgba(212,160,152,.3);
-}
+.bav{width:34px;height:34px;border-radius:50%;background:linear-gradient(145deg,var(--rose),var(--rose2));display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;box-shadow:0 3px 10px rgba(212,160,152,.3)}
 .bav svg{width:16px;height:16px}
 .bub{max-width:min(80%,300px);padding:12px 15px;font-size:13.5px;line-height:1.7;white-space:pre-wrap;border-radius:20px}
-.bub.bot{
-  background:#fff;color:var(--dark);
-  border-top-left-radius:4px;
-  box-shadow:0 2px 16px rgba(44,24,16,.07);
-  border:1px solid rgba(232,196,187,.4);
-}
-.bub.user{
-  background:linear-gradient(135deg,var(--mauve),var(--mauve2));
-  color:#fff;border-top-right-radius:4px;
-  box-shadow:0 4px 16px rgba(107,79,94,.3);
-}
+.bub.bot{background:#fff;color:var(--dark);border-top-left-radius:4px;box-shadow:0 2px 16px rgba(44,24,16,.07);border:1px solid rgba(232,196,187,.4)}
+.bub.user{background:linear-gradient(135deg,var(--mauve),var(--mauve2));color:#fff;border-top-right-radius:4px}
 .qbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.qb{
-  padding:6px 12px;border-radius:20px;
-  border:1.5px solid var(--rose2);background:rgba(232,196,187,.15);
-  color:var(--mauve2);font-size:11.5px;font-weight:600;
-  font-family:'Tenor Sans',sans-serif;cursor:pointer;transition:all .2s;
-  letter-spacing:.02em;
-}
-.qb:active{background:var(--rose2);color:#fff}
-.tybub{
-  background:#fff;border-radius:20px;border-top-left-radius:4px;
-  padding:13px 15px;display:flex;gap:5px;
-  box-shadow:0 2px 16px rgba(44,24,16,.07);
-  border:1px solid rgba(232,196,187,.4);
-}
+.qb{padding:6px 12px;border-radius:20px;border:1.5px solid var(--rose2);background:rgba(232,196,187,.15);color:var(--mauve2);font-size:11.5px;font-weight:600;font-family:'Tenor Sans',sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:13px 15px;display:flex;gap:5px;box-shadow:0 2px 16px rgba(44,24,16,.07);border:1px solid rgba(232,196,187,.4)}
 .tybub span{width:6px;height:6px;border-radius:50%;background:var(--rose2);animation:bounce 1.2s infinite}
 .tybub span:nth-child(2){animation-delay:.2s}
 .tybub span:nth-child(3){animation-delay:.4s}
-#composer{
-  padding:10px 14px 24px;background:rgba(251,247,245,.95);
-  border-top:1px solid var(--border);flex-shrink:0;
-  backdrop-filter:blur(10px);position:relative;z-index:1;
-}
+#composer{padding:10px 14px 24px;background:rgba(251,247,245,.95);border-top:1px solid var(--border);flex-shrink:0}
 .crow{display:flex;gap:10px;align-items:center}
-#inp{
-  flex:1;padding:12px 18px;border-radius:28px;
-  border:1.5px solid var(--rose);background:#fff;
-  font-size:14px;font-family:'Tenor Sans',sans-serif;
-  outline:none;color:var(--dark);
-  box-shadow:0 2px 10px rgba(232,196,187,.2);
-  transition:border .2s;
-}
+#inp{flex:1;padding:12px 18px;border-radius:28px;border:1.5px solid var(--rose);background:#fff;font-size:14px;font-family:'Tenor Sans',sans-serif;outline:none;color:var(--dark);transition:border .2s}
 #inp::placeholder{color:rgba(44,24,16,.3)}
 #inp:focus{border-color:var(--rose2)}
-#snd{
-  width:46px;height:46px;border-radius:50%;border:none;
-  background:linear-gradient(135deg,var(--rose2),var(--mauve));
-  color:#fff;font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;
-  box-shadow:0 4px 16px rgba(139,107,122,.4);
-  transition:transform .2s;
-}
-#snd:active{transform:scale(.93)}
-.wa-bubble{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  background:#25D366;color:#fff;border-radius:12px;padding:11px;
-  font-weight:700;font-size:13px;font-family:'Tenor Sans',sans-serif;
-  text-decoration:none;margin-top:10px;
-}
-
-/* ─── DEVIS ─── */
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--rose2),var(--mauve));color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.btn-planity{display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,var(--planity),var(--planity2));color:#fff;border-radius:14px;padding:14px;font-weight:700;font-size:14px;font-family:'Tenor Sans',sans-serif;text-decoration:none;margin-top:10px;box-shadow:0 4px 16px rgba(123,94,167,.35);letter-spacing:.02em}
+.btn-planity-sm{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--planity),var(--planity2));color:#fff;border-radius:12px;padding:11px 14px;font-weight:700;font-size:13px;font-family:'Tenor Sans',sans-serif;text-decoration:none;margin-top:10px;box-shadow:0 3px 12px rgba(123,94,167,.3)}
 #page-devis{background:var(--cream);padding:24px 16px 44px;gap:16px}
 .df-header{text-align:center;padding-bottom:4px}
 .df-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--dark);letter-spacing:.05em}
 .df-title em{font-style:italic;color:var(--mauve)}
 .df-subtitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve);margin-top:6px}
 .lbl{font-size:9px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--mauve);margin-bottom:7px}
-.df-select,.df-textarea{
-  width:100%;padding:13px 16px;border-radius:14px;
-  border:1.5px solid var(--border);background:#fff;
-  font-size:13.5px;font-family:'Tenor Sans',sans-serif;color:var(--dark);
-  outline:none;-webkit-appearance:none;transition:border .2s;
-  box-shadow:0 2px 10px rgba(44,24,16,.04);
-}
+.df-select,.df-textarea{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid var(--border);background:#fff;font-size:13.5px;font-family:'Tenor Sans',sans-serif;color:var(--dark);outline:none;-webkit-appearance:none;transition:border .2s}
 .df-select:focus,.df-textarea:focus{border-color:var(--rose2)}
 .df-textarea{resize:none;height:90px}
-.df-select option{background:#fff}
 .size-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.sz{
-  padding:12px 8px;border-radius:13px;border:1.5px solid var(--border);
-  background:#fff;font-size:12px;font-family:'Tenor Sans',sans-serif;
-  font-weight:600;text-align:center;cursor:pointer;color:var(--mauve);
-  line-height:1.4;transition:all .2s;
-  box-shadow:0 2px 8px rgba(44,24,16,.04);
-}
+.sz{padding:12px 8px;border-radius:13px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-family:'Tenor Sans',sans-serif;font-weight:600;text-align:center;cursor:pointer;color:var(--mauve);line-height:1.4}
 .sz small{font-size:10px;color:rgba(44,24,16,.4);display:block;font-weight:400;margin-top:2px}
-.sz.sel{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;border-color:var(--rose2);box-shadow:0 4px 14px rgba(212,160,152,.4)}
+.sz.sel{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;border-color:var(--rose2)}
 .em-wrap{display:flex;flex-wrap:wrap;gap:7px}
-.em{
-  padding:7px 13px;border-radius:22px;border:1.5px solid var(--border);
-  background:#fff;font-size:12px;font-family:'Tenor Sans',sans-serif;
-  font-weight:600;cursor:pointer;color:var(--mauve);transition:all .2s;
-}
+.em{padding:7px 13px;border-radius:22px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-family:'Tenor Sans',sans-serif;font-weight:600;cursor:pointer;color:var(--mauve)}
 .em.sel{background:linear-gradient(135deg,var(--mauve),var(--mauve2));color:#fff;border-color:var(--mauve)}
-.df-btn{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:#25D366;color:#fff;border-radius:16px;padding:17px;
-  font-weight:700;font-size:15px;font-family:'Tenor Sans',sans-serif;
-  border:none;width:100%;cursor:pointer;
-  box-shadow:0 6px 20px rgba(37,211,102,.3);letter-spacing:.03em;
-}
-
-/* ─── SOINS ─── */
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,var(--planity),var(--planity2));color:#fff;border-radius:16px;padding:17px;font-weight:700;font-size:15px;font-family:'Tenor Sans',sans-serif;border:none;width:100%;cursor:pointer;box-shadow:0 6px 20px rgba(123,94,167,.3)}
 #page-soins{background:var(--cream);padding:24px 16px 44px}
 .sv-header{text-align:center;margin-bottom:22px}
 .sv-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--dark)}
 .sv-title em{font-style:italic;color:var(--mauve)}
 .sv-subtitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve);margin-top:6px}
-.sv-sec{
-  font-size:9px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;
-  color:var(--mauve);margin:20px 0 10px;padding-bottom:8px;
-  border-bottom:1px solid var(--border);
-}
-.sv-card{
-  background:#fff;border-radius:18px;padding:16px;margin-bottom:10px;
-  border:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;
-  box-shadow:0 2px 12px rgba(44,24,16,.05);
-}
-.sv-icon{
-  width:48px;height:48px;border-radius:14px;
-  background:linear-gradient(145deg,var(--blush),var(--rose));
-  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
-}
+.sv-sec{font-size:9px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--mauve);margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sv-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;box-shadow:0 2px 12px rgba(44,24,16,.05)}
+.sv-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,var(--blush),var(--rose));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .sv-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--dark);margin-bottom:4px}
 .sv-desc{font-size:12px;color:rgba(44,24,16,.5);line-height:1.65}
 .sv-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.sv-tag{
-  font-size:10px;padding:3px 10px;border-radius:20px;
-  background:rgba(232,196,187,.25);color:var(--mauve2);
-  font-weight:600;border:1px solid rgba(232,196,187,.5);
-}
-.sv-cta{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:#25D366;color:#fff;border-radius:15px;padding:15px;
-  text-decoration:none;font-weight:700;font-size:14px;
-  font-family:'Tenor Sans',sans-serif;margin-top:10px;
-  box-shadow:0 4px 16px rgba(37,211,102,.25);
-}
-
-/* ─── TARIFS ─── */
+.sv-tag{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(232,196,187,.25);color:var(--mauve2);font-weight:600;border:1px solid rgba(232,196,187,.5)}
 #page-tarifs{background:var(--cream);padding:24px 16px 44px}
 .t-header{text-align:center;margin-bottom:22px}
 .t-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--dark)}
@@ -286,64 +103,24 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
 .tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
 .tcard-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--dark)}
 .tcard-sub{font-size:11px;color:rgba(44,24,16,.4);margin-top:3px}
-.tcard-badge{
-  background:linear-gradient(135deg,var(--rose),var(--rose2));
-  color:#fff;font-size:10px;font-weight:700;padding:4px 10px;
-  border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px;
-}
+.tcard-badge{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
 .tprices{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
 .tpx{background:var(--blush);border-radius:10px;padding:10px 6px;text-align:center;border:1px solid rgba(232,196,187,.3)}
 .tplbl{font-size:9px;color:rgba(44,24,16,.4);font-weight:600;margin-bottom:4px;letter-spacing:.05em;text-transform:uppercase}
 .tpval{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--mauve2)}
-.tcard-note{margin-top:10px;font-size:11px;color:rgba(44,24,16,.4);line-height:1.5;padding:9px;background:var(--blush);border-radius:9px;font-style:italic}
-.fcard{
-  background:linear-gradient(135deg,var(--mauve),var(--mauve2));
-  border-radius:18px;padding:18px;margin-bottom:10px;
-  box-shadow:0 8px 24px rgba(107,79,94,.3);
-}
+.fcard{background:linear-gradient(135deg,var(--mauve),var(--mauve2));border-radius:18px;padding:18px;margin-bottom:10px;box-shadow:0 8px 24px rgba(107,79,94,.3)}
 .fcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .fcard-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff}
 .fcard-price{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:rgba(255,255,255,.9)}
 .fcard-items{display:flex;flex-direction:column;gap:4px}
 .fcard-item{font-size:12px;color:rgba(255,255,255,.65);padding-left:10px}
 .fcard-note{font-size:11px;color:rgba(255,255,255,.45);margin-top:8px;font-style:italic}
-.twa{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:#25D366;color:#fff;border-radius:15px;padding:15px;
-  text-decoration:none;font-weight:700;font-size:14px;
-  font-family:'Tenor Sans',sans-serif;margin-top:6px;
-  box-shadow:0 4px 16px rgba(37,211,102,.25);
-}
-
-/* OVERLAY */
-#overlay{position:fixed;inset:0;z-index:300;background:rgba(44,24,16,.5);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
-#overlay.open{display:flex}
-#mbox{
-  background:var(--cream);border-radius:28px 28px 0 0;
-  padding:32px 20px 48px;width:100%;max-width:480px;
-  animation:slideUp .35s cubic-bezier(.16,1,.3,1);
-  border-top:1px solid var(--border);
-}
-.mbox-ico{font-size:50px;text-align:center;margin-bottom:14px}
-.mbox-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;text-align:center;margin-bottom:4px;color:var(--dark)}
-.mbox-desc{text-align:center;font-size:13px;color:rgba(44,24,16,.5);margin-bottom:22px;line-height:1.6}
-.mbox-wa{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:#25D366;color:#fff;border-radius:14px;padding:15px;
-  font-weight:700;font-size:15px;font-family:'Tenor Sans',sans-serif;
-  text-decoration:none;margin-bottom:10px;
-  box-shadow:0 4px 16px rgba(37,211,102,.3);
-}
-.mbox-cancel{display:block;text-align:center;padding:12px;font-size:13px;color:rgba(44,24,16,.35);cursor:pointer;font-family:'Tenor Sans',sans-serif;border:none;background:none;width:100%}
 </style>
 </head>
 <body>
-
-<!-- SPLASH -->
 <div id="splash">
   <div class="sp-circle">
     <svg viewBox="0 0 52 52" fill="none">
-      <!-- lotus / fleur stylisée -->
       <ellipse cx="26" cy="32" rx="6" ry="14" fill="white" opacity=".9"/>
       <ellipse cx="26" cy="32" rx="6" ry="14" fill="white" opacity=".9" transform="rotate(45 26 26)"/>
       <ellipse cx="26" cy="32" rx="6" ry="14" fill="white" opacity=".9" transform="rotate(-45 26 26)"/>
@@ -356,8 +133,9 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
   <div class="sp-sub">Soins · Beauté · Bien-être</div>
 </div>
 
-<!-- APP -->
 <div id="app">
+  <div class="demo-banner">Application Démo — Philomène IA</div>
+
   <div id="topbar">
     <div class="tb-av">
       <svg viewBox="0 0 52 52" fill="none">
@@ -379,14 +157,12 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
 
   <div id="tabs">
     <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Conseils</button>
-    <button class="tab" onclick="showTab(this,'devis')"><span>✨</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>✨</span>Projet</button>
     <button class="tab" onclick="showTab(this,'soins')"><span>🌸</span>Soins</button>
     <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
   </div>
 
-  <div id="msg-banniere"></div>
-
-  <!-- ─── CHAT ─── -->
+  <!-- CHAT -->
   <div id="page-chat" class="page active">
     <div id="messages"></div>
     <div style="height:12px;flex-shrink:0"></div>
@@ -398,51 +174,41 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
     </div>
   </div>
 
-  <!-- ─── DEVIS ─── -->
+  <!-- PROJET -->
   <div id="page-devis" class="page">
     <div class="df-header">
-      <div class="df-title"><em>Votre</em> devis</div>
-      <div class="df-subtitle">Réponse personnalisée sous 24h</div>
+      <div class="df-title"><em>Votre</em> projet</div>
+      <div class="df-subtitle">Réservez directement sur Planity</div>
     </div>
-
     <div>
       <div class="lbl">Type de soin</div>
       <select class="df-select" id="df-type">
         <option value="">Sélectionnez...</option>
         <option>Soin du visage</option>
-        <option>Épilation (cire / laser)</option>
+        <option>Épilation</option>
         <option>Manucure / Pédicure</option>
         <option>Pose de gel / Semi-permanent</option>
-        <option>Maquillage (quotidien / événement)</option>
-        <option>Soin du corps (enveloppement, gommage)</option>
+        <option>Maquillage</option>
         <option>Extension de cils</option>
         <option>Rehaussement de cils</option>
-        <option>Sourcils (design, lamination, teinture)</option>
-        <option>Massage relaxant / drainage</option>
+        <option>Sourcils (design, lamination)</option>
+        <option>Massage / Soin corps</option>
         <option>Forfait mariée</option>
         <option>Autre</option>
       </select>
     </div>
-
     <div>
-      <div class="lbl">Décrivez votre demande</div>
-      <textarea class="df-textarea" id="df-desc" placeholder="Ex: Je voudrais un soin anti-âge pour mon mariage dans 3 semaines..."></textarea>
-    </div>
-
-    <div>
-      <div class="lbl">Type de peau / spécificité</div>
+      <div class="lbl">Type de peau</div>
       <div class="em-wrap">
         <div class="em" onclick="this.classList.toggle('sel')">Peau sèche</div>
         <div class="em" onclick="this.classList.toggle('sel')">Peau grasse</div>
         <div class="em" onclick="this.classList.toggle('sel')">Peau mixte</div>
         <div class="em" onclick="this.classList.toggle('sel')">Peau sensible</div>
         <div class="em" onclick="this.classList.toggle('sel')">Peau mature</div>
-        <div class="em" onclick="this.classList.toggle('sel')">Acné / imperfections</div>
-        <div class="em" onclick="this.classList.toggle('sel')">Taches / éclat</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Acné</div>
         <div class="em" onclick="this.classList.toggle('sel')">Je ne sais pas</div>
       </div>
     </div>
-
     <div>
       <div class="lbl">Occasion</div>
       <div class="size-grid">
@@ -452,414 +218,161 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
         <div class="sz" onclick="selSz(this)">Découverte<small>première fois</small></div>
       </div>
     </div>
-
-    <button class="df-btn" onclick="genDevis()">📱 Envoyer sur WhatsApp</button>
+    <button class="df-btn" onclick="window.open(PLANITY,'_blank')">📅 Réserver sur Planity</button>
   </div>
 
-  <!-- ─── SOINS ─── -->
+  <!-- SOINS -->
   <div id="page-soins" class="page">
-    <div style="padding:0 0 0">
-      <div class="sv-header">
-        <div class="sv-title"><em>Nos</em> soins</div>
-        <div class="sv-subtitle">Tous types de beauté · Sur mesure</div>
-      </div>
+    <div class="sv-header">
+      <div class="sv-title"><em>Nos</em> soins</div>
+      <div class="sv-subtitle">Sur mesure · Tous types de beauté</div>
     </div>
-    <div style="padding:0 16px 44px">
-
-      <div class="sv-sec">Soins visage</div>
-      <div class="sv-card">
-        <div class="sv-icon">🌿</div>
-        <div>
-          <div class="sv-name">Soin hydratant & éclat</div>
-          <div class="sv-desc">Nettoyage en profondeur, gommage doux, masque hydratant et massage du visage. Teint lumineux garanti.</div>
-          <div class="sv-tags"><span class="sv-tag">45-60 min</span><span class="sv-tag">Toutes peaux</span></div>
-        </div>
-      </div>
-      <div class="sv-card">
-        <div class="sv-icon">✨</div>
-        <div>
-          <div class="sv-name">Soin anti-âge & fermeté</div>
-          <div class="sv-desc">Actifs ciblés, massage lifting, sérum tenseur et masque régénérant. Résultat visible dès la première séance.</div>
-          <div class="sv-tags"><span class="sv-tag">60-75 min</span><span class="sv-tag">Peaux matures</span></div>
-        </div>
-      </div>
-      <div class="sv-card">
-        <div class="sv-icon">🌸</div>
-        <div>
-          <div class="sv-name">Soin purifiant & anti-acné</div>
-          <div class="sv-desc">Extraction douce, masque purifiant argile, traitement ciblé imperfections. Peau nette et apaisée.</div>
-          <div class="sv-tags"><span class="sv-tag">50-60 min</span><span class="sv-tag">Peaux mixtes/grasses</span></div>
-        </div>
-      </div>
-
-      <div class="sv-sec">Regard & sourcils</div>
-      <div class="sv-card">
-        <div class="sv-icon">👁️</div>
-        <div>
-          <div class="sv-name">Extension de cils</div>
-          <div class="sv-desc">Pose fil à fil, volume russe ou hybride. Durée 3-4 semaines. Retouche disponible toutes les 3 semaines.</div>
-          <div class="sv-tags"><span class="sv-tag">90-120 min</span><span class="sv-tag">Effet naturel ou glamour</span></div>
-        </div>
-      </div>
-      <div class="sv-card">
-        <div class="sv-icon">🌙</div>
-        <div>
-          <div class="sv-name">Rehaussement & teinture cils</div>
-          <div class="sv-desc">Lift permanent sans colle, teinture assortie. Résultat naturel et recourbé pendant 6-8 semaines.</div>
-          <div class="sv-tags"><span class="sv-tag">60 min</span><span class="sv-tag">Durée 6-8 semaines</span></div>
-        </div>
-      </div>
-      <div class="sv-card">
-        <div class="sv-icon">🦋</div>
-        <div>
-          <div class="sv-name">Design & lamination sourcils</div>
-          <div class="sv-desc">Épilation à la cire ou au fil, design selon morphologie du visage, lamination et teinture sur mesure.</div>
-          <div class="sv-tags"><span class="sv-tag">30-45 min</span><span class="sv-tag">Sur mesure</span></div>
-        </div>
-      </div>
-
-      <div class="sv-sec">Ongles</div>
-      <div class="sv-card">
-        <div class="sv-icon">💅</div>
-        <div>
-          <div class="sv-name">Manucure semi-permanente</div>
-          <div class="sv-desc">Soin des mains, pose gel ou semi-permanent. Plus de 200 couleurs disponibles. Tenue 3-4 semaines.</div>
-          <div class="sv-tags"><span class="sv-tag">45-60 min</span><span class="sv-tag">200+ couleurs</span></div>
-        </div>
-      </div>
-      <div class="sv-card">
-        <div class="sv-icon">🎨</div>
-        <div>
-          <div class="sv-name">Nail art & décoration</div>
-          <div class="sv-desc">Dégradés, motifs, pierres, French moderne. Chaque set est une création unique adaptée à votre style.</div>
-          <div class="sv-tags"><span class="sv-tag">Sur mesure</span><span class="sv-tag">Création unique</span></div>
-        </div>
-      </div>
-
-      <div class="sv-sec">Corps & bien-être</div>
-      <div class="sv-card">
-        <div class="sv-icon">🧖</div>
-        <div>
-          <div class="sv-name">Massage relaxant & drainage</div>
-          <div class="sv-desc">Massage suédois, drainage lymphatique ou aux pierres chaudes. Détente profonde et corps ressourcé.</div>
-          <div class="sv-tags"><span class="sv-tag">45-90 min</span><span class="sv-tag">Sur réservation</span></div>
-        </div>
-      </div>
-
-      <a class="sv-cta" href="https://wa.me/33600000000?text=Bonjour%20!%20Je%20souhaite%20prendre%20rendez-vous." target="_blank">📱 Réserver sur WhatsApp</a>
+    <div class="sv-sec">Soins visage</div>
+    <div class="sv-card">
+      <div class="sv-icon">🌿</div>
+      <div><div class="sv-name">Soin hydratant & éclat</div><div class="sv-desc">Nettoyage, gommage doux, masque hydratant et massage du visage.</div><div class="sv-tags"><span class="sv-tag">45-60 min</span><span class="sv-tag">Toutes peaux</span></div></div>
     </div>
+    <div class="sv-card">
+      <div class="sv-icon">✨</div>
+      <div><div class="sv-name">Soin anti-âge & fermeté</div><div class="sv-desc">Actifs ciblés, massage lifting, sérum tenseur et masque régénérant.</div><div class="sv-tags"><span class="sv-tag">60-75 min</span><span class="sv-tag">Peaux matures</span></div></div>
+    </div>
+    <div class="sv-sec">Regard & sourcils</div>
+    <div class="sv-card">
+      <div class="sv-icon">👁️</div>
+      <div><div class="sv-name">Extension de cils</div><div class="sv-desc">Fil à fil, volume russe ou hybride. Durée 3-4 semaines.</div><div class="sv-tags"><span class="sv-tag">90-120 min</span><span class="sv-tag">Naturel ou glamour</span></div></div>
+    </div>
+    <div class="sv-card">
+      <div class="sv-icon">🦋</div>
+      <div><div class="sv-name">Design & lamination sourcils</div><div class="sv-desc">Épilation, design selon morphologie, lamination et teinture sur mesure.</div><div class="sv-tags"><span class="sv-tag">30-45 min</span><span class="sv-tag">Sur mesure</span></div></div>
+    </div>
+    <div class="sv-sec">Ongles</div>
+    <div class="sv-card">
+      <div class="sv-icon">💅</div>
+      <div><div class="sv-name">Manucure semi-permanente</div><div class="sv-desc">Pose gel ou semi-permanent. 200+ couleurs. Tenue 3-4 semaines.</div><div class="sv-tags"><span class="sv-tag">45-60 min</span><span class="sv-tag">200+ couleurs</span></div></div>
+    </div>
+    <a class="btn-planity" href="https://www.planity.com" target="_blank">📅 Réserver sur Planity</a>
   </div>
 
-  <!-- ─── TARIFS ─── -->
+  <!-- TARIFS -->
   <div id="page-tarifs" class="page">
-    <div style="padding:0 0 0">
-      <div class="t-header">
-        <div class="t-title"><em>Nos</em> tarifs</div>
-        <div class="t-subtitle">Transparents & sans surprise</div>
+    <div class="t-header">
+      <div class="t-title"><em>Nos</em> tarifs</div>
+      <div class="t-subtitle">Transparents & sans surprise</div>
+    </div>
+    <div class="t-sec">Soins visage</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Soins visage</div><div class="tcard-sub">Hydratant, anti-âge, purifiant</div></div><div class="tcard-badge">45-75 min</div></div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Soin express</div><div class="tpval">45€</div></div>
+        <div class="tpx"><div class="tplbl">Soin complet</div><div class="tpval">75€</div></div>
+        <div class="tpx"><div class="tplbl">Soin prestige</div><div class="tpval">95€</div></div>
+        <div class="tpx"><div class="tplbl">Forfait 5 séances</div><div class="tpval">320€</div></div>
       </div>
     </div>
-    <div style="padding:0 16px 44px">
-
-      <div class="t-sec">Soins visage</div>
-      <div class="tcard">
-        <div class="tcard-top">
-          <div><div class="tcard-name">Soins visage</div><div class="tcard-sub">Hydratant, anti-âge, purifiant</div></div>
-          <div class="tcard-badge">45-75 min</div>
-        </div>
-        <div class="tprices">
-          <div class="tpx"><div class="tplbl">Soin express</div><div class="tpval">45€</div></div>
-          <div class="tpx"><div class="tplbl">Soin complet</div><div class="tpval">75€</div></div>
-          <div class="tpx"><div class="tplbl">Soin prestige</div><div class="tpval">95€</div></div>
-          <div class="tpx"><div class="tplbl">Forfait 5 séances</div><div class="tpval">320€</div></div>
-        </div>
+    <div class="t-sec">Regard & sourcils</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Extensions de cils</div><div class="tcard-sub">Pose complète</div></div><div class="tcard-badge">90-120 min</div></div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Naturel</div><div class="tpval">75€</div></div>
+        <div class="tpx"><div class="tplbl">Volume russe</div><div class="tpval">95€</div></div>
+        <div class="tpx"><div class="tplbl">Retouche 3 sem.</div><div class="tpval">45€</div></div>
+        <div class="tpx"><div class="tplbl">Dépose</div><div class="tpval">15€</div></div>
       </div>
-
-      <div class="t-sec">Regard & sourcils</div>
-      <div class="tcard">
-        <div class="tcard-top">
-          <div><div class="tcard-name">Extensions de cils</div><div class="tcard-sub">Pose complète</div></div>
-          <div class="tcard-badge">90-120 min</div>
-        </div>
-        <div class="tprices">
-          <div class="tpx"><div class="tplbl">Naturel</div><div class="tpval">75€</div></div>
-          <div class="tpx"><div class="tplbl">Volume russe</div><div class="tpval">95€</div></div>
-          <div class="tpx"><div class="tplbl">Retouche 3 sem.</div><div class="tpval">45€</div></div>
-          <div class="tpx"><div class="tplbl">Dépose</div><div class="tpval">15€</div></div>
-        </div>
-      </div>
-      <div class="tcard">
-        <div class="tcard-top">
-          <div><div class="tcard-name">Rehaussement cils</div><div class="tcard-sub">+ teinture incluse</div></div>
-          <div class="tcard-badge">60 min</div>
-        </div>
-        <div class="tprices">
-          <div class="tpx" style="grid-column:1/-1"><div class="tplbl">Forfait complet</div><div class="tpval">65€</div></div>
-        </div>
-        <div class="tcard-note">Résultat pendant 6 à 8 semaines. Convient à tous types de cils.</div>
-      </div>
-      <div class="tcard">
-        <div class="tcard-top">
-          <div><div class="tcard-name">Sourcils</div><div class="tcard-sub">Design, épilation, lamination</div></div>
-        </div>
-        <div class="tprices">
-          <div class="tpx"><div class="tplbl">Épilation</div><div class="tpval">15€</div></div>
-          <div class="tpx"><div class="tplbl">Design complet</div><div class="tpval">25€</div></div>
-          <div class="tpx"><div class="tplbl">Lamination</div><div class="tpval">55€</div></div>
-          <div class="tpx"><div class="tplbl">Teinture</div><div class="tpval">10€</div></div>
-        </div>
-      </div>
-
-      <div class="t-sec">Ongles</div>
-      <div class="tcard">
-        <div class="tcard-top">
-          <div><div class="tcard-name">Manucure & Ongles</div><div class="tcard-sub">Gel, semi-permanent, nail art</div></div>
-        </div>
-        <div class="tprices">
-          <div class="tpx"><div class="tplbl">Semi-perm.</div><div class="tpval">35€</div></div>
-          <div class="tpx"><div class="tplbl">Gel naturel</div><div class="tpval">45€</div></div>
-          <div class="tpx"><div class="tplbl">Capsules</div><div class="tpval">55€</div></div>
-          <div class="tpx"><div class="tplbl">Nail art +</div><div class="tpval">10-25€</div></div>
-        </div>
-      </div>
-
-      <div class="t-sec">Forfaits spéciaux</div>
-      <div class="fcard">
-        <div class="fcard-top"><div class="fcard-name">💍 Forfait Mariée</div><div class="fcard-price">Sur devis</div></div>
-        <div class="fcard-items">
-          <div class="fcard-item">Essai maquillage (1h)</div>
-          <div class="fcard-item">Jour J : maquillage + coiffure</div>
-          <div class="fcard-item">Soin visage éclat J-7</div>
-          <div class="fcard-item">Manucure + pédicure</div>
-        </div>
-        <div class="fcard-note">Forfait personnalisé selon vos souhaits</div>
-      </div>
-      <div class="fcard" style="background:linear-gradient(135deg,#8B6B7A,#6B4F5E)">
-        <div class="fcard-top"><div class="fcard-name">🎁 Carte Cadeau</div><div class="fcard-price">Dès 30€</div></div>
-        <div class="fcard-items">
-          <div class="fcard-item">Valable 1 an sur tous les soins</div>
-          <div class="fcard-item">Offerte dans un coffret élégant</div>
-          <div class="fcard-item">Montant libre ou soin au choix</div>
-        </div>
-      </div>
-
-      <a class="twa" href="https://wa.me/33600000000?text=Bonjour%20!%20Je%20souhaite%20prendre%20rendez-vous." target="_blank">📱 Prendre rendez-vous</a>
     </div>
-  </div>
-
-</div>
-
-<!-- OVERLAY -->
-<div id="overlay" onclick="fermerModal()">
-  <div id="mbox" onclick="event.stopPropagation()">
-    <div class="mbox-ico" id="mbox-ico"></div>
-    <div class="mbox-name" id="mbox-name"></div>
-    <div class="mbox-desc" id="mbox-desc"></div>
-    <a class="mbox-wa" id="mbox-wa" href="#" target="_blank">📱 Prendre rendez-vous</a>
-    <button class="mbox-cancel" onclick="fermerModal()">Fermer</button>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Sourcils</div><div class="tcard-sub">Design, épilation, lamination</div></div></div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Épilation</div><div class="tpval">15€</div></div>
+        <div class="tpx"><div class="tplbl">Design complet</div><div class="tpval">25€</div></div>
+        <div class="tpx"><div class="tplbl">Lamination</div><div class="tpval">55€</div></div>
+        <div class="tpx"><div class="tplbl">Teinture</div><div class="tpval">10€</div></div>
+      </div>
+    </div>
+    <div class="t-sec">Ongles</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Manucure & Ongles</div><div class="tcard-sub">Gel, semi-permanent, nail art</div></div></div>
+      <div class="tprices">
+        <div class="tpx"><div class="tplbl">Semi-perm.</div><div class="tpval">35€</div></div>
+        <div class="tpx"><div class="tplbl">Gel naturel</div><div class="tpval">45€</div></div>
+        <div class="tpx"><div class="tplbl">Capsules</div><div class="tpval">55€</div></div>
+        <div class="tpx"><div class="tplbl">Nail art +</div><div class="tpval">10-25€</div></div>
+      </div>
+    </div>
+    <div class="t-sec">Forfaits</div>
+    <div class="fcard">
+      <div class="fcard-top"><div class="fcard-name">💍 Forfait Mariée</div><div class="fcard-price">Sur devis</div></div>
+      <div class="fcard-items">
+        <div class="fcard-item">Essai maquillage (1h)</div>
+        <div class="fcard-item">Jour J : maquillage + coiffure</div>
+        <div class="fcard-item">Soin visage éclat J-7</div>
+        <div class="fcard-item">Manucure + pédicure</div>
+      </div>
+      <div class="fcard-note">Forfait personnalisé selon vos souhaits</div>
+    </div>
+    <a class="btn-planity" href="https://www.planity.com" target="_blank">📅 Réserver sur Planity</a>
   </div>
 </div>
 
 <script>
-var WA = "33600000000";
+var PLANITY = "https://www.planity.com";
 var API = "https://philo-backend-by2c.onrender.com";
-
-var SYS = `Tu es l'assistante IA d'un salon d'esthétique haut de gamme. Tu t'appelles Sofia. Ton ton est chaleureux, doux et professionnel — comme une vraie esthéticienne qui conseille.
-
-RÈGLE ABSOLUE : Tu informes et conseilles, mais tu ne donnes JAMAIS de conseils médicaux. Pour tout protocole de soin, tu renvoies vers l'esthéticienne. Pour les RDV et réservations, tu diriges vers WhatsApp.
-
-TU CONNAIS PARFAITEMENT :
-- Soins visage : hydratation, anti-âge (rides, fermeté, éclat), purifiant (acné, points noirs), sensible, gommage enzymatique, masque acide hyaluronique
-- Techniques : ultrasons, mésothérapie cosmétique, microdermabrasion, radiofrequence, lumière pulsée, peeling doux
-- Types de peau : Fitzpatrick I à VI, sebum, TEWL, pH cutané, routine double nettoyage, SPF
-- Cils : extensions fil à fil, volume russe, hybride, mega volume, retouche 3 semaines, dépose, rehaussement lift, laminage
-- Sourcils : design selon morphologie visage (ovale, carré, rond, coeur, allongé), épilation cire chaude, fil, pince, lamination, teinture henne, microblading (informer mais orienter vers spécialiste)
-- Ongles : gel UV, semi-permanent, capsules, résine, builder gel, nail art (foils, chrome, dégradé, stamping), cuticules, soin mains paraffine
-- Épilation : cire froide, cire chaude orientale, film, strip, laser (informer sur protocole mais orienter), IPL
-- Massages : suédois, drainage lymphatique Vodder, aux pierres chaudes, kobido visage, palper-rouler
-- Corps : gommage marin, enveloppement chocolat/algues, soin jambes légères
-- Mariée : essai J-30, protocole peau, maquillage longue tenue, coiffure
-- Produits : Dermalogica, Caudalie, La Roche-Posay, Biologique Recherche (pouvoir en parler)
-
-TARIFS :
-Soins visage : 45-95€. Extensions cils : 75-95€, retouche 45€. Rehaussement : 65€. Sourcils : 15-55€. Semi-perm ongles : 35€, gel : 45€, capsules : 55€, nail art : +10-25€. Massage : 50-90€. Forfait mariée : sur devis.
-
-Pour RDV → WhatsApp. Pour urgence peau → dermatologue.`;
-
 var busy = false;
+var SYS = "Tu es Sofia, assistante IA d un salon d esthetique haut de gamme. Ton ton est chaleureux, doux et professionnel. Jamais de markdown ni asterisques. Texte simple uniquement. Max 4 phrases. Pour les disponibilites et reservations, tu diriges vers Planity. Tu connais : soins visage, extensions cils, rehaussement, sourcils, ongles, epilations, massages, forfait mariee. Tarifs : soins visage 45-95, extensions cils 75-95 retouche 45, rehaussement 65, sourcils 15-55, semi-perm ongles 35 gel 45 capsules 55.";
 
-function showTab(btn, n) {
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
-  document.getElementById("page-" + n).classList.add("active");
-  btn.classList.add("active");
+function showTab(btn,n){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});document.getElementById("page-"+n).classList.add("active");btn.classList.add("active")}
+function scrollChat(){setTimeout(function(){var c=document.getElementById("page-chat");c.scrollTop=c.scrollHeight},80)}
+function mkAv(){var av=document.createElement("div");av.className="bav";av.innerHTML='<svg viewBox="0 0 52 52" fill="none"><ellipse cx="26" cy="32" rx="5" ry="12" fill="white" opacity=".9"/><ellipse cx="26" cy="32" rx="5" ry="12" fill="white" opacity=".9" transform="rotate(60 26 26)"/><ellipse cx="26" cy="32" rx="5" ry="12" fill="white" opacity=".9" transform="rotate(-60 26 26)"/><circle cx="26" cy="26" r="6" fill="white"/></svg>';return av}
+
+function addBot(txt,withQ){
+  var msgs=document.getElementById("messages");
+  var row=document.createElement("div");row.className="mrow bot";
+  var bub=document.createElement("div");bub.className="bub bot";bub.textContent=txt;
+  if(withQ){var qw=document.createElement("div");qw.className="qbtns";withQ.forEach(function(it){var b=document.createElement("button");b.className="qb";b.textContent=it[0];(function(m){b.onclick=function(){send(m)}})(it[1]);qw.appendChild(b)});bub.appendChild(qw)}
+  row.appendChild(mkAv());row.appendChild(bub);msgs.appendChild(row);scrollChat()
 }
+function addUser(txt){var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow user";var bub=document.createElement("div");bub.className="bub user";bub.textContent=txt;row.appendChild(bub);msgs.appendChild(row);scrollChat()}
+function setTyping(on){var old=document.getElementById("ty-row");if(old)old.remove();if(!on)return;var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow bot";row.id="ty-row";var ty=document.createElement("div");ty.className="tybub";ty.innerHTML="<span></span><span></span><span></span>";row.appendChild(mkAv());row.appendChild(ty);msgs.appendChild(row);scrollChat()}
 
-function scrollChat() {
-  setTimeout(function(){
-    var c = document.getElementById("page-chat");
-    c.scrollTop = c.scrollHeight;
-  }, 80);
-}
+function addPlanityBtn(bub){var a=document.createElement("a");a.className="btn-planity-sm";a.href=PLANITY;a.target="_blank";a.textContent="📅 Réserver sur Planity";bub.appendChild(a)}
 
-function mkAv() {
-  var av = document.createElement("div");
-  av.className = "bav";
-  av.innerHTML = '<svg viewBox="0 0 52 52" fill="none"><ellipse cx="26" cy="32" rx="5" ry="12" fill="white" opacity=".9"/><ellipse cx="26" cy="32" rx="5" ry="12" fill="white" opacity=".9" transform="rotate(60 26 26)"/><ellipse cx="26" cy="32" rx="5" ry="12" fill="white" opacity=".9" transform="rotate(-60 26 26)"/><circle cx="26" cy="26" r="6" fill="white"/></svg>';
-  return av;
-}
-
-function addBot(txt, withQ) {
-  var msgs = document.getElementById("messages");
-  var row = document.createElement("div"); row.className = "mrow bot";
-  var bub = document.createElement("div"); bub.className = "bub bot"; bub.textContent = txt;
-  if (withQ) {
-    var qw = document.createElement("div"); qw.className = "qbtns";
-    withQ.forEach(function(it){
-      var b = document.createElement("button"); b.className = "qb"; b.textContent = it[0];
-      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
-      qw.appendChild(b);
-    });
-    bub.appendChild(qw);
-  }
-  row.appendChild(mkAv()); row.appendChild(bub); msgs.appendChild(row); scrollChat();
-}
-
-function addUser(txt) {
-  var msgs = document.getElementById("messages");
-  var row = document.createElement("div"); row.className = "mrow user";
-  var bub = document.createElement("div"); bub.className = "bub user"; bub.textContent = txt;
-  row.appendChild(bub); msgs.appendChild(row); scrollChat();
-}
-
-function setTyping(on) {
-  var old = document.getElementById("ty-row"); if (old) old.remove();
-  if (!on) return;
-  var msgs = document.getElementById("messages");
-  var row = document.createElement("div"); row.className = "mrow bot"; row.id = "ty-row";
-  var ty = document.createElement("div"); ty.className = "tybub";
-  ty.innerHTML = "<span></span><span></span><span></span>";
-  row.appendChild(mkAv()); row.appendChild(ty); msgs.appendChild(row); scrollChat();
-}
-
-function isRdv(txt) {
-  var l = txt.toLowerCase();
-  return l.indexOf("rdv") >= 0 || l.indexOf("rendez") >= 0 || l.indexOf("réserver") >= 0 || l.indexOf("reserver") >= 0 || l.indexOf("appointment") >= 0 || l.indexOf("prendre") >= 0;
-}
-
-function send(txt) {
-  if (!txt || busy) return;
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+function send(txt){
+  if(!txt||busy)return;
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
   document.getElementById("page-chat").classList.add("active");
   document.querySelector(".tab").classList.add("active");
-  addUser(txt); busy = true; setTyping(true);
-  fetch(API + "/maka", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: txt, userId: "esthe_" + Date.now(), systemPrompt: SYS })
-  }).then(function(r){ return r.json(); })
+  addUser(txt);busy=true;setTyping(true);
+  fetch(API+"/maka",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,userId:"esthe_"+Date.now(),systemPrompt:SYS})})
+  .then(function(r){return r.json()})
   .then(function(d){
     setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
-    var msgs = document.getElementById("messages");
-    var row = document.createElement("div"); row.className = "mrow bot";
-    var bub = document.createElement("div"); bub.className = "bub bot"; bub.textContent = ans;
-    if (isRdv(txt)) {
-      var wa = document.createElement("a"); wa.className = "wa-bubble";
-      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je souhaite prendre rendez-vous.");
-      wa.target = "_blank"; wa.textContent = "📱 Réserver sur WhatsApp";
-      bub.appendChild(wa);
-    }
-    row.appendChild(mkAv()); row.appendChild(bub); msgs.appendChild(row); scrollChat();
-    busy = false;
-  }).catch(function(){
-    setTyping(false);
-    addBot("Erreur de connexion, réessayez.");
-    busy = false;
-  });
+    var ans=(d&&d.answer)?d.answer:"Je suis là pour vous aider !";
+    var msgs=document.getElementById("messages");
+    var row=document.createElement("div");row.className="mrow bot";
+    var bub=document.createElement("div");bub.className="bub bot";bub.textContent=ans;
+    var l=txt.toLowerCase();
+    if(l.indexOf("rdv")>=0||l.indexOf("rendez")>=0||l.indexOf("reserver")>=0||l.indexOf("réserver")>=0||l.indexOf("disponible")>=0||l.indexOf("place")>=0||l.indexOf("créneau")>=0||l.indexOf("creneau")>=0)addPlanityBtn(bub);
+    row.appendChild(mkAv());row.appendChild(bub);msgs.appendChild(row);scrollChat();busy=false
+  }).catch(function(){setTyping(false);addBot("Erreur de connexion, réessayez.");busy=false})
 }
+function sendMsg(){var inp=document.getElementById("inp");var txt=inp.value.trim();if(!txt)return;inp.value="";send(txt)}
+document.getElementById("inp").addEventListener("keydown",function(e){if(e.key==="Enter")sendMsg()});
+function selSz(el){document.querySelectorAll(".sz").forEach(function(e){e.classList.remove("sel")});el.classList.add("sel")}
 
-function sendMsg() {
-  var inp = document.getElementById("inp");
-  var txt = inp.value.trim(); if (!txt) return;
-  inp.value = ""; send(txt);
-}
-
-document.getElementById("inp").addEventListener("keydown", function(e){
-  if (e.key === "Enter") sendMsg();
-});
-
-function selSz(el) {
-  document.querySelectorAll(".sz").forEach(function(e){ e.classList.remove("sel"); });
-  el.classList.add("sel");
-}
-
-function genDevis() {
-  var type = document.getElementById("df-type").value;
-  var desc = document.getElementById("df-desc").value.trim();
-  var peaux = Array.from(document.querySelectorAll(".em.sel")).map(function(e){ return e.textContent; }).join(", ");
-  var sz = document.querySelector(".sz.sel");
-  var occasion = sz ? sz.childNodes[0].textContent.trim() : "";
-  if (!type && !desc) { alert("Sélectionnez un soin ou décrivez votre demande"); return; }
-
-  var waMsg = "Bonjour ! Je souhaite un devis beauté.\n\n";
-  if (type) waMsg += "Soin : " + type + "\n";
-  if (desc) waMsg += "Détail : " + desc + "\n";
-  if (peaux) waMsg += "Type de peau : " + peaux + "\n";
-  if (occasion) waMsg += "Occasion : " + occasion + "\n";
-
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
-  document.getElementById("page-chat").classList.add("active");
-  document.querySelector(".tab").classList.add("active");
-
-  addUser("Je voudrais un devis pour : " + (type || desc) + (occasion ? " · " + occasion : ""));
-  busy = true; setTyping(true);
-
-  var resume = "La cliente demande un devis :\n";
-  if (type) resume += "- Soin : " + type + "\n";
-  if (desc) resume += "- Détail : " + desc + "\n";
-  if (peaux) resume += "- Type de peau : " + peaux + "\n";
-  if (occasion) resume += "- Occasion : " + occasion + "\n";
-  resume += "\nDonne une estimation chaleureuse en 3-4 phrases. Cite une fourchette de prix. Termine en invitant à confirmer sur WhatsApp avec l'esthéticienne.";
-
-  fetch(API + "/maka", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: resume, userId: "esthe_devis", systemPrompt: SYS })
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
-    setTyping(false);
-    var ans = (d && d.answer) ? d.answer : "Contactez l'esthéticienne pour un devis précis.";
-    var msgs = document.getElementById("messages");
-    var row = document.createElement("div"); row.className = "mrow bot";
-    var bub = document.createElement("div"); bub.className = "bub bot"; bub.textContent = ans;
-    var wa = document.createElement("a"); wa.className = "wa-bubble";
-    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg);
-    wa.target = "_blank"; wa.textContent = "✅ Confirmer avec l'esthéticienne";
-    bub.appendChild(wa);
-    row.appendChild(mkAv()); row.appendChild(bub); msgs.appendChild(row); scrollChat();
-    busy = false;
-  }).catch(function(){ setTyping(false); busy = false; });
-}
-
-function fermerModal() { document.getElementById("overlay").classList.remove("open"); }
-
-// Init
 setTimeout(function(){
   document.getElementById("splash").classList.add("gone");
   setTimeout(function(){
-    document.getElementById("splash").style.display = "none";
-    addBot("Bonjour, je suis Sofia, votre assistante beauté ✨\n\nJe peux vous conseiller sur nos soins, vous aider à préparer votre rendez-vous ou répondre à toutes vos questions beauté.\n\nComment puis-je vous aider ?", [
-      ["Soins visage", "Quels soins visage proposez-vous ?"],
-      ["Extensions cils", "Comment fonctionnent les extensions de cils ?"],
-      ["Tarifs", "Quels sont vos tarifs ?"],
-      ["Peau sensible", "J'ai la peau sensible, que me conseillez-vous ?"],
-      ["Forfait mariée", "Je me marie, avez-vous un forfait ?"],
-      ["Prendre RDV", "Je voudrais prendre rendez-vous"]
-    ]);
-  }, 900);
-}, 2500);
+    document.getElementById("splash").style.display="none";
+    addBot("Bonjour, je suis Sofia, votre assistante beauté ✨\n\nJe peux vous conseiller sur nos soins et répondre à toutes vos questions. Pour réserver un créneau, c'est directement sur Planity !",[
+      ["Soins visage","Quels soins visage proposez-vous ?"],
+      ["Extensions cils","Comment fonctionnent les extensions de cils ?"],
+      ["Tarifs","Quels sont vos tarifs ?"],
+      ["Peau sensible","J'ai la peau sensible, que me conseillez-vous ?"],
+      ["Prendre RDV","Je voudrais prendre rendez-vous"],
+      ["Forfait mariée","Je me marie, avez-vous un forfait ?"]
+    ])
+  },900)
+},2500)
 </script>
 </body>
 </html>
