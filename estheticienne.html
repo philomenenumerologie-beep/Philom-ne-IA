@@ -218,7 +218,7 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
         <div class="sz" onclick="selSz(this)">Découverte<small>première fois</small></div>
       </div>
     </div>
-    <button class="df-btn" onclick="window.open(PLANITY,'_blank')">📅 Réserver sur Planity</button>
+    <button class="df-btn" onclick="envoyerProjet()">📱 Envoyer ma demande</button>
   </div>
 
   <!-- SOINS -->
@@ -315,6 +315,7 @@ html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:
 
 <script>
 var PLANITY = "https://www.planity.com";
+var WA = "33600000000"; // Remplacer par le numéro de l'esthéticienne
 var API = "https://philo-backend-by2c.onrender.com";
 var busy = false;
 var SYS = "Tu es Sofia, assistante IA d un salon d esthetique haut de gamme. Ton ton est chaleureux, doux et professionnel. Jamais de markdown ni asterisques. Texte simple uniquement. Max 4 phrases. Pour les disponibilites et reservations, tu diriges vers Planity. Tu connais : soins visage, extensions cils, rehaussement, sourcils, ongles, epilations, massages, forfait mariee. Tarifs : soins visage 45-95, extensions cils 75-95 retouche 45, rehaussement 65, sourcils 15-55, semi-perm ongles 35 gel 45 capsules 55.";
@@ -333,7 +334,21 @@ function addBot(txt,withQ){
 function addUser(txt){var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow user";var bub=document.createElement("div");bub.className="bub user";bub.textContent=txt;row.appendChild(bub);msgs.appendChild(row);scrollChat()}
 function setTyping(on){var old=document.getElementById("ty-row");if(old)old.remove();if(!on)return;var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow bot";row.id="ty-row";var ty=document.createElement("div");ty.className="tybub";ty.innerHTML="<span></span><span></span><span></span>";row.appendChild(mkAv());row.appendChild(ty);msgs.appendChild(row);scrollChat()}
 
-function addPlanityBtn(bub){var a=document.createElement("a");a.className="btn-planity-sm";a.href=PLANITY;a.target="_blank";a.textContent="📅 Réserver sur Planity";bub.appendChild(a)}
+function addPlanityBtn(bub){var a=document.createElement("a");a.className="btn-planity-sm";a.href="https://wa.me/"+WA+"?text="+encodeURIComponent("Bonjour ! Je souhaite prendre rendez-vous.\n\nVoici le lien pour réserver mon créneau :\n"+PLANITY);a.target="_blank";a.textContent="📱 Demander un rendez-vous";bub.appendChild(a)}
+
+function envoyerProjet(){
+  var type=document.getElementById("df-type").value;
+  var peaux=Array.from(document.querySelectorAll(".em.sel")).map(function(e){return e.textContent}).join(", ");
+  var sz=document.querySelector(".sz.sel");
+  var occasion=sz?sz.childNodes[0].textContent.trim():"";
+  if(!type){alert("Sélectionnez un type de soin avant d'envoyer.");return}
+  var msg="Bonjour ! Je souhaite réserver un soin.\n\n";
+  msg+="Soin : "+type+"\n";
+  if(peaux)msg+="Type de peau : "+peaux+"\n";
+  if(occasion)msg+="Occasion : "+occasion+"\n";
+  msg+="\nVoici le lien pour réserver mon créneau directement :\n"+PLANITY;
+  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank")
+}
 
 function send(txt){
   if(!txt||busy)return;
