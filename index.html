@@ -118,6 +118,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 .promo-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#111}
 .promo-unit{font-size:9px;color:var(--text-muted)}
 .promo-save{text-align:center;font-size:11px;color:var(--gold-dim);font-style:italic;font-weight:600}
+.mentions{margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:10.5px;line-height:1.8;color:var(--text-muted);text-align:center}
 </style>
 </head>
 <body>
@@ -230,32 +231,18 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
       <div class="g-card" onclick="ouvrirApp(1)">
         <div class="g-new">Nouveau</div>
         <div class="g-card-top">
-          <div class="g-card-ico" style="background:#1A1200">👑</div>
-          <div><div class="g-card-name">Bar'a Frites</div><div class="g-card-type">Friterie · Belgique</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Menu complet avec panier intégré</div>
-          <div class="g-feat">Commande directe sur WhatsApp</div>
-          <div class="g-feat">Admin hamburger &amp; bière du mois</div>
-          <div class="g-feat">Filtres par catégorie</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">590€ — puis 390€/an</div><div class="g-prix-sub">Formule Pro</div></div><span style="font-size:20px">👉</span></div>
-      </div>
-      <div class="g-card" onclick="ouvrirApp(2)">
-        <div class="g-new">Nouveau</div>
-        <div class="g-card-top">
           <div class="g-card-ico" style="background:#2C1810">🌸</div>
           <div><div class="g-card-name">Lumière Esthétique</div><div class="g-card-type">Esthéticienne · Beauté</div></div>
         </div>
         <div class="g-features">
           <div class="g-feat">Chatbot Sofia — conseil beauté 24h/24</div>
-          <div class="g-feat">Devis soins automatique WhatsApp</div>
+          <div class="g-feat">Projet soin + réservation Planity intégrée</div>
           <div class="g-feat">Catalogue cils, ongles, visage, massage</div>
           <div class="g-feat">Design rose blush ultra élégant</div>
         </div>
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">Formule Premium</div></div><span style="font-size:20px">👉</span></div>
       </div>
-      <div class="g-card" onclick="ouvrirApp(3)">
+      <div class="g-card" onclick="ouvrirApp(2)">
         <div class="g-new">Nouveau</div>
         <div class="g-card-top">
           <div class="g-card-ico" style="background:#C0392B">🍕</div>
@@ -269,7 +256,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">490€ — puis 390€/an</div><div class="g-prix-sub">Formule Essentiel</div></div><span style="font-size:20px">👉</span></div>
       </div>
-      <div class="g-card" onclick="ouvrirApp(4)">
+      <div class="g-card" onclick="ouvrirApp(3)">
         <div class="g-card-top">
           <div class="g-card-ico" style="background:#1e3a5f">⚽</div>
           <div><div class="g-card-name">Coach IA Football</div><div class="g-card-type">Club sportif · Belgique</div></div>
@@ -282,7 +269,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">50€ à 390€/an</div><div class="g-prix-sub">Selon nombre de coachs</div></div><span style="font-size:20px">👉</span></div>
       </div>
-      <div class="g-card" onclick="ouvrirApp(5)">
+      <div class="g-card" onclick="ouvrirApp(4)">
         <div class="g-card-top">
           <div class="g-card-ico" style="background:#134e4a">🎨</div>
           <div><div class="g-card-name">Jo Déco</div><div class="g-card-type">Peintre-décorateur · France</div></div>
@@ -294,6 +281,20 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
           <div class="g-feat">Estimation prix automatique</div>
         </div>
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">Formule Premium</div></div><span style="font-size:20px">👉</span></div>
+      </div>
+      <div class="g-card" onclick="ouvrirApp(5)">
+        <div class="g-new">Nouveau</div>
+        <div class="g-card-top">
+          <div class="g-card-ico" style="background:#0D0D0D">🤘</div>
+          <div><div class="g-card-name">Direct Action</div><div class="g-card-type">Groupe Hardcore · Belgique</div></div>
+        </div>
+        <div class="g-features">
+          <div class="g-feat">Chatbot IA style fanzine hardcore</div>
+          <div class="g-feat">Dates de concerts en temps réel</div>
+          <div class="g-feat">Discographie complète + Bandcamp</div>
+          <div class="g-feat">Formulaire booking</div>
+        </div>
+        <div class="g-prix"><div><div class="g-prix-val">490€ — puis 390€/an</div><div class="g-prix-sub">Formule Essentiel</div></div><span style="font-size:20px">👉</span></div>
       </div>
     </div>
   </div>
@@ -410,6 +411,13 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 
     <div class="t-note">Hébergement, mises à jour et support WhatsApp inclus dans tous les tarifs.</div>
     <a class="t-wa" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20!%20Je%20voudrais%20en%20savoir%20plus%20sur%20vos%20apps%20IA." target="_blank">📱 Nous contacter sur WhatsApp</a>
+
+    <div class="mentions">
+      <b style="color:var(--text-mid);">Philomène IA</b> — Florentin Caron, Entrepreneur Individuel<br/>
+      SIRET : 51108926000026 — APE 6201Z<br/>
+      18 Cour Delcroix, 239 Rue des Cinq Voies, 59200 Tourcoing, France<br/>
+      <span style="opacity:.7;">Site édité par Philomène IA · <a href="https://philomeneia.com" style="color:inherit;">philomeneia.com</a></span>
+    </div>
   </div>
 </div>
 
@@ -433,11 +441,11 @@ var busy = false;
 
 var APPS = [
   {ico:"🖤",name:"Maka Tattoo",type:"Tatouage — Belgique",desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis automatique WhatsApp et admin pour gérer ses flashs.",wa:"Je suis intéressé par une app comme Maka Tattoo !",url:"https://www.philomeneia.com/maka-tattoo.html"},
-  {ico:"👑",name:"Bar'a Frites",type:"Friterie — Belgique",desc:"App menu complet pour friterie avec panier intégré, commande WhatsApp directe et admin pour gérer le hamburger et la bière du mois.",wa:"Je suis intéressé par une app comme Bar'a Frites !",url:"https://www.philomeneia.com/bara-frites.html"},
-  {ico:"🌸",name:"Lumière Esthétique",type:"Esthéticienne — Beauté",desc:"App élégante pour salon beauté avec chatbot Sofia, devis soins sur WhatsApp et catalogue complet cils, ongles, visage.",wa:"Je suis intéressé par une app comme Lumière Esthétique !",url:"https://www.philomeneia.com/estheticienne"},
+  {ico:"🌸",name:"Lumière Esthétique",type:"Esthéticienne — Beauté",desc:"App élégante pour salon beauté avec chatbot Sofia, projet soin + réservation Planity intégrée, catalogue complet cils, ongles, visage.",wa:"Je suis intéressé par une app comme Lumière Esthétique !",url:"https://www.philomeneia.com/esthetique.html"},
   {ico:"🍕",name:"Yolo Pizza",type:"Restaurant — Commande WhatsApp",desc:"App pour pizzeria avec menu complet, panier et commande directe sur WhatsApp.",wa:"Je suis intéressé par une app comme Yolo Pizza !",url:"https://www.philomeneia.com/yolo-pizza.html"},
   {ico:"⚽",name:"Coach IA Football",type:"Club sportif — Belgique",desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.",wa:"Je suis intéressé par une app Coach IA pour mon club !"},
-  {ico:"🎨",name:"Jo Déco",type:"Peintre-décorateur — France",desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.",wa:"Je suis intéressé par une app comme Jo Déco !"}
+  {ico:"🎨",name:"Jo Déco",type:"Peintre-décorateur — France",desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.",wa:"Je suis intéressé par une app comme Jo Déco !"},
+  {ico:"🤘",name:"Direct Action",type:"Groupe Hardcore — Belgique",desc:"App style fanzine pour groupe de musique avec chatbot IA, dates de concerts, discographie et formulaire de booking.",wa:"Je suis intéressé par une app comme Direct Action !",url:"https://www.philomeneia.com/groupe.html"}
 ];
 
 var SOUS_METIERS = {
@@ -449,26 +457,12 @@ var SOUS_METIERS = {
   autre:["Consultant","Photographe","Formateur","Autre activité"]
 };
 
-function selFormule(btn, val) {
-  document.querySelectorAll('#formule-wrap .col-btn').forEach(function(b){ b.classList.remove('sel'); });
-  btn.classList.add('sel');
-  btn.dataset.val = val;
-}
-
-function updateSousMetier(){
-  var metier=document.getElementById("df-metier").value;
-  var block=document.getElementById("sous-metier-block");
-  var sel=document.getElementById("df-sous");
-  if(!metier){block.style.display="none";return;}
-  var options=SOUS_METIERS[metier]||[];
-  sel.innerHTML='<option value="">Sélectionnez...</option>';
-  options.forEach(function(o){var opt=document.createElement("option");opt.value=o;opt.textContent=o;sel.appendChild(opt);});
-  block.style.display="block";
-}
+function selFormule(btn,val){document.querySelectorAll('#formule-wrap .col-btn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');btn.dataset.val=val}
+function updateSousMetier(){var metier=document.getElementById("df-metier").value;var block=document.getElementById("sous-metier-block");var sel=document.getElementById("df-sous");if(!metier){block.style.display="none";return}var options=SOUS_METIERS[metier]||[];sel.innerHTML='<option value="">Sélectionnez...</option>';options.forEach(function(o){var opt=document.createElement("option");opt.value=o;opt.textContent=o;sel.appendChild(opt)});block.style.display="block"}
 
 function ouvrirApp(i){
   var a=APPS[i];
-  if(a.url){window.open(a.url,"_blank");return;}
+  if(a.url){window.open(a.url,"_blank");return}
   document.getElementById("m-ico").textContent=a.ico;
   document.getElementById("m-name").textContent=a.name;
   document.getElementById("m-type").textContent=a.type;
@@ -477,64 +471,39 @@ function ouvrirApp(i){
   document.getElementById("overlay").style.display="flex";
 }
 
-function fermerModal(){document.getElementById("overlay").style.display="none";}
+function fermerModal(){document.getElementById("overlay").style.display="none"}
 
 function showTab(btn,n){
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
   document.getElementById("page-"+n).classList.add("active");
   btn.classList.add("active");
 }
 
-function scrollChat(){setTimeout(function(){var c=document.getElementById("page-chat");c.scrollTop=c.scrollHeight;},80);}
+function scrollChat(){setTimeout(function(){var c=document.getElementById("page-chat");c.scrollTop=c.scrollHeight},80)}
 
 function addBot(txt,withQ){
   var msgs=document.getElementById("messages");
   var row=document.createElement("div");row.className="mrow bot";
   var av=document.createElement("div");av.className="bav";av.textContent="✨";
   var bub=document.createElement("div");bub.className="bub bot";bub.textContent=txt;
-  if(withQ){
-    var qw=document.createElement("div");qw.className="qbtns";
-    withQ.forEach(function(it){
-      var b=document.createElement("button");b.className="qb";b.textContent=it[0];
-      (function(m){b.onclick=function(){send(m);};})(it[1]);
-      qw.appendChild(b);
-    });
-    bub.appendChild(qw);
-  }
-  row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);scrollChat();
+  if(withQ){var qw=document.createElement("div");qw.className="qbtns";withQ.forEach(function(it){var b=document.createElement("button");b.className="qb";b.textContent=it[0];(function(m){b.onclick=function(){send(m)}})(it[1]);qw.appendChild(b)});bub.appendChild(qw)}
+  row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);scrollChat()
 }
 
-function addUser(txt){
-  var msgs=document.getElementById("messages");
-  var row=document.createElement("div");row.className="mrow user";
-  var bub=document.createElement("div");bub.className="bub user";bub.textContent=txt;
-  row.appendChild(bub);msgs.appendChild(row);scrollChat();
-}
+function addUser(txt){var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow user";var bub=document.createElement("div");bub.className="bub user";bub.textContent=txt;row.appendChild(bub);msgs.appendChild(row);scrollChat()}
 
-function setTyping(on){
-  var old=document.getElementById("ty-row");if(old)old.remove();
-  if(!on)return;
-  var msgs=document.getElementById("messages");
-  var row=document.createElement("div");row.className="mrow bot";row.id="ty-row";
-  var av=document.createElement("div");av.className="bav";av.textContent="✨";
-  var ty=document.createElement("div");ty.className="tybub";
-  ty.innerHTML="<span></span><span></span><span></span>";
-  row.appendChild(av);row.appendChild(ty);msgs.appendChild(row);scrollChat();
-}
+function setTyping(on){var old=document.getElementById("ty-row");if(old)old.remove();if(!on)return;var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow bot";row.id="ty-row";var av=document.createElement("div");av.className="bav";av.textContent="✨";var ty=document.createElement("div");ty.className="tybub";ty.innerHTML="<span></span><span></span><span></span>";row.appendChild(av);row.appendChild(ty);msgs.appendChild(row);scrollChat()}
 
 function send(txt){
   if(!txt||busy)return;
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
   document.getElementById("page-chat").classList.add("active");
   document.querySelector(".tab").classList.add("active");
   addUser(txt);busy=true;setTyping(true);
-  fetch(API+"/vitrine",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:txt,userId:"vitrine_"+Date.now(),systemPrompt:SYS})
-  }).then(function(r){return r.json();})
+  fetch(API+"/vitrine",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,userId:"vitrine_"+Date.now(),systemPrompt:SYS})})
+  .then(function(r){return r.json()})
   .then(function(d){
     setTyping(false);
     var ans=(d&&d.answer)?d.answer:"Je suis là pour vous aider !";
@@ -549,32 +518,24 @@ function send(txt){
       wa.target="_blank";wa.textContent="📱 Demander un devis sur WhatsApp";
       bub.appendChild(wa);
     }
-    row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);scrollChat();
-    busy=false;
-  }).catch(function(){
-    setTyping(false);
-    addBot("Erreur de connexion, réessayez.");
-    busy=false;
-  });
+    row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);scrollChat();busy=false;
+  }).catch(function(){setTyping(false);addBot("Erreur de connexion, réessayez.");busy=false})
 }
 
-function sendMsg(){
-  var inp=document.getElementById("inp");
-  var txt=inp.value.trim();if(!txt)return;
-  inp.value="";send(txt);
-}
-
-document.getElementById("inp").addEventListener("keydown",function(e){
-  if(e.key==="Enter")sendMsg();
-});
+function sendMsg(){var inp=document.getElementById("inp");var txt=inp.value.trim();if(!txt)return;inp.value="";send(txt)}
+document.getElementById("inp").addEventListener("keydown",function(e){if(e.key==="Enter")sendMsg()});
 
 function genDevisPhilo(){
   var metier=document.getElementById("df-metier").value;
   var sous=document.getElementById("df-sous").value;
-  var couleurs=Array.from(document.querySelectorAll(".col-btn.sel")).map(function(e){return e.childNodes[1].textContent.trim();}).join(", ");
+  var couleurs=Array.from(document.querySelectorAll(".col-btn.sel")).map(function(e){return e.childNodes[1]?e.childNodes[1].textContent.trim():e.textContent.trim()}).join(", ");
   var info=document.getElementById("df-info").value.trim();
-  if(!metier){alert("Sélectionnez votre métier");return;}
-  var formuleBtn=document.querySelector("#formule-wrap .col-btn.sel");var formule=formuleBtn?formuleBtn.dataset.val:"";var msg="Bonjour Philomene ! Je voudrais un devis pour une app IA.\n\n";if(formule)msg+="Formule : "+formule+"\n";msg+="Métier : "+metier;
+  if(!metier){alert("Sélectionnez votre métier");return}
+  var formuleBtn=document.querySelector("#formule-wrap .col-btn.sel");
+  var formule=formuleBtn?formuleBtn.dataset.val:"";
+  var msg="Bonjour Philomene ! Je voudrais un devis pour une app IA.\n\n";
+  if(formule)msg+="Formule : "+formule+"\n";
+  msg+="Métier : "+metier;
   if(sous)msg+=" — "+sous;
   msg+="\n";
   if(couleurs)msg+="Couleurs : "+couleurs+"\n";
@@ -591,9 +552,9 @@ setTimeout(function(){
       ["Voir des exemples","Montrez-moi des exemples d'apps"],
       ["Obtenir un devis","Je veux un devis pour mon activité"],
       ["Comment ça marche","Comment fonctionne votre service ?"]
-    ]);
-  },900);
-},2500);
+    ])
+  },900)
+},2500)
 </script>
 </body>
 </html>
