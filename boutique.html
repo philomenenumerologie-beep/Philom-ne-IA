@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>JO'lie Boutique</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Tenor Sans',sans-serif;color:#3A1F24}
+:root{--blush:#F7EDE8;--rose:#E8C4BB;--rose2:#D4A098;--bordeaux:#7A2E3A;--bordeaux2:#5C1F29;--cream:#FBF7F5;--border:rgba(58,31,36,.08);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+#splash{position:fixed;inset:0;z-index:500;background:var(--blush);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.2s ease}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(145deg,var(--rose),var(--rose2));display:flex;align-items:center;justify-content:center;margin-bottom:28px;animation:float 3s ease-in-out infinite,fadeIn .8s ease .2s both;box-shadow:0 20px 60px rgba(212,160,152,.4)}
+.sp-circle span{font-family:'Cormorant Garamond',serif;font-style:italic;color:#fff;font-size:44px}
+.sp-name{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:.1em;color:var(--bordeaux2)}
+.sp-name em{font-style:italic;font-weight:400}
+.sp-line{width:1px;height:40px;background:linear-gradient(180deg,transparent,var(--rose2),transparent);margin:18px auto}
+.sp-sub{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--rose2)}
+.demo-banner{background:var(--bordeaux);color:#fff;text-align:center;padding:6px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;flex-shrink:0}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--cream)}
+#topbar{background:var(--cream);padding:14px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.tb-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(145deg,var(--rose),var(--rose2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(212,160,152,.35)}
+.tb-av span{font-family:'Cormorant Garamond',serif;font-style:italic;color:#fff;font-size:20px}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--bordeaux2)}
+.tb-name em{font-style:italic}
+.tb-sub{font-size:9px;color:var(--rose2);letter-spacing:.15em;text-transform:uppercase;margin-top:2px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tb-dot{width:7px;height:7px;border-radius:50%;background:#A8D8A8;box-shadow:0 0 8px #A8D8A8;animation:pulse 2s infinite}
+.tb-live{font-size:9px;color:#7DB87D;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+#tabs{background:var(--cream);display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(58,31,36,.3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Tenor Sans',sans-serif}
+.tab span{font-size:14px}
+.tab.active{color:var(--bordeaux2);border-bottom-color:var(--rose2)}
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+#page-chat{background:var(--blush)}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .3s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:34px;height:34px;border-radius:50%;background:linear-gradient(145deg,var(--rose),var(--rose2));display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;box-shadow:0 3px 10px rgba(212,160,152,.3)}
+.bav span{font-family:'Cormorant Garamond',serif;font-style:italic;color:#fff;font-size:15px}
+.bub{max-width:min(80%,300px);padding:12px 15px;font-size:13.5px;line-height:1.7;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:var(--bordeaux2);border-top-left-radius:4px;box-shadow:0 2px 16px rgba(58,31,36,.07);border:1px solid rgba(232,196,187,.4)}
+.bub.user{background:linear-gradient(135deg,var(--bordeaux),var(--bordeaux2));color:#fff;border-top-right-radius:4px;box-shadow:0 4px 16px rgba(122,46,58,.3)}
+.qbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.qb{padding:6px 12px;border-radius:20px;border:1.5px solid var(--rose2);background:rgba(232,196,187,.15);color:var(--bordeaux2);font-size:11.5px;font-weight:600;font-family:'Tenor Sans',sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:13px 15px;display:flex;gap:5px;box-shadow:0 2px 16px rgba(58,31,36,.07);border:1px solid rgba(232,196,187,.4)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:var(--rose2);animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 24px;background:rgba(251,247,245,.95);border-top:1px solid var(--border);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 18px;border-radius:28px;border:1.5px solid var(--rose);background:#fff;font-size:14px;font-family:'Tenor Sans',sans-serif;outline:none;color:var(--bordeaux2)}
+#inp::placeholder{color:rgba(58,31,36,.3)}
+#inp:focus{border-color:var(--rose2)}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--rose2),var(--bordeaux));color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:'Tenor Sans',sans-serif;text-decoration:none;margin-top:10px}
+
+/* NOUVEAUTES - style card comme "Soins" de Lumiere */
+#page-collection{background:var(--cream);padding:24px 16px 44px}
+.coll-header{text-align:center;margin-bottom:22px}
+.coll-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--bordeaux2)}
+.coll-title em{font-style:italic;color:var(--rose2)}
+.coll-subtitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--rose2);margin-top:6px}
+.coll-sec{font-size:9px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--rose2);margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.piece-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;gap:14px;align-items:center;box-shadow:0 2px 12px rgba(58,31,36,.05);cursor:pointer}
+.piece-ico{width:56px;height:56px;border-radius:14px;background:linear-gradient(145deg,var(--blush),var(--rose));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;position:relative;overflow:hidden}
+.piece-ico img{width:100%;height:100%;object-fit:cover}
+.piece-new{position:absolute;top:-6px;right:-6px;background:var(--bordeaux);color:#fff;font-size:7px;letter-spacing:.1em;padding:3px 6px;border-radius:20px;text-transform:uppercase;z-index:2}
+.piece-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--bordeaux2);margin-bottom:3px}
+.piece-price{font-size:13px;color:var(--rose2);font-weight:500}
+
+/* MA TAILLE - meme structure que devis Lumiere */
+#page-projet{background:var(--cream);padding:24px 16px 44px;gap:16px}
+.pj-header{text-align:center;padding-bottom:4px}
+.pj-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--bordeaux2);letter-spacing:.05em}
+.pj-title em{font-style:italic;color:var(--rose2)}
+.pj-subtitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--rose2);margin-top:6px}
+.lbl{font-size:9px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--rose2);margin-bottom:7px}
+.pj-select,.pj-textarea{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid var(--border);background:#fff;font-size:13.5px;font-family:'Tenor Sans',sans-serif;color:var(--bordeaux2);outline:none;-webkit-appearance:none}
+.pj-select:focus,.pj-textarea:focus{border-color:var(--rose2)}
+.pj-textarea{resize:none;height:90px}
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.taille{padding:12px 8px;border-radius:13px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-family:'Tenor Sans',sans-serif;font-weight:600;text-align:center;cursor:pointer;color:var(--rose2)}
+.taille.sel{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;border-color:var(--rose2)}
+.em-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.em{padding:7px 13px;border-radius:22px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-family:'Tenor Sans',sans-serif;font-weight:600;cursor:pointer;color:var(--bordeaux2)}
+.em.sel{background:linear-gradient(135deg,var(--bordeaux),var(--bordeaux2));color:#fff;border-color:var(--bordeaux)}
+.pj-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:16px;padding:17px;font-weight:700;font-size:15px;font-family:'Tenor Sans',sans-serif;border:none;width:100%;cursor:pointer;box-shadow:0 6px 20px rgba(37,211,102,.3)}
+
+/* BOUTIQUE - infos, meme style que Tarifs Lumiere */
+#page-boutique{background:var(--cream);padding:24px 16px 44px}
+.bt-header{text-align:center;margin-bottom:22px}
+.bt-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--bordeaux2)}
+.bt-title em{font-style:italic;color:var(--rose2)}
+.bt-subtitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--rose2);margin-top:6px}
+.bt-sec{font-size:9px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--rose2);margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.bt-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;gap:14px;align-items:center;box-shadow:0 2px 12px rgba(58,31,36,.05)}
+.bt-ico{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,var(--blush),var(--rose));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.bt-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--bordeaux2)}
+.bt-desc{font-size:12px;color:rgba(58,31,36,.5);line-height:1.5;margin-top:2px}
+.btn-planity{display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,#25D366,#1fa855);color:#fff;border-radius:14px;padding:14px;font-weight:700;font-size:14px;font-family:'Tenor Sans',sans-serif;text-decoration:none;margin-top:10px;box-shadow:0 4px 16px rgba(37,211,102,.3)}
+
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(58,31,36,.5);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+#overlay.open{display:flex}
+#mbox{background:var(--cream);border-radius:28px 28px 0 0;padding:32px 20px 48px;width:100%;max-width:480px}
+.mbox-ico{font-size:50px;text-align:center;margin-bottom:14px}
+.mbox-img{width:100%;max-height:280px;border-radius:16px;object-fit:cover;margin-bottom:16px;display:block}
+.mbox-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;text-align:center;margin-bottom:4px;color:var(--bordeaux2)}
+.mbox-price{text-align:center;font-size:14px;color:var(--rose2);margin-bottom:22px}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;font-weight:700;font-size:15px;font-family:'Tenor Sans',sans-serif;text-decoration:none;margin-bottom:10px}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:13px;color:rgba(58,31,36,.35);cursor:pointer;font-family:'Tenor Sans',sans-serif;border:none;background:none;width:100%}
+</style>
+</head>
+<body>
+<div id="splash">
+  <div class="sp-circle"><span>J</span></div>
+  <div class="sp-name"><em>JO'lie</em> Boutique</div>
+  <div class="sp-line"></div>
+  <div class="sp-sub">Mode · Style · Nouveautés</div>
+</div>
+<div id="app">
+  <div class="demo-banner">Application Démo — Philomène IA</div>
+  <div id="topbar">
+    <div class="tb-av"><span>J</span></div>
+    <div>
+      <div class="tb-name"><em style="font-style:italic">JO'lie</em> Boutique</div>
+      <div class="tb-sub">Assistante IA · 24h/24</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-dot"></div>
+      <div class="tb-live">En ligne</div>
+    </div>
+  </div>
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Conseils</button>
+    <button class="tab" onclick="showTab(this,'collection')"><span>✨</span>Nouveautés</button>
+    <button class="tab" onclick="showTab(this,'projet')"><span>👗</span>Ma taille</button>
+    <button class="tab" onclick="showTab(this,'boutique')"><span>📍</span>Boutique</button>
+  </div>
+
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question mode..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-collection" class="page">
+    <div class="coll-header">
+      <div class="coll-title"><em>Nouvelle</em> collection</div>
+      <div class="coll-subtitle">Fraîchement arrivé en boutique</div>
+    </div>
+    <div id="coll-list">
+      <div style="text-align:center;padding:40px 20px;color:var(--rose2);font-size:13px">⏳ Chargement...</div>
+    </div>
+  </div>
+
+  <div id="page-projet" class="page">
+    <div class="pj-header">
+      <div class="pj-title"><em>Trouvez</em> votre taille</div>
+      <div class="pj-subtitle">Un conseil sur mesure</div>
+    </div>
+    <div>
+      <div class="lbl">Vous recherchez</div>
+      <select class="pj-select" id="pj-type">
+        <option value="">Sélectionnez...</option>
+        <option>Robe</option>
+        <option>Haut / Top</option>
+        <option>Pantalon / Short</option>
+        <option>Veste / Manteau</option>
+        <option>Accessoire (sac, bijou)</option>
+        <option>Chaussures</option>
+        <option>Tenue complète pour un événement</option>
+      </select>
+    </div>
+    <div>
+      <div class="lbl">Votre taille habituelle</div>
+      <div class="size-grid">
+        <div class="taille" onclick="selTaille(this)">XS</div>
+        <div class="taille" onclick="selTaille(this)">S</div>
+        <div class="taille" onclick="selTaille(this)">M</div>
+        <div class="taille" onclick="selTaille(this)">L</div>
+        <div class="taille" onclick="selTaille(this)">XL</div>
+        <div class="taille" onclick="selTaille(this)">Je ne sais pas</div>
+      </div>
+    </div>
+    <div>
+      <div class="lbl">Style recherché</div>
+      <div class="em-wrap">
+        <div class="em" onclick="this.classList.toggle('sel')">Chic</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Casual</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Soirée</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Bohème</div>
+        <div class="em" onclick="this.classList.toggle('sel')">Tendance</div>
+      </div>
+    </div>
+    <div>
+      <div class="lbl">Un détail en plus ?</div>
+      <textarea class="pj-textarea" id="pj-desc" placeholder="Ex: J'ai un mariage dans 3 semaines, je cherche une robe élégante..."></textarea>
+    </div>
+    <button class="pj-btn" onclick="envoyerProjet()">📱 Envoyer ma demande</button>
+  </div>
+
+  <div id="page-boutique" class="page">
+    <div class="bt-header">
+      <div class="bt-title"><em>La</em> boutique</div>
+      <div class="bt-subtitle">Venez nous rendre visite</div>
+    </div>
+    <div class="bt-sec">Infos pratiques</div>
+    <div class="bt-card"><div class="bt-ico">📍</div><div><div class="bt-name">Adresse</div><div class="bt-desc">12 rue de la Mode, Mouscron, Belgique</div></div></div>
+    <div class="bt-card"><div class="bt-ico">🕐</div><div><div class="bt-name">Horaires</div><div class="bt-desc">Lun-Sam 10h-18h30 · Fermé le dimanche</div></div></div>
+    <div class="bt-card"><div class="bt-ico">✨</div><div><div class="bt-name">Essayage</div><div class="bt-desc">Cabines disponibles, aucune réservation nécessaire</div></div></div>
+    <div class="bt-sec">Services</div>
+    <div class="bt-card"><div class="bt-ico">🎁</div><div><div class="bt-name">Mise de côté</div><div class="bt-desc">On vous garde une pièce jusqu'à votre passage</div></div></div>
+    <div class="bt-card"><div class="bt-ico">💌</div><div><div class="bt-name">Carte cadeau</div><div class="bt-desc">Dès 20€, valable 1 an sur toute la boutique</div></div></div>
+    <a class="btn-planity" href="https://wa.me/32000000000?text=Bonjour%20!%20J'ai%20une%20question." target="_blank">📱 Nous contacter sur WhatsApp</a>
+  </div>
+</div>
+
+<div id="overlay" onclick="fermerModal()">
+  <div id="mbox" onclick="event.stopPropagation()">
+    <div id="mbox-img-wrap"></div>
+    <div class="mbox-name" id="m-name"></div>
+    <div class="mbox-price" id="m-price"></div>
+    <a class="mbox-wa" id="m-wa" href="#" target="_blank">📱 Je veux cette pièce !</a>
+    <button class="mbox-cancel" onclick="fermerModal()">Fermer</button>
+  </div>
+</div>
+
+<script>
+var WA = "32000000000";
+var API = "https://philo-backend-by2c.onrender.com";
+var busy = false;
+var SYS = "Tu es Jo, assistante mode d une boutique de vetements chic et feminine. Ton ton est chaleureux, style, bienveillant. Jamais de markdown ni asterisques. Texte simple uniquement. Max 4 phrases. Tu conseilles sur tailles, matieres, occasions (mariage, soiree, quotidien), tendances. Categories : robes, hauts, pantalons, vestes, accessoires, chaussures. Pour reservation ou mise de cote, orienter vers WhatsApp.";
+
+function showTab(btn,n){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});document.getElementById("page-"+n).classList.add("active");btn.classList.add("active");if(n==="collection")loadCollection()}
+function scrollChat(){setTimeout(function(){var c=document.getElementById("page-chat");c.scrollTop=c.scrollHeight},80)}
+function mkAv(){var av=document.createElement("div");av.className="bav";av.innerHTML="<span>J</span>";return av}
+
+function addBot(txt,withQ){
+  var msgs=document.getElementById("messages");
+  var row=document.createElement("div");row.className="mrow bot";
+  var bub=document.createElement("div");bub.className="bub bot";bub.textContent=txt;
+  if(withQ){var qw=document.createElement("div");qw.className="qbtns";withQ.forEach(function(it){var b=document.createElement("button");b.className="qb";b.textContent=it[0];(function(m){b.onclick=function(){send(m)}})(it[1]);qw.appendChild(b)});bub.appendChild(qw)}
+  row.appendChild(mkAv());row.appendChild(bub);msgs.appendChild(row);scrollChat()
+}
+function addUser(txt){var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow user";var bub=document.createElement("div");bub.className="bub user";bub.textContent=txt;row.appendChild(bub);msgs.appendChild(row);scrollChat()}
+function setTyping(on){var old=document.getElementById("ty-row");if(old)old.remove();if(!on)return;var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow bot";row.id="ty-row";var ty=document.createElement("div");ty.className="tybub";ty.innerHTML="<span></span><span></span><span></span>";row.appendChild(mkAv());row.appendChild(ty);msgs.appendChild(row);scrollChat()}
+
+function send(txt){
+  if(!txt||busy)return;
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);busy=true;setTyping(true);
+  fetch(API+"/maka",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,userId:"boutique_"+Date.now(),systemPrompt:SYS})})
+  .then(function(r){return r.json()})
+  .then(function(d){
+    setTyping(false);
+    var ans=(d&&d.answer)?d.answer:"Je suis là pour vous conseiller !";
+    var msgs=document.getElementById("messages");
+    var row=document.createElement("div");row.className="mrow bot";
+    var bub=document.createElement("div");bub.className="bub bot";bub.textContent=ans;
+    var l=txt.toLowerCase();
+    if(l.indexOf("réserv")>=0||l.indexOf("reserv")>=0||l.indexOf("mise de côté")>=0||l.indexOf("mise de cote")>=0||l.indexOf("disponib")>=0){
+      var wa=document.createElement("a");wa.className="wa-bubble";
+      wa.href="https://wa.me/"+WA+"?text="+encodeURIComponent("Bonjour ! J'ai une question sur une pièce.");
+      wa.target="_blank";wa.textContent="📱 Contacter la boutique";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());row.appendChild(bub);msgs.appendChild(row);scrollChat();busy=false
+  }).catch(function(){setTyping(false);addBot("Erreur de connexion, réessayez.");busy=false})
+}
+
+function sendMsg(){var inp=document.getElementById("inp");var txt=inp.value.trim();if(!txt)return;inp.value="";send(txt)}
+document.getElementById("inp").addEventListener("keydown",function(e){if(e.key==="Enter")sendMsg()});
+function selTaille(el){document.querySelectorAll(".taille").forEach(function(e){e.classList.remove("sel")});el.classList.add("sel")}
+
+function loadCollection(){
+  var list=document.getElementById("coll-list");
+  list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--rose2);font-size:13px">⏳ Chargement...</div>';
+  fetch(API+"/memory/boutique_pieces")
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var pieces=d.value||[];
+      if(pieces.length===0){
+        list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--rose2);font-size:13px">✨ Les nouveautés arrivent bientôt !</div>';
+        return;
+      }
+      list.innerHTML="";
+      pieces.forEach(function(p){
+        var card=document.createElement("div");
+        card.className="piece-card";
+        card.onclick=function(){ouvrirPieceData(p)};
+        var ico=document.createElement("div");
+        ico.className="piece-ico";
+        if(p.image){
+          var img=document.createElement("img");
+          img.src=p.image;
+          ico.appendChild(img);
+        } else {
+          ico.textContent="👗";
+        }
+        if(p.nouveau){
+          var badge=document.createElement("div");
+          badge.className="piece-new";
+          badge.textContent="Nouveau";
+          ico.appendChild(badge);
+        }
+        var info=document.createElement("div");
+        info.innerHTML='<div class="piece-name">'+p.nom+'</div><div class="piece-price">'+p.prix+'</div>';
+        card.appendChild(ico);
+        card.appendChild(info);
+        list.appendChild(card);
+      });
+    }).catch(function(){
+      list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--rose2);font-size:13px">✨ Les nouveautés arrivent bientôt !</div>';
+    });
+}
+
+function ouvrirPieceData(p){
+  var wrap=document.getElementById("mbox-img-wrap");
+  wrap.innerHTML="";
+  if(p.image){
+    var img=document.createElement("img");
+    img.className="mbox-img";
+    img.src=p.image;
+    wrap.appendChild(img);
+  } else {
+    var ico=document.createElement("div");
+    ico.className="mbox-ico";
+    ico.textContent="👗";
+    wrap.appendChild(ico);
+  }
+  document.getElementById("m-name").textContent=p.nom;
+  document.getElementById("m-price").textContent=p.prix;
+  document.getElementById("m-wa").href="https://wa.me/"+WA+"?text="+encodeURIComponent("Bonjour ! Je suis intéressée par : "+p.nom+" ("+p.prix+"). Est-elle disponible ?");
+  document.getElementById("overlay").classList.add("open");
+}
+function fermerModal(){document.getElementById("overlay").classList.remove("open")}
+
+function envoyerProjet(){
+  var type=document.getElementById("pj-type").value;
+  var taille=document.querySelector(".taille.sel");
+  var tailleVal=taille?taille.textContent:"";
+  var styles=Array.from(document.querySelectorAll(".em.sel")).map(function(e){return e.textContent}).join(", ");
+  var desc=document.getElementById("pj-desc").value.trim();
+  if(!type){alert("Sélectionnez ce que vous recherchez avant d'envoyer.");return}
+  var msg="Bonjour ! Je cherche une pièce en boutique.\n\n";
+  msg+="Recherche : "+type+"\n";
+  if(tailleVal)msg+="Taille : "+tailleVal+"\n";
+  if(styles)msg+="Style : "+styles+"\n";
+  if(desc)msg+="Détail : "+desc+"\n";
+  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank");
+}
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display="none";
+    addBot("Bonjour, je suis Jo, votre conseillère style ✨\n\nJe peux vous aider à trouver la tenue parfaite, vous conseiller sur les tailles ou vous parler de nos nouveautés. Que puis-je faire pour vous ?",[
+      ["Nouveautés","Qu'est-ce qui vient d'arriver en boutique ?"],
+      ["Conseil taille","J'ai besoin d'aide pour choisir ma taille"],
+      ["Occasion spéciale","J'ai un événement, que me conseillez-vous ?"],
+      ["Horaires","Quels sont vos horaires ?"]
+    ])
+  },900)
+},2500)
+</script>
+</body>
+</html>
