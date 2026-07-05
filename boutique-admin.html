@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>JO'lie Boutique Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#3A1F24;font-family:'Jost',sans-serif;color:#F7EDE8}
+#login-screen{position:fixed;inset:0;background:#3A1F24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;z-index:100}
+#login-screen.hidden{display:none}
+.login-logo{width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg,#E8C4BB,#D4A098);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:8px}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:#F7EDE8;letter-spacing:.06em;font-style:italic}
+.login-sub{font-size:12px;color:rgba(247,237,232,.4);letter-spacing:.15em;text-transform:uppercase}
+.login-input{width:100%;max-width:300px;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(247,237,232,.2);background:rgba(247,237,232,.06);color:#F7EDE8;font-size:16px;font-family:'Jost',sans-serif;outline:none;text-align:center;letter-spacing:.2em}
+.login-input::placeholder{color:rgba(247,237,232,.3);letter-spacing:.05em}
+.login-btn{width:100%;max-width:300px;padding:15px;border-radius:14px;border:none;background:#F7EDE8;color:#3A1F24;font-size:15px;font-weight:700;font-family:'Jost',sans-serif;cursor:pointer}
+.login-err{color:#ff8f8f;font-size:13px;display:none}
+#admin-app{display:none;flex-direction:column;min-height:100vh}
+#admin-app.show{display:flex}
+header{background:#3A1F24;border-bottom:1px solid rgba(247,237,232,.1);padding:16px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.h-logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,#E8C4BB,#D4A098);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.h-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;font-style:italic}
+.h-sub{font-size:10px;color:rgba(247,237,232,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.logout-btn{margin-left:auto;font-size:11px;color:rgba(247,237,232,.4);background:none;border:1px solid rgba(247,237,232,.15);padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Jost',sans-serif}
+.content{padding:20px 15px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto;width:100%}
+.add-card{background:rgba(247,237,232,.06);border:1px solid rgba(247,237,232,.12);border-radius:18px;padding:20px}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;margin-bottom:16px;font-style:italic}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(247,237,232,.45);margin-bottom:7px}
+.inp{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(247,237,232,.15);background:rgba(247,237,232,.06);color:#F7EDE8;font-size:14px;font-family:'Jost',sans-serif;outline:none}
+.inp::placeholder{color:rgba(247,237,232,.3)}
+.inp:focus{border-color:rgba(247,237,232,.4)}
+.check-row{display:flex;align-items:center;gap:10px;padding:4px 0}
+.check-row input[type=checkbox]{width:20px;height:20px;accent-color:#D4A098}
+.check-row label{font-size:13px;color:rgba(247,237,232,.8)}
+.upload-zone{border:2px dashed rgba(247,237,232,.2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.upload-zone:hover{border-color:rgba(247,237,232,.4)}
+.upload-icon{font-size:32px;margin-bottom:8px}
+.upload-zone strong{display:block;font-size:14px;margin-bottom:4px}
+.upload-zone p{font-size:12px;color:rgba(247,237,232,.4)}
+#photo-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#photo-preview{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;margin-top:10px;display:none;border:2px solid rgba(247,237,232,.2)}
+.add-btn{width:100%;padding:15px;border-radius:14px;border:none;background:#F7EDE8;color:#3A1F24;font-size:15px;font-weight:700;font-family:'Jost',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .2s}
+.add-btn:disabled{opacity:.4;cursor:not-allowed}
+.status{padding:12px 16px;border-radius:12px;font-size:13px;text-align:center;display:none}
+.status.ok{background:rgba(168,216,168,.15);border:1px solid rgba(168,216,168,.3);color:#A8D8A8}
+.status.err{background:rgba(255,143,143,.1);border:1px solid rgba(255,143,143,.3);color:#ff8f8f}
+.list-card{background:rgba(247,237,232,.06);border:1px solid rgba(247,237,232,.12);border-radius:18px;padding:20px}
+.count-badge{display:inline-block;background:rgba(247,237,232,.12);padding:3px 10px;border-radius:20px;font-size:11px;color:rgba(247,237,232,.6);margin-left:10px;vertical-align:middle;font-style:normal}
+.piece-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.piece-item{display:flex;align-items:center;gap:12px;background:rgba(247,237,232,.04);border:1px solid rgba(247,237,232,.08);border-radius:14px;padding:10px}
+.fi-img{width:60px;height:60px;border-radius:10px;overflow:hidden;background:rgba(247,237,232,.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px}
+.fi-img img{width:100%;height:100%;object-fit:cover}
+.fi-info{flex:1;min-width:0}
+.fi-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-price{font-size:12px;color:rgba(247,237,232,.5);margin-top:2px}
+.fi-badge{display:inline-block;background:#7A2E3A;color:#fff;font-size:8px;letter-spacing:.1em;padding:2px 6px;border-radius:20px;text-transform:uppercase;margin-top:3px}
+.fi-del{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,143,143,.3);background:rgba(255,143,143,.08);color:#ff8f8f;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.empty-state{text-align:center;padding:24px;color:rgba(247,237,232,.3);font-size:13px}
+.loading{text-align:center;padding:20px;color:rgba(247,237,232,.4);font-size:13px}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-logo">👗</div>
+  <div class="login-title">JO'lie Admin</div>
+  <div class="login-sub">Espace privé</div>
+  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  <button class="login-btn" onclick="checkPwd()">Entrer</button>
+</div>
+
+<div id="admin-app">
+  <header>
+    <div class="h-logo">👗</div>
+    <div>
+      <div class="h-title">JO'lie Boutique</div>
+      <div class="h-sub">Gestion des nouveautés</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </header>
+
+  <div class="content">
+    <div class="add-card">
+      <div class="card-title">Ajouter une pièce</div>
+      <div style="margin-bottom:14px">
+        <div class="lbl">Nom de la pièce</div>
+        <input class="inp" id="piece-nom" type="text" placeholder="Ex: Robe bustier noire"/>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="lbl">Prix</div>
+        <input class="inp" id="piece-prix" type="text" placeholder="Ex: 59€"/>
+      </div>
+      <div style="margin-bottom:14px" class="check-row">
+        <input type="checkbox" id="piece-nouveau" checked/>
+        <label for="piece-nouveau">Marquer comme "Nouveau"</label>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="lbl">Photo</div>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
+          <div class="upload-icon">📷</div>
+          <strong>Appuyez pour choisir une photo</strong>
+          <p>JPG, PNG — max 2MB</p>
+        </div>
+        <img id="photo-preview" alt="preview"/>
+      </div>
+      <div class="status" id="add-status"></div>
+      <button class="add-btn" id="add-btn" onclick="addPiece()">➕ Ajouter cette pièce</button>
+    </div>
+
+    <div class="list-card">
+      <div class="card-title">
+        Mes pièces
+        <span class="count-badge" id="count-badge">0</span>
+      </div>
+      <div class="piece-list" id="piece-list">
+        <div class="loading">Chargement…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var PWD = "jolie2026";
+var photoBase64 = null;
+
+function checkPwd() {
+  var val = document.getElementById('pwd-input').value;
+  if (val === PWD) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-app').classList.add('show');
+    loadPieces();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+
+function logout() {
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('admin-app').classList.remove('show');
+  document.getElementById('pwd-input').value = '';
+}
+
+function handlePhoto(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxSize = 800;
+      var w = img.width;
+      var h = img.height;
+      if (w > h) {
+        if (w > maxSize) { h = h * maxSize / w; w = maxSize; }
+      } else {
+        if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+      var prev = document.getElementById('photo-preview');
+      prev.src = photoBase64;
+      prev.style.display = 'block';
+      document.getElementById('upload-zone').style.borderColor = 'rgba(168,216,168,.5)';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function showStatus(msg, type) {
+  var s = document.getElementById('add-status');
+  s.textContent = msg;
+  s.className = 'status ' + type;
+  s.style.display = 'block';
+  setTimeout(function(){ s.style.display = 'none'; }, 3000);
+}
+
+function addPiece() {
+  var nom = document.getElementById('piece-nom').value.trim();
+  var prix = document.getElementById('piece-prix').value.trim();
+  var nouveau = document.getElementById('piece-nouveau').checked;
+  if (!nom || !prix || !photoBase64) {
+    showStatus('Remplissez tous les champs et ajoutez une photo', 'err');
+    return;
+  }
+  var btn = document.getElementById('add-btn');
+  btn.disabled = true;
+  btn.textContent = 'Ajout en cours…';
+  fetch(API + '/memory/boutique_pieces')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var pieces = d.value || [];
+      pieces.unshift({ id: 'p_' + Date.now(), nom: nom, prix: prix, image: photoBase64, nouveau: nouveau });
+      return fetch(API + '/memory/boutique_pieces', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ value: pieces })
+      });
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        showStatus('Pièce ajoutée ! ✨', 'ok');
+        document.getElementById('piece-nom').value = '';
+        document.getElementById('piece-prix').value = '';
+        document.getElementById('piece-nouveau').checked = true;
+        document.getElementById('photo-preview').style.display = 'none';
+        document.getElementById('upload-zone').style.borderColor = '';
+        document.getElementById('photo-input').value = '';
+        photoBase64 = null;
+        loadPieces();
+      } else {
+        showStatus('Erreur lors de l\'ajout', 'err');
+      }
+      btn.disabled = false;
+      btn.textContent = '➕ Ajouter cette pièce';
+    }).catch(function(){
+      showStatus('Erreur de connexion', 'err');
+      btn.disabled = false;
+      btn.textContent = '➕ Ajouter cette pièce';
+    });
+}
+
+function deletePiece(id) {
+  if (!confirm('Supprimer cette pièce ?')) return;
+  fetch(API + '/memory/boutique_pieces')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var pieces = (d.value || []).filter(function(p){ return p.id !== id; });
+      return fetch(API + '/memory/boutique_pieces', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ value: pieces })
+      });
+    })
+    .then(function(){ loadPieces(); });
+}
+
+function loadPieces() {
+  var list = document.getElementById('piece-list');
+  list.innerHTML = '<div class="loading">Chargement…</div>';
+  fetch(API + '/memory/boutique_pieces')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var pieces = d.value || [];
+      document.getElementById('count-badge').textContent = pieces.length;
+      if (pieces.length === 0) {
+        list.innerHTML = '<div class="empty-state">Aucune pièce pour le moment.<br/>Ajoutez votre première pièce ci-dessus ✨</div>';
+        return;
+      }
+      list.innerHTML = '';
+      pieces.forEach(function(p){
+        var item = document.createElement('div');
+        item.className = 'piece-item';
+        var imgDiv = document.createElement('div');
+        imgDiv.className = 'fi-img';
+        if (p.image) {
+          var img = document.createElement('img');
+          img.src = p.image;
+          imgDiv.appendChild(img);
+        } else {
+          imgDiv.textContent = '👗';
+        }
+        var info = document.createElement('div');
+        info.className = 'fi-info';
+        info.innerHTML = '<div class="fi-name">' + p.nom + '</div><div class="fi-price">' + p.prix + '</div>' + (p.nouveau ? '<div class="fi-badge">Nouveau</div>' : '');
+        var del = document.createElement('div');
+        del.className = 'fi-del';
+        del.textContent = '✕';
+        del.onclick = function(){ deletePiece(p.id); };
+        item.appendChild(imgDiv);
+        item.appendChild(info);
+        item.appendChild(del);
+        list.appendChild(item);
+      });
+    }).catch(function(){
+      list.innerHTML = '<div class="empty-state">Erreur de chargement</div>';
+    });
+}
+</script>
+</body>
+</html>
