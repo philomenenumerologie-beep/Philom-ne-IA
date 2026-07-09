@@ -64,7 +64,7 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 #inp::placeholder{color:#aaa}
 #inp:focus{border-color:#111}
 #snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#EDE0CC;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px;border:none;width:100%;cursor:pointer}
 #page-devis{background:#EDE0CC;padding:20px 15px 36px;gap:14px}
 .df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700}
 .df-title em{font-style:italic;color:#999;font-size:.7em;display:block}
@@ -127,8 +127,21 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
 .mbox-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
 .mbox-price{text-align:center;font-size:16px;color:#888;margin-bottom:20px}
 .mbox-price b{color:#111;font-size:20px}
-.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px;border:none;width:100%;cursor:pointer}
 .mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#888;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%}
+
+/* CAUTION MODAL */
+#caution-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65);display:none;align-items:flex-end;justify-content:center}
+#caution-overlay.open{display:flex}
+#cbox{background:#EDE0CC;border-radius:24px 24px 0 0;padding:26px 20px 40px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);max-height:85vh;overflow-y:auto}
+.cbox-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.cbox-text{background:#fff;border-radius:14px;padding:16px;font-size:13px;line-height:1.65;color:#333;margin-bottom:16px}
+.cbox-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;cursor:pointer}
+.cbox-check input{margin-top:3px;width:18px;height:18px;flex-shrink:0;accent-color:#111}
+.cbox-check span{font-size:13px;line-height:1.5;color:#111}
+.cbox-confirm{display:flex;align-items:center;justify-content:center;gap:10px;background:#111;color:#EDE0CC;border-radius:14px;padding:15px;font-weight:700;font-size:14px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer;opacity:.4;pointer-events:none;transition:opacity .2s}
+.cbox-confirm.ready{opacity:1;pointer-events:auto}
+.cbox-cancel{display:block;text-align:center;padding:12px;font-size:13px;color:#888;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%;margin-top:4px}
 </style>
 </head>
 <body>
@@ -320,8 +333,26 @@ html,body{height:100%;overflow:hidden;background:#EDE0CC;font-family:Jost,sans-s
     <div id="mbox-img-wrap"></div>
     <div class="mbox-name" id="mbox-name"></div>
     <div class="mbox-price" id="mbox-price"></div>
-    <a class="mbox-wa" id="mbox-wa" href="#" target="_blank">📱 Je veux ce flash !</a>
+    <button class="mbox-wa" id="mbox-wa">📱 Je veux ce flash !</button>
     <button class="mbox-cancel" onclick="fermerModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- OVERLAY CAUTION -->
+<div id="caution-overlay">
+  <div id="cbox">
+    <div class="cbox-title">🔒 Conditions de réservation</div>
+    <div class="cbox-text">
+      Une caution de 50€ est demandée pour valider votre rendez-vous et débuter votre projet. Elle vous sera demandée par Marie sur WhatsApp au moment de confirmer votre créneau.<br/><br/>
+      La caution est reportable une seule fois. Toute annulation ou demande de report doit être faite au minimum 7 jours avant le rendez-vous en période estivale (1er juin au 31 août), et 3 jours avant le reste de l'année.<br/><br/>
+      Passé ce délai, la caution est conservée à titre de dédommagement et le créneau ne peut plus être réattribué.
+    </div>
+    <label class="cbox-check">
+      <input type="checkbox" id="cbox-checkbox" onchange="toggleCautionBtn()"/>
+      <span>J'ai lu et j'accepte les conditions de caution et d'annulation ci-dessus.</span>
+    </label>
+    <button class="cbox-confirm" id="cbox-confirm" onclick="validerCaution()">Continuer vers WhatsApp</button>
+    <button class="cbox-cancel" onclick="fermerCaution()">Annuler</button>
   </div>
 </div>
 
@@ -331,6 +362,7 @@ var API = "https://philo-backend-by2c.onrender.com";
 fetch(API + "/ping/maka").catch(function(){});
 var SYS = "Tu es l assistante IA de Maka Tattoo, salon professionnel en Belgique tenu par Marie Caron. Reponds en francais, chaleureuse et concise. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras, pas de tirets listes - uniquement du texte simple et naturel. REGLE ABSOLUE: Tu reponds completement a toutes les questions sans jamais dire d envoyer un message WhatsApp sauf si la personne demande explicitement un RDV ou une reservation. Pour les soins, la douleur, les retouches, les styles - tu reponds directement et completement, JAMAIS de redirection WhatsApp. PRESENTATION: Bienvenue chez Maka Tattoo, salon de tatouage et piercing situe au 25 place Gerard Kasiers a Mouscron. Maka vous accueille du lundi au samedi de 10h a 13h et de 14h a 18h. Instagram @Maka.ink. Pour les tarifs precis, oriente vers l onglet Tarifs de l app ou WhatsApp. TARIFS INDICATIFS: Micros 3-4cm: 1=60/2=100/3=150. Minis 4-7cm: 1=80/2=150/3=210. Petits 7-10cm: 1=100/2=180/3=260. Simples 10cm: 1=120/2=220/3=320. Forfait1=220 Forfait2=280 Forfait3=330. Grands projets +15cm: 100 euros/h Noir et Gris, 150 euros/h Couleur. RETOUCHES - REGLE ABSOLUE: Quand quelqu un pose une question sur les retouches, tu reponds EXACTEMENT avec ce texte mot pour mot sans rien changer ni ajouter ni resumer: 'Apres chaque tatouage, une retouche gratuite est incluse pendant les deux mois suivant la seance. Les retouches ont uniquement pour but de corriger de petits defauts eventuels, tels qu un trait estompe ou une couleur ayant mal cicatrise. Les retouches ne permettent en aucun cas de modifier le modele initial. Les seances de retouche ont lieu exceptionnellement le 22 juin, le 13 juillet et le 7 aout de 10h a 18h, lors d une journee sans rendez-vous. Apres cette periode estivale, les retouches reprendront le premier lundi de chaque mois. Les retouches peuvent egalement etre realisees lors d un autre rendez-vous tatouage prevu dans l annee. Il s agit de la seule exception a la limite de deux mois. En cas de question, ou si vous ne savez pas si une retouche est necessaire, vous pouvez envoyer un message via WhatsApp.' NE PAS reformuler. NE PAS resumer. NE PAS ajouter quoi que ce soit. SOINS: Hydrater le tatouage tous les jours avec une creme adaptee type Bepanthene. Eviter le soleil et les bains pendant la cicatrisation (3 semaines minimum). Ne pas gratter meme si ca demange - c est normal. Ne pas regratter les croutes. Le soin influence directement le rendu final du tatouage. DOULEUR: Ca depend de l emplacement. Les zones osseuses comme les cotes, pieds, coudes et nuque sont plus douloureuses. Les bras, cuisses et epaules sont plus supportables. En general ca ressemble a une eraflure repetee - la plupart des gens le gerent tres bien. STYLES: Maka fait du minimaliste, linework, floral, lettrage, blackwork, geometrique, cover, realisme et tatouage couleur. Son style est doux, feminin et detaille.";
 var busy = false;
+var cautionPendingUrl = null;
 
 function showTab(btn, n) {
   document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
@@ -434,10 +466,10 @@ function send(txt) {
     var low = txt.toLowerCase();
     var needWA = low.indexOf("rdv") >= 0 || low.indexOf("rendez") >= 0 || low.indexOf("reserver") >= 0 || low.indexOf("réserver") >= 0 || low.indexOf("appointment") >= 0;
     if (needWA) {
-      var wa = document.createElement("a");
+      var wa = document.createElement("button");
       wa.className = "wa-bubble";
-      wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous");
-      wa.target = "_blank";
+      var waUrl = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Maka ! Je voudrais prendre rendez-vous");
+      wa.onclick = function(){ ouvrirCaution(waUrl); };
       wa.textContent = "Contacter Maka sur WhatsApp";
       bub.appendChild(wa);
     }
@@ -491,7 +523,7 @@ function genDevis() {
   if (ems) waMsg += "Emplacement : " + ems + "\n";
   if (couleur) waMsg += "Couleur : " + couleur + "\n";
   waMsg += "\n(Photo de reference a suivre dans ce chat)";
-  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg), "_blank");
+  ouvrirCaution("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg));
 }
 
 function loadFlashs() {
@@ -557,12 +589,40 @@ function ouvrirFlash(f) {
   document.getElementById("mbox-name").textContent = f.nom;
   document.getElementById("mbox-price").innerHTML = "<b>" + f.prix + "</b>";
   var msg = "Bonjour Maka ! Je suis interesse(e) par le flash " + f.nom + " (" + f.prix + "). Je voudrais le reserver !";
-  document.getElementById("mbox-wa").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+  var flashUrl = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+  document.getElementById("mbox-wa").onclick = function(){ fermerModal(); ouvrirCaution(flashUrl); };
   document.getElementById("overlay").classList.add("open");
 }
 
 function fermerModal() {
   document.getElementById("overlay").classList.remove("open");
+}
+
+/* --- Gestion modal caution / acceptation --- */
+function ouvrirCaution(url) {
+  cautionPendingUrl = url;
+  document.getElementById("cbox-checkbox").checked = false;
+  toggleCautionBtn();
+  document.getElementById("caution-overlay").classList.add("open");
+}
+
+function fermerCaution() {
+  document.getElementById("caution-overlay").classList.remove("open");
+  cautionPendingUrl = null;
+}
+
+function toggleCautionBtn() {
+  var checked = document.getElementById("cbox-checkbox").checked;
+  var btn = document.getElementById("cbox-confirm");
+  if (checked) { btn.classList.add("ready"); } else { btn.classList.remove("ready"); }
+}
+
+function validerCaution() {
+  if (!document.getElementById("cbox-checkbox").checked) return;
+  if (cautionPendingUrl) {
+    window.open(cautionPendingUrl, "_blank");
+  }
+  fermerCaution();
 }
 
 fetch(API + "/memory/maka_config")
