@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Thermen R</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#EAE5DC;font-family:Jost,sans-serif;color:#111}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#splash{position:fixed;inset:0;z-index:500;background:#2B4238;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:110px;height:110px;border-radius:50%;background:#EAE5DC;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-logo svg{width:52px;height:52px}
+.sp-name{font-family:'Playfair Display',serif;font-size:32px;color:#EAE5DC;letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(234,229,220,.45);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:#2B4238;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(234,229,220,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#EAE5DC;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-av svg{width:24px;height:24px}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#EAE5DC;letter-spacing:.03em}
+.tb-sub{font-size:10px;color:rgba(234,229,220,.45);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#C08A4E;box-shadow:0 0 8px #C08A4E;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+#langbar{background:#23352C;display:flex;justify-content:center;gap:6px;padding:7px 10px;flex-shrink:0;border-bottom:1px solid rgba(234,229,220,.08)}
+.langbtn{border:1px solid rgba(234,229,220,.3);background:transparent;color:rgba(234,229,220,.6);font-family:Jost,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.06em;padding:5px 14px;border-radius:20px;cursor:pointer}
+.langbtn.active{background:#EAE5DC;color:#23352C;border-color:#EAE5DC}
+#tabs{background:#2B4238;display:flex;border-bottom:1px solid rgba(234,229,220,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(234,229,220,.45);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:#EAE5DC;border-bottom-color:#C08A4E}
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+#page-chat{background:#EAE5DC}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:32px;height:32px;border-radius:50%;background:#2B4238;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.bav svg{width:17px;height:17px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:#111;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.bub.user{background:#2B4238;color:#EAE5DC;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #2B4238;background:transparent;color:#2B4238;font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:#EAE5DC;border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(0,0,0,.14);background:#fff;font-size:15px;font-family:Jost,sans-serif;outline:none;color:#111}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:#2B4238}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#2B4238;color:#EAE5DC;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.call-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#C08A4E;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px;border:none;width:100%;cursor:pointer}
+#page-tarifs{background:#EAE5DC;padding:20px 15px 32px}
+.t-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px}
+.t-h em{font-style:italic;color:#9C9284;font-size:.72em;display:block}
+.t-intro{font-size:13px;color:#666;line-height:1.5;margin-bottom:18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#9C9284;margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.08)}
+.tcard{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600}
+.tcard-sub{font-size:12px;color:#777;margin-top:5px;line-height:1.55}
+.tcard-badge{background:#2B4238;color:#EAE5DC;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tcard-price{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2B4238}
+.fcard{background:#2B4238;color:#EAE5DC;border-radius:15px;padding:16px;margin-bottom:9px}
+.fcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.fcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700}
+.fcard-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#E6C79C}
+.fcard-sub{font-size:12px;color:rgba(234,229,220,.75);line-height:1.6}
+.note-box{margin-top:14px;padding:13px;background:#fff;border-radius:13px;font-size:12.5px;color:#666;line-height:1.6;text-align:center}
+#page-faciliteiten{background:#EAE5DC;padding:20px 15px 32px}
+.fl-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700}
+.fl-h em{font-style:italic;color:#9C9284;font-size:.7em;display:block}
+.fl-sub{font-size:13px;color:#666;margin-top:6px;margin-bottom:16px}
+.fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.05)}
+.fl-thumb{width:100%;aspect-ratio:1;background:#2B4238;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.fl-thumb svg{width:38%;height:38%;stroke:#E6C79C}
+.fl-info{padding:10px 12px 13px}
+.fl-name{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:600;line-height:1.3}
+#page-infos{background:#EAE5DC;padding:20px 15px 32px}
+.tmap{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#2B4238;border:1.5px solid #2B4238;border-radius:14px;padding:14px;text-decoration:none;font-weight:700;font-size:13px;font-family:Jost,sans-serif;margin-top:10px}
+.tcall{display:flex;align-items:center;justify-content:center;gap:10px;background:#C08A4E;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
+footer{display:none}
+
+/* DEMO WATERMARK */
+#demo-badge{
+  position:fixed; top:10px; right:-34px;
+  z-index:600;
+  background:#C08A4E;
+  color:#23352C;
+  font-family:Jost,sans-serif;
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:5px 40px;
+  transform:rotate(40deg);
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  pointer-events:none;
+}
+#demo-watermark{
+  position:fixed; inset:0;
+  z-index:250;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+  overflow:hidden;
+}
+#demo-watermark span{
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-weight:700;
+  font-size:14vw;
+  color:rgba(43,66,56,0.06);
+  white-space:nowrap;
+  transform:rotate(-18deg);
+}
+</style>
+</head>
+<body>
+
+<div id="demo-badge">Démo</div>
+<div id="demo-watermark"><span>APERÇU DÉMO</span></div>
+
+<div id="splash">
+  <div class="sp-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#2B4238" stroke-width="1.3"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>
+  </div>
+  <div class="sp-name">THERMEN R</div>
+  <div class="sp-sub">Wellness &middot; Sauna &middot; Roeselare</div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2B4238" stroke-width="1.3"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>
+    </div>
+    <div>
+      <div class="tb-name">Thermen R</div>
+      <div class="tb-sub i18n" data-key="topbar-sub">Assistante IA · 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="langbar">
+    <button class="langbtn active" onclick="setLang('fr', this)">FR</button>
+    <button class="langbtn" onclick="setLang('nl', this)">NL</button>
+    <button class="langbtn" onclick="setLang('en', this)">EN</button>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span><span class="i18n" data-key="tab-chat">Assistant</span></button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💶</span><span class="i18n" data-key="tab-tarifs">Tarifs</span></button>
+    <button class="tab" onclick="showTab(this,'faciliteiten')"><span>♨️</span><span class="i18n" data-key="tab-facilities">Sauna's</span></button>
+    <button class="tab" onclick="showTab(this,'infos')"><span>📍</span><span class="i18n" data-key="tab-infos">Infos</span></button>
+  </div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" class="i18n-ph" data-key="input-placeholder" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TARIFS -->
+  <div id="page-tarifs" class="page">
+    <div class="t-h i18n" data-key="tarifs-title">Tarifs<em class="i18n" data-key="tarifs-sub">Une journée ou une soirée bien-être</em></div>
+    <div class="t-intro i18n" data-key="tarifs-intro">Découvrez nos formules d'accès aux sauna's et bains.</div>
+
+    <div class="t-sec i18n" data-key="tarifs-sec-pass">Accès journalier</div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name i18n" data-key="pass-day-name">Pass journée</div><div class="tcard-sub i18n" data-key="pass-day-sub">11h - 21h, accès complet</div></div>
+        <div class="tcard-price">42,50€</div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top">
+        <div><div class="tcard-name i18n" data-key="pass-evening-name">Pass soirée</div><div class="tcard-sub i18n" data-key="pass-evening-sub">16h - 21h, accès complet</div></div>
+        <div class="tcard-price">35,50€</div>
+      </div>
+    </div>
+
+    <div class="t-sec i18n" data-key="tarifs-sec-cards">Cartes multi-entrées</div>
+    <div class="fcard">
+      <div class="fcard-top"><div class="fcard-name i18n" data-key="ticket50-name">Ticket 50 · Offre anniversaire</div><div class="fcard-price">1695€</div></div>
+      <div class="fcard-sub i18n" data-key="ticket50-desc">50 entrées, non nominatives, sans limite de temps. Soit 33,90€/entrée au lieu de 44,50€ (-24%). Sac de sauna offert. Offre valable jusqu'au 31 août 2026, pour les 16 ans de Thermen R.</div>
+    </div>
+
+    <div class="note-box i18n" data-key="tarifs-note">Tarifs indicatifs à confirmer avant mise en ligne. L'accès est réservé aux adultes (+18 ans). Fermé le mardi et le mercredi.</div>
+  </div>
+
+  <!-- FACILITEITEN -->
+  <div id="page-faciliteiten" class="page">
+    <div class="fl-h i18n" data-key="fac-title">Sauna's & bains<em class="i18n" data-key="fac-sub">7 sauna's, piscines et bien plus</em></div>
+    <div class="fl-sub i18n" data-key="fac-intro">Un univers complet de détente et de chaleur.</div>
+    <div class="fl-grid">
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-finnish">Sauna finlandais</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M12 3v6M8 9h8l2 5H6l2-5zM6 14h12l-1 7H7l-1-7z"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-lavender">Sauna lavande</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M4 21V9l8-6 8 6v12M9 21v-7h6v7"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-kelo">Sauna Kelo</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-banja">Sauna Banja (méditation)</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M12 2v20M5 9h14M5 15h14"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-japanese">Sauna japonais</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7z"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-himalaya">Sauna sel de l'Himalaya + bain sonore</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M12 3c0 3-3 3-3 6a3 3 0 0 0 6 0c0-3-3-3-3-6zM6 21c0-3 2-5 2-8M18 21c0-3-2-5-2-8"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="sauna-infrared">Sauna infrarouge</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M2 17c1.5-1 3-1 4.5 0s3 1 4.5 0 3-1 4.5 0 3 1 4.5 0M2 12c1.5-1 3-1 4.5 0s3 1 4.5 0 3-1 4.5 0 3 1 4.5 0"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="pool-indoor">Piscine intérieure 30°C</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M2 17c1.5-1 3-1 4.5 0s3 1 4.5 0 3-1 4.5 0 3 1 4.5 0M12 3v10"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="pool-outdoor">Piscine extérieure chauffée</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M3 21c4-8 14-8 18 0M8 13a4 4 0 1 1 8 0"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="pond">Étang de baignade & plage</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="jacuzzi">Jacuzzi</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M12 21c-4-3-7-6-7-10a7 7 0 0 1 14 0c0 4-3 7-7 10z"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="hammam">Hammam & bain de vapeur</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="beauty">Beautycenter & massages</div></div></div>
+      <div class="fl-card"><div class="fl-thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.3"><path d="M3 11h18M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M3 11v6a2 2 0 0 0 2 2h2M19 11v6a2 2 0 0 1-2 2h-2M9 19v2M15 19v2"/></svg></div><div class="fl-info"><div class="fl-name i18n" data-key="restaurant">Restaurant familial · 11h-20h</div></div></div>
+    </div>
+    <div class="note-box i18n" data-key="fac-note">Toutes les installations sont accessibles avec votre pass journée ou soirée.</div>
+  </div>
+
+  <!-- INFOS -->
+  <div id="page-infos" class="page">
+    <div class="t-h i18n" data-key="infos-title">Infos<em class="i18n" data-key="infos-sub">pratiques et contact</em></div>
+    <div class="t-intro i18n" data-key="infos-intro">Tout ce qu'il faut savoir avant votre visite.</div>
+
+    <div class="t-sec i18n" data-key="infos-sec-hours">Horaires</div>
+    <div class="tcard">
+      <div class="tcard-sub" style="font-size:13px;color:#333;">
+        <span class="i18n" data-key="hours-open">Jeudi, vendredi, samedi, dimanche, lundi : 11h - 21h</span><br/>
+        <span class="i18n" data-key="hours-closed">Fermé le mardi et le mercredi</span>
+      </div>
+    </div>
+
+    <div class="t-sec i18n" data-key="infos-sec-about">À propos</div>
+    <div class="tcard">
+      <div class="tcard-sub i18n" data-key="about-text">Thermen R est l'un des plus beaux complexes bien-être de Flandre occidentale : sept sauna's, plusieurs bains et bassins, un étang de baignade naturel, un espace beauté et un restaurant familial. Un lieu pensé pour une détente complète du corps et de l'esprit.</div>
+    </div>
+
+    <div class="t-sec i18n" data-key="infos-sec-contact">Contact</div>
+    <div class="tcard">
+      <div class="tcard-sub" style="font-size:13px;color:#333;">
+        📞 +32 51 23 23 23<br/>
+        📱 +32 475 36 04 03<br/>
+        📧 info@thermen-r.be<br/>
+        📍 Kaasterstraat 44, 8800 Roeselare
+      </div>
+      <a class="tmap" href="https://www.google.com/maps/place/Kaasterstraat+44,+8800+Roeselare" target="_blank"><span class="i18n" data-key="btn-maps">📍 Ouvrir dans Google Maps</span></a>
+      <a class="tcall" href="tel:+3251232323"><span class="i18n" data-key="btn-call">📞 Appeler Thermen R</span></a>
+    </div>
+
+    <div style="margin-top:14px;padding:12px;background:rgba(192,138,78,0.15);border:1px dashed #C08A4E;border-radius:12px;font-size:11px;color:#8a5e1f;text-align:center;line-height:1.6;">
+      🔎 <span class="i18n" data-key="demo-notice">Ceci est une démonstration réalisée par Philomène IA, à titre d'exemple. Ce n'est pas le site officiel de Thermen R.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+fetch(API + "/ping/thermenr").catch(function(){});
+
+var SYS = "Tu es l assistante IA de Thermen R, complexe bien-etre et sauna a Roeselare (Kaasterstraat 44, 8800 Roeselare, Belgique). Tu reponds TOUJOURS dans la langue utilisee par le visiteur (francais, neerlandais ou anglais), de facon chaleureuse et concise. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras, uniquement du texte simple. HORAIRES: ouvert du jeudi au lundi de 11h a 21h, ferme le mardi et le mercredi. Reserve aux adultes (+18 ans). TARIFS INDICATIFS: pass journee 42,50 euros (11h-21h), pass soiree 35,50 euros (16h-21h). Offre anniversaire Ticket 50: 50 entrees pour 1695 euros soit 33,90 euros par entree au lieu de 44,50 (-24%), carte non nominative sans limite de temps, sac de sauna offert, valable jusqu au 31 aout 2026. FACILITES: sept sauna's differents (finlandais, lavande/aromatique, Kelo en cabine individuelle, Banja meditation, japonais, sel de l Himalaya avec bain sonore, infrarouge), piscine interieure chauffee a 30 degres, piscine exterieure chauffee, etang de baignade naturel non chauffe avec plage et pelouse, jacuzzi a bulles, hammam et bain de vapeur turc, scrubhut pour gommage, bains de pieds, douches de pluie, plusieurs espaces de repos, une cabine telephone, un studio son pour bain sonore, une wifi room. Beautycenter avec massages et soins hammam. Restaurant familial ouvert de 11h a 20h avec plats de poisson, viande, options vegan et snacks. CONTACT: telephone +32 51 23 23 23 ou +32 475 36 04 03, email info@thermen-r.be. Pour toute reservation de groupe, soin ou question tarifaire precise, invite la personne a appeler directement ou a passer sur place.";
+
+var TR = {
+  fr: {
+    "topbar-sub":"Assistante IA · 24h/24",
+    "tab-chat":"Assistant","tab-tarifs":"Tarifs","tab-facilities":"Sauna's","tab-infos":"Infos",
+    "input-placeholder":"Posez votre question...",
+    "tarifs-title":"Tarifs","tarifs-sub":"Une journée ou une soirée bien-être",
+    "tarifs-intro":"Découvrez nos formules d'accès aux sauna's et bains.",
+    "tarifs-sec-pass":"Accès journalier","pass-day-name":"Pass journée","pass-day-sub":"11h - 21h, accès complet",
+    "pass-evening-name":"Pass soirée","pass-evening-sub":"16h - 21h, accès complet",
+    "tarifs-sec-cards":"Cartes multi-entrées",
+    "ticket50-name":"Ticket 50 · Offre anniversaire",
+    "ticket50-desc":"50 entrées, non nominatives, sans limite de temps. Soit 33,90€/entrée au lieu de 44,50€ (-24%). Sac de sauna offert. Offre valable jusqu'au 31 août 2026, pour les 16 ans de Thermen R.",
+    "tarifs-note":"Tarifs indicatifs à confirmer avant mise en ligne. L'accès est réservé aux adultes (+18 ans). Fermé le mardi et le mercredi.",
+    "fac-title":"Sauna's & bains","fac-sub":"7 sauna's, piscines et bien plus",
+    "fac-intro":"Un univers complet de détente et de chaleur.",
+    "sauna-finnish":"Sauna finlandais","sauna-lavender":"Sauna lavande","sauna-kelo":"Sauna Kelo",
+    "sauna-banja":"Sauna Banja (méditation)","sauna-japanese":"Sauna japonais",
+    "sauna-himalaya":"Sauna sel de l'Himalaya + bain sonore","sauna-infrared":"Sauna infrarouge",
+    "pool-indoor":"Piscine intérieure 30°C","pool-outdoor":"Piscine extérieure chauffée",
+    "pond":"Étang de baignade & plage","jacuzzi":"Jacuzzi","hammam":"Hammam & bain de vapeur",
+    "beauty":"Beautycenter & massages","restaurant":"Restaurant familial · 11h-20h",
+    "fac-note":"Toutes les installations sont accessibles avec votre pass journée ou soirée.",
+    "infos-title":"Infos","infos-sub":"pratiques et contact","infos-intro":"Tout ce qu'il faut savoir avant votre visite.",
+    "infos-sec-hours":"Horaires","hours-open":"Jeudi, vendredi, samedi, dimanche, lundi : 11h - 21h","hours-closed":"Fermé le mardi et le mercredi",
+    "infos-sec-about":"À propos",
+    "about-text":"Thermen R est l'un des plus beaux complexes bien-être de Flandre occidentale : sept sauna's, plusieurs bains et bassins, un étang de baignade naturel, un espace beauté et un restaurant familial. Un lieu pensé pour une détente complète du corps et de l'esprit.",
+    "infos-sec-contact":"Contact","btn-maps":"📍 Ouvrir dans Google Maps","btn-call":"📞 Appeler Thermen R",
+    "demo-notice":"Ceci est une démonstration réalisée par Philomène IA, à titre d'exemple. Ce n'est pas le site officiel de Thermen R.",
+    "welcome":"Bienvenue chez Thermen R, complexe bien-être et sauna à Roeselare ! ♨️\n\nJe suis votre assistante disponible 24h/24. Je peux vous renseigner sur nos sauna's, nos tarifs ou nos horaires.",
+    "q1":"Sauna's","q1m":"Quels sauna's proposez-vous ?",
+    "q2":"Tarifs","q2m":"Quels sont vos tarifs ?",
+    "q3":"Horaires","q3m":"Quels sont vos horaires d'ouverture ?",
+    "q4":"Restaurant","q4m":"Y a-t-il un restaurant sur place ?"
+  },
+  nl: {
+    "topbar-sub":"AI-assistente · 24u/24",
+    "tab-chat":"Assistent","tab-tarifs":"Prijzen","tab-facilities":"Sauna's","tab-infos":"Info",
+    "input-placeholder":"Stel uw vraag...",
+    "tarifs-title":"Prijzen","tarifs-sub":"Een dag of avond wellness",
+    "tarifs-intro":"Ontdek onze toegangsformules voor sauna's en baden.",
+    "tarifs-sec-pass":"Dagtoegang","pass-day-name":"Dagpas","pass-day-sub":"11u - 21u, volledige toegang",
+    "pass-evening-name":"Avondpas","pass-evening-sub":"16u - 21u, volledige toegang",
+    "tarifs-sec-cards":"Meerbeurtenkaarten",
+    "ticket50-name":"Ticket 50 · Verjaardagsactie",
+    "ticket50-desc":"50 beurten, niet persoonsgebonden, geen tijdslimiet. Dat is €33,90 per beurt i.p.v. €44,50 (-24%). Gratis saunatas. Actie geldig tot 31 augustus 2026, voor het 16-jarig bestaan van Thermen R.",
+    "tarifs-note":"Indicatieve prijzen, te bevestigen vóór publicatie. Enkel toegankelijk voor volwassenen (+18 jaar). Gesloten op dinsdag en woensdag.",
+    "fac-title":"Sauna's & baden","fac-sub":"7 sauna's, zwembaden en meer",
+    "fac-intro":"Een complete wereld van ontspanning en warmte.",
+    "sauna-finnish":"Finse sauna","sauna-lavender":"Lavendelsauna","sauna-kelo":"Kelo sauna",
+    "sauna-banja":"Banja sauna (meditatie)","sauna-japanese":"Japanse sauna",
+    "sauna-himalaya":"Himalaya zoutkristalsauna + klankbad","sauna-infrared":"Infraroodsauna",
+    "pool-indoor":"Binnenzwembad 30°C","pool-outdoor":"Verwarmd buitenzwembad",
+    "pond":"Zwemvijver & strand","jacuzzi":"Jacuzzi","hammam":"Hammam & Turks stoombad",
+    "beauty":"Beautycenter & massages","restaurant":"Familiaal restaurant · 11u-20u",
+    "fac-note":"Alle faciliteiten zijn toegankelijk met uw dag- of avondpas.",
+    "infos-title":"Info","infos-sub":"praktisch en contact","infos-intro":"Alles wat u moet weten vóór uw bezoek.",
+    "infos-sec-hours":"Openingsuren","hours-open":"Donderdag, vrijdag, zaterdag, zondag, maandag: 11u - 21u","hours-closed":"Gesloten op dinsdag en woensdag",
+    "infos-sec-about":"Over ons",
+    "about-text":"Thermen R is een van de mooiste wellnessresorts van West-Vlaanderen: zeven sauna's, meerdere baden en bassins, een natuurlijke zwemvijver, een beautycenter en een familiaal restaurant. Een plek voor volledige ontspanning van lichaam en geest.",
+    "infos-sec-contact":"Contact","btn-maps":"📍 Openen in Google Maps","btn-call":"📞 Bel Thermen R",
+    "demo-notice":"Dit is een demonstratie gemaakt door Philomène IA, ter voorbeeld. Dit is niet de officiële website van Thermen R.",
+    "welcome":"Welkom bij Thermen R, wellness- en saunacomplex in Roeselare! ♨️\n\nIk ben uw assistente, 24u/24 beschikbaar. Ik kan u informeren over onze sauna's, prijzen of openingsuren.",
+    "q1":"Sauna's","q1m":"Welke sauna's hebben jullie?",
+    "q2":"Prijzen","q2m":"Wat zijn jullie prijzen?",
+    "q3":"Openingsuren","q3m":"Wat zijn jullie openingsuren?",
+    "q4":"Restaurant","q4m":"Is er een restaurant ter plaatse?"
+  },
+  en: {
+    "topbar-sub":"AI Assistant · 24/7",
+    "tab-chat":"Assistant","tab-tarifs":"Rates","tab-facilities":"Saunas","tab-infos":"Info",
+    "input-placeholder":"Ask your question...",
+    "tarifs-title":"Rates","tarifs-sub":"A day or evening of wellness",
+    "tarifs-intro":"Discover our access packages for saunas and baths.",
+    "tarifs-sec-pass":"Day access","pass-day-name":"Day pass","pass-day-sub":"11am - 9pm, full access",
+    "pass-evening-name":"Evening pass","pass-evening-sub":"4pm - 9pm, full access",
+    "tarifs-sec-cards":"Multi-visit cards",
+    "ticket50-name":"Ticket 50 · Anniversary offer",
+    "ticket50-desc":"50 entries, not personal, no time limit. That's €33.90/entry instead of €44.50 (-24%). Free sauna bag included. Offer valid until August 31, 2026, for Thermen R's 16th anniversary.",
+    "tarifs-note":"Indicative rates, to confirm before going live. Adults only (+18). Closed on Tuesday and Wednesday.",
+    "fac-title":"Saunas & baths","fac-sub":"7 saunas, pools and more",
+    "fac-intro":"A complete world of relaxation and warmth.",
+    "sauna-finnish":"Finnish sauna","sauna-lavender":"Lavender sauna","sauna-kelo":"Kelo sauna",
+    "sauna-banja":"Banja sauna (meditation)","sauna-japanese":"Japanese sauna",
+    "sauna-himalaya":"Himalayan salt sauna + sound bath","sauna-infrared":"Infrared sauna",
+    "pool-indoor":"Indoor pool 30°C","pool-outdoor":"Heated outdoor pool",
+    "pond":"Swimming pond & beach","jacuzzi":"Jacuzzi","hammam":"Hammam & Turkish steam bath",
+    "beauty":"Beauty center & massages","restaurant":"Family restaurant · 11am-8pm",
+    "fac-note":"All facilities are included with your day or evening pass.",
+    "infos-title":"Info","infos-sub":"practical & contact","infos-intro":"Everything you need to know before your visit.",
+    "infos-sec-hours":"Opening hours","hours-open":"Thursday, Friday, Saturday, Sunday, Monday: 11am - 9pm","hours-closed":"Closed on Tuesday and Wednesday",
+    "infos-sec-about":"About",
+    "about-text":"Thermen R is one of the finest wellness resorts in West Flanders: seven saunas, several baths and pools, a natural swimming pond, a beauty center and a family restaurant. A place designed for complete relaxation of body and mind.",
+    "infos-sec-contact":"Contact","btn-maps":"📍 Open in Google Maps","btn-call":"📞 Call Thermen R",
+    "demo-notice":"This is a demonstration made by Philomène IA, as an example. This is not the official Thermen R website.",
+    "welcome":"Welcome to Thermen R, wellness and sauna complex in Roeselare! ♨️\n\nI'm your assistant, available 24/7. I can help with our saunas, rates or opening hours.",
+    "q1":"Saunas","q1m":"What saunas do you have?",
+    "q2":"Rates","q2m":"What are your rates?",
+    "q3":"Hours","q3m":"What are your opening hours?",
+    "q4":"Restaurant","q4m":"Is there a restaurant on site?"
+  }
+};
+var currentLang = "fr";
+var busy = false;
+
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll(".langbtn").forEach(function(b){ b.classList.remove("active"); });
+  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".i18n").forEach(function(el){
+    var key = el.getAttribute("data-key");
+    if (TR[lang][key]) el.textContent = TR[lang][key];
+  });
+  var inp = document.getElementById("inp");
+  if (TR[lang]["input-placeholder"]) inp.setAttribute("placeholder", TR[lang]["input-placeholder"]);
+}
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#EAE5DC" stroke-width="1.3"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>';
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    ["q1","q2","q3","q4"].forEach(function(k){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = TR[currentLang][k];
+      (function(m){ b.onclick = function(){ send(m); }; })(TR[currentLang][k+"m"]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "thermenr_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis la pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needCall = low.indexOf("reserv") >= 0 || low.indexOf("group") >= 0 || low.indexOf("groep") >= 0 || low.indexOf("book") >= 0 || low.indexOf("contact") >= 0;
+    if (needCall) {
+      var call = document.createElement("a");
+      call.className = "call-bubble";
+      call.href = "tel:+3251232323";
+      call.textContent = TR[currentLang]["btn-call"];
+      bub.appendChild(call);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, reessayez.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot(TR[currentLang]["welcome"], true);
+  }, 900);
+}, 2200);
+</script>
+</body>
+</html>
