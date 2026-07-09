@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Duo Clean</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#E7EEEC;font-family:Jost,sans-serif;color:#111}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#splash{position:fixed;inset:0;z-index:500;background:#12233D;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:110px;height:110px;border-radius:50%;background:#E7EEEC;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-logo svg{width:52px;height:52px}
+.sp-name{font-family:'Playfair Display',serif;font-size:32px;color:#E7EEEC;letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(231,238,236,.4);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:#12233D;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(231,238,236,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#E7EEEC;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-av svg{width:24px;height:24px}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#E7EEEC;letter-spacing:.03em}
+.tb-sub{font-size:10px;color:rgba(231,238,236,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#1B9C8C;box-shadow:0 0 8px #1B9C8C;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+#tabs{background:#12233D;display:flex;border-bottom:1px solid rgba(231,238,236,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(231,238,236,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:#E7EEEC;border-bottom-color:#1B9C8C}
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+#msg-banniere{display:none;background:#12233D;color:#E7EEEC;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid rgba(231,238,236,.2);flex-shrink:0;line-height:1.5}
+#page-chat{background:#E7EEEC}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:32px;height:32px;border-radius:50%;background:#12233D;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.bav svg{width:17px;height:17px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:#111;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.bub.user{background:#12233D;color:#E7EEEC;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #12233D;background:transparent;color:#12233D;font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:#E7EEEC;border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(0,0,0,.14);background:#fff;font-size:15px;font-family:Jost,sans-serif;outline:none;color:#111}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:#12233D}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#12233D;color:#E7EEEC;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px;border:none;width:100%;cursor:pointer}
+#page-devis{background:#E7EEEC;padding:20px 15px 36px;gap:14px}
+.df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700}
+.df-title em{font-style:italic;color:#8B98A3;font-size:.7em;display:block}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8B98A3;margin-bottom:7px}
+.df-select,.df-textarea,.df-input{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:14px;font-family:Jost,sans-serif;color:#111;outline:none;-webkit-appearance:none}
+.df-textarea{resize:none;height:78px}
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.sz{padding:10px 4px;border-radius:12px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:12px;font-family:Jost,sans-serif;font-weight:500;text-align:center;cursor:pointer;color:#555;line-height:1.4}
+.sz small{font-size:10px;color:#bbb;display:block}
+.sz.sel{background:#12233D;color:#E7EEEC;border-color:#12233D}
+.em-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.em{padding:7px 12px;border-radius:22px;border:1.5px solid rgba(0,0,0,.13);background:#fff;font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:#555}
+.em.sel{background:#12233D;color:#E7EEEC;border-color:#12233D}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
+#page-services{background:#E7EEEC;padding:20px 15px 32px}
+.fl-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700}
+.fl-h em{font-style:italic;color:#8B98A3;font-size:.7em;display:block}
+.fl-sub{font-size:13px;color:#666;margin-top:6px;margin-bottom:16px}
+.fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.05);cursor:pointer}
+.fl-card:active{opacity:.85}
+.fl-thumb{width:100%;aspect-ratio:1;background:#12233D;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.fl-thumb svg{width:40%;height:40%;stroke:#5CD9C4}
+.fl-badge{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#E7EEEC;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:18px 8px 7px;text-align:center}
+.fl-info{padding:10px 12px 13px}
+.fl-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600}
+.fl-price{font-size:11.5px;color:#888;margin-top:3px;line-height:1.4}
+.fl-note{margin-top:14px;padding:13px;background:#fff;border-radius:13px;font-size:13px;color:#666;line-height:1.6;text-align:center}
+#page-infos{background:#E7EEEC;padding:20px 15px 32px}
+.t-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px}
+.t-h em{font-style:italic;color:#8B98A3;font-size:.72em;display:block}
+.t-intro{font-size:13px;color:#666;line-height:1.5;margin-bottom:18px}
+.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#8B98A3;margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.08)}
+.tcard{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px}
+.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600}
+.tcard-sub{font-size:12px;color:#666;margin-top:6px;line-height:1.55}
+.tcard-badge{background:#12233D;color:#E7EEEC;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.fcard{background:#12233D;color:#E7EEEC;border-radius:15px;padding:16px;margin-bottom:9px}
+.fcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.fcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700}
+.fcard-items{font-size:12.5px;color:rgba(231,238,236,.75);line-height:1.6}
+.twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
+.tmap{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#12233D;border:1.5px solid #12233D;border-radius:14px;padding:14px;text-decoration:none;font-weight:700;font-size:13px;font-family:Jost,sans-serif;margin-top:10px}
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+#overlay.open{display:flex}
+#mbox{background:#E7EEEC;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
+.mbox-ico-wrap{width:100%;aspect-ratio:16/9;border-radius:16px;background:#12233D;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.mbox-ico-wrap svg{width:56px;height:56px;stroke:#5CD9C4}
+.mbox-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:8px}
+.mbox-desc{text-align:center;font-size:13.5px;color:#666;line-height:1.6;margin-bottom:20px}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px;border:none;width:100%;cursor:pointer}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#888;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%}
+
+/* DEMO WATERMARK */
+#demo-badge{
+  position:fixed; top:10px; right:-34px;
+  z-index:600;
+  background:#E8A93B;
+  color:#12233D;
+  font-family:Jost,sans-serif;
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:5px 40px;
+  transform:rotate(40deg);
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  pointer-events:none;
+}
+#demo-watermark{
+  position:fixed; inset:0;
+  z-index:250;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+  overflow:hidden;
+}
+#demo-watermark span{
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-weight:700;
+  font-size:15vw;
+  color:rgba(18,35,61,0.05);
+  white-space:nowrap;
+  transform:rotate(-18deg);
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#12233D" stroke-width="1.4"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>
+  </div>
+  <div class="sp-name">DUO CLEAN</div>
+  <div class="sp-sub">Nettoyage &middot; Entretien &middot; Hygi&egrave;ne</div>
+</div>
+
+<div id="demo-badge">Démo</div>
+<div id="demo-watermark"><span>APERÇU DÉMO</span></div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#12233D" stroke-width="1.4"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>
+    </div>
+    <div>
+      <div class="tb-name">Duo Clean</div>
+      <div class="tb-sub">Assistante IA &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📝</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'services')"><span>🧽</span>Services</button>
+    <button class="tab" onclick="showTab(this,'infos')"><span>📍</span>Infos</button>
+  </div>
+
+  <div id="msg-banniere"></div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVIS -->
+  <div id="page-devis" class="page">
+    <div class="df-title">Devis instantané<em>Votre demande envoyée directement</em></div>
+    <div>
+      <div class="lbl">Type de prestation</div>
+      <select class="df-select" id="df-type">
+        <option value="">Sélectionnez...</option>
+        <option>Lavage de vitres</option>
+        <option>Entretien de surfaces commerciales</option>
+        <option>Nettoyage fin de chantier</option>
+        <option>Nettoyage vapeur (façade / terrasse)</option>
+        <option>Entretien de bureaux / écoles</option>
+        <option>Nettoyage hôpitaux / crèches</option>
+        <option>Autre / sur mesure</option>
+      </select>
+    </div>
+    <div>
+      <div class="lbl">Description du besoin</div>
+      <textarea class="df-textarea" id="df-desc" placeholder="Ex: bureaux de 120m² à nettoyer chaque semaine..."></textarea>
+    </div>
+    <div>
+      <div class="lbl">Surface approximative</div>
+      <input class="df-input" type="number" id="df-surface" placeholder="en m² (ex: 150)"/>
+    </div>
+    <div>
+      <div class="lbl">Fréquence souhaitée</div>
+      <div class="size-grid">
+        <div class="sz" onclick="selSz(this)">Ponctuel<small>1 fois</small></div>
+        <div class="sz" onclick="selSz(this)">Hebdo<small>chaque sem.</small></div>
+        <div class="sz" onclick="selSz(this)">Mensuel<small>chaque mois</small></div>
+      </div>
+    </div>
+    <div>
+      <div class="lbl">Vous êtes</div>
+      <div class="em-wrap">
+        <div class="em" id="col-part" onclick="selProfil('part')">Particulier</div>
+        <div class="em" id="col-pro" onclick="selProfil('pro')">Professionnel</div>
+      </div>
+    </div>
+    <button class="df-btn" onclick="genDevis()">📱 Envoyer sur WhatsApp</button>
+  </div>
+
+  <!-- SERVICES -->
+  <div id="page-services" class="page">
+    <div class="fl-h">Services<em>nos domaines d'intervention</em></div>
+    <div class="fl-sub">Appuyez sur un service pour demander un devis 🧽</div>
+    <div class="fl-grid" id="fl-grid"></div>
+    <div class="fl-note">Duo Clean, entreprise familiale active depuis plus de 10 ans à Mouscron.</div>
+  </div>
+
+  <!-- INFOS -->
+  <div id="page-infos" class="page">
+    <div class="t-h">Infos<em>pratiques et contact</em></div>
+    <div class="t-intro">Tout ce qu'il faut savoir sur Duo Clean.</div>
+
+    <div class="t-sec">L'entreprise</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Entreprise familiale</div></div><div class="tcard-badge">10+ ans</div></div>
+      <div class="tcard-sub">Active depuis 2008 à Mouscron. Équipe de 5 à 9 personnes, intervenant en Belgique et dans le Nord de la France, pour les professionnels comme les particuliers.</div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Notre spécialité</div></div><div class="tcard-badge">Unique région</div></div>
+      <div class="tcard-sub">Le nettoyage vapeur STEAM PLUS : façades, terrasses, toitures, sans produit chimique, sans abîmer les matériaux fragiles — contrairement au Karcher classique.</div>
+    </div>
+
+    <div class="t-sec">Ils nous font confiance</div>
+    <div class="fcard">
+      <div class="fcard-top"><div class="fcard-name">Art & Dessins, Mouscron</div></div>
+      <div class="fcard-items">"Il est important pour nous d'avoir un établissement propre et frais afin de recevoir les enfants dans de bonnes conditions. Merci Duo Clean, travail au top !"</div>
+    </div>
+    <div class="fcard">
+      <div class="fcard-top"><div class="fcard-name">St-Event</div></div>
+      <div class="fcard-items">"Quel bonheur que de retrouver ses locaux propres chaque lundi matin..."</div>
+    </div>
+
+    <div class="t-sec">Contact</div>
+    <div class="tcard">
+      <div class="tcard-sub" style="font-size:13px;color:#333;">
+        📞 +32 476 41 03 03<br/>
+        📧 contact@duo-clean.be<br/>
+        📍 Rue du Mont-à-Leux 166, 7700 Mouscron
+      </div>
+      <a class="tmap" href="https://www.google.com/maps/place/Rue+Mont-%C3%A0-Leux+166,+7700+Mouscron" target="_blank">📍 Ouvrir dans Google Maps</a>
+      <a class="twa" href="https://wa.me/32476410303?text=Bonjour%20Duo%20Clean%20!%20Je%20voudrais%20un%20devis." target="_blank">📱 Contacter Duo Clean</a>
+    </div>
+
+    <div id="mentionsLegales" style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(0,0,0,.08);font-size:10.5px;line-height:1.7;color:#999;text-align:center;">
+      <b style="color:#666;">Duo Clean SRL</b><br/>
+      N° d'entreprise : BE 0897.012.052<br/>
+      Rue du Mont-à-Leux 166, 7700 Mouscron, Belgique<br/>
+      Contact : contact@duo-clean.be<br/>
+      <span style="opacity:.8;">Site créé par <a href="https://philomeneia.com" target="_blank" style="color:inherit;">Philomène IA</a></span>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:rgba(232,169,59,0.15);border:1px dashed #E8A93B;border-radius:12px;font-size:11px;color:#8a651f;text-align:center;line-height:1.6;">
+      🔎 Ceci est une démonstration réalisée par Philomène IA, à titre d'exemple pour Duo Clean. Ce n'est pas encore leur site officiel.
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY SERVICE -->
+<div id="overlay" onclick="fermerModal()">
+  <div id="mbox" onclick="event.stopPropagation()">
+    <div class="mbox-ico-wrap"><svg id="mbox-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.3"></svg></div>
+    <div class="mbox-name" id="mbox-name"></div>
+    <div class="mbox-desc" id="mbox-desc"></div>
+    <button class="mbox-wa" id="mbox-wa">📱 Demander un devis pour ce service</button>
+    <button class="mbox-cancel" onclick="fermerModal()">Annuler</button>
+  </div>
+</div>
+
+<script>
+var WA = "32476410303";
+var API = "https://philo-backend-by2c.onrender.com";
+fetch(API + "/ping/duoclean").catch(function(){});
+var SYS = "Tu es l assistante IA de Duo Clean, entreprise familiale de nettoyage professionnel basee a Mouscron, active depuis plus de 10 ans (creee en 2008), intervenant en Belgique et dans le Nord de la France pour particuliers et professionnels. Reponds en francais, professionnelle, chaleureuse et concise. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras, pas de tirets listes - uniquement du texte simple et naturel. ADRESSE: Rue du Mont-a-Leux 166, 7700 Mouscron. TELEPHONE: +32 476 41 03 03. EMAIL: contact@duo-clean.be. SERVICES: 1) Lavage de vitres - vitrages prives, commerces, verandas, bureaux, en hauteur ou rez-de-chaussee, fin de chantier ou entretien courant hebdomadaire mensuel trimestriel ou annuel, resultat sans trace. 2) Entretien de surfaces commerciales - prestations sur mesure, produits probiotiques bio non dangereux, desinfectants de niveau hospitalier disponibles, collaborateurs formes et equipes masques et gants. 3) Nettoyage fin de chantier - apres travaux plâtre peinture ciment poussiere, pour emmenager dans un logement propre et sain. 4) Nettoyage vapeur - c'est le service unique et phare de Duo Clean dans la region, technique STEAM PLUS haute et basse pression pour facades terrasses crepis demoussage de toiture chewing-gum graffitis et peinture, sans produit chimique et sans abimer les materiaux fragiles contrairement au Karcher classique. 5) Entretien de bureaux et ecoles - nettoyage regulier d espaces professionnels et etablissements scolaires. 6) Nettoyage d hopitaux et creches - protocoles d hygiene renforcees pour environnements sensibles. TARIFS: Duo Clean ne communique pas de tarifs fixes en ligne, chaque devis depend du type de surface, de la frequence et de l etat des lieux. Si on te donne une surface tu peux donner une fourchette tres indicative environ 1,50 a 4 euros du m2 selon la prestation la vapeur et le chantier etant plus eleves, mais precise toujours que ce n est qu une estimation non contractuelle. TEMOIGNAGES: Art et Dessins a Mouscron une ecole a dit merci Duo Clean travail au top, et St-Event a parle du bonheur de retrouver ses locaux propres chaque lundi matin. REGLE ABSOLUE: pour toute demande de devis ou de rendez-vous, essaie de recuperer le type de prestation, la surface approximative, la frequence souhaitee ponctuelle hebdomadaire ou mensuelle, et si c est pour un particulier ou un professionnel, puis propose de transmettre la demande a l equipe via WhatsApp ou telephone pour un devis gratuit et precis.";
+var busy = false;
+
+var SERVICES = [
+  {nom:"Lavage de vitres", desc:"Vitrages privés, commerces, vérandas, bureaux. En hauteur ou au rez-de-chaussée. Résultat sans trace garanti.", icon:'<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 10h18M12 4v16"/>'},
+  {nom:"Surfaces commerciales", desc:"Prestations sur mesure, produits probiotiques respectueux de vos équipes, désinfectants de niveau hospitalier sur demande.", icon:'<path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>'},
+  {nom:"Fin de chantier", desc:"Plâtre, peinture, ciment, poussière : emménagez sans vous soucier du nettoyage après travaux.", icon:'<path d="M4 20l4-12h8l4 12M8 20h8"/>'},
+  {nom:"Nettoyage vapeur", desc:"Façades, terrasses, toitures, graffitis. Technique STEAM PLUS sans produit chimique. Notre spécialité, unique dans la région.", icon:'<path d="M12 3c0 3-3 3-3 6a3 3 0 0 0 6 0c0-3-3-3-3-6zM6 21c0-3 2-5 2-8M18 21c0-3-2-5-2-8"/>'},
+  {nom:"Bureaux & écoles", desc:"Nettoyage régulier de vos espaces professionnels ou établissements scolaires, avec suivi qualité.", icon:'<path d="M4 19h16M6 19V9l6-5 6 5v10M10 19v-5h4v5"/>'},
+  {nom:"Hôpitaux & crèches", desc:"Protocoles d'hygiène renforcés, désinfectants de niveau hospitalier, équipes formées aux environnements sensibles.", icon:'<path d="M12 21c-4-3-7-6-7-10a7 7 0 0 1 14 0c0 4-3 7-7 10z"/><circle cx="12" cy="11" r="2"/>'}
+];
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+  if (n === "services") loadServices();
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#E7EEEC" stroke-width="1.4"><path d="M12 2c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>';
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["Services","Quels sont vos services ?"],["Vapeur","C'est quoi le nettoyage vapeur ?"],["Devis","Comment obtenir un devis ?"],["Zone","Où intervenez-vous ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "duoclean_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis la pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("devis") >= 0 || low.indexOf("rdv") >= 0 || low.indexOf("rendez") >= 0 || low.indexOf("contact") >= 0 || low.indexOf("reserver") >= 0 || low.indexOf("réserver") >= 0;
+    if (needWA) {
+      var wa = document.createElement("button");
+      wa.className = "wa-bubble";
+      var waUrl = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Duo Clean ! Je voudrais un devis.");
+      wa.onclick = function(){ window.open(waUrl, "_blank"); };
+      wa.textContent = "Contacter Duo Clean sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, reessayez.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+function selProfil(c) {
+  document.getElementById('col-part').classList.remove('sel');
+  document.getElementById('col-pro').classList.remove('sel');
+  document.getElementById('col-' + c).classList.add('sel');
+}
+
+function selSz(el) {
+  document.querySelectorAll(".sz").forEach(function(e){ e.classList.remove("sel"); });
+  el.classList.add("sel");
+}
+
+function genDevis() {
+  var type = document.getElementById("df-type").value;
+  var desc = document.getElementById("df-desc").value.trim();
+  var surface = document.getElementById("df-surface").value.trim();
+  var sz = document.querySelector(".sz.sel");
+  var freq = sz ? sz.childNodes[0].textContent.trim() : "";
+  var profil = document.getElementById('col-pro').classList.contains('sel') ? 'Professionnel' : document.getElementById('col-part').classList.contains('sel') ? 'Particulier' : '';
+  if (!type && !desc) { alert("Remplissez au moins le type de prestation ou la description"); return; }
+  var waMsg = "Bonjour Duo Clean ! Je voudrais un devis.\n\n";
+  if (type) waMsg += "Prestation : " + type + "\n";
+  if (surface) waMsg += "Surface : " + surface + " m2\n";
+  if (freq) waMsg += "Frequence : " + freq + "\n";
+  if (profil) waMsg += "Profil : " + profil + "\n";
+  if (desc) waMsg += "Description : " + desc + "\n";
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg), "_blank");
+}
+
+function loadServices() {
+  var grid = document.getElementById("fl-grid");
+  grid.innerHTML = "";
+  SERVICES.forEach(function(s){
+    var card = document.createElement("div");
+    card.className = "fl-card";
+    card.onclick = function(){ ouvrirService(s); };
+    var thumb = document.createElement("div");
+    thumb.className = "fl-thumb";
+    thumb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#5CD9C4" stroke-width="1.3">' + s.icon + '</svg>';
+    var badge = document.createElement("div");
+    badge.className = "fl-badge";
+    badge.textContent = "Service";
+    thumb.appendChild(badge);
+    var info = document.createElement("div");
+    info.className = "fl-info";
+    info.innerHTML = '<div class="fl-name">' + s.nom + '</div><div class="fl-price">Devis gratuit</div>';
+    card.appendChild(thumb);
+    card.appendChild(info);
+    grid.appendChild(card);
+  });
+}
+
+function ouvrirService(s) {
+  document.getElementById("mbox-svg").innerHTML = s.icon;
+  document.getElementById("mbox-name").textContent = s.nom;
+  document.getElementById("mbox-desc").textContent = s.desc;
+  var msg = "Bonjour Duo Clean ! Je suis interesse(e) par le service " + s.nom + ". Pouvez-vous me faire un devis ?";
+  var url = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+  document.getElementById("mbox-wa").onclick = function(){ fermerModal(); window.open(url, "_blank"); };
+  document.getElementById("overlay").classList.add("open");
+}
+
+function fermerModal() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+fetch(API + "/memory/duoclean_config")
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.value && d.value.message && d.value.message.trim()) {
+      var b = document.getElementById("msg-banniere");
+      b.textContent = "📢 " + d.value.message;
+      b.style.display = "block";
+    }
+  }).catch(function(){});
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bienvenue chez Duo Clean, entreprise familiale de nettoyage professionnel basée à Mouscron ! 🧽\n\nJe suis votre assistante disponible 24h/24. Je peux vous renseigner sur nos services, notre zone d'intervention ou vous aider à obtenir un devis.", true);
+  }, 900);
+}, 2500);
+</script>
+</body>
+</html>
