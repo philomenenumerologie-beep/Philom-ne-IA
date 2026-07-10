@@ -352,6 +352,25 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
   border-radius:10px;border:1px solid rgba(200,40,26,.15);
   font-size:12px;color:rgba(26,10,0,.6);line-height:1.5;
 }
+.pay-options{
+  display:flex;gap:0;margin-bottom:10px;
+  background:var(--cream2);border-radius:12px;padding:4px;
+  border:1.5px solid var(--border);
+}
+.pay-opt{
+  flex:1;padding:9px 4px;border-radius:9px;border:none;
+  font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;
+  cursor:pointer;color:rgba(26,10,0,.5);background:transparent;
+  transition:all .22s;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.pay-opt.active{background:#fff;color:var(--dark);box-shadow:0 2px 8px rgba(0,0,0,.1);font-weight:700}
+.mbox-pay{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--dark);color:#fff;border-radius:14px;padding:16px;
+  font-weight:700;font-size:15px;font-family:'DM Sans',sans-serif;
+  text-decoration:none;margin-bottom:8px;border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(26,10,0,.25);
+}
 .mbox-wa{
   width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
   background:#25D366;color:#fff;border-radius:14px;padding:16px;
@@ -631,15 +650,28 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
     <div class="mbox-note" id="mbox-note">
       📍 Sur place — Mentionnez votre numéro de table sur WhatsApp.
     </div>
-    <button class="mbox-wa" onclick="commanderWA()">📱 Envoyer ma commande sur WhatsApp</button>
+
+    <div class="pay-options">
+      <button class="pay-opt active" id="pay-wa" onclick="setPayMode('wa')">📱 Payer sur place</button>
+      <button class="pay-opt" id="pay-online" onclick="setPayMode('online')">💳 Payer en ligne</button>
+    </div>
+
+    <button class="mbox-wa" id="btn-commander-wa" onclick="commanderWA()">📱 Envoyer ma commande sur WhatsApp</button>
+    <button class="mbox-pay" id="btn-payer-ligne" onclick="payerEnLigne()" style="display:none">💳 Payer maintenant (Bancontact / Payconiq)</button>
     <button class="mbox-cancel" onclick="fermerModal()">Continuer mes achats</button>
   </div>
 </div>
 
 <script>
 var WA = "32400000000";
+// Lien de paiement du commerçant (Payconiq by Bancontact, le plus utilisé en Belgique).
+// A REMPLACER par le vrai lien une fois son compte pro Payconiq/Bancontact créé.
+// A défaut, un lien Revolut ou Stripe fonctionne aussi de la même façon.
+var PAYLINK = "https://payconiq.com/pay/yolopizza";
+
 var cart = [];
 var orderType = "surplace";
+var payMode = "wa";
 
 var typeLabels = {
   surplace: "Sur place",
@@ -663,6 +695,20 @@ function setType(t) {
   });
   var note = document.getElementById("mbox-note");
   if(note) note.textContent = typeNotes[t];
+}
+
+function setPayMode(m) {
+  payMode = m;
+  document.getElementById("pay-wa").classList.toggle("active", m==="wa");
+  document.getElementById("pay-online").classList.toggle("active", m==="online");
+  document.getElementById("btn-commander-wa").style.display = (m==="wa") ? "flex" : "none";
+  document.getElementById("btn-payer-ligne").style.display = (m==="online") ? "flex" : "none";
+}
+
+function payerEnLigne() {
+  // Ouvre le lien de paiement du commerçant. Le montant exact reste à indiquer
+  // manuellement par le client tant que PAYLINK n'est pas un lien à montant fixe.
+  window.open(PAYLINK, "_blank");
 }
 
 function showTab(btn, n) {
