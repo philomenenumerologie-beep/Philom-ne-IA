@@ -650,6 +650,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
     <div class="mbox-note" id="mbox-note">
       📍 Sur place — Mentionnez votre numéro de table sur WhatsApp.
     </div>
+    <div class="mbox-note" id="pay-amount-note" style="display:none;font-weight:700;text-align:center;font-size:14px">
+      💳 Montant exact à indiquer sur la page de paiement : <span id="pay-amount-val">0.00€</span>
+    </div>
 
     <div class="pay-options">
       <button class="pay-opt active" id="pay-wa" onclick="setPayMode('wa')">📱 Payer sur place</button>
@@ -657,17 +660,19 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1a
     </div>
 
     <button class="mbox-wa" id="btn-commander-wa" onclick="commanderWA()">📱 Envoyer ma commande sur WhatsApp</button>
-    <button class="mbox-pay" id="btn-payer-ligne" onclick="payerEnLigne()" style="display:none">💳 Payer maintenant (Bancontact / Payconiq)</button>
+    <a class="mbox-pay" id="btn-payer-ligne" href="#" target="_blank" style="display:none;text-decoration:none">1️⃣ 💳 Payer en ligne</a>
+    <a class="mbox-wa" id="btn-confirmer-paye" href="#" target="_blank" style="display:none;text-decoration:none">2️⃣ 📱 Envoyer ma commande sur WhatsApp</a>
     <button class="mbox-cancel" onclick="fermerModal()">Continuer mes achats</button>
   </div>
 </div>
 
 <script>
 var WA = "32400000000";
-// Lien de paiement du commerçant (Payconiq by Bancontact, le plus utilisé en Belgique).
-// A REMPLACER par le vrai lien une fois son compte pro Payconiq/Bancontact créé.
-// A défaut, un lien Revolut ou Stripe fonctionne aussi de la même façon.
-var PAYLINK = "https://payconiq.com/pay/yolopizza";
+// Lien de paiement du commerçant. Pour cette démo : lien Revolut Business
+// (fonctionne avec n'importe quelle carte, belge ou non).
+// A REMPLACER par le vrai lien du commerçant une fois son compte pro créé
+// (Revolut Business, ou lien Payconiq Pro / Bancontact si sa banque belge le propose).
+var PAYLINK = "https://revolut.me/yolopizza";
 
 var cart = [];
 var orderType = "surplace";
@@ -703,12 +708,24 @@ function setPayMode(m) {
   document.getElementById("pay-online").classList.toggle("active", m==="online");
   document.getElementById("btn-commander-wa").style.display = (m==="wa") ? "flex" : "none";
   document.getElementById("btn-payer-ligne").style.display = (m==="online") ? "flex" : "none";
+  document.getElementById("btn-confirmer-paye").style.display = (m==="online") ? "flex" : "none";
+  document.getElementById("pay-amount-note").style.display = (m==="online") ? "block" : "none";
 }
 
-function payerEnLigne() {
-  // Ouvre le lien de paiement du commerçant. Le montant exact reste à indiquer
-  // manuellement par le client tant que PAYLINK n'est pas un lien à montant fixe.
-  window.open(PAYLINK, "_blank");
+function updatePayButtonAmount() {
+  var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+  var val = total.toFixed(2) + "€";
+  document.getElementById("btn-payer-ligne").textContent = "1️⃣ 💳 Payer en ligne — " + val;
+  document.getElementById("btn-payer-ligne").href = PAYLINK;
+  document.getElementById("pay-amount-val").textContent = val;
+
+  // Construit le lien WhatsApp "commande payée" à l'avance, comme un vrai lien <a>
+  var msg = "Bonjour Yolo Pizza ! Je voudrais commander (" + typeLabels[orderType] + ") :\n\n";
+  cart.forEach(function(i){ msg += "· " + i.qty + "x " + i.name + " — " + (i.price*i.qty).toFixed(2) + "€\n"; });
+  msg += "\nTOTAL : " + val;
+  msg += "\n\n✅ Paiement en ligne effectué (" + val + ") — merci de vérifier la réception.";
+  if (orderType === "livraison") msg += "\n\nMon adresse : ";
+  document.getElementById("btn-confirmer-paye").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
 }
 
 function showTab(btn, n) {
@@ -756,6 +773,7 @@ function ouvrirPanier() {
   });
   var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
   document.getElementById("mbox-total").textContent = total.toFixed(2) + "€";
+  updatePayButtonAmount();
   document.getElementById("overlay").classList.add("open");
 }
 
@@ -771,13 +789,14 @@ function changeQty(idx, delta) {
   ouvrirPanier();
 }
 
-function commanderWA() {
+function commanderWA(paidOnline) {
   var msg = "Bonjour Yolo Pizza ! Je voudrais commander (" + typeLabels[orderType] + ") :\n\n";
   cart.forEach(function(i){ msg += "· " + i.qty + "x " + i.name + " — " + (i.price*i.qty).toFixed(2) + "€\n"; });
   var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
   msg += "\nTOTAL : " + total.toFixed(2) + "€";
+  if (paidOnline) msg += "\n\n✅ Paiement en ligne effectué à l'instant (" + total.toFixed(2) + "€) — merci de vérifier la réception.";
   if (orderType === "livraison") msg += "\n\nMon adresse : ";
-  if (orderType === "surplace") msg += "\n\nTable n° : ";
+  if (orderType === "surplace" && !paidOnline) msg += "\n\nTable n° : ";
   window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
 }
 
