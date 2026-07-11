@@ -119,6 +119,10 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 .promo-unit{font-size:9px;color:var(--text-muted)}
 .promo-save{text-align:center;font-size:11px;color:var(--gold-dim);font-style:italic;font-weight:600}
 .mentions{margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:10.5px;line-height:1.8;color:var(--text-muted);text-align:center}
+.promo-strike{font-size:13px;color:var(--text-muted);text-decoration:line-through;margin-bottom:2px}
+.promo-banner{display:none;background:#111;color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:14px;text-align:center;font-size:13px;font-weight:600;letter-spacing:.02em}
+.promo-banner b{color:var(--gold-light)}
+.tpval-new{color:var(--gold-dim)}
 </style>
 </head>
 <body>
@@ -304,6 +308,8 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
     <div class="t-title">Tarifs<em>clairs et sans surprise</em></div>
     <div class="t-intro">Première année incluse. Pas d'abonnement mensuel. Hébergement &amp; support inclus.</div>
 
+    <div id="promo-banner" class="promo-banner"></div>
+
     <div class="t-sec">🥉 Essentiel — Sans IA</div>
     <div class="tcard">
       <div class="tcard-top">
@@ -311,7 +317,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         <div class="tcard-badge">Entrée de gamme</div>
       </div>
       <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div class="tpval">490€</div><div class="tpunit">création + hébergement</div></div>
+        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-essentiel-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-essentiel">490€</div><div class="tpunit">création + hébergement</div></div>
         <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">390€</div><div class="tpunit">par an</div></div>
       </div>
       <div class="tcard-items">
@@ -329,7 +335,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         <div class="tcard-badge gold">Populaire</div>
       </div>
       <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div class="tpval">590€</div><div class="tpunit">création + hébergement</div></div>
+        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-pro-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-pro">590€</div><div class="tpunit">création + hébergement</div></div>
         <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">390€</div><div class="tpunit">par an</div></div>
       </div>
       <div class="tcard-items">
@@ -347,7 +353,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         <div class="tcard-badge gold">Tout inclus</div>
       </div>
       <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div class="tpval">690€</div><div class="tpunit">création + hébergement</div></div>
+        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-premium-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-premium">690€</div><div class="tpunit">création + hébergement</div></div>
         <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">490€</div><div class="tpunit">par an</div></div>
       </div>
       <div class="tcard-items">
@@ -543,6 +549,50 @@ function genDevisPhilo(){
   window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank");
 }
 
+// ===== PROMOS (gérées depuis philomene-admin.html) =====
+var BASE_PRICES = { essentiel:490, pro:590, premium:690 };
+
+function appliquerPromos(promo){
+  if(!promo) return;
+  var actives = [];
+  ["essentiel","pro","premium"].forEach(function(key){
+    var p = promo[key];
+    var valEl = document.getElementById("px-"+key);
+    var strikeEl = document.getElementById("px-"+key+"-strike");
+    if(!valEl) return;
+    if(p && p.active && p.pct > 0){
+      var base = BASE_PRICES[key];
+      var reduit = Math.round(base * (1 - p.pct/100));
+      strikeEl.textContent = base + "€";
+      strikeEl.style.display = "block";
+      valEl.textContent = reduit + "€";
+      valEl.classList.add("tpval-new");
+      actives.push(key.charAt(0).toUpperCase()+key.slice(1)+" -"+p.pct+"%");
+    } else {
+      strikeEl.style.display = "none";
+      valEl.textContent = BASE_PRICES[key] + "€";
+      valEl.classList.remove("tpval-new");
+    }
+  });
+  var banner = document.getElementById("promo-banner");
+  if(actives.length){
+    banner.style.display = "block";
+    banner.innerHTML = "🔥 " + (promo.label ? promo.label + " — " : "") + "<b>" + actives.join(" · ") + "</b>";
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+function chargerPromos(){
+  fetch(API+"/memory/philo_promo")
+    .then(function(r){ if(!r.ok) throw new Error("no promo"); return r.json() })
+    .then(function(d){
+      var promo = d && d.value ? (typeof d.value === "string" ? JSON.parse(d.value) : d.value) : null;
+      appliquerPromos(promo);
+    })
+    .catch(function(){ /* pas de promo active, prix normaux */ });
+}
+
 setTimeout(function(){
   document.getElementById("splash").classList.add("gone");
   setTimeout(function(){
@@ -555,6 +605,8 @@ setTimeout(function(){
     ])
   },900)
 },2500)
+
+chargerPromos();
 </script>
 </body>
 </html>
