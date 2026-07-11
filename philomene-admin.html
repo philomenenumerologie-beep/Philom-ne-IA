@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Philomène — Admin Promos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Jost,sans-serif;background:#FAFAF7;color:#111;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:20px 16px 60px}
+h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:4px}
+.sub{font-size:12px;color:#999;margin-bottom:20px}
+#lock{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:14px}
+#lock input{width:100%;max-width:280px;padding:14px;border-radius:12px;border:1.5px solid #ddd;font-size:16px;text-align:center;outline:none}
+#lock input:focus{border-color:#C9A84C}
+#lock button{padding:14px 28px;border-radius:12px;border:none;background:#111;color:#fff;font-weight:700;font-size:14px;cursor:pointer;width:100%;max-width:280px}
+#lock-err{color:#c0392b;font-size:12px;display:none}
+#panel{display:none}
+.card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700}
+.card-base{font-size:11px;color:#999}
+.switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#ddd;border-radius:24px;cursor:pointer;transition:.2s}
+.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+input:checked + .slider{background:#C9A84C}
+input:checked + .slider:before{transform:translateX(20px)}
+.pct-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.pct-row input[type=range]{flex:1;accent-color:#C9A84C}
+.pct-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#9A7A35;min-width:52px;text-align:right}
+.preview{font-size:12px;color:#555;margin-top:8px}
+.preview b{color:#111}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#999;margin-bottom:6px}
+.txt-input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid #ddd;font-size:14px;font-family:Jost,sans-serif;outline:none;margin-bottom:16px}
+.txt-input:focus{border-color:#C9A84C}
+.save-btn{width:100%;padding:16px;border-radius:14px;border:none;background:#111;color:#fff;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
+.save-btn:active{opacity:.8}
+.status{text-align:center;font-size:13px;margin-top:10px;min-height:18px}
+.status.ok{color:#2e7d32}
+.status.err{color:#c0392b}
+.reset-link{display:block;text-align:center;font-size:12px;color:#999;margin-top:18px;text-decoration:underline;cursor:pointer;background:none;border:none;width:100%}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#C9A84C">Philomène</div>
+  <div style="font-size:12px;color:#999;margin-bottom:6px">Admin — Promotions</div>
+  <input id="pwd" type="password" placeholder="Mot de passe" autocomplete="off"/>
+  <div id="lock-err">Mot de passe incorrect</div>
+  <button onclick="checkPwd()">Entrer</button>
+</div>
+
+<div id="panel" class="wrap">
+  <h1>Promotions tarifs</h1>
+  <div class="sub">Active une réduction sur une formule, ça s'affiche automatiquement sur la vitrine.</div>
+
+  <div class="lbl">Texte du bandeau (optionnel)</div>
+  <input class="txt-input" id="label" placeholder="Ex : Offre de lancement"/>
+
+  <div class="card">
+    <div class="card-top">
+      <div><div class="card-name">🥉 Essentiel</div><div class="card-base">Prix normal : 490€</div></div>
+      <label class="switch"><input type="checkbox" id="active-essentiel" onchange="updatePreview('essentiel')"><span class="slider"></span></label>
+    </div>
+    <div class="pct-row">
+      <input type="range" id="pct-essentiel" min="0" max="80" value="20" oninput="updatePreview('essentiel')"/>
+      <div class="pct-val" id="pctval-essentiel">-20%</div>
+    </div>
+    <div class="preview" id="preview-essentiel"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div><div class="card-name">🥈 Pro</div><div class="card-base">Prix normal : 590€</div></div>
+      <label class="switch"><input type="checkbox" id="active-pro" onchange="updatePreview('pro')"><span class="slider"></span></label>
+    </div>
+    <div class="pct-row">
+      <input type="range" id="pct-pro" min="0" max="80" value="20" oninput="updatePreview('pro')"/>
+      <div class="pct-val" id="pctval-pro">-20%</div>
+    </div>
+    <div class="preview" id="preview-pro"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div><div class="card-name">🥇 Premium</div><div class="card-base">Prix normal : 690€</div></div>
+      <label class="switch"><input type="checkbox" id="active-premium" onchange="updatePreview('premium')"><span class="slider"></span></label>
+    </div>
+    <div class="pct-row">
+      <input type="range" id="pct-premium" min="0" max="80" value="30" oninput="updatePreview('premium')"/>
+      <div class="pct-val" id="pctval-premium">-30%</div>
+    </div>
+    <div class="preview" id="preview-premium"></div>
+  </div>
+
+  <button class="save-btn" onclick="savePromo()">💾 Enregistrer sur la vitrine</button>
+  <div class="status" id="status"></div>
+  <button class="reset-link" onclick="resetPromo()">Tout désactiver</button>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var PASSWORD = "jolie2026"; // même mot de passe que tes autres admins, change-le si tu veux
+var BASE = { essentiel:490, pro:590, premium:690 };
+
+function checkPwd(){
+  var v = document.getElementById("pwd").value;
+  if(v === PASSWORD){
+    document.getElementById("lock").style.display = "none";
+    document.getElementById("panel").style.display = "block";
+    loadPromo();
+  } else {
+    document.getElementById("lock-err").style.display = "block";
+  }
+}
+document.getElementById("pwd").addEventListener("keydown", function(e){ if(e.key === "Enter") checkPwd() });
+
+function updatePreview(key){
+  var pct = document.getElementById("pct-"+key).value;
+  var active = document.getElementById("active-"+key).checked;
+  document.getElementById("pctval-"+key).textContent = "-" + pct + "%";
+  var base = BASE[key];
+  var reduit = Math.round(base * (1 - pct/100));
+  var el = document.getElementById("preview-"+key);
+  if(active){
+    el.innerHTML = "Prix affiché : <b>" + reduit + "€</b> au lieu de " + base + "€";
+  } else {
+    el.innerHTML = "Inactif — prix normal affiché (" + base + "€)";
+  }
+}
+
+function buildPromo(){
+  return {
+    label: document.getElementById("label").value.trim(),
+    essentiel: { active: document.getElementById("active-essentiel").checked, pct: parseInt(document.getElementById("pct-essentiel").value,10) },
+    pro: { active: document.getElementById("active-pro").checked, pct: parseInt(document.getElementById("pct-pro").value,10) },
+    premium: { active: document.getElementById("active-premium").checked, pct: parseInt(document.getElementById("pct-premium").value,10) }
+  };
+}
+
+function savePromo(){
+  var promo = buildPromo();
+  var status = document.getElementById("status");
+  status.textContent = "Enregistrement...";
+  status.className = "status";
+  fetch(API+"/memory/philo_promo", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ value: promo })
+  })
+  .then(function(r){ if(!r.ok) throw new Error("save failed"); return r.json() })
+  .then(function(){
+    status.textContent = "✓ Promo enregistrée, elle est visible sur la vitrine";
+    status.className = "status ok";
+  })
+  .catch(function(){
+    status.textContent = "✗ Erreur d'enregistrement, réessaie";
+    status.className = "status err";
+  });
+}
+
+function resetPromo(){
+  ["essentiel","pro","premium"].forEach(function(key){
+    document.getElementById("active-"+key).checked = false;
+    updatePreview(key);
+  });
+  document.getElementById("label").value = "";
+  savePromo();
+}
+
+function loadPromo(){
+  fetch(API+"/memory/philo_promo")
+    .then(function(r){ if(!r.ok) throw new Error("no promo"); return r.json() })
+    .then(function(d){
+      var promo = d && d.value ? (typeof d.value === "string" ? JSON.parse(d.value) : d.value) : null;
+      if(!promo) return;
+      if(promo.label) document.getElementById("label").value = promo.label;
+      ["essentiel","pro","premium"].forEach(function(key){
+        if(promo[key]){
+          document.getElementById("active-"+key).checked = !!promo[key].active;
+          if(promo[key].pct !== undefined) document.getElementById("pct-"+key).value = promo[key].pct;
+        }
+        updatePreview(key);
+      });
+    })
+    .catch(function(){
+      ["essentiel","pro","premium"].forEach(updatePreview);
+    });
+}
+</script>
+</body>
+</html>
