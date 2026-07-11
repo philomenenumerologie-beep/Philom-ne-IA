@@ -149,6 +149,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 
   <!-- CHAT -->
   <div id="page-chat" class="page active">
+    <div id="promo-banner-chat" class="promo-banner" style="margin:14px 14px 0"></div>
     <div id="messages"></div>
     <div style="height:12px;flex-shrink:0"></div>
     <div id="composer">
@@ -574,13 +575,17 @@ function appliquerPromos(promo){
       valEl.classList.remove("tpval-new");
     }
   });
-  var banner = document.getElementById("promo-banner");
-  if(actives.length){
-    banner.style.display = "block";
-    banner.innerHTML = "🔥 " + (promo.label ? promo.label + " — " : "") + "<b>" + actives.join(" · ") + "</b>";
-  } else {
-    banner.style.display = "none";
-  }
+  var bannerHtml = actives.length ? ("🔥 " + (promo.label ? promo.label + " — " : "") + "<b>" + actives.join(" · ") + "</b>") : "";
+  ["promo-banner","promo-banner-chat"].forEach(function(id){
+    var b = document.getElementById(id);
+    if(!b) return;
+    if(actives.length){
+      b.style.display = "block";
+      b.innerHTML = bannerHtml;
+    } else {
+      b.style.display = "none";
+    }
+  });
 }
 
 function chargerPromos(){
