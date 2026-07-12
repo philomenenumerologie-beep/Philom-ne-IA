@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Admin - Le Camion Gourmand</title>
+<style>
+  :root{
+    --bg:#1a1410;--bg2:#231b14;--accent:#ff7a1a;--accent2:#ffb347;
+    --text:#fff6ec;--muted:#c9b8a3;--card:#2a2119;--danger:#e74c3c;--ok:#2ecc71;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* Login */
+  #login-screen{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;
+  }
+  #login-screen h1{font-size:20px;color:var(--accent2);margin-bottom:18px;}
+  #login-screen input{
+    width:100%;max-width:280px;padding:13px 14px;border-radius:10px;border:1px solid #3a2e22;
+    background:var(--card);color:var(--text);font-size:15px;text-align:center;margin-bottom:12px;
+  }
+  #login-screen button{
+    width:100%;max-width:280px;padding:13px;border:none;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1410;font-weight:800;font-size:15px;
+  }
+  #login-error{color:var(--danger);font-size:12px;margin-top:10px;display:none;}
+
+  /* App */
+  #admin-app{display:none;padding-bottom:80px;}
+  header.top{padding:18px 16px 14px;background:var(--bg2);border-bottom:1px solid #35291c;text-align:center;}
+  header.top h1{font-size:18px;color:var(--accent2);font-weight:800;}
+  header.top p{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  .tab-content{display:none;padding:16px;}
+  .tab-content.active{display:block;}
+
+  .card{background:var(--card);border:1px solid #35291c;border-radius:14px;padding:16px;margin-bottom:12px;}
+  .card h3{color:var(--accent2);font-size:14px;margin-bottom:4px;}
+  .card p{color:var(--muted);font-size:12px;line-height:1.5;}
+
+  /* Réservations */
+  .resa-item{
+    background:var(--card);border:1px solid #35291c;border-radius:14px;padding:14px;margin-bottom:10px;
+  }
+  .resa-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+  .resa-nom{font-weight:800;font-size:15px;}
+  .resa-date{font-size:12px;color:var(--accent2);font-weight:700;}
+  .resa-details{font-size:12px;color:var(--muted);line-height:1.6;}
+  .resa-details b{color:var(--text);}
+  .resa-msg{font-size:12px;color:var(--muted);margin-top:6px;font-style:italic;background:#1f1810;padding:8px;border-radius:8px;}
+  .resa-actions{display:flex;gap:8px;margin-top:10px;}
+  .resa-actions button{
+    flex:1;padding:9px;border-radius:8px;border:none;font-size:12px;font-weight:700;
+  }
+  .btn-tel{background:#25D366;color:#fff;}
+  .btn-del{background:#3a2e22;color:var(--muted);}
+  .empty-state{text-align:center;color:var(--muted);font-size:13px;padding:40px 20px;}
+
+  /* Disponibilités */
+  .add-indispo{display:flex;gap:8px;margin-bottom:16px;}
+  .add-indispo input{
+    flex:1;padding:12px;border-radius:10px;border:1px solid #3a2e22;background:#1f1810;color:var(--text);font-size:14px;
+  }
+  .add-indispo button{
+    padding:0 18px;border:none;border-radius:10px;background:var(--accent);color:#1a1410;font-weight:800;font-size:20px;
+  }
+  .indispo-tag{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--card);border:1px solid #35291c;border-radius:10px;padding:11px 14px;margin-bottom:8px;
+  }
+  .indispo-tag .date{font-weight:700;font-size:13px;}
+  .indispo-tag button{background:none;border:none;color:var(--danger);font-size:13px;font-weight:700;}
+
+  nav.bottom{
+    position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid #35291c;
+    display:flex;padding:8px 4px 10px;
+  }
+  nav.bottom button{
+    flex:1;background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10px;font-weight:600;padding:6px 0;
+  }
+  nav.bottom button.active{color:var(--accent2);}
+  nav.bottom .icon{font-size:19px;}
+
+  .loading{text-align:center;color:var(--muted);font-size:13px;padding:20px;}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <h1>🚚 Admin Camion Gourmand</h1>
+  <input type="password" id="password-input" placeholder="Mot de passe">
+  <button onclick="verifierMotDePasse()">Se connecter</button>
+  <div id="login-error">Mot de passe incorrect</div>
+</div>
+
+<div id="admin-app">
+  <header class="top">
+    <h1>🚚 Espace Admin</h1>
+    <p>Réservations & disponibilités</p>
+  </header>
+
+  <!-- RÉSERVATIONS -->
+  <div class="tab-content active" id="tab-resa">
+    <div id="resa-list"><div class="loading">Chargement...</div></div>
+  </div>
+
+  <!-- DISPONIBILITÉS -->
+  <div class="tab-content" id="tab-dispo">
+    <div class="card">
+      <h3>📅 Dates indisponibles</h3>
+      <p>Ajoute les dates où tu n'es pas disponible (congés, déjà réservé...). Ces dates seront bloquées automatiquement sur le formulaire de réservation public.</p>
+    </div>
+    <div class="add-indispo">
+      <input type="date" id="new-indispo-date">
+      <button onclick="ajouterIndispo()">+</button>
+    </div>
+    <div id="indispo-list"><div class="loading">Chargement...</div></div>
+  </div>
+</div>
+
+<nav class="bottom" style="display:none;" id="bottom-nav">
+  <button class="active" data-tab="resa" onclick="switchTab('resa')"><span class="icon">📋</span>Réservations</button>
+  <button data-tab="dispo" onclick="switchTab('dispo')"><span class="icon">📅</span>Disponibilités</button>
+</nav>
+
+<script>
+const ADMIN_PASSWORD = "camion2026"; // à changer avant mise en ligne réelle
+const BACKEND_URL = "https://philo-backend-by2c.onrender.com";
+const KEY_RESERVATIONS = "foodtruck_reservations";
+const KEY_INDISPO = "foodtruck_indispo";
+
+function verifierMotDePasse(){
+  const val = document.getElementById('password-input').value;
+  if(val === ADMIN_PASSWORD){
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    document.getElementById('bottom-nav').style.display = 'flex';
+    chargerReservations();
+    chargerIndispo();
+  }else{
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+document.getElementById('password-input').addEventListener('keypress', e => {
+  if(e.key === 'Enter') verifierMotDePasse();
+});
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav.bottom button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelector(`nav.bottom button[data-tab="${tab}"]`).classList.add('active');
+}
+
+// ---- Réservations ----
+async function chargerReservations(){
+  const list = document.getElementById('resa-list');
+  try{
+    const res = await fetch(`${BACKEND_URL}/memory/${KEY_RESERVATIONS}`);
+    const data = await res.json();
+    let liste = [];
+    try{ liste = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ liste = []; }
+
+    if(!liste.length){
+      list.innerHTML = '<div class="empty-state">Aucune demande de réservation pour le moment.</div>';
+      return;
+    }
+
+    liste.sort((a,b) => new Date(b.creeLe) - new Date(a.creeLe));
+
+    list.innerHTML = liste.map((r, i) => `
+      <div class="resa-item">
+        <div class="resa-top">
+          <div class="resa-nom">${escapeHtml(r.nom)}</div>
+          <div class="resa-date">${r.date ? formatDate(r.date) : 'Date non précisée'}</div>
+        </div>
+        <div class="resa-details">
+          📞 <b>${escapeHtml(r.tel)}</b><br>
+          🎉 ${escapeHtml(r.type || '-')} · 📍 ${escapeHtml(r.lieu || '-')} · 👥 ${r.nb || '?'} pers.
+        </div>
+        ${r.message ? `<div class="resa-msg">"${escapeHtml(r.message)}"</div>` : ''}
+        <div class="resa-actions">
+          <button class="btn-tel" onclick="window.open('https://wa.me/${(r.tel||'').replace(/\\D/g,'')}','_blank')">💬 WhatsApp</button>
+          <button class="btn-del" onclick="supprimerReservation(${i})">🗑 Supprimer</button>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){
+    list.innerHTML = '<div class="empty-state">Erreur de chargement. Vérifie ta connexion.</div>';
+  }
+}
+
+async function supprimerReservation(index){
+  if(!confirm('Supprimer cette réservation ?')) return;
+  try{
+    const res = await fetch(`${BACKEND_URL}/memory/${KEY_RESERVATIONS}`);
+    const data = await res.json();
+    let liste = [];
+    try{ liste = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ liste = []; }
+    liste.sort((a,b) => new Date(b.creeLe) - new Date(a.creeLe));
+    liste.splice(index, 1);
+    await fetch(`${BACKEND_URL}/memory/${KEY_RESERVATIONS}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ value: liste })
+    });
+    chargerReservations();
+  }catch(e){
+    alert('Erreur lors de la suppression.');
+  }
+}
+
+// ---- Disponibilités ----
+async function chargerIndispo(){
+  const list = document.getElementById('indispo-list');
+  try{
+    const res = await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`);
+    const data = await res.json();
+    let dates = [];
+    try{ dates = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ dates = []; }
+    dates.sort();
+
+    if(!dates.length){
+      list.innerHTML = '<div class="empty-state">Aucune date bloquée pour le moment.</div>';
+      return;
+    }
+    list.innerHTML = dates.map(d => `
+      <div class="indispo-tag">
+        <div class="date">${formatDate(d)}</div>
+        <button onclick="supprimerIndispo('${d}')">Retirer</button>
+      </div>
+    `).join('');
+  }catch(e){
+    list.innerHTML = '<div class="empty-state">Erreur de chargement.</div>';
+  }
+}
+
+async function ajouterIndispo(){
+  const input = document.getElementById('new-indispo-date');
+  const date = input.value;
+  if(!date){ alert('Choisis une date'); return; }
+  try{
+    const res = await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`);
+    const data = await res.json();
+    let dates = [];
+    try{ dates = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ dates = []; }
+    if(!dates.includes(date)) dates.push(date);
+    await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ value: dates })
+    });
+    input.value = '';
+    chargerIndispo();
+  }catch(e){
+    alert('Erreur lors de l\\'ajout.');
+  }
+}
+
+async function supprimerIndispo(date){
+  try{
+    const res = await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`);
+    const data = await res.json();
+    let dates = [];
+    try{ dates = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ dates = []; }
+    dates = dates.filter(d => d !== date);
+    await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ value: dates })
+    });
+    chargerIndispo();
+  }catch(e){
+    alert('Erreur lors de la suppression.');
+  }
+}
+
+function formatDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+}
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+</script>
+
+</body>
+</html>
