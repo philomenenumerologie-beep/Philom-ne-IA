@@ -1,290 +1,430 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Admin - Le Camion Gourmand</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  :root{
-    --bg:#1a1410;--bg2:#231b14;--accent:#ff7a1a;--accent2:#ffb347;
-    --text:#fff6ec;--muted:#c9b8a3;--card:#2a2119;--danger:#e74c3c;--ok:#2ecc71;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#1a1410;font-family:'Jost',sans-serif;color:#fff6ec}
+#login-screen{position:fixed;inset:0;background:#1a1410;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;z-index:100}
+#login-screen.hidden{display:none}
+.login-logo{width:80px;height:80px;border-radius:50%;background:#fff6ec;display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:6px}
+.login-title{font-family:'Playfair Display',serif;font-size:24px;color:#fff6ec;letter-spacing:.03em}
+.login-sub{font-size:11px;color:rgba(255,246,236,.4);letter-spacing:.15em;text-transform:uppercase}
+.login-input{width:100%;max-width:300px;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(255,246,236,.2);background:rgba(255,246,236,.06);color:#fff6ec;font-size:16px;font-family:'Jost',sans-serif;outline:none;text-align:center;letter-spacing:.1em}
+.login-input::placeholder{color:rgba(255,246,236,.3);letter-spacing:.03em}
+.login-btn{width:100%;max-width:300px;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff7a1a,#ffb347);color:#1a1410;font-size:15px;font-weight:800;font-family:'Jost',sans-serif;cursor:pointer}
+.login-err{color:#ff6b6b;font-size:13px;display:none}
 
-  /* Login */
-  #login-screen{
-    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;
-  }
-  #login-screen h1{font-size:20px;color:var(--accent2);margin-bottom:18px;}
-  #login-screen input{
-    width:100%;max-width:280px;padding:13px 14px;border-radius:10px;border:1px solid #3a2e22;
-    background:var(--card);color:var(--text);font-size:15px;text-align:center;margin-bottom:12px;
-  }
-  #login-screen button{
-    width:100%;max-width:280px;padding:13px;border:none;border-radius:10px;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1410;font-weight:800;font-size:15px;
-  }
-  #login-error{color:var(--danger);font-size:12px;margin-top:10px;display:none;}
+#admin-app{display:none;flex-direction:column;min-height:100vh}
+#admin-app.show{display:flex}
+header{background:#231b14;border-bottom:1px solid #35291c;padding:16px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.h-logo{width:40px;height:40px;border-radius:50%;background:#fff6ec;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.h-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#ffb347}
+.h-sub{font-size:10px;color:rgba(255,246,236,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.logout-btn{margin-left:auto;font-size:11px;color:rgba(255,246,236,.5);background:none;border:1px solid rgba(255,246,236,.15);padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Jost',sans-serif}
 
-  /* App */
-  #admin-app{display:none;padding-bottom:80px;}
-  header.top{padding:18px 16px 14px;background:var(--bg2);border-bottom:1px solid #35291c;text-align:center;}
-  header.top h1{font-size:18px;color:var(--accent2);font-weight:800;}
-  header.top p{font-size:12px;color:var(--muted);margin-top:2px;}
+#subtabs{background:#231b14;display:flex;border-bottom:1px solid #35291c;position:sticky;top:65px;z-index:9;overflow-x:auto}
+#subtabs button{flex:1;white-space:nowrap;padding:12px 10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,246,236,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:'Jost',sans-serif}
+#subtabs button.active{color:#ffb347;border-bottom-color:#ff7a1a}
 
-  .tab-content{display:none;padding:16px;}
-  .tab-content.active{display:block;}
+.subpage{display:none;padding:20px 15px 40px;max-width:480px;margin:0 auto;width:100%;flex-direction:column;gap:20px}
+.subpage.active{display:flex}
 
-  .card{background:var(--card);border:1px solid #35291c;border-radius:14px;padding:16px;margin-bottom:12px;}
-  .card h3{color:var(--accent2);font-size:14px;margin-bottom:4px;}
-  .card p{color:var(--muted);font-size:12px;line-height:1.5;}
+.add-card{background:#2a2119;border:1px solid #35291c;border-radius:18px;padding:20px}
+.card-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:16px;color:#fff6ec}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,246,236,.45);margin-bottom:7px}
+.inp{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid #3a2e22;background:#1a1410;color:#fff6ec;font-size:14px;font-family:'Jost',sans-serif;outline:none;margin-bottom:14px}
+.inp::placeholder{color:rgba(255,246,236,.3)}
+.inp:focus{border-color:#ff7a1a}
+textarea.inp{height:90px;resize:none}
 
-  /* Réservations */
-  .resa-item{
-    background:var(--card);border:1px solid #35291c;border-radius:14px;padding:14px;margin-bottom:10px;
-  }
-  .resa-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
-  .resa-nom{font-weight:800;font-size:15px;}
-  .resa-date{font-size:12px;color:var(--accent2);font-weight:700;}
-  .resa-details{font-size:12px;color:var(--muted);line-height:1.6;}
-  .resa-details b{color:var(--text);}
-  .resa-msg{font-size:12px;color:var(--muted);margin-top:6px;font-style:italic;background:#1f1810;padding:8px;border-radius:8px;}
-  .resa-actions{display:flex;gap:8px;margin-top:10px;}
-  .resa-actions button{
-    flex:1;padding:9px;border-radius:8px;border:none;font-size:12px;font-weight:700;
-  }
-  .btn-tel{background:#25D366;color:#fff;}
-  .btn-del{background:#3a2e22;color:var(--muted);}
-  .empty-state{text-align:center;color:var(--muted);font-size:13px;padding:40px 20px;}
+.upload-zone{border:2px dashed rgba(255,246,236,.2);border-radius:12px;padding:22px;text-align:center;cursor:pointer;position:relative;margin-bottom:8px}
+.upload-icon{font-size:30px;margin-bottom:8px}
+.upload-zone strong{display:block;font-size:14px;margin-bottom:4px}
+.upload-zone p{font-size:12px;color:rgba(255,246,236,.4)}
+#photo-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#photo-preview{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;margin-top:10px;display:none;border:2px solid rgba(255,246,236,.2)}
 
-  /* Disponibilités */
-  .add-indispo{display:flex;gap:8px;margin-bottom:16px;}
-  .add-indispo input{
-    flex:1;padding:12px;border-radius:10px;border:1px solid #3a2e22;background:#1f1810;color:var(--text);font-size:14px;
-  }
-  .add-indispo button{
-    padding:0 18px;border:none;border-radius:10px;background:var(--accent);color:#1a1410;font-weight:800;font-size:20px;
-  }
-  .indispo-tag{
-    display:flex;justify-content:space-between;align-items:center;
-    background:var(--card);border:1px solid #35291c;border-radius:10px;padding:11px 14px;margin-bottom:8px;
-  }
-  .indispo-tag .date{font-weight:700;font-size:13px;}
-  .indispo-tag button{background:none;border:none;color:var(--danger);font-size:13px;font-weight:700;}
+.add-btn{width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff7a1a,#ffb347);color:#1a1410;font-size:15px;font-weight:800;font-family:'Jost',sans-serif;cursor:pointer;margin-top:4px}
+.add-btn:disabled{opacity:.4}
+.add-btn.danger{background:rgba(255,107,107,.15);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)}
 
-  nav.bottom{
-    position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid #35291c;
-    display:flex;padding:8px 4px 10px;
-  }
-  nav.bottom button{
-    flex:1;background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;
-    font-size:10px;font-weight:600;padding:6px 0;
-  }
-  nav.bottom button.active{color:var(--accent2);}
-  nav.bottom .icon{font-size:19px;}
+.status{padding:12px 16px;border-radius:12px;font-size:13px;text-align:center;display:none;margin-top:10px}
+.status.ok{background:rgba(107,203,119,.15);border:1px solid rgba(107,203,119,.3);color:#6BCB77}
+.status.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b}
 
-  .loading{text-align:center;color:var(--muted);font-size:13px;padding:20px;}
+.count-badge{display:inline-block;background:rgba(255,246,236,.1);padding:3px 10px;border-radius:20px;font-size:11px;color:rgba(255,246,236,.6);margin-left:8px;vertical-align:middle}
+
+.item-row{display:flex;align-items:center;gap:12px;background:#1a1410;border:1px solid #35291c;border-radius:14px;padding:10px;margin-top:10px}
+.item-img{width:56px;height:56px;border-radius:10px;overflow:hidden;background:#231b14;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
+.item-img img{width:100%;height:100%;object-fit:cover}
+.item-info{flex:1;min-width:0}
+.item-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff6ec}
+.item-sub{font-size:12px;color:rgba(255,246,236,.5);margin-top:2px}
+.item-del{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.08);color:#ff6b6b;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+
+.empty-state{text-align:center;padding:24px;color:rgba(255,246,236,.3);font-size:13px}
+.loading{text-align:center;padding:20px;color:rgba(255,246,236,.4);font-size:13px}
+
+.resa-details{font-size:12px;color:rgba(255,246,236,.6);line-height:1.6;margin-top:4px}
+.resa-details b{color:#fff6ec}
+.resa-msg{font-size:12px;color:rgba(255,246,236,.55);margin-top:6px;font-style:italic;background:#231b14;padding:8px;border-radius:8px}
+.resa-actions{display:flex;gap:8px;margin-top:10px}
+.resa-actions button{flex:1;padding:9px;border-radius:8px;border:none;font-size:12px;font-weight:700;font-family:'Jost',sans-serif}
+.btn-tel{background:#25D366;color:#fff}
+.btn-del{background:#3a2e22;color:rgba(255,246,236,.6)}
+.resa-card{background:#1a1410;border:1px solid #35291c;border-radius:14px;padding:14px;margin-top:10px}
+.resa-top{display:flex;justify-content:space-between;align-items:flex-start}
+.resa-nom{font-weight:800;font-size:15px}
+.resa-date{font-size:12px;color:#ffb347;font-weight:700}
+
+.add-indispo{display:flex;gap:8px}
+.add-indispo .inp{margin-bottom:0}
+.add-indispo button{padding:0 18px;border:none;border-radius:12px;background:#ff7a1a;color:#1a1410;font-weight:800;font-size:20px}
+.indispo-tag{display:flex;justify-content:space-between;align-items:center;background:#1a1410;border:1px solid #35291c;border-radius:10px;padding:11px 14px;margin-top:8px}
+.indispo-tag .date{font-weight:700;font-size:13px}
+.indispo-tag button{background:none;border:none;color:#ff6b6b;font-size:13px;font-weight:700;font-family:'Jost',sans-serif}
 </style>
 </head>
 <body>
 
 <div id="login-screen">
-  <h1>🚚 Admin Camion Gourmand</h1>
-  <input type="password" id="password-input" placeholder="Mot de passe">
-  <button onclick="verifierMotDePasse()">Se connecter</button>
-  <div id="login-error">Mot de passe incorrect</div>
+  <div class="login-logo">🚚</div>
+  <div class="login-title">Admin Camion Gourmand</div>
+  <div class="login-sub">Espace privé</div>
+  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  <button class="login-btn" onclick="checkPwd()">Entrer</button>
 </div>
 
 <div id="admin-app">
-  <header class="top">
-    <h1>🚚 Espace Admin</h1>
-    <p>Réservations & disponibilités</p>
+  <header>
+    <div class="h-logo">🚚</div>
+    <div>
+      <div class="h-title">Le Camion Gourmand</div>
+      <div class="h-sub">Espace admin</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
   </header>
 
+  <div id="subtabs">
+    <button class="active" onclick="showSub(this,'resa')">Réservations</button>
+    <button onclick="showSub(this,'dispo')">Disponibilités</button>
+    <button onclick="showSub(this,'menu')">Menu</button>
+    <button onclick="showSub(this,'msg')">Message</button>
+  </div>
+
   <!-- RÉSERVATIONS -->
-  <div class="tab-content active" id="tab-resa">
-    <div id="resa-list"><div class="loading">Chargement...</div></div>
+  <div class="subpage active" id="sub-resa">
+    <div class="add-card">
+      <div class="card-title">📋 Demandes de réservation <span class="count-badge" id="resa-count">0</span></div>
+      <div id="resa-list"><div class="loading">Chargement...</div></div>
+    </div>
   </div>
 
   <!-- DISPONIBILITÉS -->
-  <div class="tab-content" id="tab-dispo">
-    <div class="card">
-      <h3>📅 Dates indisponibles</h3>
-      <p>Ajoute les dates où tu n'es pas disponible (congés, déjà réservé...). Ces dates seront bloquées automatiquement sur le formulaire de réservation public.</p>
+  <div class="subpage" id="sub-dispo">
+    <div class="add-card">
+      <div class="card-title">📅 Dates indisponibles</div>
+      <p style="font-size:12px;color:rgba(255,246,236,.5);margin-bottom:14px;line-height:1.5">Ajoute tes congés ou dates déjà réservées. Elles seront bloquées automatiquement sur le formulaire public.</p>
+      <div class="add-indispo">
+        <input class="inp" id="new-indispo-date" type="date">
+        <button onclick="ajouterIndispo()">+</button>
+      </div>
+      <div id="indispo-list"></div>
     </div>
-    <div class="add-indispo">
-      <input type="date" id="new-indispo-date">
-      <button onclick="ajouterIndispo()">+</button>
+  </div>
+
+  <!-- MENU -->
+  <div class="subpage" id="sub-menu">
+    <div class="add-card">
+      <div class="card-title">Ajouter un plat</div>
+      <div class="lbl">Nom du plat</div>
+      <input class="inp" id="plat-nom" type="text" placeholder="Ex: Burger Signature">
+      <div class="lbl">Prix</div>
+      <input class="inp" id="plat-prix" type="text" placeholder="Ex: 9€">
+      <div class="lbl">Photo</div>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)">
+        <div class="upload-icon">📷</div>
+        <strong>Appuyez pour choisir une photo</strong>
+        <p>JPG, PNG — max 2MB</p>
+      </div>
+      <img id="photo-preview" alt="preview">
+      <div class="status" id="add-status"></div>
+      <button class="add-btn" id="add-btn" onclick="addPlat()">➕ Ajouter ce plat</button>
     </div>
-    <div id="indispo-list"><div class="loading">Chargement...</div></div>
+
+    <div class="add-card">
+      <div class="card-title">Ma carte <span class="count-badge" id="menu-count">0</span></div>
+      <div id="menu-list"><div class="loading">Chargement...</div></div>
+    </div>
+  </div>
+
+  <!-- MESSAGE -->
+  <div class="subpage" id="sub-msg">
+    <div class="add-card">
+      <div class="card-title">📢 Message du moment</div>
+      <div class="lbl">Ton message (événement, promo...)</div>
+      <textarea class="inp" id="msg-texte" placeholder="Ex: On sera au marché de Tourcoing ce samedi 10h-14h !"></textarea>
+      <div class="status" id="msg-status"></div>
+      <button class="add-btn" onclick="saveMessage()">💾 Sauvegarder</button>
+      <button class="add-btn danger" style="margin-top:8px" onclick="deleteMessage()">🗑️ Supprimer le message</button>
+    </div>
   </div>
 </div>
 
-<nav class="bottom" style="display:none;" id="bottom-nav">
-  <button class="active" data-tab="resa" onclick="switchTab('resa')"><span class="icon">📋</span>Réservations</button>
-  <button data-tab="dispo" onclick="switchTab('dispo')"><span class="icon">📅</span>Disponibilités</button>
-</nav>
-
 <script>
-const ADMIN_PASSWORD = "camion2026"; // à changer avant mise en ligne réelle
-const BACKEND_URL = "https://philo-backend-by2c.onrender.com";
-const KEY_RESERVATIONS = "foodtruck_reservations";
-const KEY_INDISPO = "foodtruck_indispo";
+var API = "https://philo-backend-by2c.onrender.com";
+var PWD = "camion2026";
+var photoBase64 = null;
 
-function verifierMotDePasse(){
-  const val = document.getElementById('password-input').value;
-  if(val === ADMIN_PASSWORD){
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-app').style.display = 'block';
-    document.getElementById('bottom-nav').style.display = 'flex';
-    chargerReservations();
-    chargerIndispo();
+function checkPwd(){
+  var val = document.getElementById('pwd-input').value;
+  if(val === PWD){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-app').classList.add('show');
+    loadReservations();
+    loadIndispo();
+    loadMenu();
+    loadMessage();
   }else{
-    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
   }
 }
-document.getElementById('password-input').addEventListener('keypress', e => {
-  if(e.key === 'Enter') verifierMotDePasse();
-});
-
-function switchTab(tab){
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('nav.bottom button').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.querySelector(`nav.bottom button[data-tab="${tab}"]`).classList.add('active');
+function logout(){
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('admin-app').classList.remove('show');
+  document.getElementById('pwd-input').value = '';
 }
 
-// ---- Réservations ----
-async function chargerReservations(){
-  const list = document.getElementById('resa-list');
-  try{
-    const res = await fetch(`${BACKEND_URL}/memory/${KEY_RESERVATIONS}`);
-    const data = await res.json();
-    let liste = [];
-    try{ liste = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ liste = []; }
-
-    if(!liste.length){
-      list.innerHTML = '<div class="empty-state">Aucune demande de réservation pour le moment.</div>';
-      return;
-    }
-
-    liste.sort((a,b) => new Date(b.creeLe) - new Date(a.creeLe));
-
-    list.innerHTML = liste.map((r, i) => `
-      <div class="resa-item">
-        <div class="resa-top">
-          <div class="resa-nom">${escapeHtml(r.nom)}</div>
-          <div class="resa-date">${r.date ? formatDate(r.date) : 'Date non précisée'}</div>
-        </div>
-        <div class="resa-details">
-          📞 <b>${escapeHtml(r.tel)}</b><br>
-          🎉 ${escapeHtml(r.type || '-')} · 📍 ${escapeHtml(r.lieu || '-')} · 👥 ${r.nb || '?'} pers.
-        </div>
-        ${r.message ? `<div class="resa-msg">"${escapeHtml(r.message)}"</div>` : ''}
-        <div class="resa-actions">
-          <button class="btn-tel" onclick="window.open('https://wa.me/${(r.tel||'').replace(/\\D/g,'')}','_blank')">💬 WhatsApp</button>
-          <button class="btn-del" onclick="supprimerReservation(${i})">🗑 Supprimer</button>
-        </div>
-      </div>
-    `).join('');
-  }catch(e){
-    list.innerHTML = '<div class="empty-state">Erreur de chargement. Vérifie ta connexion.</div>';
-  }
+function showSub(btn, n){
+  document.querySelectorAll('.subpage').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('#subtabs button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('sub-' + n).classList.add('active');
+  btn.classList.add('active');
 }
 
-async function supprimerReservation(index){
+/* ============ RÉSERVATIONS ============ */
+function loadReservations(){
+  var list = document.getElementById('resa-list');
+  fetch(API + '/memory/foodtruck_reservations')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var liste = d.value || [];
+      document.getElementById('resa-count').textContent = liste.length;
+      if(liste.length === 0){
+        list.innerHTML = '<div class="empty-state">Aucune demande pour le moment.</div>';
+        return;
+      }
+      liste.sort(function(a,b){ return new Date(b.creeLe) - new Date(a.creeLe); });
+      list.innerHTML = '';
+      liste.forEach(function(r, i){
+        var card = document.createElement('div');
+        card.className = 'resa-card';
+        card.innerHTML =
+          '<div class="resa-top"><div class="resa-nom">' + esc(r.nom) + '</div><div class="resa-date">' + (r.date ? fmtDate(r.date) : 'Date libre') + '</div></div>' +
+          '<div class="resa-details">📞 <b>' + esc(r.tel) + '</b><br>🎉 ' + esc(r.type||'-') + ' · 📍 ' + esc(r.lieu||'-') + ' · 👥 ' + (r.nb||'?') + ' pers.</div>' +
+          (r.message ? '<div class="resa-msg">"' + esc(r.message) + '"</div>' : '') +
+          '<div class="resa-actions"><button class="btn-tel">💬 WhatsApp</button><button class="btn-del">🗑 Supprimer</button></div>';
+        card.querySelector('.btn-tel').onclick = function(){ window.open('https://wa.me/' + (r.tel||'').replace(/\D/g,''), '_blank'); };
+        card.querySelector('.btn-del').onclick = function(){ deleteReservation(i); };
+        list.appendChild(card);
+      });
+    }).catch(function(){ list.innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; });
+}
+function deleteReservation(index){
   if(!confirm('Supprimer cette réservation ?')) return;
-  try{
-    const res = await fetch(`${BACKEND_URL}/memory/${KEY_RESERVATIONS}`);
-    const data = await res.json();
-    let liste = [];
-    try{ liste = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ liste = []; }
-    liste.sort((a,b) => new Date(b.creeLe) - new Date(a.creeLe));
-    liste.splice(index, 1);
-    await fetch(`${BACKEND_URL}/memory/${KEY_RESERVATIONS}`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ value: liste })
-    });
-    chargerReservations();
-  }catch(e){
-    alert('Erreur lors de la suppression.');
-  }
+  fetch(API + '/memory/foodtruck_reservations')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var liste = d.value || [];
+      liste.sort(function(a,b){ return new Date(b.creeLe) - new Date(a.creeLe); });
+      liste.splice(index, 1);
+      return fetch(API + '/memory/foodtruck_reservations', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: liste })
+      });
+    }).then(function(){ loadReservations(); });
 }
 
-// ---- Disponibilités ----
-async function chargerIndispo(){
-  const list = document.getElementById('indispo-list');
-  try{
-    const res = await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`);
-    const data = await res.json();
-    let dates = [];
-    try{ dates = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ dates = []; }
-    dates.sort();
-
-    if(!dates.length){
-      list.innerHTML = '<div class="empty-state">Aucune date bloquée pour le moment.</div>';
-      return;
-    }
-    list.innerHTML = dates.map(d => `
-      <div class="indispo-tag">
-        <div class="date">${formatDate(d)}</div>
-        <button onclick="supprimerIndispo('${d}')">Retirer</button>
-      </div>
-    `).join('');
-  }catch(e){
-    list.innerHTML = '<div class="empty-state">Erreur de chargement.</div>';
-  }
+/* ============ DISPONIBILITÉS ============ */
+function loadIndispo(){
+  var list = document.getElementById('indispo-list');
+  fetch(API + '/memory/foodtruck_indispo')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var dates = (d.value || []).slice().sort();
+      if(dates.length === 0){ list.innerHTML = '<div class="empty-state">Aucune date bloquée.</div>'; return; }
+      list.innerHTML = '';
+      dates.forEach(function(date){
+        var tag = document.createElement('div');
+        tag.className = 'indispo-tag';
+        tag.innerHTML = '<div class="date">' + fmtDate(date) + '</div><button>Retirer</button>';
+        tag.querySelector('button').onclick = function(){ supprimerIndispo(date); };
+        list.appendChild(tag);
+      });
+    }).catch(function(){ list.innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; });
 }
-
-async function ajouterIndispo(){
-  const input = document.getElementById('new-indispo-date');
-  const date = input.value;
+function ajouterIndispo(){
+  var input = document.getElementById('new-indispo-date');
+  var date = input.value;
   if(!date){ alert('Choisis une date'); return; }
-  try{
-    const res = await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`);
-    const data = await res.json();
-    let dates = [];
-    try{ dates = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ dates = []; }
-    if(!dates.includes(date)) dates.push(date);
-    await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ value: dates })
-    });
-    input.value = '';
-    chargerIndispo();
-  }catch(e){
-    alert('Erreur lors de l\\'ajout.');
-  }
+  fetch(API + '/memory/foodtruck_indispo')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var dates = d.value || [];
+      if(dates.indexOf(date) === -1) dates.push(date);
+      return fetch(API + '/memory/foodtruck_indispo', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: dates })
+      });
+    }).then(function(){ input.value=''; loadIndispo(); });
+}
+function supprimerIndispo(date){
+  fetch(API + '/memory/foodtruck_indispo')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var dates = (d.value || []).filter(function(x){ return x !== date; });
+      return fetch(API + '/memory/foodtruck_indispo', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: dates })
+      });
+    }).then(function(){ loadIndispo(); });
 }
 
-async function supprimerIndispo(date){
-  try{
-    const res = await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`);
-    const data = await res.json();
-    let dates = [];
-    try{ dates = Array.isArray(data.value) ? data.value : JSON.parse(data.value); }catch(e){ dates = []; }
-    dates = dates.filter(d => d !== date);
-    await fetch(`${BACKEND_URL}/memory/${KEY_INDISPO}`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ value: dates })
+/* ============ MENU (photo) ============ */
+function handlePhoto(input){
+  var file = input.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement('canvas');
+      var maxSize = 800;
+      var w = img.width, h = img.height;
+      if(w > h){ if(w > maxSize){ h = h*maxSize/w; w = maxSize; } }
+      else{ if(h > maxSize){ w = w*maxSize/h; h = maxSize; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+      var prev = document.getElementById('photo-preview');
+      prev.src = photoBase64;
+      prev.style.display = 'block';
+      document.getElementById('upload-zone').style.borderColor = 'rgba(107,203,119,.5)';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function showAddStatus(msg, type){
+  var s = document.getElementById('add-status');
+  s.textContent = msg; s.className = 'status ' + type; s.style.display = 'block';
+  setTimeout(function(){ s.style.display = 'none'; }, 3000);
+}
+function addPlat(){
+  var nom = document.getElementById('plat-nom').value.trim();
+  var prix = document.getElementById('plat-prix').value.trim();
+  if(!nom || !prix || !photoBase64){ showAddStatus('Remplis tous les champs et ajoute une photo', 'err'); return; }
+  var btn = document.getElementById('add-btn');
+  btn.disabled = true; btn.textContent = 'Ajout en cours…';
+  fetch(API + '/memory/foodtruck_menu')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var plats = d.value || [];
+      plats.push({ id: 'p_' + Date.now(), nom: nom, prix: prix, image: photoBase64 });
+      return fetch(API + '/memory/foodtruck_menu', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: plats })
+      });
+    }).then(function(){
+      showAddStatus('Plat ajouté ! 🍔', 'ok');
+      document.getElementById('plat-nom').value = '';
+      document.getElementById('plat-prix').value = '';
+      document.getElementById('photo-preview').style.display = 'none';
+      document.getElementById('upload-zone').style.borderColor = '';
+      document.getElementById('photo-input').value = '';
+      photoBase64 = null;
+      loadMenu();
+      btn.disabled = false; btn.textContent = '➕ Ajouter ce plat';
+    }).catch(function(){
+      showAddStatus('Erreur de connexion', 'err');
+      btn.disabled = false; btn.textContent = '➕ Ajouter ce plat';
     });
-    chargerIndispo();
-  }catch(e){
-    alert('Erreur lors de la suppression.');
-  }
+}
+function deletePlat(id){
+  if(!confirm('Supprimer ce plat ?')) return;
+  fetch(API + '/memory/foodtruck_menu')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var plats = (d.value || []).filter(function(p){ return p.id !== id; });
+      return fetch(API + '/memory/foodtruck_menu', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: plats })
+      });
+    }).then(function(){ loadMenu(); });
+}
+function loadMenu(){
+  var list = document.getElementById('menu-list');
+  fetch(API + '/memory/foodtruck_menu')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var plats = d.value || [];
+      document.getElementById('menu-count').textContent = plats.length;
+      if(plats.length === 0){ list.innerHTML = '<div class="empty-state">Aucun plat pour le moment.</div>'; return; }
+      list.innerHTML = '';
+      plats.forEach(function(p){
+        var item = document.createElement('div');
+        item.className = 'item-row';
+        var imgHtml = p.image ? '<img src="' + p.image + '">' : '🍔';
+        item.innerHTML = '<div class="item-img">' + imgHtml + '</div><div class="item-info"><div class="item-name">' + esc(p.nom) + '</div><div class="item-sub">' + esc(p.prix) + '</div></div><div class="item-del">✕</div>';
+        item.querySelector('.item-del').onclick = function(){ deletePlat(p.id); };
+        list.appendChild(item);
+      });
+    }).catch(function(){ list.innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; });
 }
 
-function formatDate(iso){
-  const d = new Date(iso + 'T00:00:00');
+/* ============ MESSAGE ============ */
+function loadMessage(){
+  fetch(API + '/memory/foodtruck_config')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if(d.value && d.value.message) document.getElementById('msg-texte').value = d.value.message; })
+    .catch(function(){});
+}
+function saveMessage(){
+  var texte = document.getElementById('msg-texte').value.trim();
+  var s = document.getElementById('msg-status');
+  fetch(API + '/memory/foodtruck_config', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ value: { message: texte } })
+  }).then(function(){
+    s.textContent = texte ? 'Message sauvegardé ! 🚚' : 'Message supprimé !';
+    s.className = 'status ok'; s.style.display = 'block';
+    setTimeout(function(){ s.style.display = 'none'; }, 3000);
+  }).catch(function(){
+    s.textContent = 'Erreur de connexion'; s.className = 'status err'; s.style.display = 'block';
+  });
+}
+function deleteMessage(){
+  document.getElementById('msg-texte').value = '';
+  saveMessage();
+}
+
+/* ============ UTILS ============ */
+function fmtDate(iso){
+  var d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
 }
-function escapeHtml(str){
-  const div = document.createElement('div');
+function esc(str){
+  var div = document.createElement('div');
   div.textContent = str || '';
   return div.innerHTML;
 }
 </script>
-
 </body>
 </html>
