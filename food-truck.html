@@ -3,327 +3,712 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Maka Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>Le Camion Gourmand</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;background:#111;font-family:'Jost',sans-serif;color:#F5EFE4}
-#login-screen{position:fixed;inset:0;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;z-index:100}
-#login-screen.hidden{display:none}
-.login-logo{width:80px;height:80px;border-radius:50%;background:#F5EFE4;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:8px}
-.login-title{font-family:'Playfair Display',serif;font-size:28px;color:#F5EFE4;letter-spacing:.06em}
-.login-sub{font-size:12px;color:rgba(245,239,228,.4);letter-spacing:.15em;text-transform:uppercase}
-.login-input{width:100%;max-width:300px;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(245,239,228,.2);background:rgba(245,239,228,.06);color:#F5EFE4;font-size:16px;font-family:'Jost',sans-serif;outline:none;text-align:center;letter-spacing:.2em}
-.login-input::placeholder{color:rgba(245,239,228,.3);letter-spacing:.05em}
-.login-btn{width:100%;max-width:300px;padding:15px;border-radius:14px;border:none;background:#F5EFE4;color:#111;font-size:15px;font-weight:700;font-family:'Jost',sans-serif;cursor:pointer}
-.login-err{color:#ff6b6b;font-size:13px;display:none}
-#admin-app{display:none;flex-direction:column;min-height:100vh}
-#admin-app.show{display:flex}
-header{background:#111;border-bottom:1px solid rgba(245,239,228,.1);padding:16px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-.h-logo{width:40px;height:40px;border-radius:50%;background:#F5EFE4;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.h-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700}
-.h-sub{font-size:10px;color:rgba(245,239,228,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
-.logout-btn{margin-left:auto;font-size:11px;color:rgba(245,239,228,.4);background:none;border:1px solid rgba(245,239,228,.15);padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Jost',sans-serif}
-.content{padding:20px 15px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto;width:100%}
-.add-card{background:rgba(245,239,228,.06);border:1px solid rgba(245,239,228,.12);border-radius:18px;padding:20px}
-.card-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:16px}
-.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,239,228,.45);margin-bottom:7px}
-.inp{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(245,239,228,.15);background:rgba(245,239,228,.06);color:#F5EFE4;font-size:14px;font-family:'Jost',sans-serif;outline:none}
-.inp::placeholder{color:rgba(245,239,228,.3)}
-.inp:focus{border-color:rgba(245,239,228,.4)}
-.upload-zone{border:2px dashed rgba(245,239,228,.2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
-.upload-zone:hover{border-color:rgba(245,239,228,.4)}
-.upload-icon{font-size:32px;margin-bottom:8px}
-.upload-zone strong{display:block;font-size:14px;margin-bottom:4px}
-.upload-zone p{font-size:12px;color:rgba(245,239,228,.4)}
-#photo-input{position:absolute;inset:0;opacity:0;cursor:pointer}
-#photo-preview{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;margin-top:10px;display:none;border:2px solid rgba(245,239,228,.2)}
-.add-btn{width:100%;padding:15px;border-radius:14px;border:none;background:#F5EFE4;color:#111;font-size:15px;font-weight:700;font-family:'Jost',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .2s}
-.add-btn:disabled{opacity:.4;cursor:not-allowed}
-.status{padding:12px 16px;border-radius:12px;font-size:13px;text-align:center;display:none}
-.status.ok{background:rgba(107,203,119,.15);border:1px solid rgba(107,203,119,.3);color:#6BCB77}
-.status.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b}
-.list-card{background:rgba(245,239,228,.06);border:1px solid rgba(245,239,228,.12);border-radius:18px;padding:20px}
-.count-badge{display:inline-block;background:rgba(245,239,228,.12);padding:3px 10px;border-radius:20px;font-size:11px;color:rgba(245,239,228,.6);margin-left:10px;vertical-align:middle}
-.flash-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.flash-item{display:flex;align-items:center;gap:12px;background:rgba(245,239,228,.04);border:1px solid rgba(245,239,228,.08);border-radius:14px;padding:10px}
-.fi-img{width:60px;height:60px;border-radius:10px;overflow:hidden;background:rgba(245,239,228,.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px}
-.fi-img img{width:100%;height:100%;object-fit:cover}
-.fi-info{flex:1;min-width:0}
-.fi-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fi-price{font-size:12px;color:rgba(245,239,228,.5);margin-top:2px}
-.fi-del{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.08);color:#ff6b6b;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.empty-state{text-align:center;padding:24px;color:rgba(245,239,228,.3);font-size:13px}
-.loading{text-align:center;padding:20px;color:rgba(245,239,228,.4);font-size:13px}
+html,body{height:100%;overflow:hidden;background:#1a1410;font-family:Jost,sans-serif;color:#fff6ec}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+/* DEMO RIBBON */
+.demo-ribbon{position:fixed;top:14px;right:-38px;background:#e74c3c;color:#fff;padding:5px 45px;font-size:11px;font-weight:700;letter-spacing:1px;transform:rotate(45deg);z-index:9999;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 30%,#3a2a18 0%,#1a1410 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:100px;height:100px;border-radius:50%;background:#fff6ec;display:flex;align-items:center;justify-content:center;margin-bottom:22px;font-size:46px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-name{font-family:'Playfair Display',serif;font-size:30px;color:#ffb347;letter-spacing:.06em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,246,236,.4);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:#231b14;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,246,236,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#fff6ec;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#ffb347;letter-spacing:.02em}
+.tb-sub{font-size:10px;color:rgba(255,246,236,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+#tabs{background:#231b14;display:flex;border-bottom:1px solid rgba(255,246,236,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,246,236,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:15px}
+.tab.active{color:#ffb347;border-bottom-color:#ff7a1a}
+
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+#msg-banniere{display:none;background:#ff7a1a;color:#1a1410;padding:10px 16px;font-size:13px;font-weight:700;text-align:center;border-bottom:1px solid rgba(0,0,0,.15);flex-shrink:0;line-height:1.5}
+
+/* CHAT */
+#page-chat{background:#1a1410}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:30px;height:30px;border-radius:50%;background:#ff7a1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:15px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.6;white-space:pre-wrap;border-radius:18px}
+.bub.bot{background:#2a2119;color:#fff6ec;border-top-left-radius:4px;border:1px solid #35291c}
+.bub.user{background:#ff7a1a;color:#1a1410;font-weight:600;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #ffb347;background:transparent;color:#ffb347;font-size:12px;font-weight:600;font-family:Jost,sans-serif;cursor:pointer}
+.tybub{background:#2a2119;border:1px solid #35291c;border-radius:18px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#8a7860;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+
+#composer{padding:10px 14px 22px;background:#1a1410;border-top:1px solid #35291c;flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid #3a2e22;background:#2a2119;font-size:15px;font-family:Jost,sans-serif;outline:none;color:#fff6ec}
+#inp::placeholder{color:#8a7860}
+#inp:focus{border-color:#ff7a1a}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#ff7a1a;color:#1a1410;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-weight:800}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;margin-top:10px;border:none;width:100%;cursor:pointer}
+
+/* Cards / commun */
+.card{background:#2a2119;border:1px solid #35291c;border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{color:#ffb347;font-size:15px;margin-bottom:6px;font-family:'Playfair Display',serif}
+.card p{color:#c9b8a3;font-size:13px;line-height:1.55}
+
+/* DEVIS */
+#page-devis{background:#1a1410;padding:20px 15px 36px;gap:14px}
+.df-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff6ec}
+.df-title em{font-style:italic;color:#c9b8a3;font-size:.65em;display:block;font-family:Jost,sans-serif;margin-top:4px}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9b8a3;margin:14px 0 7px}
+.df-input,.df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid #3a2e22;background:#2a2119;font-size:14px;font-family:Jost,sans-serif;color:#fff6ec;outline:none;-webkit-appearance:none}
+.df-textarea{resize:none;height:80px}
+.df-input:focus,.df-select:focus,.df-textarea:focus{border-color:#ff7a1a}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#ff7a1a,#ffb347);color:#1a1410;border-radius:14px;padding:15px;font-weight:800;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer;margin-top:22px}
+.df-btn-wa{background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:14px;padding:15px;font-weight:800;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer;margin-top:10px}
+
+/* MENU (galerie dynamique) */
+#page-menu{background:#1a1410;padding:20px 15px 32px}
+.fl-h{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff6ec}
+.fl-h em{font-style:italic;color:#c9b8a3;font-size:.65em;display:block;font-family:Jost,sans-serif;margin-top:4px}
+.fl-sub{font-size:13px;color:#c9b8a3;margin-top:8px;margin-bottom:16px}
+.fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl-card{background:#2a2119;border-radius:16px;overflow:hidden;border:1px solid #35291c;cursor:pointer}
+.fl-card:active{opacity:.85}
+.fl-thumb{width:100%;aspect-ratio:1;background:#1a1410;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.fl-thumb img{width:100%;height:100%;object-fit:cover}
+.fl-emoji{font-size:44px}
+.fl-info{padding:10px 12px 13px}
+.fl-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:#fff6ec}
+.fl-price{font-size:12px;color:#ffb347;margin-top:2px;font-weight:700}
+.fl-empty{text-align:center;padding:40px 20px;color:#c9b8a3;font-size:14px}
+.fl-empty-icon{font-size:40px;margin-bottom:12px}
+
+/* TARIFS */
+#page-tarifs{background:#1a1410;padding:20px 15px 32px}
+.t-h{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff6ec}
+.t-h em{font-style:italic;color:#c9b8a3;font-size:.65em;display:block;font-family:Jost,sans-serif;margin-top:4px}
+.t-intro{font-size:13px;color:#c9b8a3;line-height:1.5;margin:10px 0 18px}
+.price-card{border:1px solid #35291c;border-radius:16px;padding:18px;margin-bottom:12px;background:#2a2119}
+.price-card.highlight{border-color:#ff7a1a;box-shadow:0 0 0 1px #ff7a1a}
+.price-card h3{color:#ffb347;font-size:16px;font-family:'Playfair Display',serif}
+.price-card .amount{font-size:24px;font-weight:800;color:#fff6ec;margin:8px 0;font-family:'Playfair Display',serif}
+.price-card .amount span{font-size:12px;color:#c9b8a3;font-weight:400;font-family:Jost,sans-serif}
+.price-card ul{margin:8px 0 0;padding-left:18px;color:#c9b8a3;font-size:13px;line-height:1.7}
+.twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
+
+/* NAV */
+nav.bottom{background:#231b14;border-top:1px solid #35291c;display:flex;padding:8px 4px 10px;flex-shrink:0}
+nav.bottom button{flex:1;background:none;border:none;color:#8a7860;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:6px 0;font-family:Jost,sans-serif}
+nav.bottom button.active{color:#ffb347}
+nav.bottom .icon{font-size:19px}
+
+/* MODAL ITEM MENU */
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+#overlay.open{display:flex}
+#mbox{background:#231b14;border-radius:24px 24px 0 0;padding:26px 20px 40px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
+.mbox-img{width:100%;max-height:64vw;border-radius:16px;object-fit:cover;margin:0 auto 16px;display:block;background:#1a1410}
+.mbox-ico{font-size:52px;text-align:center;margin-bottom:12px}
+.mbox-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;text-align:center;margin-bottom:4px;color:#fff6ec}
+.mbox-price{text-align:center;font-size:16px;color:#c9b8a3;margin-bottom:20px}
+.mbox-price b{color:#ffb347;font-size:19px}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;margin-bottom:10px;border:none;width:100%;cursor:pointer}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#c9b8a3;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%}
+
+/* ACOMPTE OVERLAY */
+#acompte-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center}
+#acompte-overlay.open{display:flex}
+#abox{background:#231b14;border-radius:24px 24px 0 0;padding:26px 20px 40px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);max-height:88vh;overflow-y:auto}
+.abox-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;margin-bottom:6px;text-align:center;color:#fff6ec}
+.acompte-amount{text-align:center;font-size:30px;font-weight:800;color:#ffb347;margin:6px 0 4px;font-family:'Playfair Display',serif}
+.acompte-sub{text-align:center;font-size:12px;color:#c9b8a3;margin-bottom:18px}
+.pay-choice{display:flex;gap:8px;margin-bottom:16px}
+.pay-choice button{flex:1;padding:11px 6px;border-radius:10px;border:1px solid #3a2e22;background:#1a1410;color:#c9b8a3;font-size:12px;font-weight:700;font-family:Jost,sans-serif}
+.pay-choice button.active{background:#ff7a1a;color:#1a1410;border-color:#ff7a1a}
+.pay-panel{display:none}
+.pay-panel.active{display:block}
+.rib-row{display:flex;justify-content:space-between;align-items:center;background:#1a1410;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.rib-row .label{font-size:11px;color:#c9b8a3}
+.rib-row .value{font-size:13px;font-weight:700;color:#fff6ec}
+.rib-row button{background:none;border:none;color:#ffb347;font-size:11px;font-weight:700;padding:4px 8px;font-family:Jost,sans-serif}
+.abox-note{font-size:11px;color:#c9b8a3;text-align:center;margin-top:10px;line-height:1.5}
+.btn-secondary{width:100%;margin-top:10px;padding:12px;border:1px solid #3a2e22;border-radius:12px;background:transparent;color:#c9b8a3;font-weight:600;font-size:13px;font-family:Jost,sans-serif}
+
+/* MODAL CONFIRMATION */
+#confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}
+#confirm-overlay.open{display:flex}
+.confirm-box{background:#231b14;border-radius:16px;padding:22px;max-width:340px;width:100%;text-align:center;border:1px solid #35291c}
+.confirm-box h3{color:#ffb347;margin-bottom:10px;font-family:'Playfair Display',serif}
+.confirm-box p{color:#c9b8a3;font-size:13px;margin-bottom:16px;line-height:1.5}
 </style>
 </head>
 <body>
 
-<div id="login-screen">
-  <div class="login-logo">🖤</div>
-  <div class="login-title">Maka Admin</div>
-  <div class="login-sub">Espace privé</div>
-  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
-  <div class="login-err" id="login-err">Mot de passe incorrect</div>
-  <button class="login-btn" onclick="checkPwd()">Entrer</button>
+<div class="demo-ribbon">DÉMO</div>
+
+<div id="splash">
+  <div class="sp-logo">🚚</div>
+  <div class="sp-name">LE CAMION GOURMAND</div>
+  <div class="sp-sub">Street Food &middot; Événements</div>
 </div>
 
-<div id="admin-app">
-  <header>
-    <div class="h-logo">🖤</div>
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🚚</div>
     <div>
-      <div class="h-title">Maka Tattoo</div>
-      <div class="h-sub">Gestion des flashs</div>
+      <div class="tb-name">Le Camion Gourmand</div>
+      <div class="tb-sub">Assistant IA &middot; 24h/24</div>
     </div>
-    <button class="logout-btn" onclick="logout()">Déconnexion</button>
-  </header>
+    <div class="tb-dot"></div>
+  </div>
 
-  <div class="content">
-    <div class="add-card">
-      <div class="card-title">📢 Message du moment</div>
-      <div style="margin-bottom:14px">
-        <div class="lbl">Votre message (soirée flash, événement...)</div>
-        <textarea class="inp" id="msg-texte" placeholder="Ex: Soirée Flash demain 22 mai de 17h à 22h ! Sans rendez-vous, petit budget 60-80€ 🎉" style="height:100px;resize:none"></textarea>
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Chat</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'menu')"><span>🍔</span>Menu</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+  </div>
+
+  <div id="msg-banniere"></div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Écris ton message..."/>
+        <button id="snd" onclick="sendMsg()">➤</button>
       </div>
-      <div class="status" id="msg-status"></div>
-      <button class="add-btn" onclick="saveMessage()">💾 Sauvegarder le message</button>
-      <button class="add-btn" style="margin-top:8px;background:rgba(255,107,107,.2);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)" onclick="deleteMessage()">🗑️ Supprimer le message</button>
+    </div>
+  </div>
+
+  <!-- DEVIS -->
+  <div id="page-devis" class="page">
+    <div class="df-title">Demande de réservation<em>On te répond sous 24h</em></div>
+
+    <div class="lbl">Ton nom</div>
+    <input class="df-input" id="d-nom" type="text" placeholder="Prénom / Nom"/>
+
+    <div class="lbl">Téléphone</div>
+    <input class="df-input" id="d-tel" type="text" placeholder="+33 6 12 34 56 78"/>
+
+    <div class="lbl">Type d'événement</div>
+    <select class="df-select" id="d-type">
+      <option>Mariage</option>
+      <option>Anniversaire</option>
+      <option>Événement d'entreprise</option>
+      <option>Festival / concert</option>
+      <option>Marché / brocante</option>
+      <option>Autre</option>
+    </select>
+
+    <div class="lbl">Date souhaitée</div>
+    <input class="df-input" id="d-date" type="date"/>
+
+    <div class="lbl">Lieu (ville)</div>
+    <input class="df-input" id="d-lieu" type="text" placeholder="Tourcoing, Lille, Mouscron..."/>
+
+    <div class="lbl">Nombre de personnes estimé</div>
+    <input class="df-input" id="d-nb" type="number" placeholder="Ex: 80"/>
+
+    <div class="lbl">Message (optionnel)</div>
+    <textarea class="df-textarea" id="d-msg" placeholder="Précise tes envies, contraintes, horaires..."></textarea>
+
+    <button class="df-btn" onclick="envoyerDevis()">Envoyer ma demande</button>
+    <button class="df-btn-wa" onclick="ouvrirWhatsApp()">📱 Discuter sur WhatsApp</button>
+  </div>
+
+  <!-- MENU (dynamique) -->
+  <div id="page-menu" class="page">
+    <div class="fl-h">Notre carte<em>préparée en direct devant vous</em></div>
+    <div class="fl-sub">Appuyez sur un plat pour plus d'infos 🍔</div>
+    <div class="fl-grid" id="fl-grid">
+      <div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">⏳</div>Chargement du menu...</div>
     </div>
 
-    <div class="add-card">
-      <div class="card-title">Ajouter un flash</div>
-      <div style="margin-bottom:14px">
-        <div class="lbl">Nom du flash</div>
-        <input class="inp" id="flash-nom" type="text" placeholder="Ex: Femme et fleurs"/>
-      </div>
-      <div style="margin-bottom:14px">
-        <div class="lbl">Prix</div>
-        <input class="inp" id="flash-prix" type="text" placeholder="Ex: 80-150€"/>
-      </div>
-      <div style="margin-bottom:14px">
-        <div class="lbl">Photo</div>
-        <div class="upload-zone" id="upload-zone">
-          <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
-          <div class="upload-icon">📷</div>
-          <strong>Appuyez pour choisir une photo</strong>
-          <p>JPG, PNG — max 2MB</p>
-        </div>
-        <img id="photo-preview" alt="preview"/>
-      </div>
-      <div class="status" id="add-status"></div>
-      <button class="add-btn" id="add-btn" onclick="addFlash()">➕ Ajouter ce flash</button>
+    <div class="card" style="margin-top:16px">
+      <h3>📦 Formules événement</h3>
+      <p>Menus groupés, buffet sur mesure, options végé/sans gluten disponibles sur demande. On adapte la carte selon ton événement et ton budget.</p>
+    </div>
+    <div class="card">
+      <h3>🚚 Zone de déplacement</h3>
+      <p>Métropole Lilloise, région frontalière Tourcoing / Mouscron / Wattrelos. Plus loin ? Contacte-nous, on étudie chaque demande.</p>
+    </div>
+  </div>
+
+  <!-- TARIFS -->
+  <div id="page-tarifs" class="page">
+    <div class="t-h">Nos formules<em>événement</em></div>
+    <div class="t-intro">Prix indicatifs, ajustés selon la distance, la durée et le nombre d'invités.</div>
+
+    <div class="price-card">
+      <h3>Formule Essentielle</h3>
+      <div class="amount">Dès 350€ <span>/ événement</span></div>
+      <ul>
+        <li>2h de service sur place</li>
+        <li>Jusqu'à 50 personnes</li>
+        <li>Carte simplifiée (3 choix)</li>
+      </ul>
     </div>
 
-    <div class="list-card">
-      <div class="card-title">
-        Mes flashs
-        <span class="count-badge" id="count-badge">0</span>
-      </div>
-      <div class="flash-list" id="flash-list">
-        <div class="loading">Chargement…</div>
-      </div>
+    <div class="price-card highlight">
+      <h3>Formule Événement ⭐</h3>
+      <div class="amount">Dès 590€ <span>/ événement</span></div>
+      <ul>
+        <li>3h30 de service sur place</li>
+        <li>Jusqu'à 120 personnes</li>
+        <li>Carte complète + options végé</li>
+        <li>Décoration du camion adaptée</li>
+      </ul>
     </div>
+
+    <div class="price-card">
+      <h3>Formule Grand Format</h3>
+      <div class="amount">Sur devis <span>/ festival, entreprise</span></div>
+      <ul>
+        <li>Journée complète</li>
+        <li>+120 personnes</li>
+        <li>Menu sur mesure</li>
+        <li>Équipe renforcée</li>
+      </ul>
+    </div>
+
+    <a class="twa" href="#" id="tarifs-wa">📱 Demander un devis précis</a>
+
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #35291c;font-size:10.5px;line-height:1.7;color:#8a7860;text-align:center">
+      <span style="opacity:.8">Site créé par <a href="https://philomeneia.com" target="_blank" style="color:inherit">Philomène IA</a></span>
+    </div>
+  </div>
+
+  <nav class="bottom">
+    <button class="active" data-tab="chat" onclick="showTab(document.querySelector('[data-tab=chat]'),'chat')"><span class="icon">💬</span>Chat</button>
+    <button data-tab="devis" onclick="showTab(document.querySelector('[data-tab=devis]'),'devis')"><span class="icon">📋</span>Devis</button>
+    <button data-tab="menu" onclick="showTab(document.querySelector('[data-tab=menu]'),'menu')"><span class="icon">🍔</span>Menu</button>
+    <button data-tab="tarifs" onclick="showTab(document.querySelector('[data-tab=tarifs]'),'tarifs')"><span class="icon">💰</span>Tarifs</button>
+  </nav>
+</div>
+
+<!-- MODAL ITEM MENU -->
+<div id="overlay" onclick="fermerModal()">
+  <div id="mbox" onclick="event.stopPropagation()">
+    <div id="mbox-img-wrap"></div>
+    <div class="mbox-name" id="mbox-name"></div>
+    <div class="mbox-price" id="mbox-price"></div>
+    <button class="mbox-wa" id="mbox-wa">📱 Je commande / je réserve</button>
+    <button class="mbox-cancel" onclick="fermerModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- ACOMPTE -->
+<div id="acompte-overlay">
+  <div id="abox">
+    <div class="abox-title">🔒 Acompte de réservation</div>
+    <div class="acompte-amount" id="acompte-montant">--€</div>
+    <div class="acompte-sub" id="acompte-detail">30% du montant estimé pour bloquer la date</div>
+
+    <div class="pay-choice">
+      <button id="btn-choice-cb" class="active" onclick="choisirPaiement('cb')">💳 Payer en ligne</button>
+      <button id="btn-choice-vir" onclick="choisirPaiement('virement')">🏦 Virement</button>
+    </div>
+
+    <div class="pay-panel active" id="panel-cb">
+      <p style="font-size:12px;color:#c9b8a3;margin-bottom:10px;text-align:center">Tu vas être redirigé vers la page de paiement sécurisée.</p>
+      <button class="df-btn" id="btn-cb-step1" style="margin-top:0" onclick="etapePaiementCB()">Continuer vers le paiement</button>
+    </div>
+
+    <div class="pay-panel" id="panel-virement">
+      <div class="rib-row"><div><div class="label">IBAN</div><div class="value" id="rib-iban">FR76 XXXX XXXX XXXX XXXX XXXX XXX</div></div><button onclick="copierTexte('rib-iban')">Copier</button></div>
+      <div class="rib-row"><div><div class="label">BIC</div><div class="value" id="rib-bic">REVOFRP2</div></div><button onclick="copierTexte('rib-bic')">Copier</button></div>
+      <div class="rib-row"><div><div class="label">Bénéficiaire</div><div class="value">Le Camion Gourmand</div></div></div>
+      <div class="rib-row"><div><div class="label">Référence à indiquer</div><div class="value" id="rib-ref">ACOMPTE-XXXX</div></div><button onclick="copierTexte('rib-ref')">Copier</button></div>
+      <p class="abox-note">Indique bien la référence dans le libellé du virement pour qu'on identifie ta réservation.</p>
+      <button class="df-btn" style="margin-top:14px" onclick="confirmerVirement()">J'ai fait le virement</button>
+    </div>
+
+    <button class="btn-secondary" onclick="fermerAcompte()">Plus tard</button>
+  </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <h3>✅ C'est noté !</h3>
+    <p id="confirm-text">Merci ! On revient vers toi sous 24h avec un devis personnalisé pour ton événement.</p>
+    <button class="df-btn" style="margin-top:0" onclick="fermerConfirm()">OK</button>
   </div>
 </div>
 
 <script>
+/* ============ CONFIG CLIENT ============ */
+var WA = "33600000000"; // numéro WhatsApp du client, à remplacer
 var API = "https://philo-backend-by2c.onrender.com";
-var PWD = "maka2024";
-var photoBase64 = null;
+var CLIENT_ID = "camiongourmand";
 
-function checkPwd() {
-  var val = document.getElementById('pwd-input').value;
-  if (val === PWD) {
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('admin-app').classList.add('show');
-    loadMessage();
-    loadFlashs();
-  } else {
-    document.getElementById('login-err').style.display = 'block';
-    document.getElementById('pwd-input').value = '';
-  }
+var PAYMENT_MODE = "les-deux"; // "cb-seulement" | "virement-seulement" | "les-deux"
+var DEPOSIT_PERCENT = 0.30;
+var PANIER_MOYEN = 12;
+var PAYMENT_LINK = "https://revolut.me/xxxxxx"; // lien de paiement réel du client
+var BANK_IBAN = "FR76 XXXX XXXX XXXX XXXX XXXX XXX";
+var BANK_BIC = "REVOFRP2";
+
+var SYS = "Tu es l assistant IA du food truck Le Camion Gourmand. Reponds en francais, chaleureux, direct, sans markdown (pas d asterisques, pas de tirets listes), uniquement du texte simple et naturel. PRESENTATION: Le Camion Gourmand est un food truck evenementiel qui se deplace pour mariages, anniversaires, evenements d entreprise, festivals et marches. Zone de deplacement: metropole lilloise, region Tourcoing/Mouscron/Wattrelos, plus loin sur demande. MENU: Burger Signature 9e (boeuf, cheddar affine, sauce maison, oignons confits), Frites fraiches maison 4e, Tacos Gourmand 8,50e (poulet marine, sauce fromagere, crudites), Bowl Vegetarien 8e (legumes rotis, houmous, quinoa), Menu enfant 7e (mini burger, frites, boisson). Options vegetariennes et sans gluten disponibles sur demande pour les evenements. FORMULES EVENEMENT: Essentielle des 350e (2h de service, jusqu a 50 personnes, carte simplifiee), Evenement des 590e (3h30 de service, jusqu a 120 personnes, carte complete, decoration adaptee), Grand Format sur devis (journee complete, plus de 120 personnes, menu sur mesure). RESERVATION: Pour reserver, la personne doit remplir le formulaire dans l onglet Devis avec la date, le lieu et le nombre de personnes, ou contacter directement sur WhatsApp. Un acompte de 30 pourcent est generalement demande pour bloquer la date. Sois chaleureux et donne envie de reserver, mais reponds toujours directement et completement aux questions sur le menu, les prix, la zone de deplacement avant de proposer WhatsApp.";
+
+var busy = false;
+var cautionPendingUrl = null;
+var acompteMontant = 0;
+var refReservation = '';
+var datesIndispo = [];
+
+fetch(API + "/ping/" + CLIENT_ID).catch(function(){});
+
+/* ============ TABS ============ */
+function showTab(btn, n){
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.querySelectorAll("nav.bottom button").forEach(function(b){ b.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  document.querySelectorAll('.tab[onclick*="' + n + '"]').forEach(function(t){ t.classList.add("active"); });
+  document.querySelector('nav.bottom button[data-tab="' + n + '"]').classList.add("active");
+  if(n === "menu") loadMenu();
 }
 
-function logout() {
-  document.getElementById('login-screen').classList.remove('hidden');
-  document.getElementById('admin-app').classList.remove('show');
-  document.getElementById('pwd-input').value = '';
+/* ============ CHAT ============ */
+function scrollChat(){
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
 }
-
-function handlePhoto(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var maxSize = 800;
-      var w = img.width;
-      var h = img.height;
-      if (w > h) {
-        if (w > maxSize) { h = h * maxSize / w; w = maxSize; }
-      } else {
-        if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
-      }
-      canvas.width = w;
-      canvas.height = h;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-      var prev = document.getElementById('photo-preview');
-      prev.src = photoBase64;
-      prev.style.display = 'block';
-      document.getElementById('upload-zone').style.borderColor = 'rgba(107,203,119,.5)';
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+function mkAv(){
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🚚";
+  return av;
 }
-
-function showStatus(msg, type) {
-  var s = document.getElementById('add-status');
-  s.textContent = msg;
-  s.className = 'status ' + type;
-  s.style.display = 'block';
-  setTimeout(function(){ s.style.display = 'none'; }, 3000);
-}
-
-function addFlash() {
-  var nom = document.getElementById('flash-nom').value.trim();
-  var prix = document.getElementById('flash-prix').value.trim();
-  if (!nom || !prix || !photoBase64) {
-    showStatus('Remplissez tous les champs et ajoutez une photo', 'err');
-    return;
-  }
-  var btn = document.getElementById('add-btn');
-  btn.disabled = true;
-  btn.textContent = 'Ajout en cours…';
-  fetch(API + '/memory/maka_flashs')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var flashs = d.value || [];
-      flashs.push({ id: 'f_' + Date.now(), nom: nom, prix: prix, image: photoBase64 });
-      return fetch(API + '/memory/maka_flashs', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ value: flashs })
-      });
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d.ok) {
-        showStatus('Flash ajouté ! 🖤', 'ok');
-        document.getElementById('flash-nom').value = '';
-        document.getElementById('flash-prix').value = '';
-        document.getElementById('photo-preview').style.display = 'none';
-        document.getElementById('upload-zone').style.borderColor = '';
-        document.getElementById('photo-input').value = '';
-        photoBase64 = null;
-        loadFlashs();
-      } else {
-        showStatus('Erreur lors de l\'ajout', 'err');
-      }
-      btn.disabled = false;
-      btn.textContent = '➕ Ajouter ce flash';
-    }).catch(function(){
-      showStatus('Erreur de connexion', 'err');
-      btn.disabled = false;
-      btn.textContent = '➕ Ajouter ce flash';
+function addBot(txt, withQ){
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if(withQ){
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["Menu","Qu'est-ce qu'il y a au menu ?"],["Zone","Dans quelles villes intervenez-vous ?"],["Réserver","Comment réserver le food truck ?"],["Tarifs","Quels sont vos tarifs pour un événement ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
     });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
 }
-
-function deleteFlash(id) {
-  if (!confirm('Supprimer ce flash ?')) return;
-  fetch(API + '/memory/maka_flashs')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var flashs = (d.value || []).filter(function(f){ return f.id !== id; });
-      return fetch(API + '/memory/maka_flashs', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ value: flashs })
-      });
-    })
-    .then(function(){ loadFlashs(); });
+function addUser(txt){
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
 }
-
-function saveMessage() {
-  var texte = document.getElementById('msg-texte').value.trim();
-  var s = document.getElementById('msg-status');
-  fetch(API + '/memory/maka_config', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ value: { message: texte } })
+function setTyping(on){
+  var old = document.getElementById("ty-row");
+  if(old) old.remove();
+  if(!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+function send(txt){
+  if(!txt || busy) return;
+  showTab(null, 'chat');
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: CLIENT_ID + "_" + Date.now(), systemPrompt: SYS })
   }).then(function(r){ return r.json(); })
   .then(function(d){
-    s.textContent = texte ? 'Message sauvegardé ! 🖤' : 'Message supprimé !';
-    s.className = 'status ok';
-    s.style.display = 'block';
-    setTimeout(function(){ s.style.display = 'none'; }, 3000);
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous aider !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("reserv") >= 0 || low.indexOf("devis") >= 0 || low.indexOf("contact") >= 0;
+    if(needWA){
+      var wa = document.createElement("button");
+      wa.className = "wa-bubble";
+      var waUrl = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je souhaite réserver Le Camion Gourmand pour mon événement 🚚");
+      wa.onclick = function(){ window.open(waUrl, "_blank"); };
+      wa.textContent = "Contacter sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
   }).catch(function(){
-    s.textContent = 'Erreur de connexion';
-    s.className = 'status err';
-    s.style.display = 'block';
+    setTyping(false);
+    addBot("Oups, petit souci de connexion. Réessaie dans un instant 🙏");
+    busy = false;
   });
 }
-
-function deleteMessage() {
-  document.getElementById('msg-texte').value = '';
-  saveMessage();
+function sendMsg(){
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if(!txt) return;
+  inp.value = "";
+  send(txt);
 }
 
-function loadMessage() {
-  fetch(API + '/memory/maka_config')
+/* ============ DISPONIBILITÉS ============ */
+function chargerIndispo(){
+  fetch(API + "/memory/foodtruck_indispo")
+    .then(function(r){ return r.json(); })
+    .then(function(d){ datesIndispo = d.value || []; })
+    .catch(function(){ datesIndispo = []; });
+}
+chargerIndispo();
+
+/* ============ DEVIS ============ */
+function sauverReservation(reservation){
+  return fetch(API + "/memory/foodtruck_reservations")
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if (d.value && d.value.message) {
-        document.getElementById('msg-texte').value = d.value.message;
-      }
-    }).catch(function(){});
+      var liste = d.value || [];
+      liste.push(reservation);
+      return fetch(API + "/memory/foodtruck_reservations", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ value: liste })
+      });
+    }).catch(function(e){ console.log("Erreur sauvegarde", e); });
 }
 
-function loadFlashs() {
-  var list = document.getElementById('flash-list');
-  list.innerHTML = '<div class="loading">Chargement…</div>';
-  fetch(API + '/memory/maka_flashs')
+function envoyerDevis(){
+  var nom = document.getElementById("d-nom").value.trim();
+  var tel = document.getElementById("d-tel").value.trim();
+  var nb = parseInt(document.getElementById("d-nb").value) || 0;
+  var date = document.getElementById("d-date").value;
+  if(!nom || !tel){ alert("Merci de renseigner au moins ton nom et ton téléphone 🙏"); return; }
+  if(date && datesIndispo.indexOf(date) !== -1){
+    alert("Oups, cette date n'est malheureusement pas disponible. Choisis une autre date ou contacte-nous sur WhatsApp 🙏");
+    return;
+  }
+
+  refReservation = "ACOMPTE-" + nom.substring(0,3).toUpperCase() + Math.floor(Math.random()*9000+1000);
+
+  var reservation = {
+    nom: nom, tel: tel, date: date,
+    type: document.getElementById("d-type").value,
+    lieu: document.getElementById("d-lieu").value.trim(),
+    nb: nb,
+    message: document.getElementById("d-msg").value.trim(),
+    creeLe: new Date().toISOString()
+  };
+  sauverReservation(reservation);
+
+  if(nb > 0){
+    var total = nb * PANIER_MOYEN;
+    acompteMontant = Math.round(total * DEPOSIT_PERCENT);
+    ouvrirAcompte();
+  }else{
+    document.getElementById("confirm-text").textContent = "Merci ! On revient vers toi sous 24h avec un devis personnalisé pour ton événement.";
+    document.getElementById("confirm-overlay").classList.add("open");
+  }
+}
+
+function ouvrirWhatsApp(){
+  var msg = "Bonjour ! Je souhaite réserver Le Camion Gourmand pour mon événement 🚚";
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+/* ============ ACOMPTE ============ */
+function ouvrirAcompte(){
+  document.getElementById("acompte-montant").textContent = acompteMontant + "€";
+  document.getElementById("acompte-detail").textContent = Math.round(DEPOSIT_PERCENT*100) + "% du montant estimé pour bloquer la date";
+  document.getElementById("rib-ref").textContent = refReservation;
+
+  var choiceBar = document.querySelector(".pay-choice");
+  if(PAYMENT_MODE === "cb-seulement"){ choiceBar.style.display = "none"; choisirPaiement("cb"); }
+  else if(PAYMENT_MODE === "virement-seulement"){ choiceBar.style.display = "none"; choisirPaiement("virement"); }
+  else{ choiceBar.style.display = "flex"; choisirPaiement("cb"); }
+
+  document.getElementById("acompte-overlay").classList.add("open");
+}
+function fermerAcompte(){
+  document.getElementById("acompte-overlay").classList.remove("open");
+  document.getElementById("confirm-text").textContent = "Merci ! Ta demande est bien enregistrée. Tu pourras régler l'acompte plus tard, on te recontacte pour finaliser.";
+  document.getElementById("confirm-overlay").classList.add("open");
+}
+function choisirPaiement(mode){
+  document.getElementById("btn-choice-cb").classList.toggle("active", mode === "cb");
+  document.getElementById("btn-choice-vir").classList.toggle("active", mode === "virement");
+  document.getElementById("panel-cb").classList.toggle("active", mode === "cb");
+  document.getElementById("panel-virement").classList.toggle("active", mode === "virement");
+}
+function etapePaiementCB(){
+  var btn = document.getElementById("btn-cb-step1");
+  btn.textContent = "💳 Payer " + acompteMontant + "€ maintenant";
+  btn.onclick = function(){
+    window.open(PAYMENT_LINK + "?ref=" + refReservation + "&amount=" + acompteMontant, "_blank");
+    document.getElementById("acompte-overlay").classList.remove("open");
+    document.getElementById("confirm-text").textContent = "Merci ! Finalise le paiement dans l'onglet ouvert, ta réservation sera confirmée dès réception de l'acompte.";
+    document.getElementById("confirm-overlay").classList.add("open");
+  };
+}
+function confirmerVirement(){
+  document.getElementById("acompte-overlay").classList.remove("open");
+  document.getElementById("confirm-text").textContent = "Parfait ! On confirme ta réservation dès réception du virement (sous 1-2 jours ouvrés). Merci 🙏";
+  document.getElementById("confirm-overlay").classList.add("open");
+}
+function copierTexte(id){
+  var el = document.getElementById(id);
+  var text = el.textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(text);
+  var btn = el.parentElement.parentElement.querySelector("button");
+  if(btn){
+    var old = btn.textContent;
+    btn.textContent = "Copié ✓";
+    setTimeout(function(){ btn.textContent = old; }, 1500);
+  }
+}
+function fermerConfirm(){
+  document.getElementById("confirm-overlay").classList.remove("open");
+}
+
+/* ============ MENU (galerie dynamique gérée en admin) ============ */
+function loadMenu(){
+  var grid = document.getElementById("fl-grid");
+  grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">⏳</div>Chargement...</div>';
+  fetch(API + "/memory/foodtruck_menu")
     .then(function(r){ return r.json(); })
     .then(function(d){
-      var flashs = d.value || [];
-      document.getElementById('count-badge').textContent = flashs.length;
-      if (flashs.length === 0) {
-        list.innerHTML = '<div class="empty-state">Aucun flash pour le moment.<br/>Ajoutez votre premier flash ci-dessus 🖤</div>';
+      var plats = d.value || [];
+      if(plats.length === 0){
+        grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🍔</div>Le menu arrive bientôt !</div>';
         return;
       }
-      list.innerHTML = '';
-      flashs.forEach(function(f){
-        var item = document.createElement('div');
-        item.className = 'flash-item';
-        var imgDiv = document.createElement('div');
-        imgDiv.className = 'fi-img';
-        if (f.image) {
-          var img = document.createElement('img');
-          img.src = f.image;
-          imgDiv.appendChild(img);
-        } else {
-          imgDiv.textContent = '🖤';
+      grid.innerHTML = "";
+      plats.forEach(function(p){
+        var card = document.createElement("div");
+        card.className = "fl-card";
+        card.onclick = function(){ ouvrirPlat(p); };
+        var thumb = document.createElement("div");
+        thumb.className = "fl-thumb";
+        if(p.image){
+          var img = document.createElement("img");
+          img.src = p.image;
+          thumb.appendChild(img);
+        }else{
+          var em = document.createElement("span");
+          em.className = "fl-emoji";
+          em.textContent = "🍔";
+          thumb.appendChild(em);
         }
-        var info = document.createElement('div');
-        info.className = 'fi-info';
-        info.innerHTML = '<div class="fi-name">' + f.nom + '</div><div class="fi-price">' + f.prix + '</div>';
-        var del = document.createElement('div');
-        del.className = 'fi-del';
-        del.textContent = '✕';
-        del.onclick = function(){ deleteFlash(f.id); };
-        item.appendChild(imgDiv);
-        item.appendChild(info);
-        item.appendChild(del);
-        list.appendChild(item);
+        var info = document.createElement("div");
+        info.className = "fl-info";
+        info.innerHTML = '<div class="fl-name">' + p.nom + '</div><div class="fl-price">' + p.prix + '</div>';
+        card.appendChild(thumb);
+        card.appendChild(info);
+        grid.appendChild(card);
       });
     }).catch(function(){
-      list.innerHTML = '<div class="empty-state">Erreur de chargement</div>';
+      grid.innerHTML = '<div style="grid-column:1/-1" class="fl-empty"><div class="fl-empty-icon">🍔</div>Le menu arrive bientôt !</div>';
     });
 }
+function ouvrirPlat(p){
+  var wrap = document.getElementById("mbox-img-wrap");
+  wrap.innerHTML = "";
+  if(p.image){
+    var img = document.createElement("img");
+    img.className = "mbox-img";
+    img.src = p.image;
+    wrap.appendChild(img);
+  }else{
+    var ico = document.createElement("div");
+    ico.className = "mbox-ico";
+    ico.textContent = "🍔";
+    wrap.appendChild(ico);
+  }
+  document.getElementById("mbox-name").textContent = p.nom;
+  document.getElementById("mbox-price").innerHTML = "<b>" + p.prix + "</b>";
+  var msg = "Bonjour ! Je suis intéressé(e) par " + p.nom + " (" + p.prix + ") pour mon événement.";
+  var url = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+  document.getElementById("mbox-wa").onclick = function(){ fermerModal(); window.open(url, "_blank"); };
+  document.getElementById("overlay").classList.add("open");
+}
+function fermerModal(){
+  document.getElementById("overlay").classList.remove("open");
+}
+
+/* ============ BANNIÈRE (message du moment, éditable en admin) ============ */
+fetch(API + "/memory/foodtruck_config")
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.value && d.value.message && d.value.message.trim()){
+      var b = document.getElementById("msg-banniere");
+      b.textContent = "📢 " + d.value.message;
+      b.style.display = "block";
+    }
+  }).catch(function(){});
+
+/* ============ INIT ============ */
+document.getElementById("inp") && document.getElementById("inp").addEventListener("keydown", function(e){ if(e.key === "Enter") sendMsg(); });
+document.getElementById("tarifs-wa").addEventListener("click", function(e){
+  e.preventDefault();
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je voudrais un devis précis pour mon événement."), "_blank");
+});
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Salut 👋 Je suis l'assistant du Camion Gourmand ! Je peux te renseigner sur le menu, les tarifs, la zone de déplacement, ou t'aider à réserver pour ton événement. Qu'est-ce qui t'intéresse ?", true);
+  }, 900);
+}, 2200);
 </script>
+
 </body>
 </html>
