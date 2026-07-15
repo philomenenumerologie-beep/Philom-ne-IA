@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Racine Verte CBD</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#171e15;font-family:'Work Sans',sans-serif;color:#f3f0e6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+.demo-ribbon{position:fixed;top:14px;right:-38px;background:#c0392b;color:#fff;padding:5px 45px;font-size:11px;font-weight:700;letter-spacing:1px;transform:rotate(45deg);z-index:9999;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+#splash{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 28%,#26331f 0%,#171e15 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:100px;height:100px;border-radius:50%;background:#f3f0e6;display:flex;align-items:center;justify-content:center;margin-bottom:22px;font-size:44px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-name{font-family:'Fraunces',serif;font-size:29px;font-weight:600;color:#c9d6a8;letter-spacing:.04em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:rgba(243,240,230,.4);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:#1f271b;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(243,240,230,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#f3f0e6;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:21px}
+.tb-name{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:#c9d6a8;letter-spacing:.01em}
+.tb-sub{font-size:10px;color:rgba(243,240,230,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#8fae5c;box-shadow:0 0 8px #8fae5c;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+#tabs{background:#1f271b;display:flex;border-bottom:1px solid rgba(243,240,230,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(243,240,230,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:15px}
+.tab.active{color:#c9d6a8;border-bottom-color:#8fae5c}
+
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+#msg-banniere{display:none;background:#1f271b;color:#c9d6a8;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid rgba(243,240,230,.15);flex-shrink:0;line-height:1.5}
+
+#age-gate{position:fixed;inset:0;z-index:600;background:#171e15;display:none;align-items:center;justify-content:center;padding:24px}
+#age-gate.open{display:flex}
+.ag-box{background:#1f271b;border:1px solid #333d2a;border-radius:18px;padding:28px 22px;max-width:340px;text-align:center}
+.ag-box .ico{font-size:38px;margin-bottom:10px}
+.ag-box h3{font-family:'Fraunces',serif;color:#c9d6a8;font-size:19px;margin-bottom:10px}
+.ag-box p{color:#a9b39c;font-size:12.5px;line-height:1.6;margin-bottom:18px}
+.ag-btns{display:flex;gap:10px}
+.ag-btns button{flex:1;padding:12px;border-radius:12px;font-weight:700;font-size:13px;font-family:'Work Sans',sans-serif;border:none;cursor:pointer}
+#ag-yes{background:#8fae5c;color:#171e15}
+#ag-no{background:transparent;border:1px solid #3a4530;color:#a9b39c}
+
+#page-chat{background:#171e15}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:30px;height:30px;border-radius:50%;background:#8fae5c;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:15px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.6;white-space:pre-wrap;border-radius:18px}
+.bub.bot{background:#242c1e;color:#f3f0e6;border-top-left-radius:4px;border:1px solid #333d2a}
+.bub.user{background:#8fae5c;color:#171e15;font-weight:600;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #c9d6a8;background:transparent;color:#c9d6a8;font-size:12px;font-weight:600;font-family:'Work Sans',sans-serif;cursor:pointer}
+.tybub{background:#242c1e;border:1px solid #333d2a;border-radius:18px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#7a8468;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+
+#composer{padding:10px 14px 22px;background:#171e15;border-top:1px solid #333d2a;flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid #333d2a;background:#242c1e;font-size:15px;font-family:'Work Sans',sans-serif;outline:none;color:#f3f0e6}
+#inp::placeholder{color:#7a8468}
+#inp:focus{border-color:#8fae5c}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#8fae5c;color:#171e15;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-weight:800}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:'Work Sans',sans-serif;margin-top:10px;border:none;width:100%;cursor:pointer}
+
+.card{background:#242c1e;border:1px solid #333d2a;border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{color:#c9d6a8;font-size:15px;margin-bottom:6px;font-family:'Fraunces',serif}
+.card p{color:#a9b39c;font-size:13px;line-height:1.55}
+
+#page-produits{background:#171e15;padding:20px 15px 32px}
+.fl-h{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:#f3f0e6}
+.fl-h em{font-style:italic;color:#a9b39c;font-size:.62em;display:block;font-family:'Work Sans',sans-serif;margin-top:4px}
+.fl-sub{font-size:13px;color:#a9b39c;margin:10px 0 16px}
+.cat-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;margin-bottom:16px}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-row{display:flex;gap:8px;width:max-content;padding:6px 2px 12px}
+.cat-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:5px;height:38px;padding:0 16px;line-height:normal;border-radius:20px;border:1.5px solid #333d2a;background:#1f271b;color:#a9b39c;font-size:12px;font-weight:600;font-family:'Work Sans',sans-serif;cursor:pointer;white-space:nowrap}
+.cat-btn.active{background:#8fae5c;color:#171e15;border-color:#8fae5c}
+.fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl-card{background:#242c1e;border-radius:16px;overflow:hidden;border:1px solid #333d2a;cursor:pointer}
+.fl-card:active{opacity:.85}
+.fl-thumb{width:100%;aspect-ratio:1;background:#171e15;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.fl-thumb img{width:100%;height:100%;object-fit:cover}
+.fl-emoji{font-size:42px}
+.fl-badge{position:absolute;top:8px;right:8px;background:rgba(23,30,21,.85);color:#c9d6a8;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid #3a4530}
+.fl-info{padding:10px 12px 13px}
+.fl-name{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:#f3f0e6}
+.fl-meta{font-size:10.5px;color:#7a8468;margin-top:2px}
+.fl-price{font-size:12px;color:#c9d6a8;margin-top:4px;font-weight:700}
+.fl-empty{text-align:center;padding:40px 20px;color:#a9b39c;font-size:14px;grid-column:1/-1}
+.fl-empty-icon{font-size:38px;margin-bottom:12px}
+
+#page-infos{background:#171e15;padding:20px 15px 32px}
+.map-wrap{width:100%;border-radius:16px;overflow:hidden;border:1px solid #333d2a;margin-bottom:16px;height:190px}
+.map-wrap iframe{width:100%;height:100%;border:0;filter:grayscale(.2) invert(.92) contrast(.9)}
+.info-row{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid #262e21}
+.info-row:last-child{border-bottom:none}
+.info-ico{font-size:18px;width:26px;text-align:center;flex-shrink:0}
+.info-txt b{display:block;color:#f3f0e6;font-size:13.5px;margin-bottom:2px}
+.info-txt span{color:#a9b39c;font-size:12.5px;line-height:1.5}
+.legal-note{margin-top:18px;background:#1f271b;border:1px solid #333d2a;border-radius:12px;padding:13px 14px;font-size:11px;color:#7a8468;line-height:1.6}
+
+#overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+#overlay.open{display:flex}
+#mbox{background:#1f271b;border-radius:24px 24px 0 0;padding:26px 20px 40px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);max-height:88vh;overflow-y:auto}
+.mbox-img{width:100%;max-height:60vw;border-radius:16px;object-fit:cover;margin:0 auto 16px;display:block;background:#171e15}
+.mbox-ico{font-size:50px;text-align:center;margin-bottom:12px}
+.mbox-name{font-family:'Fraunces',serif;font-size:20px;font-weight:600;text-align:center;margin-bottom:4px;color:#f3f0e6}
+.mbox-meta{text-align:center;font-size:12px;color:#7a8468;margin-bottom:10px}
+.mbox-desc{font-size:13px;color:#a9b39c;line-height:1.6;text-align:center;margin-bottom:16px;padding:0 6px}
+.mbox-price{text-align:center;font-size:16px;color:#a9b39c;margin-bottom:20px}
+.mbox-price b{color:#c9d6a8;font-size:20px}
+.mbox-buy{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#8fae5c,#c9d6a8);color:#171e15;border-radius:13px;padding:15px;font-weight:800;font-size:15px;font-family:'Work Sans',sans-serif;margin-bottom:10px;border:none;width:100%;cursor:pointer}
+.mbox-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:14px;font-weight:700;font-size:14px;font-family:'Work Sans',sans-serif;margin-bottom:10px;border:none;width:100%;cursor:pointer}
+.mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#a9b39c;cursor:pointer;font-family:'Work Sans',sans-serif;border:none;background:none;width:100%}
+
+.weight-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.wt-btn{padding:9px 14px;border-radius:12px;border:1.5px solid #333d2a;background:#171e15;color:#a9b39c;font-size:12px;font-weight:600;font-family:'Work Sans',sans-serif;cursor:pointer;text-align:center;line-height:1.4}
+.wt-btn small{display:block;font-size:9.5px;color:#7a8468;font-weight:500;margin-top:1px}
+.wt-btn.active{background:#8fae5c;color:#171e15;border-color:#8fae5c}
+.wt-btn.active small{color:#1f271b}
+#confirm-overlay.open{display:flex}
+.confirm-box{background:#1f271b;border-radius:16px;padding:22px;max-width:340px;width:100%;text-align:center;border:1px solid #333d2a}
+.confirm-box h3{color:#c9d6a8;margin-bottom:10px;font-family:'Fraunces',serif}
+.confirm-box p{color:#a9b39c;font-size:13px;margin-bottom:16px;line-height:1.5}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#8fae5c,#c9d6a8);color:#171e15;border-radius:14px;padding:15px;font-weight:800;font-size:15px;font-family:'Work Sans',sans-serif;border:none;width:100%;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="demo-ribbon">DÉMO</div>
+
+<div id="splash">
+  <div class="sp-logo">🌿</div>
+  <div class="sp-name">RACINE VERTE CBD</div>
+  <div class="sp-sub">Boutique &amp; Conseil</div>
+</div>
+
+<div id="age-gate">
+  <div class="ag-box">
+    <div class="ico">🔞</div>
+    <h3>Vérification d'âge</h3>
+    <p>Cette boutique propose des produits à base de CBD (chanvre légal, taux de THC réglementaire). L'accès est réservé aux personnes majeures.</p>
+    <div class="ag-btns">
+      <button id="ag-yes" onclick="validerAge()">J'ai 18 ans ou +</button>
+      <button id="ag-no" onclick="refuserAge()">Quitter</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🌿</div>
+    <div>
+      <div class="tb-name">Racine Verte CBD</div>
+      <div class="tb-sub">Assistant boutique &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Conseil</button>
+    <button class="tab" onclick="showTab(this,'produits')"><span>🌿</span>Produits</button>
+    <button class="tab" onclick="showTab(this,'infos')"><span>📍</span>Boutique</button>
+  </div>
+
+  <div id="msg-banniere"></div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Pose ta question..."/>
+        <button id="snd" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUITS -->
+  <div id="page-produits" class="page">
+    <div class="fl-h">Notre sélection<em>fleurs &middot; résines &middot; huiles &middot; infusions</em></div>
+    <div class="fl-sub">Chaque produit indique son taux de CBD et son origine. Appuie sur un produit pour le détail 🌿</div>
+    <div class="cat-scroll"><div class="cat-row" id="cat-row"></div></div>
+    <div class="fl-grid" id="fl-grid">
+      <div class="fl-empty"><div class="fl-empty-icon">⏳</div>Chargement des produits...</div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>🚚 Retrait &amp; livraison</h3>
+      <p>Retrait gratuit en boutique. Livraison possible sur Tourcoing, Mouscron et Wattrelos selon disponibilité.</p>
+    </div>
+  </div>
+
+  <!-- INFOS / BOUTIQUE -->
+  <div id="page-infos" class="page">
+    <div class="fl-h">La boutique<em>venez nous rencontrer</em></div>
+    <div class="map-wrap">
+      <iframe src="https://www.google.com/maps?q=Tourcoing&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="info-row">
+        <div class="info-ico">📍</div>
+        <div class="info-txt"><b>Adresse</b><span id="info-adresse">Adresse à personnaliser &middot; Tourcoing</span></div>
+      </div>
+      <div class="info-row">
+        <div class="info-ico">🕐</div>
+        <div class="info-txt"><b>Horaires</b><span>Mardi – Samedi : 10h – 19h<br/>Dimanche &amp; Lundi : fermé</span></div>
+      </div>
+      <div class="info-row">
+        <div class="info-ico">📞</div>
+        <div class="info-txt"><b>Contact</b><span>Par téléphone ou WhatsApp, réponse rapide</span></div>
+      </div>
+    </div>
+    <button class="wa-bubble" style="margin-top:14px" onclick="ouvrirWhatsApp('Bonjour ! J\'ai une question sur vos produits CBD.')">📱 Discuter sur WhatsApp</button>
+
+    <div class="legal-note">🌿 Produits issus de chanvre cultivé légalement, taux de THC conforme à la réglementation en vigueur (&lt;0,3%). Nos informations sont données à titre indicatif et ne remplacent pas un avis médical. Vente strictement réservée aux personnes majeures.</div>
+
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid #262e21;font-size:10.5px;line-height:1.7;color:#5e6852;text-align:center">
+      <span style="opacity:.8">Site créé par <a href="https://philomeneia.com" target="_blank" style="color:inherit">Philomène IA</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRODUIT -->
+<div id="overlay" onclick="fermerModal()">
+  <div id="mbox" onclick="event.stopPropagation()">
+    <div id="mbox-img-wrap"></div>
+    <div class="mbox-name" id="mbox-name"></div>
+    <div class="mbox-meta" id="mbox-meta"></div>
+    <div class="mbox-desc" id="mbox-desc"></div>
+    <div class="weight-row" id="weight-row" style="display:none"></div>
+    <div class="mbox-price" id="mbox-price"></div>
+    <button class="mbox-buy" id="mbox-buy">💳 Commander en ligne</button>
+    <button class="mbox-wa" id="mbox-wa">📱 Réserver sur WhatsApp</button>
+    <button class="mbox-cancel" onclick="fermerModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <h3 id="confirm-title">✅ C'est noté !</h3>
+    <p id="confirm-text">Merci pour votre commande, on revient vers vous rapidement.</p>
+    <button class="df-btn" onclick="fermerConfirm()">OK</button>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG CLIENT ============ */
+var WA = "33600000000";
+var API = "https://philo-backend-by2c.onrender.com";
+var CLIENT_ID = "racineverte";
+var PAYMENT_LINK = "https://revolut.me/xxxxxx";
+
+var SYS = "Tu es l assistant boutique de Racine Verte CBD, une boutique specialisee dans les produits a base de CBD (chanvre legal). Reponds en francais, chaleureux, calme et professionnel, sans markdown, uniquement du texte simple et naturel. REGLES IMPORTANTES: tu ne dois JAMAIS affirmer que le CBD soigne, traite, guerit ou previent une maladie ou un trouble medical (anxiete, insomnie, douleur, etc). Tu peux dire que certains clients apprecient tel produit pour se detendre ou en fin de journee, en restant factuel et prudent, et toujours preciser que ce ne sont pas des allegations medicales. Pour toute question de sante precise, invite la personne a consulter un professionnel de sante. PRODUITS: Fleurs de CBD (taux de CBD entre 8 et 18 pourcent selon variete, origine France et Europe, cultivees sans pesticides), Resines CBD (extraction traditionnelle, taux de CBD eleve autour de 20 a 30 pourcent), Huiles CBD sublinguales (flacons 10ml, concentrations 5, 10 et 20 pourcent, a base d huile de chanvre ou MCT), Infusions et tisanes CBD (melanges aux plantes, sans effet psychoactif). Tous les produits contiennent moins de 0,3 pourcent de THC conformement a la reglementation francaise. VENTE: reservee aux personnes majeures. Le client peut consulter le catalogue complet dans l onglet Produits, commander en ligne ou reserver via WhatsApp, ou passer directement en boutique (adresse et horaires dans l onglet Boutique). Sois accueillant et informatif, donne des reponses completes sur les produits, les taux, les modes de consommation et la reglementation avant de proposer la boutique ou WhatsApp.";
+
+var busy = false;
+var currentCat = "tous";
+var produitsData = [];
+
+fetch(API + "/ping/" + CLIENT_ID).catch(function(){});
+
+/* ============ VERIF AGE ============ */
+function checkAge(){
+  document.getElementById("age-gate").classList.add("open");
+}
+function validerAge(){
+  document.getElementById("age-gate").classList.remove("open");
+}
+function refuserAge(){
+  document.getElementById("app").innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;text-align:center;padding:30px;color:#a9b39c;font-size:14px">Accès réservé aux personnes majeures.</div>';
+}
+
+/* ============ TABS (structure identique à Maka Tattoo, un seul jeu d onglets) ============ */
+function showTab(btn, n){
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+  if(n === "produits") loadProduits();
+}
+
+/* ============ CHAT ============ */
+function scrollChat(){
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+function mkAv(){
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🌿";
+  return av;
+}
+function addBot(txt, withQ){
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if(withQ){
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["Fleurs","Parlez-moi de vos fleurs de CBD"],["Huiles","Comment fonctionnent les huiles CBD ?"],["Taux légal","Quel est le taux de THC autorisé ?"],["Boutique","Où se trouve la boutique ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+function addUser(txt){
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+function setTyping(on){
+  var old = document.getElementById("ty-row");
+  if(old) old.remove();
+  if(!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+function send(txt){
+  if(!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/maka", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: CLIENT_ID + "_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous renseigner !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("command") >= 0 || low.indexOf("reserv") >= 0 || low.indexOf("contact") >= 0;
+    if(needWA){
+      var wa = document.createElement("button");
+      wa.className = "wa-bubble";
+      var waUrl = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! J'ai une question sur vos produits CBD 🌿");
+      wa.onclick = function(){ window.open(waUrl, "_blank"); };
+      wa.textContent = "Contacter sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Oups, petit souci de connexion. Réessaie dans un instant 🙏");
+    busy = false;
+  });
+}
+function sendMsg(){
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if(!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+/* ============ PRODUITS (dynamique, gérés depuis la page admin) ============ */
+var CATEGORIES = [
+  {id:"tous", label:"Tous"},
+  {id:"fleurs", label:"🌸 Fleurs"},
+  {id:"resines", label:"🟤 Résines"},
+  {id:"huiles", label:"💧 Huiles"},
+  {id:"infusions", label:"🍵 Infusions"}
+];
+
+function renderCats(){
+  var row = document.getElementById("cat-row");
+  row.innerHTML = "";
+  CATEGORIES.forEach(function(c){
+    var b = document.createElement("button");
+    b.className = "cat-btn" + (c.id === currentCat ? " active" : "");
+    b.textContent = c.label;
+    b.onclick = function(){ currentCat = c.id; renderCats(); renderGrid(); };
+    row.appendChild(b);
+  });
+}
+
+function renderGrid(){
+  var grid = document.getElementById("fl-grid");
+  var liste = currentCat === "tous" ? produitsData : produitsData.filter(function(p){ return p.categorie === currentCat; });
+  if(liste.length === 0){
+    grid.innerHTML = '<div class="fl-empty"><div class="fl-empty-icon">🌿</div>Aucun produit dans cette catégorie pour le moment.</div>';
+    return;
+  }
+  grid.innerHTML = "";
+  liste.forEach(function(p){
+    var card = document.createElement("div");
+    card.className = "fl-card";
+    card.onclick = function(){ ouvrirProduit(p); };
+    var thumb = document.createElement("div");
+    thumb.className = "fl-thumb";
+    if(p.image){
+      var img = document.createElement("img");
+      img.src = p.image;
+      thumb.appendChild(img);
+    }else{
+      var em = document.createElement("span");
+      em.className = "fl-emoji";
+      em.textContent = "🌿";
+      thumb.appendChild(em);
+    }
+    if(p.taux){
+      var badge = document.createElement("div");
+      badge.className = "fl-badge";
+      badge.textContent = p.taux;
+      thumb.appendChild(badge);
+    }
+    var info = document.createElement("div");
+    info.className = "fl-info";
+    info.innerHTML = '<div class="fl-name">' + p.nom + '</div><div class="fl-meta">' + (p.origine || "") + '</div><div class="fl-price">' + p.prix + '</div>';
+    card.appendChild(thumb);
+    card.appendChild(info);
+    grid.appendChild(card);
+  });
+}
+
+function loadProduits(){
+  var grid = document.getElementById("fl-grid");
+  grid.innerHTML = '<div class="fl-empty"><div class="fl-empty-icon">⏳</div>Chargement...</div>';
+  renderCats();
+  var DEMO_PRODUITS = [
+    {nom:"Amnesia CBD", categorie:"fleurs", taux:"14% CBD", origine:"Culture France", prix:"9€ / g", description:"Fleur aromatique aux notes agrumées, culture française sans pesticides. Prix dégressif selon le poids choisi."},
+    {nom:"Purple CBD", categorie:"fleurs", taux:"11% CBD", origine:"Culture Europe", prix:"7,50€ / g", description:"Fleur douce aux teintes violettes, arômes fruités et boisés. Prix dégressif selon le poids choisi."},
+    {nom:"Résine Charas", categorie:"resines", taux:"24% CBD", origine:"Extraction traditionnelle", prix:"12€ / g", description:"Résine pressée à la main, texture souple et arômes intenses. Prix dégressif selon le poids choisi."},
+    {nom:"Résine Blonde", categorie:"resines", taux:"18% CBD", origine:"Extraction traditionnelle", prix:"10€ / g", description:"Résine claire, saveurs douces et florales. Prix dégressif selon le poids choisi."},
+    {nom:"Huile 10%", categorie:"huiles", taux:"10% CBD", origine:"Base huile MCT", prix:"29€ / 10ml", description:"Flacon compte-gouttes, usage sublingual, sans arôme ajouté."},
+    {nom:"Huile 20%", categorie:"huiles", taux:"20% CBD", origine:"Base huile de chanvre", prix:"45€ / 10ml", description:"Concentration renforcée, flacon compte-gouttes 10ml."},
+    {nom:"Infusion Détente", categorie:"infusions", taux:"Sans THC", origine:"Mélange de plantes", prix:"8€ / boîte", description:"Mélange camomille, verveine et chanvre, 20 sachets."},
+    {nom:"Infusion Soir", categorie:"infusions", taux:"Sans THC", origine:"Mélange de plantes", prix:"8€ / boîte", description:"Mélange tilleul, lavande et chanvre, 20 sachets."}
+  ];
+  fetch(API + "/memory/racineverte_produits")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      produitsData = (d.value && d.value.length > 0) ? d.value : DEMO_PRODUITS;
+      renderGrid();
+    }).catch(function(){
+      produitsData = DEMO_PRODUITS;
+      renderGrid();
+    });
+}
+
+/* Paliers de poids avec prix degressif, calques sur les grilles reelles du marche CBD (321CBD, CBD'eau, TealerLab...) */
+var WEIGHT_TIERS = [
+  {label:"1g", mult:1},
+  {label:"5g", mult:4.5},
+  {label:"10g", mult:7.8},
+  {label:"25g", mult:17.5},
+  {label:"50g", mult:31}
+];
+
+function parsePrixGramme(prixStr){
+  var m = (prixStr || "").match(/[\d,.]+/);
+  if(!m) return null;
+  return parseFloat(m[0].replace(",", "."));
+}
+
+function ouvrirProduit(p){
+  var wrap = document.getElementById("mbox-img-wrap");
+  wrap.innerHTML = "";
+  if(p.image){
+    var img = document.createElement("img");
+    img.className = "mbox-img";
+    img.src = p.image;
+    wrap.appendChild(img);
+  }else{
+    var ico = document.createElement("div");
+    ico.className = "mbox-ico";
+    ico.textContent = "🌿";
+    wrap.appendChild(ico);
+  }
+  document.getElementById("mbox-name").textContent = p.nom;
+  document.getElementById("mbox-meta").textContent = (p.taux ? p.taux + " · " : "") + (p.origine || "");
+  document.getElementById("mbox-desc").textContent = p.description || "";
+
+  var wRow = document.getElementById("weight-row");
+  var venduAuPoids = (p.categorie === "fleurs" || p.categorie === "resines");
+  var baseGramme = venduAuPoids ? parsePrixGramme(p.prix) : null;
+
+  if(venduAuPoids && baseGramme){
+    wRow.style.display = "flex";
+    wRow.innerHTML = "";
+    var selectedIndex = 0;
+
+    function updateSelection(){
+      var t = WEIGHT_TIERS[selectedIndex];
+      var total = (baseGramme * t.mult).toFixed(2).replace(".", ",");
+      var perG = (baseGramme * t.mult / parseFloat(t.label)).toFixed(2).replace(".", ",");
+      document.getElementById("mbox-price").innerHTML = "<b>" + total + "€</b> &nbsp;<span style='font-size:11px;color:#7a8468'>(" + perG + "€/g)</span>";
+      Array.prototype.forEach.call(wRow.children, function(btn, i){
+        btn.classList.toggle("active", i === selectedIndex);
+      });
+      var label = p.nom + " — " + t.label + " (" + total + "€)";
+      document.getElementById("mbox-buy").onclick = function(){
+        fermerModal();
+        window.open(PAYMENT_LINK + "?produit=" + encodeURIComponent(label), "_blank");
+        document.getElementById("confirm-title").textContent = "💳 Redirection paiement";
+        document.getElementById("confirm-text").textContent = "Finalise ta commande sur la page de paiement sécurisée qui vient de s'ouvrir.";
+        document.getElementById("confirm-overlay").classList.add("open");
+      };
+      var msg = "Bonjour ! Je suis intéressé(e) par : " + p.nom + ", format " + t.label + " (" + total + "€).";
+      document.getElementById("mbox-wa").onclick = function(){ fermerModal(); ouvrirWhatsApp(msg); };
+    }
+
+    WEIGHT_TIERS.forEach(function(t, i){
+      var perG = (baseGramme * t.mult / parseFloat(t.label)).toFixed(2).replace(".", ",");
+      var b = document.createElement("button");
+      b.className = "wt-btn";
+      b.innerHTML = t.label + "<small>" + perG + "€/g</small>";
+      b.onclick = function(){ selectedIndex = i; updateSelection(); };
+      wRow.appendChild(b);
+    });
+    updateSelection();
+  } else {
+    wRow.style.display = "none";
+    document.getElementById("mbox-price").innerHTML = "<b>" + p.prix + "</b>";
+    document.getElementById("mbox-buy").onclick = function(){
+      fermerModal();
+      window.open(PAYMENT_LINK + "?produit=" + encodeURIComponent(p.nom), "_blank");
+      document.getElementById("confirm-title").textContent = "💳 Redirection paiement";
+      document.getElementById("confirm-text").textContent = "Finalise ta commande sur la page de paiement sécurisée qui vient de s'ouvrir.";
+      document.getElementById("confirm-overlay").classList.add("open");
+    };
+    var msgFixe = "Bonjour ! Je suis intéressé(e) par : " + p.nom + " (" + p.prix + ").";
+    document.getElementById("mbox-wa").onclick = function(){ fermerModal(); ouvrirWhatsApp(msgFixe); };
+  }
+
+  document.getElementById("overlay").classList.add("open");
+}
+function fermerModal(){
+  document.getElementById("overlay").classList.remove("open");
+}
+function fermerConfirm(){
+  document.getElementById("confirm-overlay").classList.remove("open");
+}
+function ouvrirWhatsApp(msg){
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+/* ============ BANNIERE (message du moment, éditable en admin) ============ */
+fetch(API + "/memory/racineverte_config")
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.value && d.value.message && d.value.message.trim()){
+      var b = document.getElementById("msg-banniere");
+      b.textContent = "📢 " + d.value.message;
+      b.style.display = "block";
+    }
+  }).catch(function(){});
+
+/* ============ INIT ============ */
+document.getElementById("inp").addEventListener("keydown", function(e){ if(e.key === "Enter") sendMsg(); });
+
+checkAge();
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bonjour 🌿 Je suis l'assistant de Racine Verte CBD. Je peux vous renseigner sur nos fleurs, résines, huiles, infusions, les taux de CBD/THC ou la réglementation. Que puis-je faire pour vous ?", true);
+  }, 900);
+}, 2200);
+</script>
+
+</body>
+</html>
