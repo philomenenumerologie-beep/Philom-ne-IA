@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Racine Verte Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#171e15;font-family:'Work Sans',sans-serif;color:#f3f0e6}
+#login-screen{position:fixed;inset:0;background:#171e15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;z-index:100}
+#login-screen.hidden{display:none}
+.login-logo{width:80px;height:80px;border-radius:50%;background:#f3f0e6;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:8px}
+.login-title{font-family:'Fraunces',serif;font-size:26px;color:#c9d6a8;letter-spacing:.04em}
+.login-sub{font-size:12px;color:rgba(243,240,230,.4);letter-spacing:.15em;text-transform:uppercase}
+.login-input{width:100%;max-width:300px;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(243,240,230,.2);background:rgba(243,240,230,.06);color:#f3f0e6;font-size:16px;font-family:'Work Sans',sans-serif;outline:none;text-align:center;letter-spacing:.2em}
+.login-input::placeholder{color:rgba(243,240,230,.3);letter-spacing:.05em}
+.login-btn{width:100%;max-width:300px;padding:15px;border-radius:14px;border:none;background:#8fae5c;color:#171e15;font-size:15px;font-weight:700;font-family:'Work Sans',sans-serif;cursor:pointer}
+.login-err{color:#ff6b6b;font-size:13px;display:none}
+#admin-app{display:none;flex-direction:column;min-height:100vh}
+#admin-app.show{display:flex}
+header{background:#171e15;border-bottom:1px solid rgba(243,240,230,.1);padding:16px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.h-logo{width:40px;height:40px;border-radius:50%;background:#f3f0e6;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.h-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700}
+.h-sub{font-size:10px;color:rgba(243,240,230,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.logout-btn{margin-left:auto;font-size:11px;color:rgba(243,240,230,.4);background:none;border:1px solid rgba(243,240,230,.15);padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Work Sans',sans-serif}
+.content{padding:20px 15px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto;width:100%}
+.add-card{background:rgba(243,240,230,.06);border:1px solid rgba(243,240,230,.12);border-radius:18px;padding:20px}
+.card-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:16px}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(243,240,230,.45);margin-bottom:7px}
+.inp,.sel{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(243,240,230,.15);background:rgba(243,240,230,.06);color:#f3f0e6;font-size:14px;font-family:'Work Sans',sans-serif;outline:none;-webkit-appearance:none}
+.inp::placeholder{color:rgba(243,240,230,.3)}
+.inp:focus,.sel:focus{border-color:rgba(243,240,230,.4)}
+.field{margin-bottom:14px}
+.upload-zone{border:2px dashed rgba(243,240,230,.2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.upload-zone:hover{border-color:rgba(243,240,230,.4)}
+.upload-icon{font-size:32px;margin-bottom:8px}
+.upload-zone strong{display:block;font-size:14px;margin-bottom:4px}
+.upload-zone p{font-size:12px;color:rgba(243,240,230,.4)}
+#photo-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#photo-preview{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;margin-top:10px;display:none;border:2px solid rgba(243,240,230,.2)}
+.add-btn{width:100%;padding:15px;border-radius:14px;border:none;background:#8fae5c;color:#171e15;font-size:15px;font-weight:700;font-family:'Work Sans',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .2s}
+.add-btn:disabled{opacity:.4;cursor:not-allowed}
+.status{padding:12px 16px;border-radius:12px;font-size:13px;text-align:center;display:none}
+.status.ok{background:rgba(143,174,92,.15);border:1px solid rgba(143,174,92,.3);color:#c9d6a8}
+.status.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b}
+.list-card{background:rgba(243,240,230,.06);border:1px solid rgba(243,240,230,.12);border-radius:18px;padding:20px}
+.count-badge{display:inline-block;background:rgba(243,240,230,.12);padding:3px 10px;border-radius:20px;font-size:11px;color:rgba(243,240,230,.6);margin-left:10px;vertical-align:middle}
+.p-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.p-item{display:flex;align-items:center;gap:12px;background:rgba(243,240,230,.04);border:1px solid rgba(243,240,230,.08);border-radius:14px;padding:10px}
+.pi-img{width:60px;height:60px;border-radius:10px;overflow:hidden;background:rgba(243,240,230,.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px}
+.pi-img img{width:100%;height:100%;object-fit:cover}
+.pi-info{flex:1;min-width:0}
+.pi-name{font-family:'Fraunces',serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-meta{font-size:11px;color:rgba(243,240,230,.5);margin-top:2px}
+.pi-price{font-size:12px;color:#c9d6a8;margin-top:2px;font-weight:600}
+.pi-del{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.08);color:#ff6b6b;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.empty-state{text-align:center;padding:24px;color:rgba(243,240,230,.3);font-size:13px}
+.loading{text-align:center;padding:20px;color:rgba(243,240,230,.4);font-size:13px}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-logo">🌿</div>
+  <div class="login-title">Racine Verte Admin</div>
+  <div class="login-sub">Espace privé</div>
+  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  <button class="login-btn" onclick="checkPwd()">Entrer</button>
+</div>
+
+<div id="admin-app">
+  <header>
+    <div class="h-logo">🌿</div>
+    <div>
+      <div class="h-title">Racine Verte CBD</div>
+      <div class="h-sub">Gestion des produits</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </header>
+
+  <div class="content">
+    <div class="add-card">
+      <div class="card-title">📢 Message du moment</div>
+      <div class="field">
+        <div class="lbl">Votre message (promo, nouveauté...)</div>
+        <textarea class="inp" id="msg-texte" placeholder="Ex: Nouvelle fleur Gelato CBD disponible cette semaine !" style="height:90px;resize:none"></textarea>
+      </div>
+      <div class="status" id="msg-status"></div>
+      <button class="add-btn" onclick="saveMessage()">💾 Sauvegarder le message</button>
+      <button class="add-btn" style="margin-top:8px;background:rgba(255,107,107,.2);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)" onclick="deleteMessage()">🗑️ Supprimer le message</button>
+    </div>
+
+    <div class="add-card">
+      <div class="card-title">Ajouter un produit</div>
+      <div class="field">
+        <div class="lbl">Nom du produit</div>
+        <input class="inp" id="p-nom" type="text" placeholder="Ex: Amnesia CBD"/>
+      </div>
+      <div class="field">
+        <div class="lbl">Catégorie</div>
+        <select class="sel" id="p-categorie">
+          <option value="fleurs">🌸 Fleurs</option>
+          <option value="resines">🟤 Résines</option>
+          <option value="huiles">💧 Huiles</option>
+          <option value="infusions">🍵 Infusions</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="lbl">Taux CBD (affiché en badge)</div>
+        <input class="inp" id="p-taux" type="text" placeholder="Ex: 14% CBD"/>
+      </div>
+      <div class="field">
+        <div class="lbl">Origine</div>
+        <input class="inp" id="p-origine" type="text" placeholder="Ex: Culture France"/>
+      </div>
+      <div class="field">
+        <div class="lbl">Prix</div>
+        <input class="inp" id="p-prix" type="text" placeholder="Ex: 9€ / g"/>
+      </div>
+      <div class="field">
+        <div class="lbl">Description</div>
+        <textarea class="inp" id="p-desc" placeholder="Ex: Fleur aromatique aux notes agrumées..." style="height:70px;resize:none"></textarea>
+      </div>
+      <div class="field">
+        <div class="lbl">Photo</div>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
+          <div class="upload-icon">📷</div>
+          <strong>Appuyez pour choisir une photo</strong>
+          <p>JPG, PNG — max 2MB</p>
+        </div>
+        <img id="photo-preview" alt="preview"/>
+      </div>
+      <div class="status" id="add-status"></div>
+      <button class="add-btn" id="add-btn" onclick="addProduit()">➕ Ajouter ce produit</button>
+    </div>
+
+    <div class="list-card">
+      <div class="card-title">
+        Mes produits
+        <span class="count-badge" id="count-badge">0</span>
+      </div>
+      <div class="p-list" id="p-list">
+        <div class="loading">Chargement…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var PWD = "verte2024";
+var photoBase64 = null;
+var CAT_LABELS = { fleurs:"🌸 Fleurs", resines:"🟤 Résines", huiles:"💧 Huiles", infusions:"🍵 Infusions" };
+
+function checkPwd(){
+  var val = document.getElementById('pwd-input').value;
+  if(val === PWD){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-app').classList.add('show');
+    loadMessage();
+    loadProduits();
+  }else{
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+function logout(){
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('admin-app').classList.remove('show');
+  document.getElementById('pwd-input').value = '';
+}
+
+function handlePhoto(input){
+  var file = input.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement('canvas');
+      var maxSize = 800;
+      var w = img.width, h = img.height;
+      if(w > h){ if(w > maxSize){ h = h * maxSize / w; w = maxSize; } }
+      else{ if(h > maxSize){ w = w * maxSize / h; h = maxSize; } }
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+      var prev = document.getElementById('photo-preview');
+      prev.src = photoBase64;
+      prev.style.display = 'block';
+      document.getElementById('upload-zone').style.borderColor = 'rgba(143,174,92,.5)';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function showStatus(msg, type){
+  var s = document.getElementById('add-status');
+  s.textContent = msg;
+  s.className = 'status ' + type;
+  s.style.display = 'block';
+  setTimeout(function(){ s.style.display = 'none'; }, 3000);
+}
+
+function addProduit(){
+  var nom = document.getElementById('p-nom').value.trim();
+  var categorie = document.getElementById('p-categorie').value;
+  var taux = document.getElementById('p-taux').value.trim();
+  var origine = document.getElementById('p-origine').value.trim();
+  var prix = document.getElementById('p-prix').value.trim();
+  var description = document.getElementById('p-desc').value.trim();
+  if(!nom || !prix){
+    showStatus('Remplissez au moins le nom et le prix', 'err');
+    return;
+  }
+  var btn = document.getElementById('add-btn');
+  btn.disabled = true;
+  btn.textContent = 'Ajout en cours…';
+  fetch(API + '/memory/racineverte_produits')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var produits = d.value || [];
+      produits.push({ id:'p_' + Date.now(), nom:nom, categorie:categorie, taux:taux, origine:origine, prix:prix, description:description, image:photoBase64 });
+      return fetch(API + '/memory/racineverte_produits', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: produits })
+      });
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok){
+        showStatus('Produit ajouté ! 🌿', 'ok');
+        document.getElementById('p-nom').value = '';
+        document.getElementById('p-taux').value = '';
+        document.getElementById('p-origine').value = '';
+        document.getElementById('p-prix').value = '';
+        document.getElementById('p-desc').value = '';
+        document.getElementById('photo-preview').style.display = 'none';
+        document.getElementById('upload-zone').style.borderColor = '';
+        document.getElementById('photo-input').value = '';
+        photoBase64 = null;
+        loadProduits();
+      }else{
+        showStatus('Erreur lors de l\'ajout', 'err');
+      }
+      btn.disabled = false;
+      btn.textContent = '➕ Ajouter ce produit';
+    }).catch(function(){
+      showStatus('Erreur de connexion', 'err');
+      btn.disabled = false;
+      btn.textContent = '➕ Ajouter ce produit';
+    });
+}
+
+function deleteProduit(id){
+  if(!confirm('Supprimer ce produit ?')) return;
+  fetch(API + '/memory/racineverte_produits')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var produits = (d.value || []).filter(function(p){ return p.id !== id; });
+      return fetch(API + '/memory/racineverte_produits', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ value: produits })
+      });
+    })
+    .then(function(){ loadProduits(); });
+}
+
+function saveMessage(){
+  var texte = document.getElementById('msg-texte').value.trim();
+  var s = document.getElementById('msg-status');
+  fetch(API + '/memory/racineverte_config', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ value:{ message: texte } })
+  }).then(function(r){ return r.json(); })
+  .then(function(){
+    s.textContent = texte ? 'Message sauvegardé ! 🌿' : 'Message supprimé !';
+    s.className = 'status ok';
+    s.style.display = 'block';
+    setTimeout(function(){ s.style.display = 'none'; }, 3000);
+  }).catch(function(){
+    s.textContent = 'Erreur de connexion';
+    s.className = 'status err';
+    s.style.display = 'block';
+  });
+}
+function deleteMessage(){
+  document.getElementById('msg-texte').value = '';
+  saveMessage();
+}
+function loadMessage(){
+  fetch(API + '/memory/racineverte_config')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.value && d.value.message) document.getElementById('msg-texte').value = d.value.message;
+    }).catch(function(){});
+}
+
+function loadProduits(){
+  var list = document.getElementById('p-list');
+  list.innerHTML = '<div class="loading">Chargement…</div>';
+  fetch(API + '/memory/racineverte_produits')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var produits = d.value || [];
+      document.getElementById('count-badge').textContent = produits.length;
+      if(produits.length === 0){
+        list.innerHTML = '<div class="empty-state">Aucun produit pour le moment.<br/>Ajoutez votre premier produit ci-dessus 🌿</div>';
+        return;
+      }
+      list.innerHTML = '';
+      produits.forEach(function(p){
+        var item = document.createElement('div');
+        item.className = 'p-item';
+        var imgDiv = document.createElement('div');
+        imgDiv.className = 'pi-img';
+        if(p.image){
+          var img = document.createElement('img');
+          img.src = p.image;
+          imgDiv.appendChild(img);
+        }else{
+          imgDiv.textContent = '🌿';
+        }
+        var info = document.createElement('div');
+        info.className = 'pi-info';
+        info.innerHTML = '<div class="pi-name">' + p.nom + '</div><div class="pi-meta">' + (CAT_LABELS[p.categorie] || p.categorie || '') + (p.taux ? ' · ' + p.taux : '') + '</div><div class="pi-price">' + p.prix + '</div>';
+        var del = document.createElement('div');
+        del.className = 'pi-del';
+        del.textContent = '✕';
+        del.onclick = function(){ deleteProduit(p.id); };
+        item.appendChild(imgDiv);
+        item.appendChild(info);
+        item.appendChild(del);
+        list.appendChild(item);
+      });
+    }).catch(function(){
+      list.innerHTML = '<div class="empty-state">Erreur de chargement</div>';
+    });
+}
+</script>
+</body>
+</html>
