@@ -1,632 +1,521 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Philomene I.A.</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Philomène IA — Applications sur-mesure pour commerces locaux</title>
+<meta name="description" content="Philomène IA fabrique des applications web intelligentes, sur-mesure, pour les commerçants et professionnels de Tourcoing et des Flandres.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-serif;color:#111}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-:root{--gold:#C9A84C;--gold-light:#E8C96A;--gold-dim:#9A7A35;--bg:#FAFAF7;--bg2:#F3F0E8;--white:#FFFFFF;--text:#111111;--text-mid:#555555;--text-muted:#999999;--border:rgba(0,0,0,.09);}
-#splash{position:fixed;inset:0;z-index:500;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
-#splash.gone{opacity:0;pointer-events:none}
-.sp-name{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:var(--gold);letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
-.sp-bar{width:2px;height:44px;background:linear-gradient(180deg,transparent,var(--gold),transparent);margin:18px auto;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
-.sp-sub{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.45);animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
-#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
-#topbar{background:var(--white);padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 1px 12px rgba(0,0,0,.06)}
-.tb-gem{width:44px;height:44px;border-radius:12px;background:#111;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#111;letter-spacing:.04em}
-.tb-sub{font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
-.tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
-#tabs{background:var(--white);display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
-.tab span{font-size:14px}
-.tab.active{color:#111;border-bottom-color:var(--gold)}
-.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
-.page.active{display:flex}
-.page::-webkit-scrollbar{width:0}
-#page-chat{background:var(--bg)}
-#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
-.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
-.mrow.bot{justify-content:flex-start;gap:8px}
-.mrow.user{justify-content:flex-end}
-.bav{width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:15px}
-.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
-.bub.bot{background:var(--white);color:var(--text);border-top-left-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid var(--border)}
-.bub.user{background:#111;color:#fff;border-top-right-radius:4px}
-.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.qb{padding:7px 12px;border-radius:22px;border:1.5px solid var(--gold);background:rgba(201,168,76,.06);color:var(--gold-dim);font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer;transition:all .18s}
-.qb:active{background:var(--gold);color:#fff}
-.tybub{background:var(--white);border:1px solid var(--border);border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
-.tybub span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:bounce 1.2s infinite}
-.tybub span:nth-child(2){animation-delay:.2s}
-.tybub span:nth-child(3){animation-delay:.4s}
-#composer{padding:10px 14px 22px;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0}
-.crow{display:flex;gap:10px;align-items:center}
-#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid var(--border);background:var(--white);font-size:15px;font-family:Jost,sans-serif;outline:none;color:var(--text)}
-#inp:focus{border-color:var(--gold)}
-#snd{width:46px;height:46px;border-radius:50%;border:none;background:#111;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px}
-#page-devis{background:var(--bg);padding:20px 15px 36px;gap:14px}
-.df-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text)}
-.df-title em{font-style:italic;color:var(--gold-dim);font-size:.7em;display:block}
-.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px}
-.df-select,.df-textarea{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid var(--border);background:var(--white);font-size:14px;font-family:Jost,sans-serif;color:var(--text);outline:none;-webkit-appearance:none}
-.df-select:focus,.df-textarea:focus{border-color:var(--gold)}
-.df-textarea{resize:none;height:100px}
-.color-wrap{display:flex;flex-wrap:wrap;gap:8px}
-.col-btn{padding:8px 14px;border-radius:22px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:var(--text-mid);display:flex;align-items:center;gap:6px;transition:all .18s}
-.col-btn.sel{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--gold-dim)}
-.col-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
-.pack-card{background:var(--white);border:1.5px solid var(--gold);border-radius:16px;padding:16px;margin-bottom:4px}
-.pack-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold-dim);margin-bottom:12px}
-.pack-item{font-size:13px;color:var(--text-mid);display:flex;align-items:center;gap:8px;padding:4px 0}
-.pack-item::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
-#page-galerie{background:var(--bg);padding:20px 15px 32px}
-.g-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
-.g-title em{font-style:italic;color:var(--text-muted);font-size:.72em;display:block}
-.g-sub{font-size:13px;color:var(--text-muted);margin-top:6px;margin-bottom:18px}
-.g-grid{display:flex;flex-direction:column;gap:12px}
-.g-card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:18px;cursor:pointer;position:relative;box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .18s}
-.g-card:active{transform:scale(.98)}
-.g-card-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.g-card-ico{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.g-card-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text)}
-.g-card-type{font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
-.g-features{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.g-feat{font-size:12px;color:var(--text-mid);display:flex;align-items:center;gap:7px}
-.g-feat::before{content:"✓";color:var(--gold);font-weight:700}
-.g-prix{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border)}
-.g-prix-val{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold-dim);font-weight:700}
-.g-prix-sub{font-size:11px;color:var(--text-muted)}
-.g-new{position:absolute;top:14px;right:14px;background:#111;color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
-#page-tarifs{background:var(--bg);padding:20px 15px 32px}
-.t-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text)}
-.t-title em{font-style:italic;color:var(--text-muted);font-size:.72em;display:block}
-.t-intro{font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:6px;margin-bottom:18px}
-.t-sec{font-size:9.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);margin:16px 0 9px;padding-bottom:6px;border-bottom:1px solid rgba(201,168,76,.25)}
-.tcard{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
-.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text)}
-.tcard-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
-.tcard-badge{background:#111;color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
-.tcard-badge.gold{background:var(--gold);color:#111}
-.tprices{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.tpx{background:var(--bg2);border-radius:9px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
-.tplbl{font-size:9px;color:var(--text-muted);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.tpval{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#111}
-.tpunit{font-size:10px;color:var(--text-muted);margin-top:1px}
-.t-note{font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px;font-style:italic}
-.t-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
-.tcard-items{display:flex;flex-direction:column;gap:5px;margin-top:10px}
-.tcard-item{font-size:13px;color:var(--text-mid);display:flex;align-items:center;gap:8px}
-.tcard-item::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
-.promo-card{background:var(--white);border:1.5px solid var(--gold);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.promo-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold-dim);margin-bottom:4px}
-.promo-desc{font-size:12px;color:var(--text-muted);margin-bottom:12px}
-.promo-prices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.promo-px{background:var(--bg2);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
-.promo-lbl{font-size:9px;color:var(--text-muted);margin-bottom:3px;letter-spacing:.1em;text-transform:uppercase}
-.promo-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#111}
-.promo-unit{font-size:9px;color:var(--text-muted)}
-.promo-save{text-align:center;font-size:11px;color:var(--gold-dim);font-style:italic;font-weight:600}
-.mentions{margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:10.5px;line-height:1.8;color:var(--text-muted);text-align:center}
-.promo-strike{font-size:13px;color:var(--text-muted);text-decoration:line-through;margin-bottom:2px}
-.promo-banner{display:none;background:#111;color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:14px;text-align:center;font-size:13px;font-weight:600;letter-spacing:.02em}
-.promo-banner b{color:var(--gold-light)}
-.tpval-new{color:var(--gold-dim)}
+  :root{
+    --ink:#12171F;
+    --ink-2:#1B222D;
+    --paper:#EDE7DD;
+    --paper-dim:#C9C2B4;
+    --brass:#B8935F;
+    --brass-bright:#D4AD79;
+    --teal:#3E6259;
+    --line: rgba(237,231,221,0.14);
+    --line-bright: rgba(184,147,95,0.45);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:0.02em;
+  }
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- blueprint grid backdrop ---------- */
+  .blueprint-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.5;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
+  }
+
+  /* ---------- corner bracket utility ---------- */
+  .plate{
+    position:relative;
+    border:1px solid var(--line);
+    padding:28px;
+  }
+  .plate::before, .plate::after{
+    content:"";
+    position:absolute;
+    width:14px; height:14px;
+    border:1px solid var(--brass);
+    opacity:0.8;
+  }
+  .plate::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .plate::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(18,23,31,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Space Grotesk'; font-weight:700; font-size:1.05rem;
+  }
+  .brand .mark{
+    width:10px; height:10px;
+    border:1px solid var(--brass);
+    transform:rotate(45deg);
+    flex:none;
+  }
+  nav ul{list-style:none; display:flex; gap:32px;}
+  nav ul a{
+    font-size:0.85rem; color:var(--paper-dim);
+    transition:color .2s;
+  }
+  nav ul a:hover{color:var(--brass-bright);}
+  .nav-cta{
+    font-family:'IBM Plex Mono'; font-size:0.78rem;
+    border:1px solid var(--brass); padding:9px 16px;
+    color:var(--brass-bright);
+  }
+  .nav-cta:hover{background:var(--brass); color:var(--ink);}
+  .menu-toggle{display:none; background:none; border:none; color:var(--paper); font-size:1.4rem;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative; z-index:1;
+    padding:100px 0 90px;
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-family:'IBM Plex Mono'; font-size:0.78rem;
+    color:var(--brass-bright);
+    margin-bottom:26px;
+  }
+  .eyebrow::before{content:""; width:28px; height:1px; background:var(--brass);}
+  .hero h1{
+    font-size:clamp(2.3rem, 6vw, 4.2rem);
+    line-height:1.05;
+    max-width:820px;
+    margin-bottom:26px;
+  }
+  .hero h1 em{
+    font-style:normal; color:var(--brass-bright);
+  }
+  .hero p.lead{
+    font-size:1.1rem; color:var(--paper-dim);
+    max-width:560px; margin-bottom:40px;
+  }
+  .hero-actions{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--brass); color:var(--ink);
+    font-family:'Space Grotesk'; font-weight:600; font-size:0.95rem;
+    padding:15px 28px;
+    display:inline-flex; align-items:center; gap:10px;
+    transition:background .2s;
+  }
+  .btn-primary:hover{background:var(--brass-bright);}
+  .btn-ghost{
+    border:1px solid var(--line-bright);
+    font-family:'Space Grotesk'; font-weight:500; font-size:0.95rem;
+    padding:15px 28px; color:var(--paper);
+  }
+  .btn-ghost:hover{border-color:var(--brass);}
+
+  .specs-row{
+    margin-top:70px;
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--line);
+  }
+  .specs-row div{
+    padding:22px 24px 0;
+    border-right:1px solid var(--line);
+  }
+  .specs-row div:last-child{border-right:none;}
+  .specs-row .num{font-family:'IBM Plex Mono'; color:var(--brass-bright); font-size:0.8rem; display:block; margin-bottom:6px;}
+  .specs-row .val{font-family:'Space Grotesk'; font-size:1.5rem; font-weight:600;}
+  .specs-row .lab{font-size:0.82rem; color:var(--paper-dim); margin-top:4px;}
+
+  /* ---------- section shell ---------- */
+  section{position:relative; z-index:1; padding:100px 0;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-bottom:56px; flex-wrap:wrap; gap:20px;
+    border-bottom:1px solid var(--line); padding-bottom:24px;
+  }
+  .section-head h2{font-size:clamp(1.7rem,3.5vw,2.4rem);}
+  .section-head .tag{font-family:'IBM Plex Mono'; font-size:0.78rem; color:var(--brass-bright);}
+
+  /* ---------- process / method ---------- */
+  .method-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line);}
+  .method-grid .plate{background:var(--ink); border:none;}
+  .method-grid .idx{font-family:'IBM Plex Mono'; color:var(--brass); font-size:0.85rem; margin-bottom:16px; display:block;}
+  .method-grid h3{font-size:1.15rem; margin-bottom:10px;}
+  .method-grid p{color:var(--paper-dim); font-size:0.92rem;}
+
+  /* ---------- portfolio ---------- */
+  .portfolio-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+    gap:1px; background:var(--line);
+  }
+  .port-card{
+    background:var(--ink-2); padding:26px; min-height:180px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    transition:background .2s;
+  }
+  .port-card:hover{background:#232B38;}
+  .port-card .sector{font-family:'IBM Plex Mono'; font-size:0.72rem; color:var(--teal); text-transform:uppercase;}
+  .port-card h3{font-size:1.25rem; margin:10px 0 6px;}
+  .port-card p{font-size:0.88rem; color:var(--paper-dim);}
+  .port-card .thumb{
+    width:100%; height:120px; margin-bottom:14px;
+    background:#0E1218; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--paper-dim); font-family:'IBM Plex Mono'; font-size:0.7rem;
+    background-size:cover; background-position:center;
+  }
+
+  /* ---------- pricing ---------- */
+  .price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .price-card{
+    border:1px solid var(--line); padding:32px 26px; position:relative;
+  }
+  .price-card.feat{border-color:var(--brass); background:rgba(184,147,95,0.05);}
+  .price-card .tier{font-family:'IBM Plex Mono'; font-size:0.78rem; color:var(--brass-bright); margin-bottom:18px;}
+  .price-card .amount{font-family:'Space Grotesk'; font-size:2.1rem; font-weight:700; margin-bottom:4px;}
+  .price-card .amount span{font-size:1rem; color:var(--paper-dim); font-weight:400;}
+  .price-card .annual{font-size:0.82rem; color:var(--paper-dim); margin-bottom:24px;}
+  .price-card ul{list-style:none; font-size:0.88rem; color:var(--paper-dim);}
+  .price-card li{padding:7px 0; border-top:1px solid var(--line);}
+  .price-card li:first-child{border-top:none;}
+
+  /* ---------- contact ---------- */
+  .contact-shell{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:1px;
+    background:var(--line);
+  }
+  .contact-shell > div{background:var(--ink); padding:44px;}
+  .contact-shell h2{font-size:1.8rem; margin-bottom:18px;}
+  .contact-shell p{color:var(--paper-dim); margin-bottom:28px;}
+  .info-row{display:flex; gap:14px; padding:14px 0; border-top:1px solid var(--line); align-items:flex-start;}
+  .info-row:first-child{border-top:none;}
+  .info-row .k{font-family:'IBM Plex Mono'; font-size:0.72rem; color:var(--brass-bright); width:110px; flex:none; padding-top:2px;}
+  .info-row .v{font-size:0.92rem;}
+  .social-row{display:flex; gap:14px; margin-top:8px;}
+  .social-row a{
+    border:1px solid var(--line-bright); padding:10px 18px;
+    font-family:'IBM Plex Mono'; font-size:0.8rem;
+  }
+  .social-row a:hover{border-color:var(--brass); color:var(--brass-bright);}
+
+  footer{
+    position:relative; z-index:1;
+    border-top:1px solid var(--line);
+    padding:32px 0; font-family:'IBM Plex Mono'; font-size:0.75rem; color:var(--paper-dim);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+
+  @media (max-width:820px){
+    .specs-row{grid-template-columns:1fr; }
+    .specs-row div{border-right:none; border-bottom:1px solid var(--line); padding-bottom:20px; margin-bottom:16px;}
+    .method-grid, .price-grid{grid-template-columns:1fr;}
+    .contact-shell{grid-template-columns:1fr;}
+    nav ul{display:none;}
+    .menu-toggle{display:block;}
+  }
 </style>
 </head>
 <body>
-<div id="splash">
-  <div class="sp-name">Philomène</div>
-  <div class="sp-bar"></div>
-  <div class="sp-sub">Assistants IA pour professionnels</div>
-</div>
-<div id="app">
-  <div id="topbar">
-    <div class="tb-gem">✨</div>
-    <div>
-      <div class="tb-name">Philomène I.A.</div>
-      <div class="tb-sub">Assistants IA sur mesure</div>
-    </div>
-    <div class="tb-dot"></div>
-  </div>
-  <div id="tabs">
-    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
-    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
-    <button class="tab" onclick="showTab(this,'galerie')"><span>✦</span>Réalisations</button>
-    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
-  </div>
+<div class="blueprint-bg"></div>
 
-  <!-- CHAT -->
-  <div id="page-chat" class="page active">
-    <div id="promo-banner-chat" class="promo-banner" style="margin:14px 14px 0"></div>
-    <div id="messages"></div>
-    <div style="height:12px;flex-shrink:0"></div>
-    <div id="composer">
-      <div class="crow">
-        <input id="inp" type="text" placeholder="Posez votre question..."/>
-        <button id="snd" onclick="sendMsg()">&#10148;</button>
-      </div>
-    </div>
-  </div>
+<header>
+  <nav class="wrap">
+    <div class="brand"><span class="mark"></span> Philomène IA</div>
+    <ul>
+      <li><a href="#methode">Méthode</a></li>
+      <li><a href="#portfolio">Réalisations</a></li>
+      <li><a href="#tarifs">Tarifs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a class="nav-cta" href="#contact">Démarrer un projet</a>
+  </nav>
+</header>
 
-  <!-- DEVIS -->
-  <div id="page-devis" class="page">
-    <div class="df-title">Votre devis<em>en 2 minutes</em></div>
-    <div class="pack-card">
-      <div class="pack-title">✨ Pack complet inclus</div>
-      <div class="pack-item">Chatbot IA — répond à vos clients 24h/24</div>
-      <div class="pack-item">Devis automatique sur WhatsApp</div>
-      <div class="pack-item">Galerie photos gérée depuis votre admin</div>
-      <div class="pack-item">Page tarifs personnalisée</div>
-      <div class="pack-item">QR Code carte de visite</div>
-      <div class="pack-item">Page admin privée pour gérer votre contenu</div>
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow mono">ATELIER LOGICIEL — TOURCOING / FLANDRES</div>
+    <h1>Des applications web <em>sur-mesure</em>, pas des sites qui se ressemblent tous.</h1>
+    <p class="lead">Philomène IA conçoit, code et met en ligne des applications intelligentes pour les commerçants et professionnels locaux — chaque projet est pensé et fabriqué à la main, pas assemblé depuis un générateur.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#contact">Discuter de mon projet →</a>
+      <a class="btn-ghost" href="#portfolio">Voir les réalisations</a>
     </div>
-    <div>
-      <div class="lbl">Votre formule</div>
-      <div class="color-wrap" id="formule-wrap">
-        <div class="col-btn" onclick="selFormule(this,'Essentiel — 490€ + 390€/an')">🥉 Essentiel</div>
-        <div class="col-btn" onclick="selFormule(this,'Pro — 590€ + 390€/an')">🥈 Pro</div>
-        <div class="col-btn" onclick="selFormule(this,'Premium — 690€ + 490€/an')">🥇 Premium</div>
-      </div>
-    </div>
-    <div>
-      <div class="lbl">Votre métier</div>
-      <select class="df-select" id="df-metier" onchange="updateSousMetier()">
-        <option value="">Sélectionnez...</option>
-        <option value="artisan">Artisan (couvreur, peintre...)</option>
-        <option value="beaute">Beauté / Bien-être</option>
-        <option value="sport">Coach sportif / Club</option>
-        <option value="sante">Santé</option>
-        <option value="commerce">Commerce / Boutique</option>
-        <option value="autre">Autre activité</option>
-      </select>
-    </div>
-    <div id="sous-metier-block" style="display:none">
-      <div class="lbl">Spécialité</div>
-      <select class="df-select" id="df-sous"></select>
-    </div>
-    <div>
-      <div class="lbl">Couleurs souhaitées</div>
-      <div class="color-wrap">
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#111;border:1px solid #444"></div>Noir &amp; Élégant</div>
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#EDE0CC"></div>Beige &amp; Naturel</div>
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#c9a84c"></div>Or &amp; Sombre</div>
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#ec4899"></div>Rose &amp; Doux</div>
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#10b981"></div>Vert &amp; Naturel</div>
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:#3b82f6"></div>Bleu &amp; Pro</div>
-        <div class="col-btn" onclick="this.classList.toggle('sel')"><div class="col-dot" style="background:conic-gradient(red,orange,yellow,green,blue,violet)"></div>Mes couleurs</div>
-      </div>
-    </div>
-    <div>
-      <div class="lbl">Informations complémentaires</div>
-      <textarea class="df-textarea" id="df-info" placeholder="Ex: Je suis coiffeuse à Lyon, je veux une app rose et sobre..."></textarea>
-    </div>
-    <button class="df-btn" onclick="genDevisPhilo()">📱 Envoyer ma demande sur WhatsApp</button>
-  </div>
 
-  <!-- GALERIE -->
-  <div id="page-galerie" class="page">
-    <div class="g-title">Réalisations<em>nos apps en production</em></div>
-    <div class="g-sub">Appuyez sur une app pour en savoir plus ✨</div>
-    <div class="g-grid">
-      <div class="g-card" onclick="ouvrirApp(0)">
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#111">🖤</div>
-          <div><div class="g-card-name">Maka Tattoo</div><div class="g-card-type">Tatouage · Belgique</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Chatbot IA spécialisé tatouage</div>
-          <div class="g-feat">Galerie flashs avec réservation WhatsApp</div>
-          <div class="g-feat">Devis automatique sur WhatsApp</div>
-          <div class="g-feat">Admin pour gérer ses flashs</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">1ère année incluse</div></div><span style="font-size:20px">👉</span></div>
+    <div class="specs-row mono">
+      <div>
+        <span class="num">01 / FABRICATION</span>
+        <span class="val">100% sur-mesure</span>
+        <div class="lab">Chaque app est conçue pour un métier précis</div>
       </div>
-      <div class="g-card" onclick="ouvrirApp(1)">
-        <div class="g-new">Nouveau</div>
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#2C1810">🌸</div>
-          <div><div class="g-card-name">Lumière Esthétique</div><div class="g-card-type">Esthéticienne · Beauté</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Chatbot Sofia — conseil beauté 24h/24</div>
-          <div class="g-feat">Projet soin + réservation Planity intégrée</div>
-          <div class="g-feat">Catalogue cils, ongles, visage, massage</div>
-          <div class="g-feat">Design rose blush ultra élégant</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">Formule Premium</div></div><span style="font-size:20px">👉</span></div>
+      <div>
+        <span class="num">02 / TECHNOLOGIE</span>
+        <span class="val">IA intégrée</span>
+        <div class="lab">Chat assistant, gestion dynamique, back-office</div>
       </div>
-      <div class="g-card" onclick="ouvrirApp(2)">
-        <div class="g-new">Nouveau</div>
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#C0392B">🍕</div>
-          <div><div class="g-card-name">Yolo Pizza</div><div class="g-card-type">Restaurant · Commande WhatsApp</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Menu avec panier &amp; commande WhatsApp</div>
-          <div class="g-feat">Livraison / sur place / à emporter</div>
-          <div class="g-feat">Menu personnalisé</div>
-          <div class="g-feat">Design moderne et appétissant</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">490€ — puis 390€/an</div><div class="g-prix-sub">Formule Essentiel</div></div><span style="font-size:20px">👉</span></div>
-      </div>
-      <div class="g-card" onclick="ouvrirApp(3)">
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#1e3a5f">⚽</div>
-          <div><div class="g-card-name">Coach IA Football</div><div class="g-card-type">Club sportif · Belgique</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Générateur de séances par catégorie</div>
-          <div class="g-feat">Schémas d'exercices automatiques</div>
-          <div class="g-feat">Préparation physique intégrée</div>
-          <div class="g-feat">Multi-coachs selon formule</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">50€ à 390€/an</div><div class="g-prix-sub">Selon nombre de coachs</div></div><span style="font-size:20px">👉</span></div>
-      </div>
-      <div class="g-card" onclick="ouvrirApp(4)">
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#134e4a">🎨</div>
-          <div><div class="g-card-name">Jo Déco</div><div class="g-card-type">Peintre-décorateur · France</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Chatbot expert bâtiment &amp; peinture</div>
-          <div class="g-feat">Devis automatique sur WhatsApp</div>
-          <div class="g-feat">Galerie avant/après gérée en admin</div>
-          <div class="g-feat">Estimation prix automatique</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">Formule Premium</div></div><span style="font-size:20px">👉</span></div>
-      </div>
-      <div class="g-card" onclick="ouvrirApp(5)">
-        <div class="g-new">Nouveau</div>
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#0D0D0D">🤘</div>
-          <div><div class="g-card-name">Direct Action</div><div class="g-card-type">Groupe Hardcore · Belgique</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Chatbot IA style fanzine hardcore</div>
-          <div class="g-feat">Dates de concerts en temps réel</div>
-          <div class="g-feat">Discographie complète + Bandcamp</div>
-          <div class="g-feat">Formulaire booking</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">490€ — puis 390€/an</div><div class="g-prix-sub">Formule Essentiel</div></div><span style="font-size:20px">👉</span></div>
-      </div>
-      <div class="g-card" onclick="ouvrirApp(6)">
-        <div class="g-new">Nouveau</div>
-        <div class="g-card-top">
-          <div class="g-card-ico" style="background:#ff7a1a">🚚</div>
-          <div><div class="g-card-name">Le Camion Gourmand</div><div class="g-card-type">Food Truck · Événementiel</div></div>
-        </div>
-        <div class="g-features">
-          <div class="g-feat">Chatbot IA menu, tarifs et zone de déplacement</div>
-          <div class="g-feat">Réservation événement avec acompte (CB ou virement)</div>
-          <div class="g-feat">Menu en photos géré depuis l'admin</div>
-          <div class="g-feat">Dates indisponibles bloquées automatiquement</div>
-        </div>
-        <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">Formule Premium</div></div><span style="font-size:20px">👉</span></div>
+      <div>
+        <span class="num">03 / SUIVI</span>
+        <span class="val">Accompagnement direct</span>
+        <div class="lab">Un seul interlocuteur, du premier au dernier jour</div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- TARIFS -->
-  <div id="page-tarifs" class="page">
-    <div class="t-title">Tarifs<em>clairs et sans surprise</em></div>
-    <div class="t-intro">Première année incluse. Pas d'abonnement mensuel. Hébergement &amp; support inclus.</div>
-
-    <div id="promo-banner" class="promo-banner"></div>
-
-    <div class="t-sec">🥉 Essentiel — Sans IA</div>
-    <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">App vitrine + menu + WhatsApp</div><div class="tcard-sub">Sans chatbot IA, sans lien admin</div></div>
-        <div class="tcard-badge">Entrée de gamme</div>
-      </div>
-      <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-essentiel-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-essentiel">490€</div><div class="tpunit">création + hébergement</div></div>
-        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">390€</div><div class="tpunit">par an</div></div>
-      </div>
-      <div class="tcard-items">
-        <div class="tcard-item">App mobile personnalisée</div>
-        <div class="tcard-item">Menu / catalogue complet</div>
-        <div class="tcard-item">Commande ou contact WhatsApp</div>
-        <div class="tcard-item">QR Code carte de visite</div>
-      </div>
+<section id="methode">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>La méthode</h2>
+      <div class="tag mono">DE L'IDÉE À LA MISE EN LIGNE</div>
     </div>
-
-    <div class="t-sec">🥈 Pro — Sans IA + Admin</div>
-    <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">App vitrine + menu + Admin</div><div class="tcard-sub">Sans chatbot IA, avec lien admin</div></div>
-        <div class="tcard-badge gold">Populaire</div>
+    <div class="method-grid">
+      <div class="plate">
+        <span class="idx mono">ÉTAPE 01</span>
+        <h3>On parle de votre métier</h3>
+        <p>Pas de questionnaire type — un échange direct pour comprendre ce qui compte vraiment pour vos clients.</p>
       </div>
-      <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-pro-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-pro">590€</div><div class="tpunit">création + hébergement</div></div>
-        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">390€</div><div class="tpunit">par an</div></div>
+      <div class="plate">
+        <span class="idx mono">ÉTAPE 02</span>
+        <h3>Je fabrique votre app</h3>
+        <p>Design propre, chat IA formé sur votre activité, back-office pour gérer vos contenus vous-même.</p>
       </div>
-      <div class="tcard-items">
-        <div class="tcard-item">Tout Essentiel inclus</div>
-        <div class="tcard-item">Lien admin privé pour gérer le contenu</div>
-        <div class="tcard-item">Spécial du mois, galerie photos...</div>
-        <div class="tcard-item">Mise à jour en temps réel</div>
+      <div class="plate">
+        <span class="idx mono">ÉTAPE 03</span>
+        <h3>Mise en ligne & suivi</h3>
+        <p>Votre app est en ligne, et je reste disponible pour l'ajuster au fil du temps.</p>
       </div>
-    </div>
-
-    <div class="t-sec">🥇 Premium — IA + Admin</div>
-    <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">App complète avec chatbot IA</div><div class="tcard-sub">Chatbot IA + Admin + tout inclus</div></div>
-        <div class="tcard-badge gold">Tout inclus</div>
-      </div>
-      <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-premium-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-premium">690€</div><div class="tpunit">création + hébergement</div></div>
-        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">490€</div><div class="tpunit">par an</div></div>
-      </div>
-      <div class="tcard-items">
-        <div class="tcard-item">Tout Pro inclus</div>
-        <div class="tcard-item">Chatbot IA personnalisé 24h/24</div>
-        <div class="tcard-item">Répond aux clients automatiquement</div>
-        <div class="tcard-item">Devis automatique sur WhatsApp</div>
-      </div>
-    </div>
-
-    <div class="t-sec">👥 Formules Groupées — Économisez !</div>
-    <div class="promo-card">
-      <div class="promo-name">Formule Duo 👥</div>
-      <div class="promo-desc">Vous + 1 autre commerçant — chacun sa propre app</div>
-      <div class="promo-prices">
-        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">450€</div><div class="promo-unit">au lieu de 690€</div></div>
-        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">390€</div><div class="promo-unit">/ an chacun</div></div>
-      </div>
-      <div class="promo-save">🎉 Économie de 240€ sur la création !</div>
-    </div>
-    <div class="promo-card">
-      <div class="promo-name">Formule Trio 👥👥👥</div>
-      <div class="promo-desc">Vous + 2 autres commerçants — chacun sa propre app</div>
-      <div class="promo-prices">
-        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">420€</div><div class="promo-unit">au lieu de 690€</div></div>
-        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">390€</div><div class="promo-unit">/ an chacun</div></div>
-      </div>
-      <div class="promo-save">🎉 Économie de 270€ sur la création !</div>
-    </div>
-    <div class="promo-card">
-      <div class="promo-name">Formule Rue 🏘️</div>
-      <div class="promo-desc">5 commerçants et plus — chacun sa propre app</div>
-      <div class="promo-prices">
-        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">350€</div><div class="promo-unit">au lieu de 690€</div></div>
-        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">390€</div><div class="promo-unit">/ an chacun</div></div>
-      </div>
-      <div class="promo-save">🎉 Économie de 340€ sur la création !</div>
-    </div>
-
-    <div class="t-sec">⚽ Coach IA — Clubs sportifs</div>
-    <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Solo</div><div class="tcard-sub">1 coach</div></div><div class="tcard-badge">1 coach</div></div>
-      <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">50€</div></div></div>
-    </div>
-    <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Mini Club</div><div class="tcard-sub">Jusqu'à 5 coachs</div></div><div class="tcard-badge">5 coachs</div></div>
-      <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">90€</div></div></div>
-    </div>
-    <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Club</div><div class="tcard-sub">Jusqu'à 10 coachs</div></div><div class="tcard-badge">10 coachs</div></div>
-      <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">150€</div></div></div>
-    </div>
-    <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Club Pro</div><div class="tcard-sub">Jusqu'à 20 coachs</div></div><div class="tcard-badge">20 coachs</div></div>
-      <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">250€</div></div></div>
-    </div>
-    <div class="tcard">
-      <div class="tcard-top"><div><div class="tcard-name">Club Max</div><div class="tcard-sub">Coachs illimités</div></div><div class="tcard-badge">Illimité</div></div>
-      <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">390€</div></div></div>
-    </div>
-
-    <div class="t-note">Hébergement, mises à jour et support WhatsApp inclus dans tous les tarifs.</div>
-    <a class="t-wa" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20!%20Je%20voudrais%20en%20savoir%20plus%20sur%20vos%20apps%20IA." target="_blank">📱 Nous contacter sur WhatsApp</a>
-
-    <div class="mentions">
-      <b style="color:var(--text-mid);">Philomène IA</b> — Florentin Caron, Entrepreneur Individuel<br/>
-      SIRET : 51108926000026 — APE 6201Z<br/>
-      18 Cour Delcroix, 239 Rue des Cinq Voies, 59200 Tourcoing, France<br/>
-      <span style="opacity:.7;">Site édité par Philomène IA · <a href="https://philomeneia.com" style="color:inherit;">philomeneia.com</a></span>
     </div>
   </div>
-</div>
+</section>
 
-<!-- MODAL -->
-<div id="overlay" onclick="fermerModal()" style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center">
-  <div id="mbox" onclick="event.stopPropagation()" style="background:#fff;border-radius:24px 24px 0 0;padding:28px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s cubic-bezier(.16,1,.3,1)">
-    <div id="m-ico" style="font-size:44px;text-align:center;margin-bottom:12px"></div>
-    <div id="m-name" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-align:center;color:#111;margin-bottom:4px"></div>
-    <div id="m-type" style="text-align:center;font-size:12px;color:#999;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px"></div>
-    <div id="m-desc" style="font-size:13px;color:#555;text-align:center;line-height:1.6;margin-bottom:20px"></div>
-    <a id="m-wa" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;text-decoration:none;margin-bottom:10px">📱 Je veux cette app !</a>
-    <button onclick="fermerModal()" style="display:block;text-align:center;padding:12px;font-size:14px;color:#999;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%">Fermer</button>
+<section id="portfolio">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Réalisations</h2>
+      <div class="tag mono">CHAQUE PROJET, UNE IDENTITÉ DIFFÉRENTE</div>
+    </div>
+    <div class="portfolio-grid">
+      <a class="port-card" data-linkkey="maka" href="#" target="_blank" rel="noopener">
+        <div>
+          <div class="thumb" data-key="maka">MAKA TATTOO</div>
+          <span class="sector mono">Tatouage</span>
+          <h3>Maka Tattoo</h3>
+          <p>Prise de rendez-vous, portfolio, chat IA — le studio de référence de Philomène IA.</p>
+        </div>
+      </a>
+      <a class="port-card" data-linkkey="lumiere" href="#" target="_blank" rel="noopener">
+        <div>
+          <div class="thumb" data-key="lumiere">LUMIÈRE ESTHÉTIQUE</div>
+          <span class="sector mono">Esthétique</span>
+          <h3>Lumière Esthétique</h3>
+          <p>Présentation des soins, réservation en ligne et conseils personnalisés.</p>
+        </div>
+      </a>
+      <a class="port-card" data-linkkey="yolo" href="#" target="_blank" rel="noopener">
+        <div>
+          <div class="thumb" data-key="yolo">YOLO PIZZA</div>
+          <span class="sector mono">Restauration</span>
+          <h3>Yolo Pizza</h3>
+          <p>Commande et paiement en deux gestes, menu géré en autonomie.</p>
+        </div>
+      </a>
+      <a class="port-card" data-linkkey="rtm" href="#" target="_blank" rel="noopener">
+        <div>
+          <div class="thumb" data-key="rtm">RT MOUSCRON</div>
+          <span class="sector mono">Sport</span>
+          <h3>Coach IA Football</h3>
+          <p>Assistant d'entraînement pour le RT Mouscron.</p>
+        </div>
+      </a>
+      <a class="port-card" data-linkkey="jodeco" href="#" target="_blank" rel="noopener">
+        <div>
+          <div class="thumb" data-key="jodeco">JO DÉCO</div>
+          <span class="sector mono">Décoration</span>
+          <h3>Jo Déco</h3>
+          <p>Vitrine de créations avec galerie photo dynamique.</p>
+        </div>
+      </a>
+      <a class="port-card" data-linkkey="camion" href="#" target="_blank" rel="noopener">
+        <div>
+          <div class="thumb" data-key="camion">LE CAMION GOURMAND</div>
+          <span class="sector mono">Food truck</span>
+          <h3>Le Camion Gourmand</h3>
+          <p>Menu du jour, localisation et commande à emporter.</p>
+        </div>
+      </a>
+    </div>
   </div>
-</div>
+</section>
+
+<section id="tarifs">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Tarifs</h2>
+      <div class="tag mono">SETUP + ABONNEMENT ANNUEL</div>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="tier mono">ESSENTIEL</div>
+        <div class="amount">490€ <span>setup</span></div>
+        <div class="annual mono">+ 390€ / an</div>
+        <ul>
+          <li>App sur-mesure</li>
+          <li>Chat IA intégré</li>
+          <li>Back-office simple</li>
+        </ul>
+      </div>
+      <div class="price-card feat">
+        <div class="tier mono">PRO</div>
+        <div class="amount">590€ <span>setup</span></div>
+        <div class="annual mono">+ 390€ / an</div>
+        <ul>
+          <li>Tout Essentiel</li>
+          <li>Fonctions dynamiques (photos, réservations)</li>
+          <li>Accompagnement prioritaire</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="tier mono">PREMIUM</div>
+        <div class="amount">690€ <span>setup</span></div>
+        <div class="annual mono">+ 490€ / an</div>
+        <ul>
+          <li>Tout Pro</li>
+          <li>Fonctionnalités sur-mesure avancées</li>
+          <li>Suivi renforcé</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Contact</h2>
+      <div class="tag mono">DISCUTONS DE VOTRE PROJET</div>
+    </div>
+    <div class="contact-shell">
+      <div>
+        <h2>Parlons de votre app.</h2>
+        <p>Un échange rapide suffit pour savoir si Philomène IA peut vous aider. Réponse directe, sans intermédiaire.</p>
+        <div class="social-row" id="social-links">
+          <!-- rempli dynamiquement depuis l'admin -->
+        </div>
+      </div>
+      <div>
+        <div class="info-row"><div class="k mono">ENTREPRISE</div><div class="v">Philomène IA</div></div>
+        <div class="info-row"><div class="k mono">SIRET</div><div class="v" id="siret-value">51108926000026</div></div>
+        <div class="info-row"><div class="k mono">ADRESSE</div><div class="v">18 Cour Delcroix, 239 Rue des Cinq Voies<br>59200 Tourcoing, France</div></div>
+        <div class="info-row"><div class="k mono">EMAIL</div><div class="v" id="email-value">contact@philomeneia.com</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div>© 2026 Philomène IA — Micro-entreprise, Tourcoing</div>
+  <div>Fabriqué à la main, depuis un iPhone.</div>
+</footer>
 
 <script>
-var WA = "33617123910";
-var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. LANGUE: Detecte automatiquement la langue du message et reponds dans la meme langue. Tu parles francais, neerlandais et anglais. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes. Texte simple uniquement. TARIFS - 3 FORMULES: Essentiel (sans IA, sans admin) 490 euros setup + 390 euros/an. Pro (sans IA, avec admin) 590 euros setup + 390 euros/an. Premium (avec IA + admin) 690 euros setup + 490 euros/an. Formule Duo: 450 euros chacun + 390 euros/an. Formule Trio: 420 euros chacun + 390 euros/an. Formule Rue (5+): 350 euros chacun + 390 euros/an. Clubs sportifs: solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an. Pour toute demande orienter vers l onglet Devis ou WhatsApp.";
-var busy = false;
+// Charge la config dynamique (photos, réseaux sociaux, contact) depuis le backend.
+// Clé mémoire dédiée : "vitrine-site" — n'entre pas en conflit avec la clé promo existante.
+const BACKEND = "https://philo-backend-by2c.onrender.com";
 
-var APPS = [
-  {ico:"🖤",name:"Maka Tattoo",type:"Tatouage — Belgique",desc:"App complète pour tatoueur avec chatbot spécialisé, galerie flashs cliquable, devis automatique WhatsApp et admin pour gérer ses flashs.",wa:"Je suis intéressé par une app comme Maka Tattoo !",url:"https://www.philomeneia.com/maka-tattoo.html"},
-  {ico:"🌸",name:"Lumière Esthétique",type:"Esthéticienne — Beauté",desc:"App élégante pour salon beauté avec chatbot Sofia, projet soin + réservation Planity intégrée, catalogue complet cils, ongles, visage.",wa:"Je suis intéressé par une app comme Lumière Esthétique !",url:"https://www.philomeneia.com/esthetique.html"},
-  {ico:"🍕",name:"Yolo Pizza",type:"Restaurant — Commande WhatsApp",desc:"App pour pizzeria avec menu complet, panier et commande directe sur WhatsApp.",wa:"Je suis intéressé par une app comme Yolo Pizza !",url:"https://www.philomeneia.com/yolo-pizza.html"},
-  {ico:"⚽",name:"Coach IA Football",type:"Club sportif — Belgique",desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.",wa:"Je suis intéressé par une app Coach IA pour mon club !"},
-  {ico:"🎨",name:"Jo Déco",type:"Peintre-décorateur — France",desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.",wa:"Je suis intéressé par une app comme Jo Déco !"},
-  {ico:"🤘",name:"Direct Action",type:"Groupe Hardcore — Belgique",desc:"App style fanzine pour groupe de musique avec chatbot IA, dates de concerts, discographie et formulaire de booking.",wa:"Je suis intéressé par une app comme Direct Action !",url:"https://www.philomeneia.com/groupe.html"},
-  {ico:"🚚",name:"Le Camion Gourmand",type:"Food Truck — Événementiel",desc:"App pour food truck avec chatbot IA menu/tarifs/zone, formulaire de réservation avec acompte (CB ou virement), menu en photos géré depuis l'admin et blocage automatique des dates indisponibles.",wa:"Je suis intéressé par une app comme Le Camion Gourmand !",url:"https://www.philomeneia.com/food-truck.html"}
-];
-
-var SOUS_METIERS = {
-  artisan:["Couvreur","Plombier","Electricien","Menuisier / Charpentier","Peintre / Carreleur","Chauffagiste","Multi-services","Autre artisan"],
-  beaute:["Esthéticienne","Coiffeur","Tatoueur / Piercing","Nail artist","Barbier","Massage / Bien-être","Autre beauté"],
-  sport:["Football","Basketball / Handball","Boxe / Arts martiaux","Tennis / Padel","Natation / Athlétisme","Fitness / Coach perso","Autre sport"],
-  sante:["Kinésithérapeute","Infirmière libérale","Ostéopathe","Naturopathe","Autre santé"],
-  commerce:["Boutique vêtements","Fleuriste","Boulangerie / Pâtisserie","Restaurant / Friterie","Autre commerce"],
-  autre:["Consultant","Photographe","Formateur","Autre activité"]
-};
-
-function selFormule(btn,val){document.querySelectorAll('#formule-wrap .col-btn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');btn.dataset.val=val}
-function updateSousMetier(){var metier=document.getElementById("df-metier").value;var block=document.getElementById("sous-metier-block");var sel=document.getElementById("df-sous");if(!metier){block.style.display="none";return}var options=SOUS_METIERS[metier]||[];sel.innerHTML='<option value="">Sélectionnez...</option>';options.forEach(function(o){var opt=document.createElement("option");opt.value=o;opt.textContent=o;sel.appendChild(opt)});block.style.display="block"}
-
-function ouvrirApp(i){
-  var a=APPS[i];
-  if(a.url){window.open(a.url,"_blank");return}
-  document.getElementById("m-ico").textContent=a.ico;
-  document.getElementById("m-name").textContent=a.name;
-  document.getElementById("m-type").textContent=a.type;
-  document.getElementById("m-desc").textContent=a.desc;
-  document.getElementById("m-wa").href="https://wa.me/"+WA+"?text="+encodeURIComponent(a.wa);
-  document.getElementById("overlay").style.display="flex";
+async function loadVitrineConfig(){
+  try{
+    const res = await fetch(`${BACKEND}/memory/vitrine-site`);
+    if(!res.ok) return;
+    const data = await res.json();
+    applyConfig(data);
+  }catch(e){
+    console.log("Config par défaut utilisée (backend non joignable ou clé absente).");
+  }
 }
 
-function fermerModal(){document.getElementById("overlay").style.display="none"}
+function applyConfig(cfg){
+  if(!cfg) return;
 
-function showTab(btn,n){
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
-  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
-  document.getElementById("page-"+n).classList.add("active");
-  btn.classList.add("active");
-}
-
-function scrollChat(){setTimeout(function(){var c=document.getElementById("page-chat");c.scrollTop=c.scrollHeight},80)}
-
-function addBot(txt,withQ){
-  var msgs=document.getElementById("messages");
-  var row=document.createElement("div");row.className="mrow bot";
-  var av=document.createElement("div");av.className="bav";av.textContent="✨";
-  var bub=document.createElement("div");bub.className="bub bot";bub.textContent=txt;
-  if(withQ){var qw=document.createElement("div");qw.className="qbtns";withQ.forEach(function(it){var b=document.createElement("button");b.className="qb";b.textContent=it[0];(function(m){b.onclick=function(){send(m)}})(it[1]);qw.appendChild(b)});bub.appendChild(qw)}
-  row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);scrollChat()
-}
-
-function addUser(txt){var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow user";var bub=document.createElement("div");bub.className="bub user";bub.textContent=txt;row.appendChild(bub);msgs.appendChild(row);scrollChat()}
-
-function setTyping(on){var old=document.getElementById("ty-row");if(old)old.remove();if(!on)return;var msgs=document.getElementById("messages");var row=document.createElement("div");row.className="mrow bot";row.id="ty-row";var av=document.createElement("div");av.className="bav";av.textContent="✨";var ty=document.createElement("div");ty.className="tybub";ty.innerHTML="<span></span><span></span><span></span>";row.appendChild(av);row.appendChild(ty);msgs.appendChild(row);scrollChat()}
-
-function send(txt){
-  if(!txt||busy)return;
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
-  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
-  document.getElementById("page-chat").classList.add("active");
-  document.querySelector(".tab").classList.add("active");
-  addUser(txt);busy=true;setTyping(true);
-  fetch(API+"/vitrine",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,userId:"vitrine_"+Date.now(),systemPrompt:SYS})})
-  .then(function(r){return r.json()})
-  .then(function(d){
-    setTyping(false);
-    var ans=(d&&d.answer)?d.answer:"Je suis là pour vous aider !";
-    var msgs=document.getElementById("messages");
-    var row=document.createElement("div");row.className="mrow bot";
-    var av=document.createElement("div");av.className="bav";av.textContent="✨";
-    var bub=document.createElement("div");bub.className="bub bot";bub.textContent=ans;
-    var low=txt.toLowerCase();
-    if(low.indexOf("prix")>=0||low.indexOf("tarif")>=0||low.indexOf("combien")>=0||low.indexOf("devis")>=0){
-      var wa=document.createElement("a");wa.className="wa-bubble";
-      wa.href="https://wa.me/"+WA+"?text="+encodeURIComponent("Bonjour ! Je voudrais un devis pour une app Philomene IA.");
-      wa.target="_blank";wa.textContent="📱 Demander un devis sur WhatsApp";
-      bub.appendChild(wa);
+  // Réseaux sociaux
+  const socialWrap = document.getElementById('social-links');
+  if(cfg.instagram || cfg.facebook){
+    socialWrap.innerHTML = '';
+    if(cfg.instagram){
+      const a = document.createElement('a');
+      a.href = cfg.instagram; a.target = "_blank"; a.textContent = "Instagram ↗";
+      socialWrap.appendChild(a);
     }
-    row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);scrollChat();busy=false;
-  }).catch(function(){setTyping(false);addBot("Erreur de connexion, réessayez.");busy=false})
-}
-
-function sendMsg(){var inp=document.getElementById("inp");var txt=inp.value.trim();if(!txt)return;inp.value="";send(txt)}
-document.getElementById("inp").addEventListener("keydown",function(e){if(e.key==="Enter")sendMsg()});
-
-function genDevisPhilo(){
-  var metier=document.getElementById("df-metier").value;
-  var sous=document.getElementById("df-sous").value;
-  var couleurs=Array.from(document.querySelectorAll(".col-btn.sel")).map(function(e){return e.childNodes[1]?e.childNodes[1].textContent.trim():e.textContent.trim()}).join(", ");
-  var info=document.getElementById("df-info").value.trim();
-  if(!metier){alert("Sélectionnez votre métier");return}
-  var formuleBtn=document.querySelector("#formule-wrap .col-btn.sel");
-  var formule=formuleBtn?formuleBtn.dataset.val:"";
-  var msg="Bonjour Philomene ! Je voudrais un devis pour une app IA.\n\n";
-  if(formule)msg+="Formule : "+formule+"\n";
-  msg+="Métier : "+metier;
-  if(sous)msg+=" — "+sous;
-  msg+="\n";
-  if(couleurs)msg+="Couleurs : "+couleurs+"\n";
-  if(info)msg+="Info : "+info+"\n";
-  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank");
-}
-
-// ===== PROMOS (gérées depuis philomene-admin.html) =====
-var BASE_PRICES = { essentiel:490, pro:590, premium:690 };
-
-function appliquerPromos(promo){
-  if(!promo) return;
-  var actives = [];
-  ["essentiel","pro","premium"].forEach(function(key){
-    var p = promo[key];
-    var valEl = document.getElementById("px-"+key);
-    var strikeEl = document.getElementById("px-"+key+"-strike");
-    if(!valEl) return;
-    if(p && p.active && p.pct > 0){
-      var base = BASE_PRICES[key];
-      var reduit = Math.round(base * (1 - p.pct/100));
-      strikeEl.textContent = base + "€";
-      strikeEl.style.display = "block";
-      valEl.textContent = reduit + "€";
-      valEl.classList.add("tpval-new");
-      actives.push(key.charAt(0).toUpperCase()+key.slice(1)+" -"+p.pct+"%");
-    } else {
-      strikeEl.style.display = "none";
-      valEl.textContent = BASE_PRICES[key] + "€";
-      valEl.classList.remove("tpval-new");
+    if(cfg.facebook){
+      const a = document.createElement('a');
+      a.href = cfg.facebook; a.target = "_blank"; a.textContent = "Facebook ↗";
+      socialWrap.appendChild(a);
     }
-  });
-  var bannerHtml = actives.length ? ("🔥 " + (promo.label ? promo.label + " — " : "") + "<b>" + actives.join(" · ") + "</b>") : "";
-  ["promo-banner","promo-banner-chat"].forEach(function(id){
-    var b = document.getElementById(id);
-    if(!b) return;
-    if(actives.length){
-      b.style.display = "block";
-      b.innerHTML = bannerHtml;
+  }
+
+  // Contact
+  if(cfg.email) document.getElementById('email-value').textContent = cfg.email;
+  if(cfg.siret) document.getElementById('siret-value').textContent = cfg.siret;
+
+  // Photos portfolio (thumbnails en background-image si fournies)
+  if(cfg.photos){
+    Object.entries(cfg.photos).forEach(([key, url]) => {
+      const thumb = document.querySelector(`.thumb[data-key="${key}"]`);
+      if(thumb && url){
+        thumb.style.backgroundImage = `url(${url})`;
+        thumb.textContent = '';
+      }
+    });
+  }
+
+  // Liens portfolio (cartes cliquables vers chaque app en ligne)
+  document.querySelectorAll('.port-card[data-linkkey]').forEach(card => {
+    const key = card.getAttribute('data-linkkey');
+    const url = cfg.links && cfg.links[key];
+    if(url){
+      card.href = url;
     } else {
-      b.style.display = "none";
+      card.removeAttribute('href');
+      card.style.cursor = 'default';
+      card.addEventListener('click', e => e.preventDefault());
     }
   });
 }
 
-function chargerPromos(){
-  fetch(API+"/memory/philo_promo")
-    .then(function(r){ if(!r.ok) throw new Error("no promo"); return r.json() })
-    .then(function(d){
-      var promo = d && d.value ? (typeof d.value === "string" ? JSON.parse(d.value) : d.value) : null;
-      appliquerPromos(promo);
-    })
-    .catch(function(){ /* pas de promo active, prix normaux */ });
-}
-
-setTimeout(function(){
-  document.getElementById("splash").classList.add("gone");
-  setTimeout(function(){
-    document.getElementById("splash").style.display="none";
-    addBot("Bonjour ! Je suis Philomène.\n\nJe crée des apps IA sur mesure pour les professionnels — artisans, salons, clubs sportifs, commerçants. Chaque app répond à vos clients 24h/24 et génère des devis automatiques sur WhatsApp.\n\nQu'est-ce que je peux faire pour vous ?",[
-      ["Voir les tarifs","Quels sont vos tarifs ?"],
-      ["Voir des exemples","Montrez-moi des exemples d'apps"],
-      ["Obtenir un devis","Je veux un devis pour mon activité"],
-      ["Comment ça marche","Comment fonctionne votre service ?"]
-    ])
-  },900)
-},2500)
-
-chargerPromos();
+// Ping de réveil du backend (free tier Render)
+fetch(`${BACKEND}/`).catch(()=>{});
+loadVitrineConfig();
 </script>
+
 </body>
 </html>
