@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réservation — DJ Fabz</title>
+<meta name="description" content="Réservez DJ Fabz pour votre mariage, baptême, EVJF ou EVG. Réponse rapide sur WhatsApp.">
+<meta name="color-scheme" content="dark only">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0A0A11; --void-2:#141220; --glass: rgba(255,255,255,0.045); --glass-line: rgba(255,255,255,0.1);
+  --magenta:#FF3D8A; --cyan:#3DE0FF; --violet:#8C5CFF;
+  --paper:#F5F3FA; --dim:#948CB0;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--void); color:var(--paper); font-family:'Inter',sans-serif; line-height:1.6;}
+h1,h2{font-family:'Syne',sans-serif; font-weight:800;}
+.mono{font-family:'JetBrains Mono',monospace; letter-spacing:0.04em;}
+a{color:inherit; text-decoration:none;}
+.wrap{max-width:680px; margin:0 auto; padding:0 24px;}
+
+.glow-bg{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+.glow-bg .orb{position:absolute; border-radius:50%; filter:blur(90px); opacity:0.3;}
+.glow-bg .o1{width:480px; height:480px; background:var(--magenta); top:-160px; left:-140px;}
+.glow-bg .o2{width:420px; height:420px; background:var(--cyan); bottom:-120px; right:-140px;}
+
+header{position:sticky; top:0; z-index:50; background:rgba(10,10,17,0.75); backdrop-filter:blur(12px); border-bottom:1px solid var(--glass-line);}
+nav.wrap{max-width:1120px; display:flex; align-items:center; justify-content:space-between; height:76px;}
+.brand{display:flex; align-items:center; gap:10px; font-family:'Syne'; font-weight:800; font-size:1.15rem;}
+.eq-icon{display:flex; align-items:flex-end; gap:2.5px; height:18px;}
+.eq-icon span{width:3px; background:linear-gradient(var(--magenta),var(--cyan)); border-radius:1px; animation: eq 1s ease-in-out infinite;}
+.eq-icon span:nth-child(1){height:60%;} .eq-icon span:nth-child(2){height:100%; animation-delay:0.15s;}
+.eq-icon span:nth-child(3){height:40%; animation-delay:0.3s;} .eq-icon span:nth-child(4){height:80%; animation-delay:0.45s;}
+@keyframes eq{ 0%,100%{ transform:scaleY(0.5);} 50%{ transform:scaleY(1);} }
+.back-link{font-family:'JetBrains Mono'; font-size:0.82rem; color:var(--dim);}
+.back-link:hover{color:var(--cyan);}
+
+section{position:relative; z-index:1;}
+.head{padding:56px 0 16px; text-align:center;}
+.head .tag{color:var(--magenta); font-size:0.8rem; display:block; margin-bottom:10px;}
+.head h1{font-size:clamp(2.2rem,6vw,3.2rem); margin-bottom:14px;}
+.head p{color:var(--dim); max-width:460px; margin:0 auto;}
+
+.form-shell{padding:26px 0 90px;}
+.glass-form{background:var(--glass); border:1px solid var(--glass-line); border-radius:22px; padding:40px; backdrop-filter:blur(8px);}
+.field{margin-bottom:22px;}
+.field label{display:block; font-family:'JetBrains Mono'; font-size:0.75rem; margin-bottom:9px; color:var(--dim); text-transform:uppercase;}
+.field input, .field select, .field textarea{
+  width:100%; border:1px solid var(--glass-line); background:rgba(255,255,255,0.03); border-radius:12px; padding:13px 15px; font-family:'Inter'; font-size:0.95rem; color:var(--paper);
+}
+.field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--cyan);}
+.field textarea{resize:vertical; min-height:90px;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+@media (max-width:560px){ .field-row{grid-template-columns:1fr;} }
+
+.submit-btn{width:100%; background:linear-gradient(90deg,var(--magenta),var(--violet)); color:#fff; font-family:'Syne'; font-weight:700; font-size:1.05rem; padding:18px; border:none; border-radius:100px; cursor:pointer; margin-top:6px; box-shadow:0 0 30px rgba(255,61,138,0.3);}
+.submit-btn:hover{filter:brightness(1.1); box-shadow:0 0 40px rgba(255,61,138,0.5);}
+.form-note{font-family:'JetBrains Mono'; font-size:0.72rem; color:var(--dim); text-align:center; margin-top:18px; opacity:0.8;}
+
+footer{padding:28px 0; text-align:center; font-family:'JetBrains Mono'; font-size:0.75rem; color:var(--dim); border-top:1px solid var(--glass-line);}
+</style>
+</head>
+<body>
+
+<div class="glow-bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div></div>
+
+<header>
+  <nav class="wrap">
+    <div class="brand"><span class="eq-icon"><span></span><span></span><span></span><span></span></span>DJ Fabz</div>
+    <a class="back-link" href="dj-fabz.html">← Retour</a>
+  </nav>
+</header>
+
+<section class="head">
+  <div class="wrap">
+    <span class="tag mono">RÉSERVATION</span>
+    <h1>On bloque votre date</h1>
+    <p>Remplissez le formulaire — vos infos partent directement sur WhatsApp à Fabz, qui vous répond avec les disponibilités.</p>
+  </div>
+</section>
+
+<section class="form-shell">
+  <div class="wrap">
+    <form class="glass-form" id="resa-form">
+      <div class="field">
+        <label class="mono" for="nom">Votre nom</label>
+        <input type="text" id="nom" required placeholder="Prénom Nom">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="mono" for="type">Type d'événement</label>
+          <select id="type" required>
+            <option value="">Choisir…</option>
+            <option value="Mariage">Mariage</option>
+            <option value="Baptême">Baptême</option>
+            <option value="EVJF">EVJF</option>
+            <option value="EVG">EVG</option>
+            <option value="Anniversaire">Anniversaire</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="mono" for="date">Date souhaitée</label>
+          <input type="date" id="date" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="mono" for="invites">Nombre d'invités (approx.)</label>
+        <input type="number" id="invites" min="1" placeholder="Ex : 90">
+      </div>
+      <div class="field">
+        <label class="mono" for="message">Un message pour Fabz ?</label>
+        <textarea id="message" placeholder="Lieu, ambiance souhaitée, morceaux incontournables…"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Envoyer sur WhatsApp →</button>
+      <div class="form-note">Vous serez redirigé·e vers WhatsApp avec votre demande pré-remplie.</div>
+    </form>
+  </div>
+</section>
+
+<footer class="wrap" style="max-width:1120px;">
+  © 2026 DJ Fabz — Mariages, baptêmes & soirées, Flandres
+</footer>
+
+<script>
+const WA_NUMBER = "33600000000";
+document.getElementById('resa-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const nom = document.getElementById('nom').value.trim();
+  const type = document.getElementById('type').value;
+  const date = document.getElementById('date').value;
+  const invites = document.getElementById('invites').value.trim();
+  const message = document.getElementById('message').value.trim();
+
+  let texte = `Bonjour Fabz, je souhaite faire une demande de réservation.\n\n`;
+  texte += `Nom : ${nom}\n`;
+  texte += `Type d'événement : ${type}\n`;
+  texte += `Date souhaitée : ${date}\n`;
+  if(invites) texte += `Nombre d'invités : ${invites}\n`;
+  if(message) texte += `Message : ${message}\n`;
+
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(texte)}`;
+  window.open(url, '_blank');
+});
+</script>
+
+</body>
+</html>
