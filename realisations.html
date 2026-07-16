@@ -113,10 +113,6 @@ section{position:relative; z-index:1; padding:90px 0;}
 .port-card h3{font-size:1.25rem; margin:10px 0 6px;}
 .port-card p{font-size:0.88rem; color:var(--paper-dim);}
 .port-card .thumb{width:100%; height:120px; margin-bottom:14px; background:#0E1218; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--paper-dim); font-family:'IBM Plex Mono'; font-size:0.7rem; background-size:cover; background-position:center;}
-.port-card{position:relative;}
-.badge-type{position:absolute; top:16px; right:16px; font-family:'IBM Plex Mono'; font-size:0.62rem; letter-spacing:0.05em; padding:4px 9px; border-radius:2px; text-transform:uppercase; z-index:2;}
-.badge-type.site{background:var(--teal); color:#fff;}
-.badge-type.app{background:var(--brass); color:var(--ink);}
 
 .price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
 .price-card{border:1px solid var(--line); padding:32px 26px; position:relative;}
@@ -193,6 +189,7 @@ footer{position:relative; z-index:1; border-top:1px solid var(--line); padding:3
       <li><a href="index.html">Accueil</a></li>
       <li><a href="realisations.html" class="active">Réalisations</a></li>
       <li><a href="tarifs.html">Tarifs</a></li>
+      <li><a href="devis.html">Devis</a></li>
       <li><a href="contact.html">Contact</a></li>
       
     </ul>
@@ -206,6 +203,7 @@ footer{position:relative; z-index:1; border-top:1px solid var(--line); padding:3
     <a href="index.html">Accueil</a>
     <a href="realisations.html" class="active">Réalisations</a>
     <a href="tarifs.html">Tarifs</a>
+    <a href="devis.html">Devis</a>
     <a href="contact.html">Contact</a>
     
     <a class="mnp-cta" href="https://wa.me/33618123910?text=Bonjour%2C%20je%20souhaite%20discuter%20d%27un%20projet%20avec%20Philom%C3%A8ne%20IA" target="_blank" rel="noopener">Démarrer un projet</a>
@@ -228,7 +226,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
   <div class="wrap">
     <div class="portfolio-grid">
       <a class="port-card" href="https://www.philomeneia.com/maka-tattoo.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="maka">MAKA TATTOO</div>
           <span class="sector mono">Tatouage</span>
@@ -237,7 +234,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/template-artisan.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="artisan">TEMPLATE ARTISAN</div>
           <span class="sector mono">Artisanat / BTP</span>
@@ -246,7 +242,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/toiture-pro" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="toiture">TOITURE PRO</div>
           <span class="sector mono">Couverture / Toiture</span>
@@ -255,7 +250,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/yolo-pizza.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="yolo">YOLO PIZZA</div>
           <span class="sector mono">Restauration</span>
@@ -264,7 +258,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/boutique.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="boutique">BOUTIQUE</div>
           <span class="sector mono">Commerce</span>
@@ -273,7 +266,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/esthetique.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="esthetique">LUMIÈRE ESTHÉTIQUE</div>
           <span class="sector mono">Esthétique</span>
@@ -282,7 +274,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/food-truck.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="camion">LE CAMION GOURMAND</div>
           <span class="sector mono">Food truck</span>
@@ -291,7 +282,6 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
         </div>
       </a>
       <a class="port-card" href="https://www.philomeneia.com/racineverte.html" target="_blank" rel="noopener">
-        <div class="badge-type app">App Web</div>
         <div>
           <div class="thumb" data-key="racineverte">RACINE VERTE</div>
           <span class="sector mono">Bien-être / CBD</span>
@@ -299,40 +289,13 @@ document.getElementById('menu-toggle-btn')?.addEventListener('click', () => {
           <p>Boutique CBD avec conseils produits et prise de contact facilitée.</p>
         </div>
       </a>
-      <a class="port-card" href="https://www.philomeneia.com/ancrage-yoga.html" target="_blank" rel="noopener">
-        <div class="badge-type site">Site Web</div>
-        <div>
-          <div class="thumb" data-key="yoga">ANCRAGE YOGA</div>
-          <span class="sector mono">Bien-être / Yoga</span>
-          <h3>Ancrage Yoga</h3>
-          <p>Site vitrine 1 page, cours et tarifs, pour une prof de yoga indépendante.</p>
-        </div>
-      </a>
-      <a class="port-card" href="https://www.philomeneia.com/henri-papin.html" target="_blank" rel="noopener">
-        <div class="badge-type site">Site Web</div>
-        <div>
-          <div class="thumb" data-key="henripapin">HENRI PAPIN</div>
-          <span class="sector mono">Boulangerie / Pâtisserie</span>
-          <h3>Henri Papin</h3>
-          <p>Site 3 pages avec galerie de créations, pour une boulangerie familiale.</p>
-        </div>
-      </a>
-      <a class="port-card" href="https://www.philomeneia.com/le-central-padel.html" target="_blank" rel="noopener">
-        <div class="badge-type site">Site Web</div>
-        <div>
-          <div class="thumb" data-key="padel">LE CENTRAL PADEL</div>
-          <span class="sector mono">Sport / Padel</span>
-          <h3>Le Central Padel</h3>
-          <p>Site 4 pages pour un complexe de padel, terrains, tarifs et réservation.</p>
-        </div>
-      </a>
     </div>
   </div>
 </section>
 
 <footer class="wrap">
-  <div>© 2026 Philomène IA — Micro-entreprise, Tourcoing</div>
-  <div>Fabriqué à la main, depuis un iPhone.</div>
+  <div>© 2026 Philomène IA — Micro-entreprise, Tourcoing · <a href="mentions-legales.html" style="text-decoration:underline; opacity:0.85;">Mentions légales</a></div>
+  <div>Sites & applications sur-mesure.</div>
 </footer>
 
 <a class="wa-float" href="https://wa.me/33618123910?text=Bonjour%2C%20je%20souhaite%20discuter%20d%27un%20projet%20avec%20Philom%C3%A8ne%20IA" target="_blank" rel="noopener" aria-label="Contacter sur WhatsApp">
