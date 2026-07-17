@@ -42,7 +42,7 @@ nav.wrap{display:flex; align-items:center; justify-content:space-between; height
 nav ul{list-style:none; display:flex; gap:30px;}
 nav ul a{font-family:'JetBrains Mono'; font-size:0.8rem; color:var(--dim); text-transform:uppercase;}
 nav ul a:hover{color:var(--cyan);}
-.nav-cta{background:linear-gradient(90deg,var(--magenta),var(--violet)); color:#fff; font-family:'Syne'; font-weight:700; font-size:0.85rem; padding:11px 20px; border-radius:100px;}
+.nav-cta{display:inline-flex; align-items:center; justify-content:center; text-align:center; background:linear-gradient(90deg,var(--magenta),var(--violet)); color:#fff; font-family:'Syne'; font-weight:700; font-size:0.85rem; padding:11px 20px; border-radius:100px;}
 .nav-cta:hover{filter:brightness(1.12);}
 @media (max-width:800px){ nav ul{display:none;} }
 
@@ -57,9 +57,9 @@ section{position:relative; z-index:1;}
 .hero .exp{margin:16px 0 36px; font-size:1rem; color:var(--paper);}
 .hero .exp b{font-family:'Syne'; font-weight:800; color:var(--magenta); font-size:1.3rem;}
 .hero-cta{display:flex; justify-content:center; gap:16px; flex-wrap:wrap;}
-.btn-glow{background:linear-gradient(90deg,var(--magenta),var(--violet)); color:#fff; font-family:'Syne'; font-weight:700; font-size:1rem; padding:17px 32px; border-radius:100px; box-shadow:0 0 30px rgba(255,61,138,0.35);}
+.btn-glow{display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center; background:linear-gradient(90deg,var(--magenta),var(--violet)); color:#fff; font-family:'Syne'; font-weight:700; font-size:1rem; padding:17px 32px; border-radius:100px; box-shadow:0 0 30px rgba(255,61,138,0.35);}
 .btn-glow:hover{box-shadow:0 0 44px rgba(255,61,138,0.55); filter:brightness(1.08);}
-.btn-ghost{border:1px solid var(--glass-line); font-family:'Syne'; font-weight:700; font-size:0.95rem; padding:15px 30px; border-radius:100px; color:var(--paper);}
+.btn-ghost{display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center; border:1px solid var(--glass-line); font-family:'Syne'; font-weight:700; font-size:0.95rem; padding:15px 30px; border-radius:100px; color:var(--paper);}
 .btn-ghost:hover{border-color:var(--cyan); color:var(--cyan);}
 
 /* MARQUEE — scrolling ticker, direct reference to top-tier DJ sites (Garrix-style) */
