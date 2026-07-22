@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Jo Déco — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#f2ead8;font-family:Jost,sans-serif;color:#1a2e20}
+body{min-height:100%;overflow-y:auto}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+#app{min-height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;padding-bottom:30px}
+#topbar{background:#1a2e20;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:10}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#f2ead8;letter-spacing:.04em}
+.tb-sub{font-size:10px;color:rgba(242,234,216,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+#tabs{background:#1a2e20;display:flex;border-bottom:1px solid rgba(242,234,216,.1);flex-shrink:0;position:sticky;top:69px;z-index:10}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(242,234,216,.35);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:15px}
+.tab.active{color:#f2ead8;border-bottom-color:#f2ead8}
+
+.page{display:none;flex-direction:column;padding:20px 15px 30px;gap:14px}
+.page.active{display:flex}
+
+.sec-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1a2e20}
+.sec-title em{font-style:italic;color:#999;font-size:.65em;display:block;font-family:Jost,sans-serif;text-transform:none;letter-spacing:0;margin-top:2px}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#7a8c6a;margin-bottom:7px}
+.fld{margin-bottom:2px}
+.df-select,.df-textarea,.df-input{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(45,90,61,.18);background:#fff;font-size:14px;font-family:Jost,sans-serif;color:#1a2e20;outline:none;-webkit-appearance:none}
+.df-textarea{resize:none;height:96px}
+.status-msg{font-size:12px;padding:10px 13px;border-radius:11px;display:none}
+.status-msg.ok{background:#e7f4ea;color:#2d5a3d;display:block}
+.status-msg.err{background:#fbe9e7;color:#a83a2c;display:block}
+
+/* IDENTITE */
+.logo-zone{border:2px dashed rgba(45,90,61,.25);border-radius:13px;padding:16px;text-align:center;background:#fff;cursor:pointer}
+.logo-zone img{max-width:120px;max-height:80px;border-radius:8px;margin-bottom:6px}
+.logo-zone p{font-size:12px;color:#aaa}
+.big-btn{display:flex;align-items:center;justify-content:center;gap:9px;background:#1a2e20;color:#f2ead8;border-radius:15px;padding:15px;font-weight:700;font-size:14px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
+
+/* DEVIS TAB */
+.mic-row{display:flex;gap:10px;align-items:flex-start}
+.mic-row .df-textarea{flex:1}
+.mic-btn{width:48px;height:48px;border-radius:50%;border:none;background:#2d5a3d;color:#fff;font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s}
+.mic-btn.rec{background:#c0392b;animation:pulse 1.2s infinite}
+.mic-hint{font-size:11px;color:#7a8c6a;margin-top:4px}
+.markup-row{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid rgba(45,90,61,.18);border-radius:13px;padding:10px 14px}
+.markup-row input{width:56px;border:none;background:transparent;font-size:15px;font-weight:700;color:#1a2e20;text-align:center;outline:none}
+.markup-row span{font-size:12px;color:#7a8c6a}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer}
+.df-btn:disabled{opacity:.5}
+
+#result{display:flex;flex-direction:column;gap:10px}
+.devis-card{background:#f9f6ef;border:1.5px solid rgba(45,90,61,.2);border-radius:14px;padding:14px;width:100%;animation:msgIn .3s cubic-bezier(.16,1,.3,1)}
+.devis-card-title{font-size:11px;font-weight:700;color:#2d5a3d;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(45,90,61,.15)}
+.devis-section{font-size:10px;font-weight:700;color:#7a8c6a;letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px}
+.devis-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#1a2e20;padding:3px 0;border-bottom:1px solid rgba(45,90,61,.06)}
+.devis-line:last-child{border-bottom:none}
+.devis-line-label{flex:1;color:#444}
+.devis-line-price{font-weight:700;color:#1a2e20;margin-left:10px;white-space:nowrap}
+.devis-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid rgba(45,90,61,.2)}
+.devis-total-label{font-weight:700;font-size:14px;color:#1a2e20}
+.devis-total-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#2d5a3d}
+.result-actions{display:flex;gap:10px}
+.result-actions button{flex:1;padding:13px;border-radius:13px;border:none;font-weight:700;font-size:13px;font-family:Jost,sans-serif;cursor:pointer}
+.btn-pdf{background:#1a2e20;color:#f2ead8}
+.btn-print{background:#fff;color:#1a2e20;border:1.5px solid rgba(45,90,61,.25) !important}
+
+/* GALERIE ADMIN */
+.ga-item{background:#fff;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center;margin-bottom:8px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.ga-thumbs{display:flex;gap:4px;flex-shrink:0}
+.ga-thumbs img{width:44px;height:44px;object-fit:cover;border-radius:8px}
+.ga-item-title{flex:1;font-size:13px;color:#1a2e20;font-weight:500}
+.ga-del{background:none;border:none;color:#c0392b;font-size:18px;cursor:pointer;padding:4px 8px}
+.ga-empty{font-size:13px;color:#7a8c6a;padding:10px 0}
+
+.tybub{background:#fff;border-radius:20px;padding:14px 16px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07);align-self:flex-start}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#2d5a3d;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:#1a2e20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;z-index:100}
+#login-screen.hidden{display:none}
+.login-logo{width:80px;height:80px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:6px}
+.login-title{font-family:'Playfair Display',serif;font-size:26px;color:#f2ead8;letter-spacing:.05em}
+.login-sub{font-size:11px;color:rgba(242,234,216,.4);letter-spacing:.15em;text-transform:uppercase}
+.login-input{width:100%;max-width:280px;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(242,234,216,.2);background:rgba(242,234,216,.06);color:#f2ead8;font-size:16px;font-family:Jost,sans-serif;outline:none;text-align:center;letter-spacing:.2em}
+.login-input::placeholder{color:rgba(242,234,216,.3);letter-spacing:.05em}
+.login-btn{width:100%;max-width:280px;padding:15px;border-radius:14px;border:none;background:#f2ead8;color:#1a2e20;font-size:15px;font-weight:700;font-family:Jost,sans-serif;cursor:pointer}
+.login-err{color:#ff8a7a;font-size:13px;display:none}
+#app{display:none}
+#app.show{display:flex}
+.logout-btn{margin-left:8px;font-size:10px;color:rgba(242,234,216,.5);background:none;border:1px solid rgba(242,234,216,.2);padding:5px 10px;border-radius:20px;cursor:pointer;font-family:Jost,sans-serif;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-logo">🎨</div>
+  <div class="login-title">Jo Déco</div>
+  <div class="login-sub">Espace pro — privé</div>
+  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  <button class="login-btn" onclick="checkPwd()">Entrer</button>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🎨</div>
+    <div>
+      <div class="tb-name">Jo Déco</div>
+      <div class="tb-sub">Espace pro</div>
+    </div>
+    <div class="tb-dot"></div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'identite')"><span>🪪</span>Identité</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis vocal</button>
+    <button class="tab" onclick="showTab(this,'galerie')"><span>🖼️</span>Réalisations</button>
+  </div>
+
+  <!-- IDENTITE -->
+  <div id="page-identite" class="page active">
+    <div class="sec-title">Mon entreprise<em>Ces infos apparaîtront sur vos devis PDF</em></div>
+
+    <div class="fld">
+      <div class="lbl">Logo</div>
+      <div class="logo-zone" onclick="document.getElementById('id-logo-input').click()">
+        <img id="id-logo-preview" style="display:none"/>
+        <p id="id-logo-txt">Ajouter un logo (facultatif)</p>
+      </div>
+      <input type="file" id="id-logo-input" accept="image/*" style="display:none" onchange="onLogoChange(this)"/>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Nom / raison sociale</div>
+      <input class="df-input" id="id-nom" type="text" placeholder="Ex: Jo Déco — Peinture &amp; Décoration"/>
+    </div>
+    <div class="fld">
+      <div class="lbl">Adresse</div>
+      <input class="df-input" id="id-adresse" type="text" placeholder="Ex: Rue de l'Artisan 12, 7700 Mouscron"/>
+    </div>
+    <div class="fld">
+      <div class="lbl">Téléphone</div>
+      <input class="df-input" id="id-tel" type="text" placeholder="Ex: +32 470 12 34 56"/>
+    </div>
+    <div class="fld">
+      <div class="lbl">Email</div>
+      <input class="df-input" id="id-email" type="text" placeholder="Ex: contact@jodeco.be"/>
+    </div>
+    <div class="fld">
+      <div class="lbl">N° d'entreprise / SIRET (facultatif)</div>
+      <input class="df-input" id="id-siret" type="text" placeholder="Ex: BE 0123.456.789"/>
+    </div>
+
+    <button class="big-btn" onclick="saveIdentity()">Enregistrer mes coordonnées</button>
+    <div id="identity-status" class="status-msg"></div>
+  </div>
+
+  <!-- DEVIS VOCAL -->
+  <div id="page-devis" class="page">
+    <div class="sec-title">Devis sur place<em>Dictez, ajustez, envoyez</em></div>
+
+    <div class="fld">
+      <div class="lbl">Type de travaux</div>
+      <select class="df-select" id="dv-type">
+        <option value="">Sélectionnez...</option>
+        <option>Peinture intérieure — murs et plafonds</option>
+        <option>Peinture extérieure — façade</option>
+        <option>Papier peint et revêtements muraux</option>
+        <option>Enduits et ragréage</option>
+        <option>Boiseries, plinthes et portes</option>
+        <option>Rénovation complète</option>
+        <option>Autre</option>
+      </select>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Description du chantier</div>
+      <div class="mic-row">
+        <textarea class="df-textarea" id="dv-desc" placeholder="Appuyez sur le micro et décrivez le chantier à voix haute, ou tapez ici..."></textarea>
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙️</button>
+      </div>
+      <div class="mic-hint" id="mic-hint">Appuyez sur le micro pour dicter</div>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Surface approximative</div>
+      <input class="df-input" id="dv-surface" type="text" placeholder="Ex: 100m², 15ml de façade..."/>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Majoration matériaux</div>
+      <div class="markup-row">
+        <input id="dv-markup" type="number" value="18" min="0" max="100"/>
+        <span>% ajouté sur le prix marché des matériaux</span>
+      </div>
+    </div>
+
+    <button class="df-btn" id="dv-gen-btn" onclick="genDevisAdmin()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      Générer le devis
+    </button>
+
+    <div id="result"></div>
+  </div>
+
+  <!-- REALISATIONS -->
+  <div id="page-galerie" class="page">
+    <div class="sec-title">Réalisations<em>Ajoutez vos chantiers avant / après</em></div>
+
+    <div class="fld">
+      <div class="lbl">Titre du chantier</div>
+      <input class="df-input" id="ga-titre" type="text" placeholder="Ex: Façade rue de l'Église, Mouscron"/>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Photo avant</div>
+      <div class="logo-zone" onclick="document.getElementById('ga-avant-input').click()">
+        <img id="ga-avant-preview" style="display:none;max-width:100%;max-height:140px"/>
+        <p id="ga-avant-txt">Ajouter la photo "avant"</p>
+      </div>
+      <input type="file" id="ga-avant-input" accept="image/*" style="display:none" onchange="onGaleriePhoto(this,'avant')"/>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Photo après</div>
+      <div class="logo-zone" onclick="document.getElementById('ga-apres-input').click()">
+        <img id="ga-apres-preview" style="display:none;max-width:100%;max-height:140px"/>
+        <p id="ga-apres-txt">Ajouter la photo "après"</p>
+      </div>
+      <input type="file" id="ga-apres-input" accept="image/*" style="display:none" onchange="onGaleriePhoto(this,'apres')"/>
+    </div>
+
+    <button class="big-btn" onclick="ajouterRealisation()">Ajouter aux réalisations</button>
+    <div id="galerie-status" class="status-msg"></div>
+
+    <div class="lbl" style="margin-top:8px">Déjà publiées</div>
+    <div id="galerie-liste"></div>
+  </div>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var PWD = "jodeco2026";
+
+function checkPwd() {
+  var val = document.getElementById("pwd-input").value;
+  if (val === PWD) {
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("app").classList.add("show");
+    loadIdentity();
+    loadGalerieAdmin();
+  } else {
+    document.getElementById("login-err").style.display = "block";
+    document.getElementById("pwd-input").value = "";
+  }
+}
+
+function logout() {
+  document.getElementById("login-screen").classList.remove("hidden");
+  document.getElementById("app").classList.remove("show");
+  document.getElementById("pwd-input").value = "";
+}
+
+var SYS_DEVIS_ADMIN = "Tu es Jo, artisan peintre-décorateur expert. On te donne les détails d'un chantier dictés sur place par l'artisan lui-même. Réponds UNIQUEMENT en JSON valide avec ce format exact :\n{\"titre\":\"DEVIS PEINTURE INTÉRIEURE — 25M²\",\"materiaux\":[{\"label\":\"Peinture lessivable satinée\",\"detail\":\"2 pots 2.5L\",\"prix\":\"85€\"}],\"maindoeuvre\":[{\"label\":\"Préparation surfaces\",\"detail\":\"2h\",\"prix\":\"80€\"}],\"total\":\"520€\",\"duree\":\"1 à 2 jours\"}\nRègles : prix de marché français réalistes, applique une majoration de MARKUP% sur le prix de chaque matériau avant de l'indiquer (garde ce prix déjà majoré, n'affiche pas le calcul), main d'oeuvre au prix normal du métier, montants arrondis vers le haut. Réponds UNIQUEMENT avec le JSON, rien d'autre.";
+
+// ---------- Navigation ----------
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+// ---------- Compression photo (identique à Maka Admin) ----------
+function compressPhoto(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxSize = 800;
+      var w = img.width, h = img.height;
+      if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+      else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ---------- Identité ----------
+var logoBase64 = "";
+
+function onLogoChange(input) {
+  var f = input.files[0];
+  if (!f) return;
+  compressPhoto(f, function(b64){
+    logoBase64 = b64;
+    var img = document.getElementById("id-logo-preview");
+    img.src = logoBase64;
+    img.style.display = "block";
+    document.getElementById("id-logo-txt").textContent = "Toucher pour changer";
+  });
+}
+
+function loadIdentity() {
+  fetch(API + "/memory/jodeco_identity")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var v = d && d.value;
+      if (!v) return;
+      document.getElementById("id-nom").value = v.nom || "";
+      document.getElementById("id-adresse").value = v.adresse || "";
+      document.getElementById("id-tel").value = v.tel || "";
+      document.getElementById("id-email").value = v.email || "";
+      document.getElementById("id-siret").value = v.siret || "";
+      if (v.logo) {
+        logoBase64 = v.logo;
+        var img = document.getElementById("id-logo-preview");
+        img.src = logoBase64;
+        img.style.display = "block";
+        document.getElementById("id-logo-txt").textContent = "Toucher pour changer";
+      }
+    })
+    .catch(function(){ /* pas encore de données enregistrées */ });
+}
+
+function saveIdentity() {
+  var data = {
+    nom: document.getElementById("id-nom").value.trim(),
+    adresse: document.getElementById("id-adresse").value.trim(),
+    tel: document.getElementById("id-tel").value.trim(),
+    email: document.getElementById("id-email").value.trim(),
+    siret: document.getElementById("id-siret").value.trim(),
+    logo: logoBase64
+  };
+  var statusEl = document.getElementById("identity-status");
+  statusEl.className = "status-msg";
+  fetch(API + "/memory/jodeco_identity", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value: data })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d && d.ok) {
+      statusEl.textContent = "Coordonnées enregistrées ✓";
+      statusEl.className = "status-msg ok";
+    } else {
+      statusEl.textContent = "Erreur lors de l'enregistrement, réessayez.";
+      statusEl.className = "status-msg err";
+    }
+  }).catch(function(){
+    statusEl.textContent = "Erreur de connexion, réessayez.";
+    statusEl.className = "status-msg err";
+  });
+}
+
+// ---------- Micro / dictée vocale ----------
+var recognition = null;
+var recognizing = false;
+
+function toggleMic() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    document.getElementById("mic-hint").textContent = "Dictée vocale non disponible sur ce navigateur, tapez le texte.";
+    return;
+  }
+  if (recognizing) {
+    recognition.stop();
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = "fr-FR";
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  var baseText = document.getElementById("dv-desc").value;
+  if (baseText && !/\s$/.test(baseText)) baseText += " ";
+
+  recognition.onstart = function() {
+    recognizing = true;
+    document.getElementById("mic-btn").classList.add("rec");
+    document.getElementById("mic-hint").textContent = "Écoute en cours... reparlez librement";
+  };
+  recognition.onerror = function() {
+    document.getElementById("mic-hint").textContent = "Erreur du micro, réessayez ou tapez le texte.";
+  };
+  recognition.onend = function() {
+    recognizing = false;
+    document.getElementById("mic-btn").classList.remove("rec");
+    document.getElementById("mic-hint").textContent = "Appuyez sur le micro pour dicter";
+  };
+  recognition.onresult = function(event) {
+    var finalTxt = "";
+    for (var i = 0; i < event.results.length; i++) {
+      finalTxt += event.results[i][0].transcript;
+    }
+    document.getElementById("dv-desc").value = baseText + finalTxt;
+  };
+  recognition.start();
+}
+
+// ---------- Génération devis ----------
+function genDevisAdmin() {
+  var type = document.getElementById("dv-type").value;
+  var desc = document.getElementById("dv-desc").value.trim();
+  var surface = document.getElementById("dv-surface").value.trim();
+  var markup = document.getElementById("dv-markup").value || "18";
+
+  if (!type && !desc) { alert("Décrivez le chantier avant de générer le devis."); return; }
+
+  var btn = document.getElementById("dv-gen-btn");
+  btn.disabled = true;
+  var result = document.getElementById("result");
+  result.innerHTML = "";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  result.appendChild(ty);
+
+  var resume = "Génère un devis détaillé pour ces travaux :\n";
+  if (type) resume += "- Type : " + type + "\n";
+  if (desc) resume += "- Description : " + desc + "\n";
+  if (surface) resume += "- Surface : " + surface + "\n";
+
+  var sysPrompt = SYS_DEVIS_ADMIN.replace(/MARKUP/g, markup);
+
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: resume, userId: "jodeco_admin_devis", systemPrompt: sysPrompt })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    result.innerHTML = "";
+    btn.disabled = false;
+    try {
+      var raw = (d && d.answer) ? d.answer : "{}";
+      var clean = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+      var data = JSON.parse(clean);
+      renderDevisResult(data);
+    } catch(e) {
+      result.innerHTML = '<div class="status-msg err">Le devis n\'a pas pu être généré, réessayez avec une description plus précise.</div>';
+    }
+  }).catch(function(){
+    result.innerHTML = '<div class="status-msg err">Erreur de connexion, réessayez.</div>';
+    btn.disabled = false;
+  });
+}
+
+var lastDevisData = null;
+
+function renderDevisResult(data) {
+  lastDevisData = data;
+  var result = document.getElementById("result");
+
+  var card = document.createElement("div");
+  card.className = "devis-card";
+
+  var cardTitle = document.createElement("div");
+  cardTitle.className = "devis-card-title";
+  cardTitle.textContent = "🎨 " + (data.titre || "DEVIS ESTIMATIF");
+  card.appendChild(cardTitle);
+
+  if (data.materiaux && data.materiaux.length > 0) {
+    var secMat = document.createElement("div");
+    secMat.className = "devis-section";
+    secMat.textContent = "MATÉRIAUX";
+    card.appendChild(secMat);
+    data.materiaux.forEach(function(m){ card.appendChild(devisLine(m)); });
+  }
+
+  if (data.maindoeuvre && data.maindoeuvre.length > 0) {
+    var secMO = document.createElement("div");
+    secMO.className = "devis-section";
+    secMO.textContent = "MAIN D'ŒUVRE";
+    card.appendChild(secMO);
+    data.maindoeuvre.forEach(function(m){ card.appendChild(devisLine(m)); });
+  }
+
+  var total = document.createElement("div");
+  total.className = "devis-total";
+  var totalLabel = document.createElement("div");
+  totalLabel.className = "devis-total-label";
+  totalLabel.textContent = data.duree ? "Total estimé (" + data.duree + ")" : "Total estimé";
+  var totalPrice = document.createElement("div");
+  totalPrice.className = "devis-total-price";
+  totalPrice.textContent = data.total || "Sur devis";
+  total.appendChild(totalLabel);
+  total.appendChild(totalPrice);
+  card.appendChild(total);
+
+  result.appendChild(card);
+
+  var actions = document.createElement("div");
+  actions.className = "result-actions";
+  var btnPdf = document.createElement("button");
+  btnPdf.className = "btn-pdf";
+  btnPdf.textContent = "⬇️ Télécharger le PDF";
+  btnPdf.onclick = function(){ genererPDF(data); };
+  var btnPrint = document.createElement("button");
+  btnPrint.className = "btn-print";
+  btnPrint.textContent = "🖨️ Imprimer";
+  btnPrint.onclick = function(){ genererPDF(data, true); };
+  actions.appendChild(btnPdf);
+  actions.appendChild(btnPrint);
+  result.appendChild(actions);
+}
+
+function devisLine(m) {
+  var line = document.createElement("div");
+  line.className = "devis-line";
+  var label = document.createElement("div");
+  label.className = "devis-line-label";
+  label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+  var price = document.createElement("div");
+  price.className = "devis-line-price";
+  price.textContent = m.prix;
+  line.appendChild(label);
+  line.appendChild(price);
+  return line;
+}
+
+// ---------- PDF ----------
+function getIdentity() {
+  return {
+    nom: document.getElementById("id-nom").value.trim() || "Jo Déco",
+    adresse: document.getElementById("id-adresse").value.trim(),
+    tel: document.getElementById("id-tel").value.trim(),
+    email: document.getElementById("id-email").value.trim(),
+    siret: document.getElementById("id-siret").value.trim(),
+    logo: logoBase64
+  };
+}
+
+function genererPDF(data, autoprint) {
+  var jsPDFLib = window.jspdf.jsPDF;
+  var doc = new jsPDFLib({ unit: "mm", format: "a4" });
+  var id = getIdentity();
+  var y = 20;
+  var marginX = 18;
+
+  if (id.logo) {
+    try { doc.addImage(id.logo, "JPEG", marginX, y - 8, 28, 20); } catch(e) {}
+  }
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(id.nom, id.logo ? marginX + 34 : marginX, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  var infoY = y + 6;
+  if (id.adresse) { doc.text(id.adresse, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+  if (id.tel) { doc.text("Tél : " + id.tel, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+  if (id.email) { doc.text(id.email, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+  if (id.siret) { doc.text(id.siret, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+
+  y = Math.max(infoY, y + 24) + 6;
+  doc.setDrawColor(45, 90, 61);
+  doc.line(marginX, y, 210 - marginX, y);
+  y += 10;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text(data.titre || "DEVIS", marginX, y);
+  y += 5;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(120,120,120);
+  doc.text("Devis établi le " + new Date().toLocaleDateString("fr-FR"), marginX, y);
+  doc.setTextColor(0,0,0);
+  y += 10;
+
+  function section(titre, items) {
+    if (!items || !items.length) return;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(45,90,61);
+    doc.text(titre, marginX, y);
+    doc.setTextColor(0,0,0);
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    items.forEach(function(it){
+      var label = it.label + (it.detail ? " — " + it.detail : "");
+      doc.text(label, marginX, y);
+      doc.text(it.prix, 210 - marginX, y, { align: "right" });
+      y += 6;
+    });
+    y += 4;
+  }
+
+  section("Matériaux", data.materiaux);
+  section("Main d'œuvre", data.maindoeuvre);
+
+  doc.setDrawColor(200,200,200);
+  doc.line(marginX, y, 210 - marginX, y);
+  y += 8;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text("Total estimé" + (data.duree ? " (" + data.duree + ")" : ""), marginX, y);
+  doc.text(data.total || "Sur devis", 210 - marginX, y, { align: "right" });
+  y += 12;
+
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(9);
+  doc.setTextColor(130,130,130);
+  doc.text("Devis estimatif établi avec assistance IA — confirmation gratuite sur place.", marginX, y);
+
+  var filename = "devis-" + (data.titre || "jodeco").toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40) + ".pdf";
+
+  if (autoprint) {
+    doc.autoPrint();
+    window.open(doc.output("bloburl"), "_blank");
+  } else {
+    doc.save(filename);
+  }
+}
+
+// ---------- Réalisations (galerie) ----------
+var gaAvantBase64 = "";
+var gaApresBase64 = "";
+
+function onGaleriePhoto(input, which) {
+  var f = input.files[0];
+  if (!f) return;
+  compressPhoto(f, function(b64){
+    var img = document.getElementById("ga-" + which + "-preview");
+    var txt = document.getElementById("ga-" + which + "-txt");
+    img.src = b64;
+    img.style.display = "block";
+    txt.textContent = "Toucher pour changer";
+    if (which === "avant") gaAvantBase64 = b64;
+    else gaApresBase64 = b64;
+  });
+}
+
+function loadGalerieAdmin() {
+  var list = document.getElementById("galerie-liste");
+  list.innerHTML = '<div class="ga-empty">Chargement…</div>';
+  fetch(API + "/memory/jodeco_galerie")
+    .then(function(r){ return r.json(); })
+    .then(function(d){ renderGalerieListe(d.value || []); })
+    .catch(function(){ renderGalerieListe([]); });
+}
+
+function renderGalerieListe(chantiers) {
+  var list = document.getElementById("galerie-liste");
+  list.innerHTML = "";
+  if (!chantiers.length) {
+    list.innerHTML = '<div class="ga-empty">Aucune réalisation publiée pour l\'instant.</div>';
+    return;
+  }
+  chantiers.forEach(function(c){
+    var item = document.createElement("div");
+    item.className = "ga-item";
+    var thumbs = document.createElement("div");
+    thumbs.className = "ga-thumbs";
+    if (c.avant) { var ia = document.createElement("img"); ia.src = c.avant; thumbs.appendChild(ia); }
+    if (c.apres) { var ip = document.createElement("img"); ip.src = c.apres; thumbs.appendChild(ip); }
+    var title = document.createElement("div");
+    title.className = "ga-item-title";
+    title.textContent = c.titre || "Chantier";
+    var del = document.createElement("button");
+    del.className = "ga-del";
+    del.textContent = "✕";
+    del.onclick = function(){ supprimerRealisation(c.id); };
+    item.appendChild(thumbs);
+    item.appendChild(title);
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+
+function ajouterRealisation() {
+  var titre = document.getElementById("ga-titre").value.trim();
+  if (!titre || (!gaAvantBase64 && !gaApresBase64)) {
+    alert("Ajoutez un titre et au moins une photo avant de publier.");
+    return;
+  }
+  var statusEl = document.getElementById("galerie-status");
+  statusEl.className = "status-msg";
+
+  fetch(API + "/memory/jodeco_galerie")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var chantiers = d.value || [];
+      chantiers.push({ id: "c_" + Date.now(), titre: titre, avant: gaAvantBase64, apres: gaApresBase64 });
+      return fetch(API + "/memory/jodeco_galerie", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: chantiers })
+      });
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.ok) {
+        statusEl.textContent = "Réalisation publiée ✓";
+        statusEl.className = "status-msg ok";
+        document.getElementById("ga-titre").value = "";
+        gaAvantBase64 = ""; gaApresBase64 = "";
+        document.getElementById("ga-avant-preview").style.display = "none";
+        document.getElementById("ga-apres-preview").style.display = "none";
+        document.getElementById("ga-avant-txt").textContent = "Ajouter la photo \"avant\"";
+        document.getElementById("ga-apres-txt").textContent = "Ajouter la photo \"après\"";
+        loadGalerieAdmin();
+      } else {
+        statusEl.textContent = "Erreur lors de la publication, réessayez.";
+        statusEl.className = "status-msg err";
+      }
+    }).catch(function(){
+      statusEl.textContent = "Erreur de connexion, réessayez.";
+      statusEl.className = "status-msg err";
+    });
+}
+
+function supprimerRealisation(id) {
+  if (!confirm("Supprimer cette réalisation ?")) return;
+  fetch(API + "/memory/jodeco_galerie")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var chantiers = (d.value || []).filter(function(c){ return c.id !== id; });
+      return fetch(API + "/memory/jodeco_galerie", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: chantiers })
+      });
+    })
+    .then(function(){ loadGalerieAdmin(); });
+}
+</script>
+</body>
+</html>
