@@ -81,6 +81,16 @@ body{min-height:100%;overflow-y:auto}
 .ga-del{background:none;border:none;color:#c0392b;font-size:18px;cursor:pointer;padding:4px 8px}
 .ga-empty{font-size:13px;color:#7a8c6a;padding:10px 0}
 
+/* FACTURES */
+.fa-ligne-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.fa-ligne-row input:first-child{flex:2}
+.fa-ligne-row input:nth-child(2){flex:1;text-align:right}
+.fa-ligne-del{background:none;border:none;color:#c0392b;font-size:18px;cursor:pointer;padding:0 4px;flex-shrink:0}
+.fa-item{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.fa-item-top{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#1a2e20}
+.fa-item-sub{font-size:11px;color:#7a8c6a;margin-top:3px}
+.fa-empty{font-size:13px;color:#7a8c6a;padding:10px 0}
+
 .tybub{background:#fff;border-radius:20px;padding:14px 16px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07);align-self:flex-start}
 .tybub span{width:6px;height:6px;border-radius:50%;background:#2d5a3d;animation:bounce 1.2s infinite}
 .tybub span:nth-child(2){animation-delay:.2s}
@@ -127,6 +137,7 @@ body{min-height:100%;overflow-y:auto}
     <button class="tab active" onclick="showTab(this,'identite')"><span>🪪</span>Identité</button>
     <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis vocal</button>
     <button class="tab" onclick="showTab(this,'galerie')"><span>🖼️</span>Réalisations</button>
+    <button class="tab" onclick="showTab(this,'facture')"><span>🧾</span>Factures</button>
   </div>
 
   <!-- IDENTITE -->
@@ -248,6 +259,51 @@ body{min-height:100%;overflow-y:auto}
     <div class="lbl" style="margin-top:8px">Déjà publiées</div>
     <div id="galerie-liste"></div>
   </div>
+
+  <!-- FACTURES -->
+  <div id="page-facture" class="page">
+    <div class="sec-title">Facture<em>N° <span id="fa-numero-preview">FAC-...</span></em></div>
+
+    <div class="fld">
+      <div class="lbl">Client — nom</div>
+      <input class="df-input" id="fa-client-nom" type="text" placeholder="Ex: M. Durand"/>
+    </div>
+    <div class="fld">
+      <div class="lbl">Client — adresse</div>
+      <input class="df-input" id="fa-client-adresse" type="text" placeholder="Ex: 12 rue des Lilas, 7700 Mouscron"/>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Lignes de facturation</div>
+      <div id="fa-lignes"></div>
+      <button class="big-btn" style="background:#fff;color:#1a2e20;border:1.5px solid rgba(45,90,61,.25);margin-top:6px" onclick="ajouterLigneFacture()">+ Ajouter une ligne</button>
+    </div>
+
+    <div class="fld">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#1a2e20">
+        <input type="checkbox" id="fa-tva-active" onchange="toggleTva()" style="width:16px;height:16px"/>
+        TVA applicable sur cette facture
+      </label>
+      <div id="fa-tva-row" style="display:none;margin-top:8px" class="markup-row">
+        <input id="fa-tva-taux" type="number" value="21" min="0" max="100"/>
+        <span>% de TVA</span>
+      </div>
+    </div>
+
+    <div class="fld">
+      <div class="lbl">Conditions de paiement</div>
+      <textarea class="df-textarea" id="fa-conditions" style="height:64px">Paiement à réception. En cas de retard, une pénalité de 3 fois le taux d'intérêt légal sera appliquée, ainsi qu'une indemnité forfaitaire de 40€ pour frais de recouvrement.</textarea>
+    </div>
+
+    <button class="df-btn" onclick="genererFacture()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      Créer la facture (PDF)
+    </button>
+    <div id="facture-status" class="status-msg"></div>
+
+    <div class="lbl" style="margin-top:8px">Historique</div>
+    <div id="facture-liste"></div>
+  </div>
 </div>
 
 <script>
@@ -261,6 +317,8 @@ function checkPwd() {
     document.getElementById("app").classList.add("show");
     loadIdentity();
     loadGalerieAdmin();
+    loadFactureCounter();
+    ajouterLigneFacture();
   } else {
     document.getElementById("login-err").style.display = "block";
     document.getElementById("pwd-input").value = "";
@@ -741,6 +799,247 @@ function supprimerRealisation(id) {
       });
     })
     .then(function(){ loadGalerieAdmin(); });
+}
+
+// ---------- Factures ----------
+var ligneFactureCount = 0;
+
+function ajouterLigneFacture(label, prix) {
+  ligneFactureCount++;
+  var id = "flig" + ligneFactureCount;
+  var row = document.createElement("div");
+  row.className = "fa-ligne-row";
+  row.id = id;
+  row.innerHTML =
+    '<input class="df-input" placeholder="Ex: Peinture façade 20m²" value="' + (label ? label.replace(/"/g,'&quot;') : '') + '"/>' +
+    '<input class="df-input" placeholder="Ex: 570" type="number" value="' + (prix != null ? prix : '') + '"/>' +
+    '<button class="fa-ligne-del" onclick="document.getElementById(\'' + id + '\').remove()">✕</button>';
+  document.getElementById("fa-lignes").appendChild(row);
+}
+
+function toggleTva() {
+  var on = document.getElementById("fa-tva-active").checked;
+  document.getElementById("fa-tva-row").style.display = on ? "flex" : "none";
+}
+
+function loadFactureCounter() {
+  fetch(API + "/memory/jodeco_factures")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var factures = d.value || [];
+      afficherProchainNumero(factures);
+      renderFactureListe(factures);
+    })
+    .catch(function(){
+      afficherProchainNumero([]);
+      renderFactureListe([]);
+    });
+}
+
+function afficherProchainNumero(factures) {
+  var year = new Date().getFullYear();
+  var count = factures.filter(function(f){ return (f.numero || "").indexOf("FAC-" + year) === 0; }).length;
+  document.getElementById("fa-numero-preview").textContent = "FAC-" + year + "-" + String(count + 1).padStart(3, "0");
+}
+
+function renderFactureListe(factures) {
+  var list = document.getElementById("facture-liste");
+  list.innerHTML = "";
+  if (!factures.length) {
+    list.innerHTML = '<div class="fa-empty">Aucune facture émise pour l\'instant.</div>';
+    return;
+  }
+  factures.slice().reverse().forEach(function(f){
+    var item = document.createElement("div");
+    item.className = "fa-item";
+    var top = document.createElement("div");
+    top.className = "fa-item-top";
+    top.innerHTML = "<span>" + f.numero + "</span><span>" + f.total + "€</span>";
+    var sub = document.createElement("div");
+    sub.className = "fa-item-sub";
+    sub.textContent = (f.clientNom || "Client") + " — " + f.date;
+    item.appendChild(top);
+    item.appendChild(sub);
+    list.appendChild(item);
+  });
+}
+
+function genererFacture() {
+  var clientNom = document.getElementById("fa-client-nom").value.trim();
+  var clientAdresse = document.getElementById("fa-client-adresse").value.trim();
+  var conditions = document.getElementById("fa-conditions").value.trim();
+  var tvaActive = document.getElementById("fa-tva-active").checked;
+  var tvaTaux = parseFloat(document.getElementById("fa-tva-taux").value) || 0;
+
+  var lignes = [];
+  document.querySelectorAll("#fa-lignes .fa-ligne-row").forEach(function(row){
+    var inputs = row.querySelectorAll("input");
+    var label = inputs[0].value.trim();
+    var prix = parseFloat(inputs[1].value) || 0;
+    if (label && prix) lignes.push({ label: label, prix: prix });
+  });
+
+  if (!clientNom || !lignes.length) {
+    alert("Renseignez au moins le nom du client et une ligne de facturation avec un montant.");
+    return;
+  }
+
+  var statusEl = document.getElementById("facture-status");
+  statusEl.className = "status-msg";
+
+  fetch(API + "/memory/jodeco_factures")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var factures = d.value || [];
+      var year = new Date().getFullYear();
+      var count = factures.filter(function(f){ return (f.numero || "").indexOf("FAC-" + year) === 0; }).length;
+      var numero = "FAC-" + year + "-" + String(count + 1).padStart(3, "0");
+
+      var totalHT = lignes.reduce(function(s, l){ return s + l.prix; }, 0);
+      var montantTva = tvaActive ? Math.round(totalHT * tvaTaux) / 100 : 0;
+      var totalTTC = Math.round((totalHT + montantTva) * 100) / 100;
+
+      var facture = {
+        id: "fac_" + Date.now(),
+        numero: numero,
+        date: new Date().toLocaleDateString("fr-FR"),
+        clientNom: clientNom,
+        clientAdresse: clientAdresse,
+        lignes: lignes,
+        tvaActive: tvaActive,
+        tvaTaux: tvaTaux,
+        totalHT: totalHT,
+        montantTva: montantTva,
+        total: totalTTC,
+        conditions: conditions
+      };
+
+      factures.push(facture);
+      return fetch(API + "/memory/jodeco_factures", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: factures })
+      }).then(function(r){ return r.json(); }).then(function(res){ return { res: res, facture: facture, factures: factures }; });
+    })
+    .then(function(out){
+      if (out.res && out.res.ok) {
+        statusEl.textContent = "Facture " + out.facture.numero + " créée ✓";
+        statusEl.className = "status-msg ok";
+        genererPDFFacture(out.facture);
+        renderFactureListe(out.factures);
+        afficherProchainNumero(out.factures);
+        document.getElementById("fa-client-nom").value = "";
+        document.getElementById("fa-client-adresse").value = "";
+        document.getElementById("fa-lignes").innerHTML = "";
+        ligneFactureCount = 0;
+        ajouterLigneFacture();
+      } else {
+        statusEl.textContent = "Erreur lors de l'enregistrement, réessayez.";
+        statusEl.className = "status-msg err";
+      }
+    }).catch(function(){
+      statusEl.textContent = "Erreur de connexion, réessayez.";
+      statusEl.className = "status-msg err";
+    });
+}
+
+function genererPDFFacture(f) {
+  var jsPDFLib = window.jspdf.jsPDF;
+  var doc = new jsPDFLib({ unit: "mm", format: "a4" });
+  var id = getIdentity();
+  var marginX = 18;
+  var y = 20;
+
+  if (id.logo) { try { doc.addImage(id.logo, "JPEG", marginX, y - 8, 28, 20); } catch(e) {} }
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(id.nom, id.logo ? marginX + 34 : marginX, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  var infoY = y + 6;
+  if (id.adresse) { doc.text(id.adresse, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+  if (id.tel) { doc.text("Tél : " + id.tel, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+  if (id.email) { doc.text(id.email, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+  if (id.siret) { doc.text("N° entreprise : " + id.siret, id.logo ? marginX + 34 : marginX, infoY); infoY += 5; }
+
+  y = Math.max(infoY, y + 24) + 6;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(15);
+  doc.text("FACTURE " + f.numero, marginX, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("Date d'émission : " + f.date, 210 - marginX, y, { align: "right" });
+  y += 10;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Facturé à :", marginX, y);
+  doc.setFont("helvetica", "normal");
+  y += 6;
+  doc.text(f.clientNom, marginX, y);
+  if (f.clientAdresse) { y += 5; doc.text(f.clientAdresse, marginX, y); }
+  y += 10;
+
+  doc.setDrawColor(45, 90, 61);
+  doc.line(marginX, y, 210 - marginX, y);
+  y += 8;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(45,90,61);
+  doc.text("Description", marginX, y);
+  doc.text("Montant", 210 - marginX, y, { align: "right" });
+  doc.setTextColor(0,0,0);
+  y += 6;
+  doc.setFont("helvetica", "normal");
+  f.lignes.forEach(function(l){
+    doc.text(l.label, marginX, y);
+    doc.text(l.prix.toFixed(2) + "€", 210 - marginX, y, { align: "right" });
+    y += 6;
+  });
+
+  y += 4;
+  doc.setDrawColor(200,200,200);
+  doc.line(marginX, y, 210 - marginX, y);
+  y += 8;
+
+  doc.text("Total HT", marginX, y);
+  doc.text(f.totalHT.toFixed(2) + "€", 210 - marginX, y, { align: "right" });
+  y += 6;
+
+  if (f.tvaActive) {
+    doc.text("TVA (" + f.tvaTaux + "%)", marginX, y);
+    doc.text(f.montantTva.toFixed(2) + "€", 210 - marginX, y, { align: "right" });
+    y += 6;
+  } else {
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9);
+    doc.text("Petite entreprise soumise au régime de la franchise de la taxe (art. 56bis du Code de la TVA belge).", marginX, y);
+    doc.text("TVA non applicable.", marginX, y + 4);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    y += 10;
+  }
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text("Total à payer", marginX, y);
+  doc.text(f.total.toFixed(2) + "€", 210 - marginX, y, { align: "right" });
+  y += 12;
+
+  if (f.conditions) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(90,90,90);
+    var lines = doc.splitTextToSize(f.conditions, 210 - marginX * 2);
+    doc.text(lines, marginX, y);
+    y += lines.length * 4.5 + 4;
+  }
+
+  var filename = f.numero.toLowerCase() + ".pdf";
+  doc.save(filename);
 }
 </script>
 </body>
