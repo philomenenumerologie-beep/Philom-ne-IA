@@ -527,8 +527,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;color:#1c
     </div>
 
     <button class="mbox-wa" id="btn-commander-wa" onclick="commanderWA()">📱 Envoyer ma commande sur WhatsApp</button>
-    <a class="mbox-pay" id="btn-payer-ligne" href="#" target="_blank" style="display:none;text-decoration:none">1️⃣ 💳 Payer en ligne</a>
-    <a class="mbox-wa" id="btn-confirmer-paye" href="#" target="_blank" style="display:none;text-decoration:none">2️⃣ 📱 Envoyer ma commande sur WhatsApp</a>
+    <a class="mbox-pay" id="btn-payer-ligne" href="#" target="_blank" style="display:none;text-decoration:none" onclick="revealWaButton()">💳 Payer</a>
+    <a class="mbox-wa" id="btn-confirmer-paye" href="#" target="_blank" style="display:none;text-decoration:none">📱 Envoyer ma commande sur WhatsApp</a>
     <button class="mbox-cancel" onclick="fermerModal()">Continuer mes achats</button>
   </div>
 </div>
@@ -621,14 +621,18 @@ function setPayMode(m) {
   document.getElementById("pay-online").classList.toggle("active", m==="online");
   document.getElementById("btn-commander-wa").style.display = (m==="wa") ? "flex" : "none";
   document.getElementById("btn-payer-ligne").style.display = (m==="online") ? "flex" : "none";
-  document.getElementById("btn-confirmer-paye").style.display = (m==="online") ? "flex" : "none";
+  document.getElementById("btn-confirmer-paye").style.display = "none";
   document.getElementById("pay-amount-note").style.display = (m==="online") ? "block" : "none";
+}
+
+function revealWaButton() {
+  document.getElementById("btn-confirmer-paye").style.display = "flex";
 }
 
 function updatePayButtonAmount() {
   var total = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
   var val = total.toFixed(2) + "€";
-  document.getElementById("btn-payer-ligne").textContent = "1️⃣ 💳 Payer en ligne — " + val;
+  document.getElementById("btn-payer-ligne").textContent = "💳 Payer — " + val;
   document.getElementById("btn-payer-ligne").href = PAYLINK;
   document.getElementById("pay-amount-val").textContent = val;
 
