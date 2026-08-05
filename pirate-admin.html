@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Pirate Snack — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Archivo+Black&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:#F6ECD2;color:#1c1006;min-height:100vh}
+:root{--navy:#0b2436;--cream:#F6ECD2;--cream2:#EBDBB2;--dark:#1c1006;--gold:#c99a3c;--gold2:#9c7527;--border:rgba(28,16,6,.12);}
+
+/* LOGIN */
+#login{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;z-index:900}
+#login h1{font-family:'Pirata One',cursive;color:var(--gold);font-size:34px;margin-bottom:18px;text-transform:uppercase}
+#login input{width:100%;max-width:280px;padding:14px;border-radius:12px;border:none;font-size:16px;margin-bottom:12px;text-align:center}
+#login button{width:100%;max-width:280px;padding:14px;border-radius:12px;border:none;background:var(--gold);color:var(--navy);font-weight:700;font-size:15px;cursor:pointer}
+#login .err{color:#ff8a8a;font-size:12px;margin-top:8px;display:none}
+
+/* APP */
+#admin{display:none;max-width:520px;margin:0 auto;padding-bottom:60px}
+header{background:var(--navy);padding:18px 16px;position:sticky;top:0;z-index:10}
+header h1{font-family:'Pirata One',cursive;color:var(--gold);font-size:26px;text-transform:uppercase}
+header p{color:rgba(246,236,210,.6);font-size:12px;margin-top:2px}
+
+.section{padding:16px}
+.card{background:#fff;border-radius:16px;border:1.5px solid var(--border);padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card h2{font-family:'Archivo Black',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:14px}
+
+label{display:block;font-size:12px;font-weight:600;color:rgba(28,16,6,.55);margin-bottom:5px;margin-top:12px}
+label:first-of-type{margin-top:0}
+input[type=text],input[type=number],textarea,select{
+  width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--border);
+  font-size:14px;font-family:'DM Sans',sans-serif;background:var(--cream2);color:var(--dark);
+}
+textarea{resize:vertical;min-height:60px}
+
+.photo-zone{
+  border:2px dashed var(--border);border-radius:14px;padding:16px;text-align:center;
+  cursor:pointer;background:var(--cream2);margin-top:6px;position:relative;overflow:hidden;
+}
+.photo-zone img{max-width:100%;max-height:160px;border-radius:10px;display:block;margin:0 auto}
+.photo-zone .ph{color:rgba(28,16,6,.45);font-size:13px}
+.photo-zone .ph span{display:block;font-size:26px;margin-bottom:6px}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.tags-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.tag-chip{
+  padding:8px 12px;border-radius:20px;border:1.5px solid var(--border);
+  font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:rgba(28,16,6,.5);
+}
+.tag-chip.active{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+
+.btn-add{
+  width:100%;margin-top:16px;padding:14px;border-radius:12px;border:none;
+  background:var(--navy);color:var(--gold);font-weight:700;font-size:15px;cursor:pointer;
+}
+.btn-add:active{opacity:.85}
+
+.status{font-size:12px;text-align:center;margin-top:10px;min-height:16px;color:rgba(28,16,6,.5)}
+.status.ok{color:#2E7D32;font-weight:700}
+.status.err{color:#a01f10;font-weight:700}
+
+/* LIST */
+.item-row{
+  display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);
+}
+.item-row:last-child{border:none}
+.item-row img,.item-row .emoji{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--cream2);font-size:20px}
+.item-row .info{flex:1;min-width:0}
+.item-row .name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-row .cat{font-size:11px;color:rgba(28,16,6,.45)}
+.item-row .price{font-weight:700;color:var(--gold2);font-size:13px;flex-shrink:0}
+.item-row .del{background:none;border:none;color:#a01f10;font-size:18px;cursor:pointer;flex-shrink:0;padding:4px 6px}
+
+.empty-list{text-align:center;color:rgba(28,16,6,.4);font-size:13px;padding:20px 0}
+
+.save-bar{
+  position:sticky;bottom:0;background:rgba(246,236,210,.95);backdrop-filter:blur(8px);
+  padding:12px 16px 20px;border-top:1px solid var(--border);
+}
+.save-bar button{
+  width:100%;padding:15px;border-radius:14px;border:none;background:#25D366;color:#fff;
+  font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 4px 16px rgba(37,211,102,.3);
+}
+.save-bar .sync-status{font-size:11px;text-align:center;margin-top:8px;color:rgba(28,16,6,.4)}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>🏴‍☠️ Admin</h1>
+  <input type="password" id="pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkLogin()">
+  <button onclick="checkLogin()">Entrer</button>
+  <div class="err" id="loginErr">Mot de passe incorrect</div>
+</div>
+
+<div id="admin">
+  <header>
+    <h1>Pirate Snack — Admin</h1>
+    <p>Ajoute tes burgers : photo, description, prix</p>
+  </header>
+
+  <div class="section">
+    <div class="card">
+      <h2>➕ Nouvel article</h2>
+
+      <label>Photo</label>
+      <div class="photo-zone" id="photoZone">
+        <div class="ph" id="photoPlaceholder"><span>📷</span>Prendre une photo ou choisir</div>
+        <img id="photoPreview" style="display:none">
+        <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="handlePhoto(event)">
+      </div>
+
+      <label>Catégorie</label>
+      <select id="fCat">
+        <option>Smash Burgers</option>
+        <option>Tacos & Kebabs</option>
+        <option>Tenders & Snacks</option>
+        <option>Le Trésor du Capitaine</option>
+        <option>Boissons</option>
+        <option>Dessert</option>
+      </select>
+
+      <label>Nom du burger</label>
+      <input type="text" id="fName" placeholder="Ex : Barbe Noire">
+
+      <label>Description</label>
+      <textarea id="fDesc" placeholder="Ex : Buns brioché, triple steaks smashés, cheddar fondant..."></textarea>
+
+      <label>Prix (€)</label>
+      <input type="number" id="fPrice" step="0.10" placeholder="11.90">
+
+      <label>Tags</label>
+      <div class="tags-row">
+        <div class="tag-chip" onclick="toggleTag(this,'Best-seller')">🔥 Best-seller</div>
+        <div class="tag-chip" onclick="toggleTag(this,'Végétarien')">🌿 Végétarien</div>
+        <div class="tag-chip" onclick="toggleTag(this,'Épicé')">🌶️ Épicé</div>
+      </div>
+
+      <button class="btn-add" onclick="addItem()">Ajouter au menu</button>
+      <div class="status" id="addStatus"></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Articles du menu (<span id="itemCount">0</span>)</h2>
+      <div id="itemList"><div class="empty-list">Aucun article pour l'instant</div></div>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button onclick="saveMenu()">💾 Enregistrer sur l'appli</button>
+    <div class="sync-status" id="syncStatus">Non enregistré</div>
+  </div>
+</div>
+
+<script>
+var PASSWORD = "pirate2026";
+var BACKEND = "https://philo-backend-by2c.onrender.com";
+var MENU_KEY = "pirate-menu";
+
+var items = [];
+var currentPhoto = null;
+var currentTags = [];
+
+function checkLogin() {
+  var v = document.getElementById("pwd").value;
+  if (v === PASSWORD) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("admin").style.display = "block";
+    loadMenu();
+  } else {
+    document.getElementById("loginErr").style.display = "block";
+  }
+}
+
+function handlePhoto(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      var maxSize = 800;
+      var w = img.width, h = img.height;
+      if (w > h && w > maxSize) { h = h * maxSize / w; w = maxSize; }
+      else if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+      var canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      currentPhoto = canvas.toDataURL("image/jpeg", 0.7);
+      document.getElementById("photoPreview").src = currentPhoto;
+      document.getElementById("photoPreview").style.display = "block";
+      document.getElementById("photoPlaceholder").style.display = "none";
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleTag(el, tag) {
+  el.classList.toggle("active");
+  if (currentTags.includes(tag)) currentTags = currentTags.filter(function(t){ return t !== tag; });
+  else currentTags.push(tag);
+}
+
+function addItem() {
+  var name = document.getElementById("fName").value.trim();
+  var desc = document.getElementById("fDesc").value.trim();
+  var price = parseFloat(document.getElementById("fPrice").value);
+  var cat = document.getElementById("fCat").value;
+  var status = document.getElementById("addStatus");
+
+  if (!name || isNaN(price)) {
+    status.textContent = "⚠️ Nom et prix obligatoires";
+    status.className = "status err";
+    return;
+  }
+
+  items.push({
+    id: Date.now().toString(36),
+    category: cat,
+    name: name,
+    desc: desc,
+    price: price,
+    photo: currentPhoto,
+    tags: currentTags.slice()
+  });
+
+  document.getElementById("fName").value = "";
+  document.getElementById("fDesc").value = "";
+  document.getElementById("fPrice").value = "";
+  currentPhoto = null;
+  currentTags = [];
+  document.querySelectorAll(".tag-chip").forEach(function(c){ c.classList.remove("active"); });
+  document.getElementById("photoPreview").style.display = "none";
+  document.getElementById("photoPlaceholder").style.display = "block";
+  document.getElementById("photoInput").value = "";
+
+  status.textContent = "✅ Article ajouté — pense à enregistrer";
+  status.className = "status ok";
+  renderList();
+}
+
+function removeItem(id) {
+  items = items.filter(function(i){ return i.id !== id; });
+  renderList();
+}
+
+function renderList() {
+  var list = document.getElementById("itemList");
+  document.getElementById("itemCount").textContent = items.length;
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-list">Aucun article pour l\'instant</div>';
+    return;
+  }
+  var html = "";
+  items.forEach(function(item){
+    var visual = item.photo ? '<img src="' + item.photo + '">' : '<div class="emoji">🍽️</div>';
+    html +=
+      '<div class="item-row">' +
+        visual +
+        '<div class="info"><div class="name">' + item.name + '</div><div class="cat">' + item.category + '</div></div>' +
+        '<div class="price">' + item.price.toFixed(2) + '€</div>' +
+        '<button class="del" onclick="removeItem(\'' + item.id + '\')">🗑️</button>' +
+      '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function loadMenu() {
+  document.getElementById("syncStatus").textContent = "Chargement...";
+  fetch(BACKEND + "/memory/" + MENU_KEY + "?t=" + Date.now(), { cache: "no-store" })
+    .then(function(r){ if(!r.ok) throw new Error("empty"); return r.json(); })
+    .then(function(data){
+      var v = (data && data.value) ? data.value : (Array.isArray(data) ? data : []);
+      if (typeof v === "string") { try { v = JSON.parse(v); } catch(e){ v = []; } }
+      items = v || [];
+      renderList();
+      document.getElementById("syncStatus").textContent = "Menu chargé (" + items.length + " articles)";
+    })
+    .catch(function(){
+      items = [];
+      renderList();
+      document.getElementById("syncStatus").textContent = "Menu vide — prêt à démarrer";
+    });
+}
+
+function saveMenu() {
+  var sync = document.getElementById("syncStatus");
+  sync.textContent = "Enregistrement...";
+  fetch(BACKEND + "/memory/" + MENU_KEY, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value: items })
+  })
+  .then(function(r){ if(!r.ok) throw new Error("fail"); return r.json(); })
+  .then(function(){
+    sync.textContent = "✅ Enregistré — visible sur l'appli";
+  })
+  .catch(function(){
+    sync.textContent = "⚠️ Échec de l'enregistrement, réessaie";
+  });
+}
+</script>
+</body>
+</html>
