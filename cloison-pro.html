@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Cloison Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#33363b;font-family:'Inter',sans-serif;color:#1c1c1e}
+
+:root{
+  --charcoal:#33363b;
+  --charcoal2:#3f434a;
+  --orange:#FF6B35;
+  --orange2:#d9551f;
+  --grey:#6b6f76;
+  --border:rgba(0,0,0,.08);
+  --cream:#F5F3EF;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:500;background:var(--charcoal);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:100px;height:100px;border-radius:20px;background:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:22px;font-size:46px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-name{font-family:'Big Shoulders Display',sans-serif;font-size:32px;font-weight:800;color:#fff;letter-spacing:.04em;text-transform:uppercase;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+#demo-wm{position:fixed;bottom:10px;left:0;right:0;text-align:center;z-index:250;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,0,0,.28);font-weight:700;pointer-events:none}
+
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:#fff}
+
+/* TOPBAR */
+#topbar{background:var(--charcoal);padding:13px 16px 10px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.tb-av{width:40px;height:40px;border-radius:9px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:19px}
+.tb-name{font-family:'Big Shoulders Display',sans-serif;font-size:17px;font-weight:800;color:#fff;letter-spacing:.02em;text-transform:uppercase}
+.tb-sub{font-size:9.5px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:8px;height:8px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+/* TABS */
+#tabs{background:var(--charcoal);display:flex;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* ─── CHAT ─── */
+#page-chat{background:var(--cream)}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:30px;height:30px;border-radius:8px;background:var(--charcoal);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:14px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.6;white-space:pre-wrap;border-radius:16px}
+.bub.bot{background:#fff;color:#1c1c1e;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.bub.user{background:var(--charcoal);color:#fff;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:20px;border:1.5px solid var(--charcoal);background:transparent;color:var(--charcoal);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:16px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 20px;background:var(--cream);border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:24px;border:1.5px solid rgba(0,0,0,.14);background:#fff;font-size:15px;font-family:'Inter',sans-serif;outline:none;color:#1c1c1e}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:var(--charcoal)}
+#snd{width:44px;height:44px;border-radius:50%;border:none;background:var(--orange);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:10px;padding:11px;font-weight:700;font-size:13px;font-family:'Inter',sans-serif;margin-top:10px;border:none;width:100%;cursor:pointer}
+
+/* DEVIS CARD */
+.devis-card{background:#f9f9fa;border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-top:10px;width:100%}
+.devis-card-title{font-size:11px;font-weight:700;color:var(--orange2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.devis-section{font-size:10px;font-weight:700;color:var(--grey);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px}
+.devis-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#1c1c1e;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.devis-line:last-child{border-bottom:none}
+.devis-line-label{flex:1;color:#444}
+.devis-line-price{font-weight:700;color:#1c1c1e;margin-left:10px;white-space:nowrap}
+.devis-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--border)}
+.devis-total-label{font-weight:700;font-size:14px;color:#1c1c1e}
+.devis-total-price{font-family:'Big Shoulders Display',sans-serif;font-size:22px;font-weight:800;color:var(--orange2)}
+
+/* ─── DEVIS PAGE ─── */
+#page-devis{background:var(--cream);padding:16px 16px 24px}
+.res-label{font-size:12px;font-weight:700;color:#1c1c1e;margin:16px 0 8px}
+.res-label:first-child{margin-top:0}
+.res-select,.res-textarea,.res-input{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);font-size:14px;background:#fff;font-family:'Inter',sans-serif}
+.res-textarea{resize:none;height:80px}
+.photo-zone{border:2px dashed var(--border);border-radius:12px;padding:18px;text-align:center;background:#fff;cursor:pointer}
+.pz-icon{font-size:26px;margin-bottom:6px}
+.photo-zone strong{color:#1c1c1e;font-size:13px;display:block;margin-bottom:2px}
+.photo-zone p{font-size:11.5px;color:#aaa}
+#prev{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;justify-content:center}
+#prev img{width:60px;height:60px;object-fit:cover;border-radius:8px}
+.devis-cta{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--orange);color:#fff;border-radius:12px;padding:15px;font-weight:700;font-size:14px;border:none;width:100%;cursor:pointer;margin-top:18px;font-family:'Inter',sans-serif}
+
+/* ─── REALISATIONS ─── */
+#page-galerie{background:var(--cream);padding:16px 16px 24px}
+.sec-title{font-family:'Big Shoulders Display',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin:16px 0 10px}
+.sec-title:first-child{margin-top:0}
+.g-h{font-family:'Big Shoulders Display',sans-serif;font-size:26px;font-weight:800;color:#1c1c1e;text-transform:uppercase}
+.g-h em{font-style:normal;color:var(--orange);font-size:.55em;letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:2px;font-family:'Inter',sans-serif;font-weight:700}
+.g-sub{font-size:13px;color:var(--grey);margin-top:6px;margin-bottom:16px}
+.chantier-card{background:#fff;border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);border:1px solid var(--border)}
+.chantier-title{padding:13px 14px 9px;font-family:'Big Shoulders Display',sans-serif;font-size:15px;font-weight:700;color:#1c1c1e;text-transform:uppercase}
+.avant-apres{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.aa-side{position:relative}
+.aa-img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.aa-placeholder{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--cream)}
+.aa-badge{position:absolute;top:8px;left:8px;background:rgba(51,54,59,.8);color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:20px}
+.aa-badge.apres{background:rgba(255,107,53,.92)}
+.g-empty{text-align:center;padding:36px 20px;color:var(--grey);font-size:13.5px}
+.g-empty-icon{font-size:38px;margin-bottom:10px}
+
+/* ─── TARIFS ─── */
+#page-tarifs{background:var(--cream);padding:16px 16px 32px}
+.t-h{font-family:'Big Shoulders Display',sans-serif;font-size:26px;font-weight:800;line-height:1.05;color:#1c1c1e;text-transform:uppercase}
+.t-h em{font-style:normal;color:var(--orange);font-size:.55em;letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:2px;font-family:'Inter',sans-serif;font-weight:700}
+.t-intro{font-size:13px;color:var(--grey);line-height:1.5;margin:10px 0 16px}
+.tcard{background:#fff;border-radius:14px;padding:15px;margin-bottom:9px;border:1.5px solid var(--border)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.tcard-name{font-family:'Big Shoulders Display',sans-serif;font-size:15px;font-weight:700;color:#1c1c1e;text-transform:uppercase}
+.tcard-sub{font-size:11px;color:var(--grey);margin-top:3px}
+.tcard-badge{background:var(--charcoal);color:#fff;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.tpx{background:var(--cream);border-radius:9px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center}
+.tplbl{font-size:11.5px;color:var(--grey);font-weight:500}
+.tpval{font-family:'Big Shoulders Display',sans-serif;font-size:16px;font-weight:800;color:#1c1c1e}
+.twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:13px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:'Inter',sans-serif;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">🧱</div>
+  <div class="sp-name">Cloison Pro</div>
+  <div class="sp-sub">Plaquiste &middot; Isolation &middot; Rénovation</div>
+</div>
+<div id="demo-wm">Démo</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🧱</div>
+    <div>
+      <div class="tb-name">Cloison Pro</div>
+      <div class="tb-sub">Assistant IA &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'galerie')"><span>🏗️</span>Réalisations</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+  </div>
+
+  <!-- ─── CHAT ─── -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DEVIS ─── -->
+  <div id="page-devis" class="page">
+    <div class="res-label">Type de travaux</div>
+    <select class="res-select" id="devis-type">
+      <option value="">Sélectionnez...</option>
+      <option>Cloison placo simple</option>
+      <option>Cloison avec isolation phonique</option>
+      <option>Faux plafond</option>
+      <option>Doublage mur / isolation thermique</option>
+      <option>Bandes et joints / finition</option>
+      <option>Rénovation complète intérieure</option>
+      <option>Autre / sur mesure</option>
+    </select>
+
+    <div class="res-label">Décrivez votre projet</div>
+    <textarea class="res-textarea" id="devis-desc" placeholder="Ex : cloison de séparation 15m², isolation phonique entre deux chambres..."></textarea>
+
+    <div class="res-label">Surface approximative</div>
+    <input class="res-input" id="devis-surface" type="text" placeholder="Ex : 15m², 3m de haut..."/>
+
+    <div class="res-label">Photo (optionnel)</div>
+    <div class="photo-zone" onclick="document.getElementById('devis-photo').click()">
+      <div class="pz-icon">📸</div>
+      <strong>Ajouter une photo</strong>
+      <p>Pièce, mur, structure existante...</p>
+      <div id="prev"></div>
+    </div>
+    <input type="file" id="devis-photo" accept="image/*" style="display:none" onchange="prevPhoto(this)"/>
+
+    <button class="devis-cta" onclick="genDevis()">🧱 Générer mon devis IA</button>
+  </div>
+
+  <!-- ─── REALISATIONS ─── -->
+  <div id="page-galerie" class="page">
+    <div class="g-h">Réalisations<em>avant &amp; après</em></div>
+    <div class="g-sub">Nos chantiers en images 🧱</div>
+    <div id="galerie-list">
+      <div class="g-empty"><div class="g-empty-icon">⏳</div>Chargement...</div>
+    </div>
+  </div>
+
+  <!-- ─── TARIFS ─── -->
+  <div id="page-tarifs" class="page">
+    <div class="t-h">Tarifs<em>clairs et sans surprise</em></div>
+    <div class="t-intro">Devis gratuit et sans engagement. Déplacement offert dans un rayon de 30km.</div>
+
+    <div class="sec-title">Cloisons</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Cloison placo simple</div><div class="tcard-sub">BA13, montants métalliques</div></div><div class="tcard-badge">au m²</div></div>
+      <div class="tpx"><span class="tplbl">Fourchette</span><span class="tpval">45€ — 65€</span></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Cloison isolation phonique</div><div class="tcard-sub">Laine minérale, double plaque</div></div><div class="tcard-badge">au m²</div></div>
+      <div class="tpx"><span class="tplbl">Fourchette</span><span class="tpval">70€ — 100€</span></div>
+    </div>
+
+    <div class="sec-title">Plafonds</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Faux plafond</div><div class="tcard-sub">Ossature + plaque, isolation possible</div></div><div class="tcard-badge">au m²</div></div>
+      <div class="tpx"><span class="tplbl">Fourchette</span><span class="tpval">40€ — 60€</span></div>
+    </div>
+
+    <div class="sec-title">Doublage & finitions</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Doublage isolation thermique</div><div class="tcard-sub">Contre mur existant</div></div><div class="tcard-badge">au m²</div></div>
+      <div class="tpx"><span class="tplbl">Fourchette</span><span class="tpval">50€ — 75€</span></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Bandes et joints</div><div class="tcard-sub">Finition prête à peindre</div></div><div class="tcard-badge">au m²</div></div>
+      <div class="tpx"><span class="tplbl">Fourchette</span><span class="tpval">12€ — 20€</span></div>
+    </div>
+
+    <a class="twa" href="https://wa.me/33600000000?text=Bonjour%2C%20je%20souhaite%20un%20devis%20gratuit." target="_blank">📱 Devis gratuit sur WhatsApp</a>
+  </div>
+
+</div>
+
+<script>
+var WA = "33600000000";
+var API = "https://philo-backend-by2c.onrender.com";
+fetch(API + "/ping/cloison-pro").catch(function(){});
+
+var SYS = "Tu es l assistant virtuel d un plaquiste independant base a Tourcoing (zone Tourcoing, Roubaix, Lille, Wattrelos, Mouscron). Reponds en francais, ton direct et professionnel, sans jargon inutile. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras, pas de tirets listes - uniquement du texte simple et naturel. Ne donne JAMAIS un prix fixe et definitif: donne toujours une fourchette indicative au m2, en precisant que le devis exact est confirme apres visite sur place. TARIFS INDICATIFS: cloison placo simple 45 a 65 euros le m2. Cloison avec isolation phonique 70 a 100 euros le m2. Faux plafond 40 a 60 euros le m2. Doublage isolation thermique 50 a 75 euros le m2. Bandes et joints finition 12 a 20 euros le m2. Devis gratuit et sans engagement, deplacement offert dans un rayon de 30km. Pour les questions sur l isolation phonique entre logements, explique que le choix de la laine (epaisseur, densite) et le double parement font toute la difference, mais que le resultat exact depend de la structure existante donc une visite est recommandee. Toujours proposer de venir voir le chantier ou de faire un devis gratuit. Reponds de maniere concise, 2 a 4 phrases maximum.";
+
+var SYS_DEVIS = "Tu es un plaquiste professionnel expert. Le client demande un devis detaille. Tu dois repondre UNIQUEMENT en JSON valide avec ce format exact : {\"titre\":\"DEVIS CLOISON PLACO - 15M2\",\"materiaux\":[{\"label\":\"Plaques BA13\",\"detail\":\"20 unites\",\"prix\":\"180EUR\"},{\"label\":\"Montants et rails metalliques\",\"detail\":\"kit complet\",\"prix\":\"120EUR\"}],\"maindoeuvre\":[{\"label\":\"Pose ossature\",\"detail\":\"1 jour\",\"prix\":\"280EUR\"},{\"label\":\"Pose plaques et finitions\",\"detail\":\"1 jour\",\"prix\":\"280EUR\"}],\"total\":\"860EUR\",\"duree\":\"2 jours\"}. Regles: prix realistes marche francais pour un plaquiste (cloison simple 45 a 65 euros le m2, avec isolation phonique 70 a 100 euros le m2, faux plafond 40 a 60 euros le m2, doublage isolation 50 a 75 euros le m2), toujours arrondi vers le haut, materiaux coherents avec la demande (plaques BA13, ossature metallique, laine isolante si mentionne, bandes a joint). Reponds UNIQUEMENT avec le JSON, rien d autre.";
+
+var busy = false;
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+  if (n === "galerie") loadGalerie();
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🧱";
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    [["Tarifs","Combien coûte une cloison au m² ?"],["Isolation","Comment fonctionne l'isolation phonique ?"],["Délais","Quels sont vos délais ?"],["Devis","Comment se passe un devis ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "cloisonpro_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Contactez-nous directement sur WhatsApp.";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("devis") >= 0 || low.indexOf("prix") >= 0 || low.indexOf("rdv") >= 0 || low.indexOf("rendez") >= 0;
+    if (needWA) {
+      var wa = document.createElement("button");
+      wa.className = "wa-bubble";
+      wa.onclick = function(){ window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour, je souhaite un devis gratuit."), "_blank"); };
+      wa.textContent = "📱 Contacter sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion. Contactez-nous sur WhatsApp.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+// ── DEVIS IA ──
+function prevPhoto(input) {
+  var prev = document.getElementById("prev");
+  prev.innerHTML = "";
+  if (input.files[0]) {
+    var img = document.createElement("img");
+    img.src = URL.createObjectURL(input.files[0]);
+    prev.appendChild(img);
+  }
+}
+
+function afficherDevisCard(data, waMsg) {
+  setTyping(false);
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.style.maxWidth = "min(92%,380px)";
+
+  var card = document.createElement("div");
+  card.className = "devis-card";
+
+  var cardTitle = document.createElement("div");
+  cardTitle.className = "devis-card-title";
+  cardTitle.textContent = "🧱 " + (data.titre || "DEVIS ESTIMATIF");
+  card.appendChild(cardTitle);
+
+  if (data.materiaux && data.materiaux.length > 0) {
+    var secMat = document.createElement("div");
+    secMat.className = "devis-section";
+    secMat.textContent = "MATÉRIAUX";
+    card.appendChild(secMat);
+    data.materiaux.forEach(function(m){
+      var line = document.createElement("div");
+      line.className = "devis-line";
+      var label = document.createElement("div");
+      label.className = "devis-line-label";
+      label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+      var price = document.createElement("div");
+      price.className = "devis-line-price";
+      price.textContent = m.prix;
+      line.appendChild(label);
+      line.appendChild(price);
+      card.appendChild(line);
+    });
+  }
+
+  if (data.maindoeuvre && data.maindoeuvre.length > 0) {
+    var secMO = document.createElement("div");
+    secMO.className = "devis-section";
+    secMO.textContent = "MAIN D'ŒUVRE";
+    card.appendChild(secMO);
+    data.maindoeuvre.forEach(function(m){
+      var line = document.createElement("div");
+      line.className = "devis-line";
+      var label = document.createElement("div");
+      label.className = "devis-line-label";
+      label.textContent = m.label + (m.detail ? " — " + m.detail : "");
+      var price = document.createElement("div");
+      price.className = "devis-line-price";
+      price.textContent = m.prix;
+      line.appendChild(label);
+      line.appendChild(price);
+      card.appendChild(line);
+    });
+  }
+
+  var total = document.createElement("div");
+  total.className = "devis-total";
+  var totalLabel = document.createElement("div");
+  totalLabel.className = "devis-total-label";
+  totalLabel.textContent = data.duree ? "Total estimé (" + data.duree + ")" : "Total estimé";
+  var totalPrice = document.createElement("div");
+  totalPrice.className = "devis-total-price";
+  totalPrice.textContent = data.total || "Sur devis";
+  total.appendChild(totalLabel);
+  total.appendChild(totalPrice);
+  card.appendChild(total);
+
+  bub.appendChild(card);
+
+  var note = document.createElement("div");
+  note.style.cssText = "margin-top:8px;font-size:12px;color:#888;font-style:italic";
+  note.textContent = "Devis estimatif — confirmé gratuitement après visite sur place.";
+  bub.appendChild(note);
+
+  var waMsgFinal = waMsg + "\n\n💬 Devis estimé par l'IA :\n" + (data.titre || "") + "\nTotal : " + (data.total || "à confirmer") + " — " + (data.duree || "");
+  var wa = document.createElement("button");
+  wa.className = "wa-bubble";
+  wa.onclick = function(){ window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsgFinal), "_blank"); };
+  wa.textContent = "✅ Confirmer sur WhatsApp";
+  bub.appendChild(wa);
+
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+  busy = false;
+}
+
+function genDevis() {
+  var type = document.getElementById("devis-type").value;
+  var desc = document.getElementById("devis-desc").value.trim();
+  var surface = document.getElementById("devis-surface").value.trim();
+  if (!type && !desc) { alert("Décrivez votre projet avant de générer le devis."); return; }
+
+  var waMsg = "Bonjour, je souhaite un devis gratuit.\n\n";
+  if (type) waMsg += "Travaux : " + type + "\n";
+  if (desc) waMsg += "Description : " + desc + "\n";
+  if (surface) waMsg += "Surface : " + surface + "\n";
+
+  showTab(document.querySelectorAll(".tab")[0], "chat");
+  addUser("Devis pour : " + (type || desc) + (surface ? " — " + surface : ""));
+  busy = true;
+  setTyping(true);
+
+  var resume = "Genere un devis detaille pour ces travaux de plaquisterie :\n";
+  if (type) resume += "- Type : " + type + "\n";
+  if (desc) resume += "- Description : " + desc + "\n";
+  if (surface) resume += "- Surface : " + surface + "\n";
+  resume += "Inclus les materiaux professionnels avec quantites et prix, et la main d oeuvre. Prix marche francais, toujours arrondi vers le haut.";
+
+  var photoFile = document.getElementById("devis-photo").files[0];
+
+  function demanderDevisIA(promptFinal) {
+    fetch(API + "/vitrine", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: promptFinal, userId: "cloisonpro_devis_" + Date.now(), systemPrompt: SYS_DEVIS })
+    }).then(function(r){ return r.json(); })
+    .then(function(d){
+      try {
+        var raw = (d && d.answer) ? d.answer : "{}";
+        var clean = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+        var data = JSON.parse(clean);
+        afficherDevisCard(data, waMsg);
+      } catch(e) {
+        setTyping(false);
+        addBot("Je vais venir voir votre chantier pour vous faire un devis précis. Contactez-nous sur WhatsApp !");
+        busy = false;
+      }
+    }).catch(function(){
+      setTyping(false);
+      addBot("Erreur de connexion, réessayez.");
+      busy = false;
+    });
+  }
+
+  if (photoFile) {
+    var formData = new FormData();
+    formData.append("image", photoFile);
+    formData.append("prompt", "Analyse cette photo de piece ou mur et decris l etat de la structure existante pour aider a faire un devis plaquisterie : " + resume);
+    formData.append("userId", "cloisonpro_devis_" + Date.now());
+    fetch(API + "/analyze-image", { method: "POST", body: formData })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var analyse = (d && d.answer) ? d.answer : "";
+        demanderDevisIA(resume + "\n\nAnalyse photo : " + analyse);
+      }).catch(function(){
+        demanderDevisIA(resume);
+      });
+  } else {
+    demanderDevisIA(resume);
+  }
+}
+
+// ── GALERIE ──
+function loadGalerie() {
+  var list = document.getElementById("galerie-list");
+  list.innerHTML = '<div class="g-empty"><div class="g-empty-icon">⏳</div>Chargement...</div>';
+  fetch(API + "/memory/cloisonpro_galerie")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var chantiers = d.value || [];
+      if (chantiers.length === 0) {
+        list.innerHTML = '<div class="g-empty"><div class="g-empty-icon">🧱</div>Les réalisations arrivent bientôt !</div>';
+        return;
+      }
+      list.innerHTML = "";
+      chantiers.forEach(function(c){
+        var card = document.createElement("div");
+        card.className = "chantier-card";
+        var title = document.createElement("div");
+        title.className = "chantier-title";
+        title.textContent = c.titre || "Chantier";
+        var grid = document.createElement("div");
+        grid.className = "avant-apres";
+        var avant = document.createElement("div");
+        avant.className = "aa-side";
+        if (c.avant) {
+          var imgA = document.createElement("img");
+          imgA.className = "aa-img";
+          imgA.src = c.avant;
+          avant.appendChild(imgA);
+        } else {
+          var phA = document.createElement("div");
+          phA.className = "aa-placeholder";
+          phA.textContent = "🚧";
+          avant.appendChild(phA);
+        }
+        var badgeA = document.createElement("div");
+        badgeA.className = "aa-badge";
+        badgeA.textContent = "Avant";
+        avant.appendChild(badgeA);
+        var apres = document.createElement("div");
+        apres.className = "aa-side";
+        if (c.apres) {
+          var imgP = document.createElement("img");
+          imgP.className = "aa-img";
+          imgP.src = c.apres;
+          apres.appendChild(imgP);
+        } else {
+          var phP = document.createElement("div");
+          phP.className = "aa-placeholder";
+          phP.textContent = "🏠";
+          apres.appendChild(phP);
+        }
+        var badgeP = document.createElement("div");
+        badgeP.className = "aa-badge apres";
+        badgeP.textContent = "Après";
+        apres.appendChild(badgeP);
+        grid.appendChild(avant);
+        grid.appendChild(apres);
+        card.appendChild(title);
+        card.appendChild(grid);
+        list.appendChild(card);
+      });
+    }).catch(function(){
+      list.innerHTML = '<div class="g-empty"><div class="g-empty-icon">🧱</div>Les réalisations arrivent bientôt !</div>';
+    });
+}
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bonjour ! Je suis l'assistant de Cloison Pro, plaquiste basé à Tourcoing. Cloisons, isolation, faux plafonds... posez votre question 🧱", true);
+  }, 900);
+}, 2200);
+</script>
+</body>
+</html>
