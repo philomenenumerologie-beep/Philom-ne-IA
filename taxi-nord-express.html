@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Taxi Nord Express</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#0f1b33;font-family:'Inter',sans-serif;color:#111}
+
+:root{
+  --navy:#0f1b33;
+  --navy2:#182645;
+  --amber:#F5B921;
+  --amber2:#d9a10f;
+  --grey:#6b7280;
+  --border:rgba(0,0,0,.08);
+  --cream:#faf9f6;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:500;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:96px;height:96px;border-radius:20px;background:var(--amber);display:flex;align-items:center;justify-content:center;margin-bottom:22px;font-size:44px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both}
+.sp-name{font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;color:#fff;letter-spacing:.02em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both}
+.sp-sub{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+#demo-wm{position:fixed;bottom:10px;left:0;right:0;text-align:center;z-index:250;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,0,0,.28);font-weight:700;pointer-events:none}
+
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:#fff}
+
+/* TOPBAR */
+#topbar{background:var(--navy);padding:12px 16px 9px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.tb-av{width:38px;height:38px;border-radius:9px;background:var(--amber);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.tb-name{font-family:'Poppins',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:.01em}
+.tb-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
+.tb-dot{width:7px;height:7px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;flex-shrink:0}
+
+/* LANG SWITCH */
+#langsw{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.lang-btn{
+  padding:5px 8px;border-radius:7px;border:1.5px solid rgba(255,255,255,.15);
+  background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-weight:700;
+  cursor:pointer;font-family:'Inter',sans-serif;
+}
+.lang-btn.active{background:var(--amber);border-color:var(--amber);color:var(--navy)}
+
+/* TABS */
+#tabs{background:var(--navy);display:flex;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:var(--amber);border-bottom-color:var(--amber)}
+
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+
+/* ─── CHAT ─── */
+#page-chat{background:var(--cream)}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:30px;height:30px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:14px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.6;white-space:pre-wrap;border-radius:16px}
+.bub.bot{background:#fff;color:#111;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.bub.user{background:var(--navy);color:#fff;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:20px;border:1.5px solid var(--navy);background:transparent;color:var(--navy);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:16px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 20px;background:var(--cream);border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:24px;border:1.5px solid rgba(0,0,0,.14);background:#fff;font-size:15px;font-family:'Inter',sans-serif;outline:none;color:#111}
+#inp::placeholder{color:#aaa}
+#inp:focus{border-color:var(--navy)}
+#snd{width:44px;height:44px;border-radius:50%;border:none;background:var(--amber);color:var(--navy);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:10px;padding:11px;font-weight:700;font-size:13px;font-family:'Inter',sans-serif;margin-top:10px;border:none;width:100%;cursor:pointer}
+
+/* ─── TARIFS ─── */
+#page-tarifs{background:var(--cream);padding:16px 16px 24px}
+.sec-title{font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin:16px 0 10px}
+.sec-title:first-child{margin-top:0}
+.trip-card{background:#fff;border-radius:12px;border:1.5px solid var(--border);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.trip-ico{width:38px;height:38px;border-radius:9px;background:#fef6dc;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.trip-name{font-weight:700;font-size:13.5px;color:#111}
+.trip-desc{font-size:11px;color:var(--grey);margin-top:2px}
+.trip-price{font-family:'Poppins',sans-serif;font-size:16px;font-weight:800;color:var(--amber2);margin-left:auto;white-space:nowrap;flex-shrink:0}
+.base-card{background:var(--navy);border-radius:14px;padding:16px;margin-top:6px;color:#fff}
+.base-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,.1)}
+.base-row:last-child{border:none}
+.base-label{color:rgba(255,255,255,.6)}
+.base-val{font-weight:700;color:var(--amber)}
+
+/* ─── RESERVER ─── */
+#page-reserver{background:var(--cream);padding:16px 16px 24px}
+.res-label{font-size:12px;font-weight:700;color:#111;margin:16px 0 8px}
+.res-label:first-child{margin-top:0}
+.res-input,.res-select{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);font-size:14px;background:#fff;font-family:'Inter',sans-serif}
+.res-cta{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--amber);color:var(--navy);border-radius:12px;padding:15px;font-weight:700;font-size:14px;text-decoration:none;margin-top:20px}
+
+/* ─── CONTACT ─── */
+#page-contact{background:var(--cream);padding:16px 16px 32px}
+.contact-card{background:#fff;border-radius:12px;border:1.5px solid var(--border);padding:16px;margin-bottom:10px}
+.contact-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.contact-row:last-child{border:none}
+.contact-label{color:var(--grey)}
+.contact-val{font-weight:700;color:#111}
+.zone-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.zone-tag{background:#f2f2f4;border-radius:16px;padding:5px 11px;font-size:11px;font-weight:600;color:#333}
+.contact-call{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--amber);color:var(--navy);border-radius:12px;padding:14px;font-weight:700;font-size:14px;text-decoration:none;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">🚕</div>
+  <div class="sp-name" id="sp-name">Taxi Nord Express</div>
+  <div class="sp-sub" id="sp-sub">Tourcoing · Mouscron · Lille</div>
+</div>
+<div id="demo-wm">Démo</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🚕</div>
+    <div>
+      <div class="tb-name">Taxi Nord Express</div>
+      <div class="tb-sub" id="tb-sub">Assistant IA · 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+    <div id="langsw">
+      <button class="lang-btn active" id="lang-fr" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" id="lang-nl" onclick="setLang('nl')">NL</button>
+      <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span><span id="tab-chat">Assistant</span></button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💶</span><span id="tab-tarifs">Tarifs</span></button>
+    <button class="tab" onclick="showTab(this,'reserver')"><span>🚕</span><span id="tab-reserver">Réserver</span></button>
+    <button class="tab" onclick="showTab(this,'contact')"><span>📍</span><span id="tab-contact">Contact</span></button>
+  </div>
+
+  <!-- ─── CHAT ─── -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TARIFS ─── -->
+  <div id="page-tarifs" class="page">
+    <div class="base-card">
+      <div class="base-row"><span class="base-label" id="t-prise">Prise en charge</span><span class="base-val">3,00€</span></div>
+      <div class="base-row"><span class="base-label" id="t-km">Prix au km</span><span class="base-val">1,80€</span></div>
+      <div class="base-row"><span class="base-label" id="t-attente">Attente / heure</span><span class="base-val">25,00€</span></div>
+      <div class="base-row"><span class="base-label" id="t-nuit">Majoration nuit / dimanche</span><span class="base-val">+30%</span></div>
+    </div>
+
+    <div class="sec-title" id="sec-forfaits">Trajets forfaitaires</div>
+    <div class="trip-card">
+      <div class="trip-ico">✈️</div>
+      <div><div class="trip-name">Lille — Aéroport Lesquin</div><div class="trip-desc" id="d1">Trajet fixe, bagages inclus</div></div>
+      <div class="trip-price">35€</div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-ico">✈️</div>
+      <div><div class="trip-name">Aéroport Bruxelles</div><div class="trip-desc" id="d2">Trajet fixe, bagages inclus</div></div>
+      <div class="trip-price">95€</div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-ico">🚉</div>
+      <div><div class="trip-name">Gare Lille Flandres</div><div class="trip-desc" id="d3">Trajet fixe</div></div>
+      <div class="trip-price">28€</div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-ico">🚉</div>
+      <div><div class="trip-name">Gare Courtrai / Kortrijk</div><div class="trip-desc" id="d4">Trajet fixe</div></div>
+      <div class="trip-price">22€</div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-ico">🏙️</div>
+      <div><div class="trip-name">Tournai centre</div><div class="trip-desc" id="d5">Trajet fixe</div></div>
+      <div class="trip-price">30€</div>
+    </div>
+  </div>
+
+  <!-- ─── RESERVER ─── -->
+  <div id="page-reserver" class="page">
+    <div class="res-label" id="l-depart">Adresse de départ</div>
+    <input class="res-input" id="res-depart" type="text" placeholder="Ex : 12 rue de Lille, Tourcoing"/>
+
+    <div class="res-label" id="l-dest">Destination</div>
+    <input class="res-input" id="res-dest" type="text" placeholder="Ex : Aéroport de Lille, Gare de Lille..."/>
+
+    <div class="res-label" id="l-date">Date et heure</div>
+    <input class="res-input" id="res-date" type="text" placeholder="Ex : Samedi 14h30"/>
+
+    <div class="res-label" id="l-pax">Nombre de passagers</div>
+    <select class="res-select" id="res-pax">
+      <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+    </select>
+
+    <a class="res-cta" id="res-cta-btn" href="#" target="_blank">📱 Confirmer sur WhatsApp</a>
+  </div>
+
+  <!-- ─── CONTACT ─── -->
+  <div id="page-contact" class="page">
+    <div class="contact-card">
+      <div class="contact-row"><span class="contact-label" id="c-tel">Téléphone</span><span class="contact-val">06 00 00 00 00</span></div>
+      <div class="contact-row"><span class="contact-label" id="c-dispo">Disponibilité</span><span class="contact-val">24h/24 · 7j/7</span></div>
+      <div class="contact-row"><span class="contact-label" id="c-langues">Langues parlées</span><span class="contact-val">FR · NL · EN</span></div>
+    </div>
+    <div class="contact-card">
+      <div style="font-size:12px;font-weight:700;color:#111;margin-bottom:6px" id="c-zone">Zone desservie</div>
+      <div class="zone-tags">
+        <span class="zone-tag">Tourcoing</span>
+        <span class="zone-tag">Mouscron</span>
+        <span class="zone-tag">Lille</span>
+        <span class="zone-tag">Roubaix</span>
+        <span class="zone-tag">Courtrai</span>
+        <span class="zone-tag">Tournai</span>
+      </div>
+    </div>
+    <a class="contact-call" id="c-call" href="tel:+33600000000">📞 Appeler maintenant</a>
+  </div>
+
+</div>
+
+<script>
+var WA = "33600000000";
+var API = "https://philo-backend-by2c.onrender.com";
+fetch(API + "/ping/taxi-nord-express").catch(function(){});
+
+var currentLang = "fr";
+
+var I18N = {
+  fr: {
+    tbSub: "Assistant IA · 24h/24",
+    spSub: "Tourcoing · Mouscron · Lille",
+    tabChat: "Assistant", tabTarifs: "Tarifs", tabReserver: "Réserver", tabContact: "Contact",
+    tPrise: "Prise en charge", tKm: "Prix au km", tAttente: "Attente / heure", tNuit: "Majoration nuit / dimanche",
+    secForfaits: "Trajets forfaitaires",
+    d1: "Trajet fixe, bagages inclus", d2: "Trajet fixe, bagages inclus", d3: "Trajet fixe", d4: "Trajet fixe", d5: "Trajet fixe",
+    lDepart: "Adresse de départ", pDepart: "Ex : 12 rue de Lille, Tourcoing",
+    lDest: "Destination", pDest: "Ex : Aéroport de Lille, Gare de Lille...",
+    lDate: "Date et heure", pDate: "Ex : Samedi 14h30",
+    lPax: "Nombre de passagers",
+    resCta: "📱 Confirmer sur WhatsApp",
+    inpPh: "Posez votre question...",
+    cTel: "Téléphone", cDispo: "Disponibilité", cLangues: "Langues parlées", cZone: "Zone desservie", cCall: "📞 Appeler maintenant",
+    welcome: "Bonjour ! Je suis l'assistant de Taxi Nord Express. Tarifs, réservation, trajets aéroport/gare... posez votre question 🚕",
+    q1: "Tarifs", q1msg: "Quels sont vos tarifs ?",
+    q2: "Aéroport", q2msg: "Combien coûte un trajet vers l'aéroport de Lille ?",
+    q3: "Réserver", q3msg: "Comment réserver un taxi ?",
+    q4: "Langues", q4msg: "Vous parlez quelles langues ?",
+    resWaMsg: "Bonjour, je souhaite réserver un taxi.",
+    resDepartLbl: "Départ", resDestLbl: "Destination", resDateLbl: "Date/heure", resPaxLbl: "Passagers"
+  },
+  nl: {
+    tbSub: "AI-assistent · 24u/24",
+    spSub: "Tourcoing · Moeskroen · Rijsel",
+    tabChat: "Assistent", tabTarifs: "Tarieven", tabReserver: "Boeken", tabContact: "Contact",
+    tPrise: "Instaptarief", tKm: "Prijs per km", tAttente: "Wachttijd / uur", tNuit: "Toeslag nacht / zondag",
+    secForfaits: "Vaste ritten",
+    d1: "Vaste prijs, bagage inbegrepen", d2: "Vaste prijs, bagage inbegrepen", d3: "Vaste prijs", d4: "Vaste prijs", d5: "Vaste prijs",
+    lDepart: "Vertrekadres", pDepart: "Bv: Rijselstraat 12, Tourcoing",
+    lDest: "Bestemming", pDest: "Bv: Luchthaven Rijsel, Station Rijsel...",
+    lDate: "Datum en uur", pDate: "Bv: Zaterdag 14u30",
+    lPax: "Aantal passagiers",
+    resCta: "📱 Bevestigen via WhatsApp",
+    inpPh: "Stel uw vraag...",
+    cTel: "Telefoon", cDispo: "Beschikbaarheid", cLangues: "Gesproken talen", cZone: "Werkgebied", cCall: "📞 Nu bellen",
+    welcome: "Hallo! Ik ben de assistent van Taxi Nord Express. Tarieven, boeking, ritten naar luchthaven/station... stel gerust uw vraag 🚕",
+    q1: "Tarieven", q1msg: "Wat zijn uw tarieven?",
+    q2: "Luchthaven", q2msg: "Hoeveel kost een rit naar de luchthaven van Rijsel?",
+    q3: "Boeken", q3msg: "Hoe boek ik een taxi?",
+    q4: "Talen", q4msg: "Welke talen spreekt u?",
+    resWaMsg: "Hallo, ik wil graag een taxi boeken.",
+    resDepartLbl: "Vertrek", resDestLbl: "Bestemming", resDateLbl: "Datum/uur", resPaxLbl: "Passagiers"
+  },
+  en: {
+    tbSub: "AI Assistant · 24/7",
+    spSub: "Tourcoing · Mouscron · Lille",
+    tabChat: "Assistant", tabTarifs: "Rates", tabReserver: "Book", tabContact: "Contact",
+    tPrise: "Base fare", tKm: "Price per km", tAttente: "Waiting / hour", tNuit: "Night / Sunday surcharge",
+    secForfaits: "Fixed-rate trips",
+    d1: "Fixed price, luggage included", d2: "Fixed price, luggage included", d3: "Fixed price", d4: "Fixed price", d5: "Fixed price",
+    lDepart: "Pickup address", pDepart: "E.g. 12 Rue de Lille, Tourcoing",
+    lDest: "Destination", pDest: "E.g. Lille Airport, Lille Station...",
+    lDate: "Date and time", pDate: "E.g. Saturday 2:30pm",
+    lPax: "Number of passengers",
+    resCta: "📱 Confirm on WhatsApp",
+    inpPh: "Ask your question...",
+    cTel: "Phone", cDispo: "Availability", cLangues: "Languages spoken", cZone: "Service area", cCall: "📞 Call now",
+    welcome: "Hello! I'm the Taxi Nord Express assistant. Rates, booking, airport/station transfers... ask away 🚕",
+    q1: "Rates", q1msg: "What are your rates?",
+    q2: "Airport", q2msg: "How much does a trip to Lille airport cost?",
+    q3: "Book", q3msg: "How do I book a taxi?",
+    q4: "Languages", q4msg: "What languages do you speak?",
+    resWaMsg: "Hello, I would like to book a taxi.",
+    resDepartLbl: "Pickup", resDestLbl: "Destination", resDateLbl: "Date/time", resPaxLbl: "Passengers"
+  }
+};
+
+var SYS_BY_LANG = {
+  fr: "Tu es l assistant virtuel de Taxi Nord Express, service de taxi base a Tourcoing (zone Tourcoing, Mouscron, Lille, Roubaix, Courtrai, Tournai). Reponds UNIQUEMENT en francais. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras - texte simple et naturel. TARIFS: prise en charge 3 euros, 1,80 euro par km, attente 25 euros de l heure, majoration de 30 pourcent la nuit et le dimanche. TRAJETS FIXES: Lille aeroport Lesquin 35 euros, aeroport Bruxelles 95 euros, gare Lille Flandres 28 euros, gare Courtrai 22 euros, Tournai centre 30 euros. Le chauffeur parle francais, neerlandais et anglais. Toujours proposer de reserver via l onglet Reserver ou WhatsApp. Reponds de maniere concise, 2 a 4 phrases maximum.",
+  nl: "Je bent de virtuele assistent van Taxi Nord Express, een taxidienst gevestigd in Tourcoing (regio Tourcoing, Moeskroen, Rijsel, Roubaix, Kortrijk, Doornik). Antwoord UITSLUITEND in het Nederlands. BELANGRIJK: gebruik NOOIT markdown, geen sterretjes, geen vetgedrukte tekst - eenvoudige natuurlijke tekst. TARIEVEN: instaptarief 3 euro, 1,80 euro per km, wachttijd 25 euro per uur, toeslag van 30 procent 's nachts en op zondag. VASTE RITTEN: Rijsel luchthaven Lesquin 35 euro, luchthaven Brussel 95 euro, station Rijsel Flandres 28 euro, station Kortrijk 22 euro, Doornik centrum 30 euro. De chauffeur spreekt Frans, Nederlands en Engels. Stel altijd voor om te boeken via het tabblad Boeken of WhatsApp. Antwoord beknopt, maximaal 2 tot 4 zinnen.",
+  en: "You are the virtual assistant for Taxi Nord Express, a taxi service based in Tourcoing (Tourcoing, Mouscron, Lille, Roubaix, Kortrijk, Tournai area). Reply ONLY in English. IMPORTANT: NEVER use markdown, no asterisks, no bold text - simple natural text. RATES: base fare 3 euros, 1.80 euros per km, waiting time 25 euros per hour, 30 percent surcharge at night and on Sundays. FIXED TRIPS: Lille Lesquin airport 35 euros, Brussels airport 95 euros, Lille Flandres station 28 euros, Kortrijk station 22 euros, Tournai centre 30 euros. The driver speaks French, Dutch and English. Always suggest booking via the Book tab or WhatsApp. Keep answers concise, 2 to 4 sentences maximum."
+};
+
+var busy = false;
+
+function setLang(lang) {
+  currentLang = lang;
+  var t = I18N[lang];
+  document.getElementById("lang-fr").classList.toggle("active", lang === "fr");
+  document.getElementById("lang-nl").classList.toggle("active", lang === "nl");
+  document.getElementById("lang-en").classList.toggle("active", lang === "en");
+
+  document.getElementById("tb-sub").textContent = t.tbSub;
+  document.getElementById("sp-sub").textContent = t.spSub;
+  document.getElementById("tab-chat").textContent = t.tabChat;
+  document.getElementById("tab-tarifs").textContent = t.tabTarifs;
+  document.getElementById("tab-reserver").textContent = t.tabReserver;
+  document.getElementById("tab-contact").textContent = t.tabContact;
+
+  document.getElementById("t-prise").textContent = t.tPrise;
+  document.getElementById("t-km").textContent = t.tKm;
+  document.getElementById("t-attente").textContent = t.tAttente;
+  document.getElementById("t-nuit").textContent = t.tNuit;
+  document.getElementById("sec-forfaits").textContent = t.secForfaits;
+  document.getElementById("d1").textContent = t.d1;
+  document.getElementById("d2").textContent = t.d2;
+  document.getElementById("d3").textContent = t.d3;
+  document.getElementById("d4").textContent = t.d4;
+  document.getElementById("d5").textContent = t.d5;
+
+  document.getElementById("l-depart").textContent = t.lDepart;
+  document.getElementById("res-depart").placeholder = t.pDepart;
+  document.getElementById("l-dest").textContent = t.lDest;
+  document.getElementById("res-dest").placeholder = t.pDest;
+  document.getElementById("l-date").textContent = t.lDate;
+  document.getElementById("res-date").placeholder = t.pDate;
+  document.getElementById("l-pax").textContent = t.lPax;
+
+  document.getElementById("c-tel").textContent = t.cTel;
+  document.getElementById("c-dispo").textContent = t.cDispo;
+  document.getElementById("c-langues").textContent = t.cLangues;
+  document.getElementById("c-zone").textContent = t.cZone;
+  document.getElementById("c-call").textContent = t.cCall;
+
+  document.getElementById("inp").placeholder = t.inpPh;
+
+  renderQuickReplies();
+  updateResCta();
+}
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🚕";
+  return av;
+}
+
+var welcomeMsgEl = null;
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    qw.id = "qbtns-welcome";
+    row.qw = qw;
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  if (withQ) { welcomeMsgEl = row; renderQuickReplies(); }
+  scrollChat();
+}
+
+function renderQuickReplies() {
+  if (!welcomeMsgEl) return;
+  var qw = welcomeMsgEl.querySelector("#qbtns-welcome");
+  if (!qw) return;
+  var t = I18N[currentLang];
+  qw.innerHTML = "";
+  [[t.q1, t.q1msg], [t.q2, t.q2msg], [t.q3, t.q3msg], [t.q4, t.q4msg]].forEach(function(it){
+    var b = document.createElement("button");
+    b.className = "qb";
+    b.textContent = it[0];
+    (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+    qw.appendChild(b);
+  });
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "taxi_" + Date.now(), systemPrompt: SYS_BY_LANG[currentLang] })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Contact us directly on WhatsApp.";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    var needWA = low.indexOf("book") >= 0 || low.indexOf("reserv") >= 0 || low.indexOf("boek") >= 0;
+    if (needWA) {
+      var wa = document.createElement("button");
+      wa.className = "wa-bubble";
+      wa.onclick = function(){ window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(I18N[currentLang].resWaMsg), "_blank"); };
+      wa.textContent = "📱 WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Connection error. Contact us on WhatsApp.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+// ── RESERVATION ──
+["res-depart","res-dest","res-date","res-pax"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", updateResCta);
+  document.getElementById(id).addEventListener("change", updateResCta);
+});
+
+function updateResCta() {
+  var t = I18N[currentLang];
+  var depart = document.getElementById("res-depart").value.trim();
+  var dest = document.getElementById("res-dest").value.trim();
+  var date = document.getElementById("res-date").value.trim();
+  var pax = document.getElementById("res-pax").value;
+  var msg = t.resWaMsg + "\n\n";
+  if (depart) msg += t.resDepartLbl + " : " + depart + "\n";
+  if (dest) msg += t.resDestLbl + " : " + dest + "\n";
+  if (date) msg += t.resDateLbl + " : " + date + "\n";
+  msg += t.resPaxLbl + " : " + pax;
+  document.getElementById("res-cta-btn").href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+  document.getElementById("res-cta-btn").textContent = t.resCta;
+}
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot(I18N.fr.welcome, true);
+    updateResCta();
+  }, 900);
+}, 2200);
+</script>
+</body>
+</html>
