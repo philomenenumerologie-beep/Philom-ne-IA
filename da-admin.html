@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>DIRECT ACTION — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#1C1C1C;font-family:'Space Mono',monospace;color:#F0EDE8}
+:root{
+  --beton:#1C1C1C;--beton2:#252525;--beton3:#2E2E2E;
+  --papier:#F0EDE8;--encre:#0A0A0A;--orange:#C94F1A;--orange2:#E05A20;
+  --gris:#6B6B6B;--gris2:#4A4A4A;
+}
+
+/* LOGIN */
+#login{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;gap:18px;
+}
+#login .lg-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:34px;
+  letter-spacing:.05em;text-transform:uppercase;text-align:center;
+}
+#login .lg-title span{color:var(--orange)}
+#login input{
+  width:100%;max-width:280px;padding:13px 15px;
+  background:var(--beton2);border:1px solid var(--beton3);border-bottom:2px solid var(--gris2);
+  color:var(--papier);font-family:'Space Mono',monospace;font-size:14px;outline:none;
+}
+#login button{
+  width:100%;max-width:280px;padding:14px;border:none;
+  background:var(--orange);color:#fff;font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+}
+#login .lg-err{color:var(--orange);font-size:11px;display:none}
+
+/* APP */
+#app{display:none;max-width:520px;margin:0 auto;min-height:100vh;flex-direction:column}
+#app.show{display:flex}
+
+#topbar{background:var(--encre);padding:16px;flex-shrink:0}
+#topbar h1{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+#topbar h1 span{color:var(--orange)}
+#topbar p{font-size:9px;letter-spacing:.2em;color:var(--gris);text-transform:uppercase;margin-top:3px}
+
+#tabs{background:var(--beton2);display:flex;border-bottom:1px solid var(--beton3);flex-shrink:0;position:sticky;top:0;z-index:10}
+.tab{
+  flex:1;padding:12px 2px;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gris2);border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;
+}
+.tab.active{color:var(--papier);border-bottom-color:var(--orange)}
+
+.page{display:none;flex-direction:column;padding:16px;gap:14px}
+.page.active{display:flex}
+
+.sec-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;
+  letter-spacing:.05em;text-transform:uppercase;border-bottom:2px solid var(--orange);padding-bottom:6px;
+}
+
+.card{background:var(--beton2);border-left:3px solid var(--orange);padding:14px;display:flex;flex-direction:column;gap:8px}
+.card.past{border-left-color:var(--gris2);opacity:.6}
+.card-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase}
+.card-meta{font-size:10px;color:var(--gris);line-height:1.5}
+.card-actions{display:flex;gap:8px;flex-shrink:0}
+.icon-btn{
+  width:30px;height:30px;border:1px solid var(--gris2);background:transparent;color:var(--papier);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;
+}
+.icon-btn.danger{border-color:var(--orange);color:var(--orange)}
+
+.lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.f-input,.f-select,.f-textarea{
+  width:100%;padding:10px 12px;background:var(--encre);border:1px solid var(--beton3);border-bottom:2px solid var(--gris2);
+  color:var(--papier);font-family:'Space Mono',monospace;font-size:12px;outline:none;-webkit-appearance:none;
+}
+.f-textarea{resize:none;height:70px}
+.f-group{display:flex;flex-direction:column;margin-bottom:10px}
+.f-row{display:flex;gap:8px}
+.f-row .f-group{flex:1}
+
+.form-card{background:var(--beton2);border:1px dashed var(--gris2);padding:16px}
+.form-card h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;color:var(--orange);margin-bottom:12px}
+
+.btn{
+  padding:13px;border:none;background:var(--orange);color:#fff;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.08em;
+  text-transform:uppercase;cursor:pointer;width:100%;
+}
+.btn.secondary{background:transparent;border:1px solid var(--gris2);color:var(--gris)}
+
+.add-btn{
+  padding:12px;border:1px dashed var(--orange);background:transparent;color:var(--orange);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;cursor:pointer;width:100%;
+}
+
+.photo-up-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.photo-up-item{position:relative}
+.photo-up-item img{width:100%;height:110px;object-fit:cover;border:1px solid var(--beton3)}
+.photo-up-item .icon-btn{position:absolute;top:5px;right:5px;background:var(--encre)}
+
+.empty{font-size:12px;color:var(--gris);text-align:center;padding:30px 10px}
+.saving{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;padding:8px 16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;display:none;z-index:50}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="lg-title">DIRECT<br/><span>ACTION</span></div>
+  <div style="font-size:9px;letter-spacing:.3em;color:var(--gris);text-transform:uppercase;margin-top:-10px">Espace Admin</div>
+  <input id="pwd" type="password" placeholder="Mot de passe" autocomplete="off"/>
+  <button onclick="tryLogin()">Entrer</button>
+  <div class="lg-err" id="lg-err">Mot de passe incorrect.</div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <h1>DIRECT <span>ACTION</span></h1>
+    <p>Espace admin · Philomène IA</p>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'dates')">Dates</button>
+    <button class="tab" onclick="showTab(this,'disco')">Disco</button>
+    <button class="tab" onclick="showTab(this,'photos')">Photos</button>
+    <button class="tab" onclick="showTab(this,'booking')">Booking</button>
+  </div>
+
+  <!-- DATES -->
+  <div id="page-dates" class="page active">
+    <div class="sec-title">Dates</div>
+    <div id="dates-cards"></div>
+
+    <div class="form-card" id="date-form-card" style="display:none">
+      <h4 id="date-form-title">Nouvelle date</h4>
+      <div class="f-row">
+        <div class="f-group">
+          <div class="lbl">Jour</div>
+          <input class="f-input" id="d-day" placeholder="12"/>
+        </div>
+        <div class="f-group">
+          <div class="lbl">Mois</div>
+          <input class="f-input" id="d-month" placeholder="JUIL"/>
+        </div>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Titre événement</div>
+        <input class="f-input" id="d-title" placeholder="Hardcore Fest Mouscron"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Lieu</div>
+        <input class="f-input" id="d-venue" placeholder="La Malterie — Mouscron, Belgique"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Heure (optionnel)</div>
+        <input class="f-input" id="d-time" placeholder="20h00"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Statut</div>
+        <select class="f-select" id="d-status">
+          <option value="confirmed">Confirmé (à venir)</option>
+          <option value="past">Terminé (passé)</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="saveDate()">Enregistrer</button>
+        <button class="btn secondary" onclick="closeDateForm()">Annuler</button>
+      </div>
+    </div>
+    <button class="add-btn" id="date-add-btn" onclick="openDateForm()">+ Ajouter une date</button>
+  </div>
+
+  <!-- DISCO -->
+  <div id="page-disco" class="page">
+    <div class="sec-title">Discographie</div>
+    <div id="disco-cards"></div>
+
+    <div class="form-card" id="disco-form-card" style="display:none">
+      <h4 id="disco-form-title">Nouvelle sortie</h4>
+      <div class="f-row">
+        <div class="f-group">
+          <div class="lbl">Type</div>
+          <input class="f-input" id="r-type" placeholder="LP / EP / Single"/>
+        </div>
+        <div class="f-group">
+          <div class="lbl">Date sortie</div>
+          <input class="f-input" id="r-date" placeholder="30 Jan 2026"/>
+        </div>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Label / Référence</div>
+        <input class="f-input" id="r-label" placeholder="WTF Records (WTF-088)"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Titre</div>
+        <input class="f-input" id="r-title" placeholder="Turning Point"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Description / Tracklist</div>
+        <textarea class="f-textarea" id="r-desc" placeholder="200 exemplaires vinyle jaune flame..."></textarea>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Lien Bandcamp (optionnel)</div>
+        <input class="f-input" id="r-bandcamp" placeholder="https://socialanxiety1.bandcamp.com"/>
+      </div>
+      <div class="f-group">
+        <div class="lbl">Pochette</div>
+        <input class="f-input" type="file" accept="image/*" id="r-cover-file" onchange="previewCover(this)"/>
+        <img id="r-cover-preview" style="max-width:100px;margin-top:8px;display:none;border:1px solid var(--beton3)"/>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="saveRelease()">Enregistrer</button>
+        <button class="btn secondary" onclick="closeDiscoForm()">Annuler</button>
+      </div>
+    </div>
+    <button class="add-btn" id="disco-add-btn" onclick="openDiscoForm()">+ Ajouter une sortie</button>
+  </div>
+
+  <!-- PHOTOS -->
+  <div id="page-photos" class="page">
+    <div class="sec-title">Photos du groupe</div>
+    <div class="photo-up-grid" id="photos-grid"></div>
+    <input type="file" accept="image/*" multiple id="photo-file" style="display:none" onchange="addPhotos(this)"/>
+    <button class="add-btn" onclick="document.getElementById('photo-file').click()">+ Ajouter des photos</button>
+  </div>
+
+  <!-- BOOKING -->
+  <div id="page-booking" class="page">
+    <div class="sec-title">Demandes de booking</div>
+    <div id="booking-cards"></div>
+  </div>
+</div>
+
+<div class="saving" id="saving">Enregistrement...</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var PWD = "direct2026";
+var DATA = { dates: [], disco: [], photos: [], booking: [] };
+var editingDateId = null;
+var editingDiscoId = null;
+
+function tryLogin() {
+  var v = document.getElementById("pwd").value.trim();
+  if (v === PWD) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").classList.add("show");
+    loadAll();
+  } else {
+    document.getElementById("lg-err").style.display = "block";
+  }
+}
+document.getElementById("pwd").addEventListener("keydown", function(e){ if (e.key === "Enter") tryLogin(); });
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+}
+
+function esc(s) { var d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+function uid(p) { return p + "_" + Date.now() + Math.floor(Math.random()*1000); }
+
+function showSaving() {
+  var el = document.getElementById("saving");
+  el.style.display = "block";
+  setTimeout(function(){ el.style.display = "none"; }, 1200);
+}
+
+function apiGet(key) {
+  return fetch(API + "/memory/" + key).then(function(r){ return r.json(); }).then(function(d){ return (d && d.value) || []; }).catch(function(){ return []; });
+}
+function apiSet(key, value) {
+  showSaving();
+  return fetch(API + "/memory/" + key, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value: value })
+  }).catch(function(){});
+}
+
+function loadAll() {
+  apiGet("direct_action_dates").then(function(v){ DATA.dates = v; renderDates(); });
+  apiGet("direct_action_disco").then(function(v){ DATA.disco = v; renderDisco(); });
+  apiGet("direct_action_photos").then(function(v){ DATA.photos = v; renderPhotos(); });
+  apiGet("direct_action_booking").then(function(v){ DATA.booking = v; renderBooking(); });
+}
+
+/* ===== DATES ===== */
+function renderDates() {
+  var el = document.getElementById("dates-cards");
+  if (!DATA.dates.length) { el.innerHTML = '<div class="empty">Aucune date pour l\'instant.</div>'; return; }
+  var html = "";
+  DATA.dates.forEach(function(c){
+    var isPast = c.status === "past";
+    html += '<div class="card' + (isPast ? ' past' : '') + '">' +
+      '<div class="card-row"><div>' +
+      '<div class="card-title">' + esc(c.day) + ' ' + esc(c.month) + ' — ' + esc(c.title) + '</div>' +
+      '<div class="card-meta">' + esc(c.venue) + (c.time ? " · " + esc(c.time) : "") + '<br/>' + (isPast ? "Terminé" : "Confirmé") + '</div>' +
+      '</div><div class="card-actions">' +
+      '<button class="icon-btn" onclick="editDate(\'' + c.id + '\')">✎</button>' +
+      '<button class="icon-btn danger" onclick="deleteDate(\'' + c.id + '\')">✕</button>' +
+      '</div></div></div>';
+  });
+  el.innerHTML = html;
+}
+
+function openDateForm() {
+  editingDateId = null;
+  document.getElementById("date-form-title").textContent = "Nouvelle date";
+  ["d-day","d-month","d-title","d-venue","d-time"].forEach(function(id){ document.getElementById(id).value = ""; });
+  document.getElementById("d-status").value = "confirmed";
+  document.getElementById("date-form-card").style.display = "flex";
+  document.getElementById("date-form-card").style.flexDirection = "column";
+  document.getElementById("date-add-btn").style.display = "none";
+}
+function closeDateForm() {
+  document.getElementById("date-form-card").style.display = "none";
+  document.getElementById("date-add-btn").style.display = "block";
+}
+function editDate(id) {
+  var c = DATA.dates.find(function(x){ return x.id === id; });
+  if (!c) return;
+  editingDateId = id;
+  document.getElementById("date-form-title").textContent = "Modifier la date";
+  document.getElementById("d-day").value = c.day || "";
+  document.getElementById("d-month").value = c.month || "";
+  document.getElementById("d-title").value = c.title || "";
+  document.getElementById("d-venue").value = c.venue || "";
+  document.getElementById("d-time").value = c.time || "";
+  document.getElementById("d-status").value = c.status || "confirmed";
+  document.getElementById("date-form-card").style.display = "flex";
+  document.getElementById("date-form-card").style.flexDirection = "column";
+  document.getElementById("date-add-btn").style.display = "none";
+}
+function saveDate() {
+  var day = document.getElementById("d-day").value.trim();
+  var month = document.getElementById("d-month").value.trim().toUpperCase();
+  var title = document.getElementById("d-title").value.trim();
+  var venue = document.getElementById("d-venue").value.trim();
+  var time = document.getElementById("d-time").value.trim();
+  var status = document.getElementById("d-status").value;
+  if (!day || !month || !title || !venue) { alert("Jour, mois, titre et lieu sont obligatoires."); return; }
+  if (editingDateId) {
+    var c = DATA.dates.find(function(x){ return x.id === editingDateId; });
+    c.day = day; c.month = month; c.title = title; c.venue = venue; c.time = time; c.status = status;
+  } else {
+    DATA.dates.push({ id: uid("dt"), day: day, month: month, title: title, venue: venue, time: time, status: status });
+  }
+  apiSet("direct_action_dates", DATA.dates);
+  renderDates();
+  closeDateForm();
+}
+function deleteDate(id) {
+  if (!confirm("Supprimer cette date ?")) return;
+  DATA.dates = DATA.dates.filter(function(x){ return x.id !== id; });
+  apiSet("direct_action_dates", DATA.dates);
+  renderDates();
+}
+
+/* ===== DISCO ===== */
+function renderDisco() {
+  var el = document.getElementById("disco-cards");
+  if (!DATA.disco.length) { el.innerHTML = '<div class="empty">Aucune sortie pour l\'instant.</div>'; return; }
+  var html = "";
+  DATA.disco.forEach(function(r){
+    html += '<div class="card">' +
+      '<div class="card-row"><div style="display:flex;gap:10px;align-items:flex-start">' +
+      (r.cover ? '<img src="' + r.cover + '" style="width:44px;height:44px;object-fit:cover;flex-shrink:0"/>' : '') +
+      '<div><div class="card-title">' + esc(r.title) + '</div>' +
+      '<div class="card-meta">' + esc(r.type) + ' · ' + esc(r.date) + ' · ' + esc(r.label) + '</div></div>' +
+      '</div><div class="card-actions">' +
+      '<button class="icon-btn" onclick="editRelease(\'' + r.id + '\')">✎</button>' +
+      '<button class="icon-btn danger" onclick="deleteRelease(\'' + r.id + '\')">✕</button>' +
+      '</div></div></div>';
+  });
+  el.innerHTML = html;
+}
+
+var pendingCover = null;
+function previewCover(input) {
+  var file = input.files[0];
+  if (!file) return;
+  compressImage(file, 500, 0.75, function(dataUrl){
+    pendingCover = dataUrl;
+    var pv = document.getElementById("r-cover-preview");
+    pv.src = dataUrl;
+    pv.style.display = "block";
+  });
+}
+
+function openDiscoForm() {
+  editingDiscoId = null;
+  pendingCover = null;
+  document.getElementById("disco-form-title").textContent = "Nouvelle sortie";
+  ["r-type","r-date","r-label","r-title","r-desc","r-bandcamp"].forEach(function(id){ document.getElementById(id).value = ""; });
+  document.getElementById("r-cover-preview").style.display = "none";
+  document.getElementById("disco-form-card").style.display = "block";
+  document.getElementById("disco-add-btn").style.display = "none";
+}
+function closeDiscoForm() {
+  document.getElementById("disco-form-card").style.display = "none";
+  document.getElementById("disco-add-btn").style.display = "block";
+}
+function editRelease(id) {
+  var r = DATA.disco.find(function(x){ return x.id === id; });
+  if (!r) return;
+  editingDiscoId = id;
+  pendingCover = r.cover || null;
+  document.getElementById("disco-form-title").textContent = "Modifier la sortie";
+  document.getElementById("r-type").value = r.type || "";
+  document.getElementById("r-date").value = r.date || "";
+  document.getElementById("r-label").value = r.label || "";
+  document.getElementById("r-title").value = r.title || "";
+  document.getElementById("r-desc").value = r.desc || "";
+  document.getElementById("r-bandcamp").value = r.bandcamp || "";
+  var pv = document.getElementById("r-cover-preview");
+  if (r.cover) { pv.src = r.cover; pv.style.display = "block"; } else { pv.style.display = "none"; }
+  document.getElementById("disco-form-card").style.display = "block";
+  document.getElementById("disco-add-btn").style.display = "none";
+}
+function saveRelease() {
+  var type = document.getElementById("r-type").value.trim();
+  var date = document.getElementById("r-date").value.trim();
+  var label = document.getElementById("r-label").value.trim();
+  var title = document.getElementById("r-title").value.trim();
+  var desc = document.getElementById("r-desc").value.trim();
+  var bandcamp = document.getElementById("r-bandcamp").value.trim();
+  if (!title) { alert("Le titre est obligatoire."); return; }
+  if (editingDiscoId) {
+    var r = DATA.disco.find(function(x){ return x.id === editingDiscoId; });
+    r.type = type; r.date = date; r.label = label; r.title = title; r.desc = desc; r.bandcamp = bandcamp;
+    if (pendingCover) r.cover = pendingCover;
+  } else {
+    DATA.disco.unshift({ id: uid("rl"), type: type, date: date, label: label, title: title, desc: desc, bandcamp: bandcamp, cover: pendingCover });
+  }
+  apiSet("direct_action_disco", DATA.disco);
+  renderDisco();
+  closeDiscoForm();
+}
+function deleteRelease(id) {
+  if (!confirm("Supprimer cette sortie ?")) return;
+  DATA.disco = DATA.disco.filter(function(x){ return x.id !== id; });
+  apiSet("direct_action_disco", DATA.disco);
+  renderDisco();
+}
+
+/* ===== PHOTOS ===== */
+function renderPhotos() {
+  var el = document.getElementById("photos-grid");
+  if (!DATA.photos.length) { el.innerHTML = '<div class="empty">Aucune photo pour l\'instant.</div>'; return; }
+  var html = "";
+  DATA.photos.forEach(function(p){
+    html += '<div class="photo-up-item"><img src="' + p.img + '"/>' +
+      '<button class="icon-btn danger" onclick="deletePhoto(\'' + p.id + '\')">✕</button></div>';
+  });
+  el.innerHTML = html;
+}
+function compressImage(file, maxDim, quality, cb) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var w = img.width, h = img.height;
+      if (w > h && w > maxDim) { h = h * (maxDim / w); w = maxDim; }
+      else if (h > maxDim) { w = w * (maxDim / h); h = maxDim; }
+      var canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function addPhotos(input) {
+  var files = Array.prototype.slice.call(input.files);
+  var remaining = files.length;
+  if (!remaining) return;
+  files.forEach(function(file){
+    compressImage(file, 800, 0.7, function(dataUrl){
+      DATA.photos.push({ id: uid("ph"), img: dataUrl });
+      remaining--;
+      if (remaining === 0) {
+        apiSet("direct_action_photos", DATA.photos);
+        renderPhotos();
+      }
+    });
+  });
+  input.value = "";
+}
+function deletePhoto(id) {
+  if (!confirm("Supprimer cette photo ?")) return;
+  DATA.photos = DATA.photos.filter(function(x){ return x.id !== id; });
+  apiSet("direct_action_photos", DATA.photos);
+  renderPhotos();
+}
+
+/* ===== BOOKING ===== */
+function renderBooking() {
+  var el = document.getElementById("booking-cards");
+  if (!DATA.booking.length) { el.innerHTML = '<div class="empty">Aucune demande reçue pour l\'instant.</div>'; return; }
+  var html = "";
+  DATA.booking.forEach(function(b){
+    var d = b.ts ? new Date(b.ts).toLocaleDateString("fr-FR", { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
+    html += '<div class="card">' +
+      '<div class="card-row"><div>' +
+      '<div class="card-title">' + esc(b.nom || "Sans nom") + '</div>' +
+      '<div class="card-meta">' +
+      (b.type ? esc(b.type) + '<br/>' : '') +
+      (b.date ? "Date envisagée : " + esc(b.date) + '<br/>' : '') +
+      (b.lieu ? esc(b.lieu) + '<br/>' : '') +
+      (b.message ? '"' + esc(b.message) + '"<br/>' : '') +
+      '<span style="color:var(--gris2)">Reçu le ' + d + '</span>' +
+      '</div></div><div class="card-actions">' +
+      '<button class="icon-btn danger" onclick="deleteBooking(\'' + b.id + '\')">✕</button>' +
+      '</div></div></div>';
+  });
+  el.innerHTML = html;
+}
+function deleteBooking(id) {
+  if (!confirm("Supprimer cette demande ?")) return;
+  DATA.booking = DATA.booking.filter(function(x){ return x.id !== id; });
+  apiSet("direct_action_booking", DATA.booking);
+  renderBooking();
+}
+</script>
+</body>
+</html>
