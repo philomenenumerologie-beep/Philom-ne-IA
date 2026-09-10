@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>La Cave d'Antoine — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#FAF5EC;font-family:Jost,sans-serif;color:#1c1210}
+
+:root{
+  --wine:#3B0F1A; --gold:#C9A24A; --gold-light:#E0C177;
+  --cream2:#F2E9D8; --text-mid:#6b5b52; --text-muted:#a3948b;
+  --border:rgba(0,0,0,.1);
+}
+
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding-bottom:40px;display:none}
+#app.show{display:block}
+#topbar{background:var(--wine);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;font-weight:700;color:var(--gold-light)}
+.logout-btn{font-size:10px;color:rgba(255,255,255,.5);background:none;border:1px solid rgba(255,255,255,.2);padding:5px 10px;border-radius:20px;cursor:pointer}
+
+.section{padding:20px 18px}
+.lbl{font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;margin-top:16px}
+.lbl:first-child{margin-top:0}
+.inp,.select,.textarea{width:100%;padding:12px 14px;border-radius:11px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-family:'Jost',sans-serif;color:#1c1210;outline:none}
+.textarea{resize:none;height:70px}
+
+.photo-zone{border:2px dashed var(--border);border-radius:12px;padding:18px;text-align:center;background:#fff;cursor:pointer;position:relative;overflow:hidden}
+.photo-zone img{max-width:100%;max-height:150px;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
+.photo-zone p{font-size:12px;color:#bbb}
+
+.btn-add{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--wine);color:var(--gold-light);border-radius:13px;padding:16px;font-weight:700;font-size:15px;border:none;width:100%;cursor:pointer;margin-top:20px}
+.status-msg{font-size:12px;padding:10px 13px;border-radius:10px;display:none;margin-top:10px}
+.status-msg.ok{background:#e7f4ea;color:#2d5a3d;display:block}
+.status-msg.err{background:#fbe9e7;color:#a83a2c;display:block}
+
+.wine-item{background:#fff;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.wine-thumb{width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#eee;display:flex;align-items:center;justify-content:center;font-size:18px}
+.wine-title-sm{flex:1;min-width:0}
+.wine-name-sm{font-size:13px;font-weight:600;color:#1c1210;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wine-cat-sm{font-size:10.5px;color:var(--text-muted)}
+.wine-price-sm{font-weight:700;color:var(--wine);font-size:13px;flex-shrink:0}
+.wine-del{background:none;border:none;color:#a83a2c;font-size:17px;cursor:pointer;flex-shrink:0}
+.wine-empty{font-size:13px;color:var(--text-muted);padding:8px 0}
+
+#login-screen{position:fixed;inset:0;background:var(--wine);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;z-index:100}
+#login-screen.hidden{display:none}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:34px;font-style:italic;font-weight:700;color:var(--gold-light);margin-bottom:6px}
+.login-sub{font-size:11px;color:rgba(250,245,236,.4);letter-spacing:.15em;text-transform:uppercase}
+.login-input{width:100%;max-width:280px;padding:14px 18px;border-radius:12px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:16px;outline:none;text-align:center;letter-spacing:.2em}
+.login-btn{width:100%;max-width:280px;padding:15px;border-radius:12px;border:none;background:var(--gold);color:var(--wine);font-size:15px;font-weight:700;cursor:pointer}
+.login-err{color:#ff8a7a;font-size:13px;display:none}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-logo">La Cave d'Antoine</div>
+  <div class="login-sub">Espace pro — privé</div>
+  <input class="login-input" id="pwd-input" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  <button class="login-btn" onclick="checkPwd()">Entrer</button>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="logo">La Cave d'Antoine</div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </div>
+
+  <div class="section">
+    <div class="lbl">Photo (optionnel)</div>
+    <div class="photo-zone" onclick="document.getElementById('f-photo').click()">
+      <img id="photo-preview" style="display:none"/>
+      <p id="photo-txt">Ajouter une photo de l'étiquette</p>
+    </div>
+    <input type="file" id="f-photo" accept="image/*" style="display:none" onchange="onPhotoChange(this)"/>
+
+    <div class="lbl">Nom du vin</div>
+    <input class="inp" id="f-nom" type="text" placeholder="Ex : Château Belles Vignes"/>
+
+    <div class="lbl">Catégorie</div>
+    <select class="select" id="f-cat">
+      <option>Rouge</option>
+      <option>Blanc</option>
+      <option>Rosé</option>
+      <option>Champagne & bulles</option>
+      <option>Autre</option>
+    </select>
+
+    <div class="lbl">Description</div>
+    <textarea class="textarea" id="f-desc" placeholder="Ex : Bordeaux, 2019 — tanins souples, fruits noirs"></textarea>
+
+    <div class="lbl">Prix (€)</div>
+    <input class="inp" id="f-prix" type="number" step="0.5" placeholder="18"/>
+
+    <button class="btn-add" onclick="addWine()">🍷 Ajouter à la cave</button>
+    <div id="add-status" class="status-msg"></div>
+
+    <div class="lbl" style="margin-top:28px">Vins en ligne</div>
+    <div id="wine-list"></div>
+  </div>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var MEMKEY = "cave_selection";
+var PWD = "cave2026";
+var photoBase64 = "";
+
+function checkPwd() {
+  var v = document.getElementById("pwd-input").value;
+  if (v === PWD) {
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("app").classList.add("show");
+    loadWines();
+  } else {
+    document.getElementById("login-err").style.display = "block";
+    document.getElementById("pwd-input").value = "";
+  }
+}
+
+function logout() {
+  document.getElementById("login-screen").classList.remove("hidden");
+  document.getElementById("app").classList.remove("show");
+}
+
+function compressPhoto(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxSize = 800;
+      var w = img.width, h = img.height;
+      if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+      else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function onPhotoChange(input) {
+  var f = input.files[0];
+  if (!f) return;
+  compressPhoto(f, function(b64){
+    photoBase64 = b64;
+    var img = document.getElementById("photo-preview");
+    img.src = b64;
+    img.style.display = "block";
+    document.getElementById("photo-txt").textContent = "Toucher pour changer";
+  });
+}
+
+function addWine() {
+  var nom = document.getElementById("f-nom").value.trim();
+  var cat = document.getElementById("f-cat").value;
+  var desc = document.getElementById("f-desc").value.trim();
+  var prix = parseFloat(document.getElementById("f-prix").value);
+
+  if (!nom || isNaN(prix)) {
+    var s = document.getElementById("add-status");
+    s.textContent = "Nom et prix obligatoires.";
+    s.className = "status-msg err";
+    return;
+  }
+
+  var statusEl = document.getElementById("add-status");
+  statusEl.className = "status-msg";
+
+  fetch(API + "/memory/" + MEMKEY)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var wines = d.value || [];
+      wines.push({
+        id: "w_" + Date.now(),
+        nom: nom,
+        categorie: cat,
+        description: desc,
+        prix: prix,
+        photo: photoBase64
+      });
+      return fetch(API + "/memory/" + MEMKEY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: wines })
+      }).then(function(r){ return r.json(); }).then(function(res){ return { res: res, wines: wines }; });
+    })
+    .then(function(out){
+      if (out.res && out.res.ok) {
+        statusEl.textContent = "Vin ajouté ✓ visible sur l'appli";
+        statusEl.className = "status-msg ok";
+        document.getElementById("f-nom").value = "";
+        document.getElementById("f-desc").value = "";
+        document.getElementById("f-prix").value = "";
+        photoBase64 = "";
+        document.getElementById("photo-preview").style.display = "none";
+        document.getElementById("photo-txt").textContent = "Ajouter une photo de l'étiquette";
+        document.getElementById("f-photo").value = "";
+        renderWineList(out.wines);
+      } else {
+        statusEl.textContent = "Erreur lors de l'enregistrement, réessayez.";
+        statusEl.className = "status-msg err";
+      }
+    }).catch(function(){
+      statusEl.textContent = "Erreur de connexion, réessayez.";
+      statusEl.className = "status-msg err";
+    });
+}
+
+function loadWines() {
+  fetch(API + "/memory/" + MEMKEY)
+    .then(function(r){ return r.json(); })
+    .then(function(d){ renderWineList(d.value || []); })
+    .catch(function(){ renderWineList([]); });
+}
+
+function renderWineList(wines) {
+  var list = document.getElementById("wine-list");
+  list.innerHTML = "";
+  if (!wines.length) {
+    list.innerHTML = '<div class="wine-empty">Aucun vin en ligne pour l\'instant.</div>';
+    return;
+  }
+  wines.slice().reverse().forEach(function(w){
+    var item = document.createElement("div");
+    item.className = "wine-item";
+    var thumb;
+    if (w.photo) {
+      thumb = document.createElement("img");
+      thumb.className = "wine-thumb";
+      thumb.src = w.photo;
+    } else {
+      thumb = document.createElement("div");
+      thumb.className = "wine-thumb";
+      thumb.textContent = w.categorie && w.categorie.indexOf("Champagne") >= 0 ? "🍾" : "🍷";
+    }
+    var titleWrap = document.createElement("div");
+    titleWrap.className = "wine-title-sm";
+    var name = document.createElement("div");
+    name.className = "wine-name-sm";
+    name.textContent = w.nom;
+    var cat = document.createElement("div");
+    cat.className = "wine-cat-sm";
+    cat.textContent = w.categorie;
+    titleWrap.appendChild(name);
+    titleWrap.appendChild(cat);
+    var price = document.createElement("div");
+    price.className = "wine-price-sm";
+    price.textContent = w.prix + "€";
+    var del = document.createElement("button");
+    del.className = "wine-del";
+    del.textContent = "✕";
+    del.onclick = function(){ deleteWine(w.id); };
+    item.appendChild(thumb);
+    item.appendChild(titleWrap);
+    item.appendChild(price);
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+
+function deleteWine(id) {
+  if (!confirm("Retirer ce vin de la cave ?")) return;
+  fetch(API + "/memory/" + MEMKEY)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var wines = (d.value || []).filter(function(w){ return w.id !== id; });
+      return fetch(API + "/memory/" + MEMKEY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: wines })
+      });
+    })
+    .then(function(){ loadWines(); });
+}
+</script>
+</body>
+</html>
