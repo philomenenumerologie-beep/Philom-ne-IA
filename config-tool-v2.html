@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Créateur d'appli — Philomène IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif}
+body{background:#1a2e20;color:#f2ead8;padding:20px 16px 60px;max-width:540px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
+.sub{font-size:12px;color:rgba(242,234,216,.5);margin-bottom:20px}
+.card{background:rgba(242,234,216,.06);border:1px solid rgba(242,234,216,.12);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(242,234,216,.6);margin-bottom:12px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,234,216,.4);margin-bottom:5px;display:block}
+input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;margin-bottom:12px;outline:none;-webkit-appearance:none}
+select option{background:#1a2e20;color:#f2ead8}
+textarea{resize:vertical;min-height:56px}
+
+/* PALETTE DE BULLES DE COULEUR */
+.palette-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.palette-bulle{width:42px;height:42px;border-radius:50%;cursor:pointer;border:2px solid rgba(242,234,216,.2);position:relative;flex-shrink:0}
+.palette-bulle.selected{border-color:#f2ead8;box-shadow:0 0 0 2px rgba(242,234,216,.3)}
+.palette-bulle span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;white-space:nowrap;color:rgba(242,234,216,.4)}
+
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=color]{padding:2px;height:38px}
+
+.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.mod-check{display:flex;align-items:center;gap:8px;background:rgba(242,234,216,.05);border:1.5px solid rgba(242,234,216,.12);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px}
+.mod-check input{width:16px;height:16px;margin:0;flex-shrink:0}
+.mod-check.active{border-color:#6BCB77;background:rgba(107,203,119,.08)}
+
+.item-row{display:grid;grid-template-columns:1fr 1fr 0.7fr auto;gap:6px;margin-bottom:8px;align-items:center}
+.del-btn{background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);color:#ff8a7a;border-radius:8px;font-size:14px;cursor:pointer;padding:8px}
+.add-btn{background:none;border:1.5px dashed rgba(242,234,216,.25);color:rgba(242,234,216,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px;margin-top:2px}
+.save-btn{width:100%;padding:15px;border-radius:12px;border:none;background:#f2ead8;color:#1a2e20;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
+.status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
+.status.ok{background:rgba(46,204,113,.15);color:#6BCB77;display:block}
+.status.err{background:rgba(255,107,107,.1);color:#ff8a7a;display:block}
+.logo-zone{border:2px dashed rgba(242,234,216,.25);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px}
+.logo-zone p{font-size:12px;color:rgba(242,234,216,.4)}
+.logo-zone img{max-width:90px;max-height:60px;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
+.subsection{display:none;border-top:1px solid rgba(242,234,216,.1);padding-top:12px;margin-top:12px}
+.subsection.show{display:block}
+.day-block{background:rgba(242,234,216,.04);border-radius:10px;padding:10px;margin-bottom:8px}
+.day-block h3{font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)}
+</style>
+</head>
+<body>
+
+<h1>🛠️ Créateur d'appli</h1>
+<div class="sub">Choisis un métier, tout se pré-remplit. Ajuste, complète, enregistre.</div>
+
+<div class="card">
+  <h2>1. Métier</h2>
+  <label class="lbl">Secteur d'activité</label>
+  <select id="cf-secteur"></select>
+  <label class="lbl">Slug (utilisé dans l'URL ?client=...)</label>
+  <input id="cf-slug" placeholder="Ex: renovnord"/>
+</div>
+
+<div class="card">
+  <h2>2. Identité</h2>
+  <label class="lbl">Nom de l'entreprise</label>
+  <input id="cf-nom" placeholder="Ex: Rénov Nord"/>
+  <label class="lbl">Sous-titre</label>
+  <input id="cf-soustitre" placeholder="Ex: Rénovation intérieure"/>
+  <label class="lbl">Logo / photo (remplace l'icône si ajouté)</label>
+  <div class="logo-zone" id="logo-zone" onclick="document.getElementById('logo-input').click()">
+    <img id="logo-preview" style="display:none"/>
+    <p id="logo-txt">Appuyez pour ajouter un logo (facultatif)</p>
+  </div>
+  <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
+  <label class="lbl">Icône de secours (emoji)</label>
+  <input id="cf-icone" placeholder="🏠"/>
+  <label class="lbl">Numéro WhatsApp (international, sans +)</label>
+  <input id="cf-whatsapp" placeholder="33612345678"/>
+</div>
+
+<div class="card">
+  <h2>3. Couleurs</h2>
+  <label class="lbl">Palettes suggérées (clique pour appliquer)</label>
+  <div class="palette-grid" id="palette-grid"></div>
+  <label class="lbl" style="margin-top:6px">Ajustement fin</label>
+  <div class="row3">
+    <div><label class="lbl">Fond</label><input type="color" id="cf-fond"/></div>
+    <div><label class="lbl">Texte</label><input type="color" id="cf-texte"/></div>
+    <div><label class="lbl">Foncé</label><input type="color" id="cf-fonce"/></div>
+  </div>
+  <div class="row3">
+    <div><label class="lbl">Accent</label><input type="color" id="cf-accent"/></div>
+    <div><label class="lbl">Clair</label><input type="color" id="cf-clair"/></div>
+    <div><label class="lbl">Alerte</label><input type="color" id="cf-alerte"/></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>4. Assistant IA</h2>
+  <label class="lbl">Message d'accueil</label>
+  <textarea id="cf-accueil"></textarea>
+  <label class="lbl">Consigne pour l'IA (ce qu'elle sait, comment elle répond)</label>
+  <textarea id="cf-prompt" style="min-height:100px"></textarea>
+  <label class="lbl">Questions rapides (boutons sous le 1er message)</label>
+  <div id="qr-list"></div>
+  <button class="add-btn" onclick="ajouterQR()">+ Ajouter une question rapide</button>
+</div>
+
+<div class="card">
+  <h2>5. Modules à activer</h2>
+  <div class="modules-grid" id="modules-grid"></div>
+
+  <div class="subsection" id="sub-tarifs">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">💰 Tarifs</h3>
+    <label class="lbl">Sous-titre</label>
+    <input id="cf-tarifs-soustitre" placeholder="Ex: Prix indicatifs"/>
+    <div id="tarifs-list"></div>
+    <button class="add-btn" onclick="ajouterTarif()">+ Ajouter un tarif</button>
+  </div>
+
+  <div class="subsection" id="sub-devis">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">📋 Devis</h3>
+    <label class="lbl">Types de prestations proposées (une par ligne)</label>
+    <textarea id="cf-devis-types" placeholder="Peinture intérieure&#10;Revêtement de sol&#10;..." style="min-height:80px"></textarea>
+    <label class="lbl">Consigne IA spécifique au devis (prix, règles de calcul)</label>
+    <textarea id="cf-devis-prompt" style="min-height:80px"></textarea>
+  </div>
+
+  <div class="subsection" id="sub-catalogue">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">🛍️ Catalogue</h3>
+    <label class="lbl">Titre de la page</label>
+    <input id="cf-catalogue-titre" placeholder="Ex: Notre carte"/>
+    <label class="lbl">Sous-titre</label>
+    <input id="cf-catalogue-soustitre" placeholder="Ex: Fait maison"/>
+    <div id="catalogue-list"></div>
+    <button class="add-btn" onclick="ajouterCatalogueItem()">+ Ajouter un article</button>
+  </div>
+
+  <div class="subsection" id="sub-galerie">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">🖼️ Galerie</h3>
+    <label class="lbl">Titre de la page</label>
+    <input id="cf-galerie-titre" placeholder="Ex: Nos réalisations"/>
+    <div id="galerie-list"></div>
+    <button class="add-btn" onclick="ajouterGalerieItem()">+ Ajouter un avant/après</button>
+  </div>
+
+  <div class="subsection" id="sub-planning">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">🗓️ Planning</h3>
+    <div id="planning-jours"></div>
+  </div>
+
+  <div class="subsection" id="sub-reservation">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">📅 Réservation</h3>
+    <label class="lbl">Services proposés</label>
+    <div id="reservation-list"></div>
+    <button class="add-btn" onclick="ajouterReservationService()">+ Ajouter un service</button>
+  </div>
+</div>
+
+<button class="save-btn" onclick="enregistrer()">💾 Enregistrer et créer le lien</button>
+<div class="status" id="status"></div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var logoBase64 = "";
+
+/* =====================================================================
+   PALETTES DE COULEURS — beaucoup de choix, cliquables en un tap
+   ===================================================================== */
+var PALETTES = [
+  {nom:"Sauge",     fond:"#F3EEE5", texte:"#2E2A24", fonce:"#5C6A54", accent:"#7C8B72", clair:"#E8DFCF", alerte:"#C17A5A"},
+  {nom:"Terracotta",fond:"#F5EEE2", texte:"#2B1B12", fonce:"#3B2415", accent:"#6B4226", clair:"#E9DCC7", alerte:"#C1793A"},
+  {nom:"Bleu marine",fond:"#EDEDE8", texte:"#1a1a1a", fonce:"#16324F", accent:"#2C5578", clair:"#DFDED5", alerte:"#D98B3F"},
+  {nom:"Vert forêt",fond:"#f2ead8", texte:"#1a1a1a", fonce:"#1a2e20", accent:"#2d5a3d", clair:"#e8dfcf", alerte:"#c9a84c"},
+  {nom:"Noir & vert",fond:"#EDE0CC",texte:"#111111", fonce:"#111111", accent:"#2ecc71", clair:"#d9c9ad", alerte:"#4ade80"},
+  {nom:"Rose poudré",fond:"#FBF2EF",texte:"#3d2226", fonce:"#7a3b47", accent:"#c98a95", clair:"#f0d9d3", alerte:"#d4a017"},
+  {nom:"Beige naturel",fond:"#F7F2E9",texte:"#2b2620", fonce:"#4a3f30", accent:"#a68a5c", clair:"#e9decb", alerte:"#c17a5a"},
+  {nom:"Jaune moutarde",fond:"#FBF6E9",texte:"#2b2410", fonce:"#5c4a12", accent:"#d4a017", clair:"#f0e3b8", alerte:"#c0392b"},
+  {nom:"Bordeaux",  fond:"#F6EEEC", texte:"#2b1414", fonce:"#5c1a1a", accent:"#8a2e2e", clair:"#e8d3d0", alerte:"#c9a84c"},
+  {nom:"Gris anthracite",fond:"#EFEFEF",texte:"#1a1a1a", fonce:"#2b2b2b", accent:"#5a5a5a", clair:"#dcdcdc", alerte:"#d98b3f"},
+  {nom:"Corail",    fond:"#FDF2EE", texte:"#3d1f14", fonce:"#8a3a24", accent:"#e0673f", clair:"#f5ddd2", alerte:"#d4a017"},
+  {nom:"Lavande",   fond:"#F3F0F8", texte:"#2a2438", fonce:"#4a3f68", accent:"#7c6fa0", clair:"#e2dcf0", alerte:"#c9a84c"},
+  {nom:"Kaki",      fond:"#F2F0E4", texte:"#232516", fonce:"#4a4a2e", accent:"#7a7a4e", clair:"#e0e0c4", alerte:"#c1793a"},
+  {nom:"Turquoise", fond:"#EEF7F6", texte:"#123430", fonce:"#1f5c54", accent:"#2f9c8f", clair:"#d0ede9", alerte:"#d98b3f"},
+  {nom:"Chocolat",  fond:"#F5EEE7", texte:"#2b1d14", fonce:"#3f2a1c", accent:"#7a5233", clair:"#e6d8c8", alerte:"#c9a84c"},
+  {nom:"Blanc & or",fond:"#FDFCF9", texte:"#1a1a1a", fonce:"#1a1a1a", accent:"#c9a84c", clair:"#f0ece0", alerte:"#c9a84c"}
+];
+
+/* =====================================================================
+   PRÉRÉGLAGES PAR MÉTIER — palette, icône, questions, modules, devis...
+   ===================================================================== */
+var SECTEURS = {
+  tatoueur: {
+    label: "Tatoueur / Piercing", icone: "🖤", palette: "Noir & vert",
+    sousTitre: "Tatouage · Piercing · Art",
+    accueil: "Bienvenue ! Je suis votre assistante disponible 24h/24. Je peux vous renseigner sur les soins, les retouches, la douleur, ou vous aider à préparer votre projet.",
+    prompt: "Tu es l'assistante IA d'un salon de tatouage. Tu es chaleureuse et directe, tu réponds en français sans markdown. Tu réponds complètement aux questions sur les soins, la douleur, les styles, les retouches — jamais de redirection WhatsApp pour ces sujets. Pour une réservation ou un devis de projet, oriente vers WhatsApp.",
+    questions: [
+      {label:"Soins", message:"Comment prendre soin de mon tatouage ?"},
+      {label:"Douleur", message:"Est-ce que ça fait mal ?"},
+      {label:"Retouches", message:"Comment fonctionnent les retouches ?"},
+      {label:"RDV", message:"Comment prendre rendez-vous ?"}
+    ],
+    modules: ["catalogue","tarifs"],
+    catalogueTitre: "Flashs disponibles", catalogueSousTitre: "Réservez directement",
+    tarifs: [
+      {nom:"Micro flash", description:"3-4cm", prix:"60-80€"},
+      {nom:"Petit projet", description:"7-10cm", prix:"100-180€"},
+      {nom:"Projet personnalisé", description:"Sur devis, à l'heure", prix:"100-150€/h"}
+    ]
+  },
+  coiffure: {
+    label: "Coiffure / Esthétique", icone: "💇", palette: "Rose poudré",
+    sousTitre: "Coiffure · Beauté · Bien-être",
+    accueil: "Bienvenue ! Je suis votre assistante disponible 24h/24 pour vous renseigner sur nos prestations et vous aider à prendre rendez-vous.",
+    prompt: "Tu es l'assistante IA d'un salon de coiffure/esthétique. Chaleureuse, en français, sans markdown. Réponds complètement sur les prestations, produits utilisés, durée des soins. Oriente vers la réservation pour fixer un rendez-vous.",
+    questions: [
+      {label:"Prestations", message:"Quelles prestations proposez-vous ?"},
+      {label:"Durée", message:"Combien de temps dure une coupe ?"},
+      {label:"Prix", message:"Quels sont vos tarifs ?"},
+      {label:"RDV", message:"Comment prendre rendez-vous ?"}
+    ],
+    modules: ["reservation","tarifs"],
+    reservationServices: [
+      {nom:"Coupe femme", prix:"35€"}, {nom:"Coupe homme", prix:"22€"}, {nom:"Coloration", prix:"dès 55€"}
+    ],
+    tarifs: [
+      {nom:"Coupe femme", description:"Shampoing, coupe, brushing", prix:"35€"},
+      {nom:"Coupe homme", description:"Shampoing, coupe", prix:"22€"},
+      {nom:"Coloration", description:"Selon longueur", prix:"dès 55€"}
+    ]
+  },
+  renovation: {
+    label: "Rénovation / Artisan BTP", icone: "🏠", palette: "Bleu marine",
+    sousTitre: "Rénovation intérieure · Tous corps d'état",
+    accueil: "Bienvenue ! Je suis votre assistante disponible 24h/24. Je peux vous renseigner sur nos travaux, les délais, ou vous aider à obtenir un devis approximatif gratuit.",
+    prompt: "Tu es l'assistante IA d'une entreprise de rénovation intérieure tous corps d'état. Chaleureuse, en français, sans markdown. Réponds sur les types de travaux, délais, garanties. Pour un devis, précise qu'il est approximatif et à confirmer sur place.",
+    questions: [
+      {label:"Délais", message:"Quel est le délai moyen d'un chantier ?"},
+      {label:"Garanties", message:"Vos travaux sont-ils garantis ?"},
+      {label:"Salle de bain", message:"Vous rénovez les salles de bain ?"}
+    ],
+    modules: ["devis","galerie","tarifs"],
+    devisTypes: ["Peinture intérieure","Revêtement de sol","Cloisons et plâtrerie","Rénovation salle de bain","Rénovation cuisine","Rénovation complète"],
+    devisPrompt: "Tu es un artisan expert en rénovation intérieure. RÈGLE PRIORITAIRE : si un prix est mentionné dans la description, utilise-le exactement. Sinon utilise des prix de marché réalistes (peinture 20€/m², sol 35€/m², plâtrerie 40€/m², salle de bain 4000-9000€). Réponds UNIQUEMENT en JSON : {\"titre\":\"...\",\"lignes\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
+    galerieTitre: "Nos chantiers",
+    tarifs: [
+      {nom:"Peinture intérieure", description:"Murs et plafonds", prix:"dès 20€/m²"},
+      {nom:"Revêtement de sol", description:"Carrelage, parquet", prix:"dès 35€/m²"},
+      {nom:"Salle de bain complète", description:"Clé en main", prix:"sur devis"}
+    ]
+  },
+  plomberie: {
+    label: "Plomberie / Chauffage", icone: "🔧", palette: "Bleu marine",
+    sousTitre: "Plomberie · Chauffage · Dépannage",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24, y compris pour les urgences. Je peux vous renseigner ou vous aider à obtenir un devis.",
+    prompt: "Tu es l'assistant IA d'un plombier-chauffagiste. En français, sans markdown, direct et rassurant. Réponds sur les types d'interventions, délais d'urgence, garanties. Pour un devis, précise qu'il est approximatif.",
+    questions: [
+      {label:"Urgence", message:"Vous intervenez en urgence ?"},
+      {label:"Chaudière", message:"Vous installez des chaudières ?"},
+      {label:"Devis", message:"Comment obtenir un devis ?"}
+    ],
+    modules: ["devis","tarifs"],
+    devisTypes: ["Fuite / dépannage","Installation chaudière","Remplacement sanitaire","Installation salle de bain","Chauffage central"],
+    devisPrompt: "Tu es un plombier-chauffagiste professionnel. RÈGLE PRIORITAIRE : si un prix est donné dans la description, utilise-le. Sinon prix de marché réalistes (dépannage 80-150€, chaudière posée 2000-4000€). Réponds UNIQUEMENT en JSON : {\"titre\":\"...\",\"lignes\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
+    tarifs: [
+      {nom:"Déplacement + diagnostic", description:"Dans un rayon de 20km", prix:"50€"},
+      {nom:"Dépannage fuite", description:"Main d'oeuvre", prix:"80-150€"},
+      {nom:"Installation chaudière", description:"Fourniture et pose", prix:"sur devis"}
+    ]
+  },
+  electricite: {
+    label: "Électricité", icone: "⚡", palette: "Jaune moutarde",
+    sousTitre: "Électricité générale · Mise aux normes",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24. Je peux vous renseigner sur nos interventions ou vous aider à obtenir un devis.",
+    prompt: "Tu es l'assistant IA d'un électricien. En français, sans markdown, rassurant et précis. Réponds sur la mise aux normes, le tableau électrique, les délais. Pour un devis, précise qu'il est approximatif.",
+    questions: [
+      {label:"Mise aux normes", message:"Vous faites la mise aux normes électriques ?"},
+      {label:"Délais", message:"Quel délai pour une intervention ?"},
+      {label:"Devis", message:"Comment obtenir un devis ?"}
+    ],
+    modules: ["devis","tarifs"],
+    devisTypes: ["Mise aux normes tableau","Rénovation électrique complète","Installation prises/luminaires","Dépannage panne"],
+    devisPrompt: "Tu es un électricien professionnel. RÈGLE PRIORITAIRE : si un prix est donné, utilise-le. Sinon prix de marché réalistes (tableau électrique 800-1500€, rénovation complète 80-120€/m²). Réponds UNIQUEMENT en JSON : {\"titre\":\"...\",\"lignes\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
+    tarifs: [
+      {nom:"Mise aux normes tableau", description:"Selon ampérage", prix:"800-1500€"},
+      {nom:"Rénovation électrique", description:"Complète", prix:"dès 80€/m²"}
+    ]
+  },
+  taxi: {
+    label: "Taxi / VTC", icone: "🚕", palette: "Jaune moutarde",
+    sousTitre: "Transport de personnes",
+    accueil: "Bonjour ! Je suis votre assistant disponible 24h/24 pour réserver une course ou répondre à vos questions.",
+    prompt: "Tu es l'assistant IA d'un chauffeur taxi/VTC. En français, sans markdown, rapide et clair. Réponds sur les zones desservies, les tarifs approximatifs, les délais. Oriente vers la réservation pour une course précise.",
+    questions: [
+      {label:"Zone", message:"Quelle est votre zone d'intervention ?"},
+      {label:"Aéroport", message:"Vous faites les trajets aéroport ?"},
+      {label:"Tarif", message:"Comment sont calculés vos tarifs ?"}
+    ],
+    modules: ["reservation","tarifs"],
+    reservationServices: [{nom:"Course simple"},{nom:"Aéroport"},{nom:"Longue distance"},{nom:"Mise à disposition"}],
+    tarifs: [
+      {nom:"Prise en charge", description:"Tarif de base", prix:"3,50€"},
+      {nom:"Trajet aéroport", description:"Forfait", prix:"sur devis"},
+      {nom:"Mise à disposition", description:"À l'heure", prix:"35€/h"}
+    ]
+  },
+  restauration: {
+    label: "Café / Restauration", icone: "☕", palette: "Terracotta",
+    sousTitre: "Café · Petite restauration",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24. Je peux vous renseigner sur nos horaires, notre carte, ou vous aider à réserver une table.",
+    prompt: "Tu es l'assistant IA d'un café-restaurant. En français, sans markdown, chaleureux. Réponds sur les horaires, le wifi, la terrasse, les allergènes. Oriente vers WhatsApp pour réservation de groupe.",
+    questions: [
+      {label:"Horaires", message:"Quels sont vos horaires ?"},
+      {label:"Wifi", message:"Avez-vous le wifi ?"},
+      {label:"Réserver", message:"Je voudrais réserver une table"}
+    ],
+    modules: ["catalogue","tarifs"],
+    catalogueTitre: "Notre carte", catalogueSousTitre: "Préparé avec des produits de saison",
+    tarifs: [{nom:"Menu du jour", description:"Entrée + plat ou plat + dessert", prix:"14,50€"}]
+  },
+  pizzeria: {
+    label: "Pizzeria / Click & Collect", icone: "🍕", palette: "Bordeaux",
+    sousTitre: "Pizzeria · À emporter",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24. Commandez directement en Click & Collect, prêt en 20-30 minutes !",
+    prompt: "Tu es l'assistant IA d'une pizzeria. En français, sans markdown, convivial. Réponds sur les ingrédients, allergènes, temps de préparation. Oriente vers le catalogue pour commander.",
+    questions: [
+      {label:"Menu", message:"Quelles pizzas proposez-vous ?"},
+      {label:"Délai", message:"Combien de temps pour une commande ?"},
+      {label:"Allergènes", message:"Vous avez des options sans gluten ?"}
+    ],
+    modules: ["catalogue","tarifs"],
+    catalogueTitre: "Nos pizzas", catalogueSousTitre: "Commandez en Click & Collect",
+    tarifs: [{nom:"Pizza Margherita", description:"Base tomate, mozzarella", prix:"9€"},{nom:"Pizza Regina", description:"Jambon, champignons", prix:"11€"}]
+  },
+  coach_sportif: {
+    label: "Coach sportif", icone: "💪", palette: "Vert forêt",
+    sousTitre: "Coaching sportif individuel",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24. Je peux vous renseigner sur les séances ou vous aider à réserver votre premier cours.",
+    prompt: "Tu es l'assistant IA d'un coach sportif indépendant. En français, sans markdown, motivant. Réponds sur les types de séances, le matériel nécessaire, les résultats attendus. Oriente vers la réservation.",
+    questions: [
+      {label:"Débutant", message:"Je n'ai jamais fait de sport, c'est possible ?"},
+      {label:"Lieu", message:"Où se déroulent les séances ?"},
+      {label:"Tarifs", message:"Quels sont vos tarifs ?"}
+    ],
+    modules: ["reservation","tarifs"],
+    reservationServices: [{nom:"Séance découverte", prix:"gratuite"},{nom:"Séance individuelle", prix:"45€"},{nom:"Pack 10 séances", prix:"400€"}],
+    tarifs: [
+      {nom:"Séance découverte", description:"1h, sans engagement", prix:"Offerte"},
+      {nom:"Séance individuelle", description:"1h", prix:"45€"},
+      {nom:"Pack 10 séances", description:"Valable 4 mois", prix:"400€"}
+    ]
+  },
+  coach_foot: {
+    label: "Coach / Club de foot", icone: "⚽", palette: "Vert forêt",
+    sousTitre: "Football · Formation · Entraînement",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24 pour tout savoir sur les entraînements et inscriptions.",
+    prompt: "Tu es l'assistant IA d'un club ou coach de football. En français, sans markdown. Réponds sur les catégories d'âge, horaires d'entraînement, inscriptions, équipement nécessaire.",
+    questions: [
+      {label:"Catégories", message:"Quelles catégories d'âge accueillez-vous ?"},
+      {label:"Inscription", message:"Comment inscrire mon enfant ?"},
+      {label:"Horaires", message:"Quels sont les horaires d'entraînement ?"}
+    ],
+    modules: ["planning","tarifs"],
+    planning: {
+      "Mercredi": [{heure:"14H00 – 15H30", nom:"U9-U11", meta:"Entraînement"}],
+      "Samedi": [{heure:"10H00 – 11H30", nom:"U13-U15", meta:"Entraînement"}]
+    },
+    tarifs: [{nom:"Licence saison", description:"Assurance incluse", prix:"180€/an"}]
+  },
+  boutique_vetements: {
+    label: "Boutique / Vêtements", icone: "🧥", palette: "Beige naturel",
+    sousTitre: "Prêt-à-porter",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24 pour vous présenter la collection.",
+    prompt: "Tu es l'assistant IA d'une boutique de vêtements. En français, sans markdown, élégant. Réponds sur les matières, tailles disponibles, conseils de style. Oriente vers le catalogue pour commander.",
+    questions: [
+      {label:"Tailles", message:"Quelles tailles proposez-vous ?"},
+      {label:"Livraison", message:"Faites-vous la livraison ?"},
+      {label:"Retours", message:"Quelle est votre politique de retour ?"}
+    ],
+    modules: ["catalogue","tarifs"],
+    catalogueTitre: "La collection", catalogueSousTitre: "Pièces sélectionnées avec soin",
+    tarifs: [{nom:"Retouches", description:"Ourlet, ajustement", prix:"dès 10€"}]
+  },
+  torrefacteur: {
+    label: "Torréfacteur / Café en grains", icone: "🫘", palette: "Chocolat",
+    sousTitre: "Torréfaction artisanale",
+    accueil: "Bienvenue ! Je suis votre torréfacteur disponible 24h/24. Je peux vous conseiller sur nos cafés ou vous aider à commander.",
+    prompt: "Tu es un torréfacteur expert. En français, sans markdown, passionné. Réponds sur les origines, méthodes de préparation, conservation. Oriente vers le catalogue pour commander.",
+    questions: [
+      {label:"Corsé", message:"Quel café me conseillez-vous si j'aime le corsé ?"},
+      {label:"Préparation", message:"Comment préparer un café filtre ?"},
+      {label:"Décaféiné", message:"Vous avez un décaféiné ?"}
+    ],
+    modules: ["catalogue","tarifs"],
+    catalogueTitre: "Notre sélection", catalogueSousTitre: "Torréfié à la commande",
+    tarifs: [{nom:"Café origine", description:"250g", prix:"9-12€"},{nom:"Blend maison", description:"250g", prix:"9,50€"}]
+  },
+  garage_auto: {
+    label: "Garage automobile", icone: "🚗", palette: "Gris anthracite",
+    sousTitre: "Mécanique · Entretien auto",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24 pour vos questions ou une prise de rendez-vous.",
+    prompt: "Tu es l'assistant IA d'un garage automobile. En français, sans markdown, rassurant. Réponds sur les prestations, délais, garanties pièces. Oriente vers la réservation.",
+    questions: [
+      {label:"Révision", message:"Combien coûte une révision ?"},
+      {label:"Délai", message:"Quel délai pour une intervention ?"},
+      {label:"Pneus", message:"Vous faites le changement de pneus ?"}
+    ],
+    modules: ["reservation","tarifs"],
+    reservationServices: [{nom:"Révision complète", prix:"dès 90€"},{nom:"Changement pneus", prix:"dès 20€/pneu"},{nom:"Diagnostic panne", prix:"40€"}],
+    tarifs: [{nom:"Révision", description:"Vidange + filtres + contrôle", prix:"dès 90€"}]
+  },
+  esthetique: {
+    label: "Institut de beauté", icone: "💅", palette: "Rose poudré",
+    sousTitre: "Soins esthétiques · Bien-être",
+    accueil: "Bienvenue ! Je suis votre assistante disponible 24h/24 pour vous renseigner et réserver votre soin.",
+    prompt: "Tu es l'assistante IA d'un institut de beauté. En français, sans markdown, douce. Réponds sur les soins proposés, la durée, les produits utilisés. Oriente vers la réservation.",
+    questions: [
+      {label:"Soins", message:"Quels soins proposez-vous ?"},
+      {label:"Durée", message:"Combien de temps dure un soin visage ?"},
+      {label:"RDV", message:"Comment prendre rendez-vous ?"}
+    ],
+    modules: ["reservation","tarifs"],
+    reservationServices: [{nom:"Soin visage", prix:"45€"},{nom:"Épilation", prix:"dès 15€"},{nom:"Manucure", prix:"30€"}],
+    tarifs: [{nom:"Soin visage", description:"1h", prix:"45€"},{nom:"Manucure", description:"45min", prix:"30€"}]
+  },
+  autre: {
+    label: "Autre / Générique", icone: "🔧", palette: "Vert forêt",
+    sousTitre: "Assistant IA",
+    accueil: "Bienvenue ! Je suis votre assistant disponible 24h/24.",
+    prompt: "Tu es un assistant professionnel. Réponds en français, de façon concise, sans markdown.",
+    questions: [{label:"Tarifs", message:"Quels sont vos tarifs ?"},{label:"Horaires", message:"Quels sont vos horaires ?"}],
+    modules: ["tarifs"],
+    tarifs: [{nom:"Prestation", description:"Description", prix:"Sur devis"}]
+  }
+};
+
+/* =====================================================================
+   INITIALISATION UI
+   ===================================================================== */
+var secteurSelect = document.getElementById("cf-secteur");
+Object.keys(SECTEURS).forEach(function(key){
+  var opt = document.createElement("option");
+  opt.value = key;
+  opt.textContent = SECTEURS[key].label;
+  secteurSelect.appendChild(opt);
+});
+
+var paletteGrid = document.getElementById("palette-grid");
+PALETTES.forEach(function(p){
+  var b = document.createElement("div");
+  b.className = "palette-bulle";
+  b.style.background = "linear-gradient(135deg, " + p.fonce + " 50%, " + p.accent + " 50%)";
+  b.title = p.nom;
+  b.onclick = function(){ appliquerPalette(p); };
+  paletteGrid.appendChild(b);
+});
+
+function appliquerPalette(p) {
+  document.getElementById("cf-fond").value = p.fond;
+  document.getElementById("cf-texte").value = p.texte;
+  document.getElementById("cf-fonce").value = p.fonce;
+  document.getElementById("cf-accent").value = p.accent;
+  document.getElementById("cf-clair").value = p.clair;
+  document.getElementById("cf-alerte").value = p.alerte;
+}
+
+var MODULES_DISPO = {
+  tarifs: "💰 Tarifs", devis: "📋 Devis IA", catalogue: "🛍️ Catalogue",
+  galerie: "🖼️ Galerie avant/après", planning: "🗓️ Planning", reservation: "📅 Réservation"
+};
+var modulesGrid = document.getElementById("modules-grid");
+Object.keys(MODULES_DISPO).forEach(function(key){
+  var label = document.createElement("label");
+  label.className = "mod-check";
+  label.innerHTML = '<input type="checkbox" value="' + key + '" onchange="toggleSubsection(\'' + key + '\', this.checked); this.parentElement.classList.toggle(\'active\', this.checked)"/>' + MODULES_DISPO[key];
+  modulesGrid.appendChild(label);
+});
+
+function toggleSubsection(mod, show) {
+  var el = document.getElementById("sub-" + mod);
+  if (el) el.classList.toggle("show", show);
+}
+
+secteurSelect.addEventListener("change", function(){
+  var s = SECTEURS[secteurSelect.value];
+  if (!s) return;
+  document.getElementById("cf-icone").value = s.icone;
+  document.getElementById("cf-soustitre").value = s.sousTitre;
+  document.getElementById("cf-accueil").value = s.accueil;
+  document.getElementById("cf-prompt").value = s.prompt;
+
+  var palette = PALETTES.filter(function(p){ return p.nom === s.palette; })[0];
+  if (palette) appliquerPalette(palette);
+
+  document.getElementById("qr-list").innerHTML = "";
+  (s.questions || []).forEach(function(q){ ajouterQR(q.label, q.message); });
+
+  document.querySelectorAll(".mod-check input").forEach(function(cb){
+    var actif = (s.modules || []).indexOf(cb.value) >= 0;
+    cb.checked = actif;
+    cb.parentElement.classList.toggle("active", actif);
+    toggleSubsection(cb.value, actif);
+  });
+
+  document.getElementById("cf-tarifs-soustitre").value = "Prix indicatifs";
+  document.getElementById("tarifs-list").innerHTML = "";
+  (s.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix); });
+
+  document.getElementById("cf-devis-types").value = (s.devisTypes || []).join("\n");
+  document.getElementById("cf-devis-prompt").value = s.devisPrompt || "";
+
+  document.getElementById("cf-catalogue-titre").value = s.catalogueTitre || "";
+  document.getElementById("cf-catalogue-soustitre").value = s.catalogueSousTitre || "";
+  document.getElementById("catalogue-list").innerHTML = "";
+  ajouterCatalogueItem();
+
+  document.getElementById("cf-galerie-titre").value = s.galerieTitre || "Nos réalisations";
+  document.getElementById("galerie-list").innerHTML = "";
+  ajouterGalerieItem();
+
+  document.getElementById("reservation-list").innerHTML = "";
+  (s.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix); });
+
+  construirePlanningJours(s.planning || {});
+});
+
+/* ---------- QUESTIONS RAPIDES ---------- */
+function ajouterQR(label, message) {
+  var row = document.createElement("div");
+  row.className = "item-row";
+  row.style.gridTemplateColumns = "1fr 2fr auto";
+  row.innerHTML =
+    '<input placeholder="Label" value="' + (label||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Question envoyée à l\'IA" value="' + (message||'').replace(/"/g,'&quot;') + '"/>' +
+    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById("qr-list").appendChild(row);
+}
+
+/* ---------- TARIFS ---------- */
+function ajouterTarif(nom, desc, prix) {
+  var row = document.createElement("div");
+  row.className = "item-row";
+  row.innerHTML =
+    '<input placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Description" value="' + (desc||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/>' +
+    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById("tarifs-list").appendChild(row);
+}
+
+/* ---------- CATALOGUE ---------- */
+function ajouterCatalogueItem(nom, categorie, prix, image) {
+  var row = document.createElement("div");
+  row.className = "day-block";
+  var uid = "cat" + Date.now() + Math.floor(Math.random()*1000);
+  row.innerHTML =
+    '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/><input class="ci-cat" placeholder="Catégorie (optionnel)" value="' + (categorie||'').replace(/"/g,'&quot;') + '"/></div>' +
+    '<div class="row2"><input class="ci-prix" placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/></div>' +
+    '<img id="prev-' + uid + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:6px;' + (image?'':'display:none') + '" src="' + (image||'') + '" data-img="' + (image||'') + '"/>' +
+    '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
+  document.getElementById("catalogue-list").appendChild(row);
+}
+
+/* ---------- GALERIE ---------- */
+function ajouterGalerieItem(titre, avant, apres) {
+  var row = document.createElement("div");
+  row.className = "day-block";
+  var uidA = "gA" + Date.now() + Math.floor(Math.random()*1000);
+  var uidP = "gP" + Date.now() + Math.floor(Math.random()*1000);
+  row.innerHTML =
+    '<input class="gi-titre" placeholder="Titre du chantier/réalisation" value="' + (titre||'').replace(/"/g,'&quot;') + '" style="margin-bottom:8px"/>' +
+    '<div class="row2">' +
+    '<div><label class="lbl">Avant</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidA + '\')"/><img id="prev-' + uidA + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (avant?'':'display:none') + '" src="' + (avant||'') + '" data-img="' + (avant||'') + '"/></div>' +
+    '<div><label class="lbl">Après</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidP + '\')"/><img id="prev-' + uidP + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (apres?'':'display:none') + '" src="' + (apres||'') + '" data-img="' + (apres||'') + '"/></div>' +
+    '</div>' +
+    '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer</button>';
+  document.getElementById("galerie-list").appendChild(row);
+}
+
+/* ---------- RESERVATION ---------- */
+function ajouterReservationService(nom, prix) {
+  var row = document.createElement("div");
+  row.className = "item-row";
+  row.style.gridTemplateColumns = "2fr 1fr auto";
+  row.innerHTML =
+    '<input placeholder="Nom du service" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Prix (optionnel)" value="' + (prix||'').replace(/"/g,'&quot;') + '"/>' +
+    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById("reservation-list").appendChild(row);
+}
+
+/* ---------- PLANNING ---------- */
+var JOURS_SEMAINE = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+function construirePlanningJours(planningExistant) {
+  var wrap = document.getElementById("planning-jours");
+  wrap.innerHTML = "";
+  JOURS_SEMAINE.forEach(function(jour){
+    var block = document.createElement("div");
+    block.className = "day-block";
+    block.innerHTML = '<h3>' + jour + '</h3><div class="pj-cours" data-jour="' + jour + '"></div><button class="add-btn" onclick="ajouterCoursJour(\'' + jour + '\')">+ Ajouter un cours ce jour</button>';
+    wrap.appendChild(block);
+    (planningExistant[jour] || []).forEach(function(c){ ajouterCoursJour(jour, c.heure, c.nom, c.meta); });
+  });
+}
+function ajouterCoursJour(jour, heure, nom, meta) {
+  var container = document.querySelector('.pj-cours[data-jour="' + jour + '"]');
+  var row = document.createElement("div");
+  row.className = "item-row";
+  row.style.marginTop = "6px";
+  row.innerHTML =
+    '<input placeholder="Horaire" value="' + (heure||'').replace(/"/g,'&quot;') + '" style="max-width:90px"/>' +
+    '<input placeholder="Nom du cours" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Infos (niveau, prof...)" value="' + (meta||'').replace(/"/g,'&quot;') + '"/>' +
+    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
+  container.appendChild(row);
+}
+construirePlanningJours({});
+
+/* ---------- PHOTOS (logo + items) ---------- */
+function compressPhoto(file, maxSize, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var w = img.width, h = img.height;
+      if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+      else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.75));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function handleLogo(input) {
+  var f = input.files[0];
+  if (!f) return;
+  compressPhoto(f, 400, function(b64){
+    logoBase64 = b64;
+    var prev = document.getElementById('logo-preview');
+    prev.src = b64; prev.style.display = 'block';
+    document.getElementById('logo-txt').textContent = 'Toucher pour changer';
+  });
+}
+function handleItemPhoto(input, uid) {
+  var f = input.files[0];
+  if (!f) return;
+  compressPhoto(f, 700, function(b64){
+    var prev = document.getElementById('prev-' + uid);
+    prev.src = b64; prev.style.display = 'block';
+    prev.setAttribute('data-img', b64);
+  });
+}
+
+/* =====================================================================
+   ENREGISTREMENT
+   ===================================================================== */
+function enregistrer() {
+  var slug = document.getElementById("cf-slug").value.trim();
+  if (!slug) { showStatus("Renseigne un slug avant d'enregistrer.", "err"); return; }
+
+  var modulesActifs = [];
+  document.querySelectorAll(".mod-check input:checked").forEach(function(cb){ modulesActifs.push(cb.value); });
+
+  var qr = [];
+  document.querySelectorAll("#qr-list .item-row").forEach(function(row){
+    var inputs = row.querySelectorAll("input");
+    if (inputs[0].value.trim()) qr.push({ label: inputs[0].value.trim(), message: inputs[1].value.trim() });
+  });
+
+  var tarifs = [];
+  document.querySelectorAll("#tarifs-list .item-row").forEach(function(row){
+    var inputs = row.querySelectorAll("input");
+    if (inputs[0].value.trim()) tarifs.push({ nom: inputs[0].value.trim(), description: inputs[1].value.trim(), prix: inputs[2].value.trim() });
+  });
+
+  var catalogue = [];
+  document.querySelectorAll("#catalogue-list .day-block").forEach(function(row){
+    var nom = row.querySelector(".ci-nom").value.trim();
+    if (!nom) return;
+    var img = row.querySelector("img");
+    catalogue.push({
+      nom: nom,
+      categorie: row.querySelector(".ci-cat").value.trim(),
+      prix: row.querySelector(".ci-prix").value.trim(),
+      image: img ? img.getAttribute("data-img") : ""
+    });
+  });
+
+  var galerie = [];
+  document.querySelectorAll("#galerie-list .day-block").forEach(function(row){
+    var titre = row.querySelector(".gi-titre").value.trim();
+    var imgs = row.querySelectorAll("img");
+    if (!titre && !imgs[0].getAttribute("data-img") && !imgs[1].getAttribute("data-img")) return;
+    galerie.push({ titre: titre, avant: imgs[0].getAttribute("data-img"), apres: imgs[1].getAttribute("data-img") });
+  });
+
+  var reservationServices = [];
+  document.querySelectorAll("#reservation-list .item-row").forEach(function(row){
+    var inputs = row.querySelectorAll("input");
+    if (inputs[0].value.trim()) reservationServices.push({ nom: inputs[0].value.trim(), prix: inputs[1].value.trim() });
+  });
+
+  var planning = {};
+  JOURS_SEMAINE.forEach(function(jour){
+    var container = document.querySelector('.pj-cours[data-jour="' + jour + '"]');
+    var cours = [];
+    container.querySelectorAll(".item-row").forEach(function(row){
+      var inputs = row.querySelectorAll("input");
+      if (inputs[1].value.trim()) cours.push({ heure: inputs[0].value.trim(), nom: inputs[1].value.trim(), meta: inputs[2].value.trim() });
+    });
+    if (cours.length) planning[jour] = cours;
+  });
+
+  var config = {
+    secteur: document.getElementById("cf-secteur").value,
+    nom: document.getElementById("cf-nom").value.trim(),
+    sousTitre: document.getElementById("cf-soustitre").value.trim(),
+    icone: document.getElementById("cf-icone").value.trim() || "🔧",
+    logoImage: logoBase64 || "",
+    telephoneWhatsApp: document.getElementById("cf-whatsapp").value.trim(),
+    couleurs: {
+      fond: document.getElementById("cf-fond").value,
+      texte: document.getElementById("cf-texte").value,
+      fonce: document.getElementById("cf-fonce").value,
+      accent: document.getElementById("cf-accent").value,
+      clair: document.getElementById("cf-clair").value,
+      alerte: document.getElementById("cf-alerte").value
+    },
+    messageAccueil: document.getElementById("cf-accueil").value.trim(),
+    systemPrompt: document.getElementById("cf-prompt").value.trim(),
+    questionsRapides: qr,
+    modulesActifs: modulesActifs,
+    tarifsSousTitre: document.getElementById("cf-tarifs-soustitre").value.trim(),
+    tarifs: tarifs,
+    devisTypes: document.getElementById("cf-devis-types").value.split("\n").map(function(s){return s.trim();}).filter(Boolean),
+    devisPrompt: document.getElementById("cf-devis-prompt").value.trim(),
+    catalogueTitre: document.getElementById("cf-catalogue-titre").value.trim(),
+    catalogueSousTitre: document.getElementById("cf-catalogue-soustitre").value.trim(),
+    catalogue: catalogue,
+    galerieTitre: document.getElementById("cf-galerie-titre").value.trim(),
+    galerie: galerie,
+    reservationServices: reservationServices,
+    planning: planning
+  };
+
+  fetch(API + "/memory/config_" + slug, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value: config })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d && d.ok) {
+      showStatus("✅ Enregistré ! Lien à donner au client : moteur-v2.html?client=" + slug, "ok");
+    } else {
+      showStatus("Erreur lors de l'enregistrement.", "err");
+    }
+  }).catch(function(){
+    showStatus("Erreur de connexion.", "err");
+  });
+}
+
+function showStatus(msg, type) {
+  var s = document.getElementById("status");
+  s.textContent = msg;
+  s.className = "status " + type;
+}
+</script>
+</body>
+</html>
