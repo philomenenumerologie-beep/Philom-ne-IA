@@ -86,7 +86,9 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 .df-textarea{resize:none;height:80px}
 .df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer;margin-top:16px}
 .devis-card{background:#f9f6ef;border:1.5px solid rgba(0,0,0,.12);border-radius:14px;padding:14px;width:100%;max-width:min(90%,340px)}
+.devis-approx-tag{display:inline-block;background:var(--couleur-alerte);color:#2b2410;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:10px}
 .devis-card-title{font-size:11px;font-weight:700;color:var(--couleur-fonce);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.1)}
+.devis-section{font-size:10px;font-weight:700;color:#7a8c6a;letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px}
 .devis-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#1a1a1a;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.05)}
 .devis-line:last-child{border-bottom:none}
 .devis-line-label{flex:1;color:#444}
@@ -101,12 +103,33 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 .cat-tab{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(0,0,0,.12);background:#fff;font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:#777}
 .cat-tab.active{background:var(--couleur-fonce);color:var(--couleur-fond);border-color:var(--couleur-fonce)}
 .item-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.item-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer}
-.item-thumb{width:100%;aspect-ratio:1;background:var(--couleur-clair);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden}
+.item-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.item-thumb{width:100%;aspect-ratio:1;background:var(--couleur-clair);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;cursor:pointer}
 .item-thumb img{width:100%;height:100%;object-fit:cover}
 .item-info{padding:10px 12px 12px}
-.item-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:600}
+.item-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;cursor:pointer}
 .item-price{font-size:12px;color:var(--couleur-accent);margin-top:2px;font-weight:600}
+.item-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.item-tag{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--couleur-clair);color:var(--couleur-fonce)}
+.qty-stepper{display:flex;align-items:center;justify-content:space-between;margin-top:8px;background:var(--couleur-clair);border-radius:10px;padding:4px}
+.qty-btn{width:26px;height:26px;border-radius:8px;border:none;background:#fff;color:var(--couleur-fonce);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qty-val{font-size:13px;font-weight:600;min-width:18px;text-align:center}
+
+.panier-bar{position:sticky;bottom:0;background:var(--couleur-fonce);color:var(--couleur-fond);padding:13px 16px;border-radius:14px;display:none;justify-content:space-between;align-items:center;margin-top:14px;cursor:pointer;box-shadow:0 -4px 16px rgba(0,0,0,.15);font-size:14px;font-weight:600}
+.panier-bar.show{display:flex}
+
+#panier-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
+#panier-overlay.open{display:flex}
+#panier-box{background:var(--couleur-fond);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
+.panier-titre{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:14px}
+.panier-modes{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.panier-mode-btn{padding:9px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,.15);background:#fff;font-size:13px;cursor:pointer;color:#555}
+.panier-mode-btn.active{background:var(--couleur-fonce);color:var(--couleur-fond);border-color:var(--couleur-fonce)}
+.panier-line{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.08)}
+.panier-line-nom{font-size:14px;font-weight:600}
+.panier-line-prix{font-size:13px;color:#888;margin-top:2px}
+.panier-total{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:2px solid rgba(0,0,0,.15);font-weight:700;font-size:17px}
+.panier-vide{text-align:center;color:#999;padding:20px;font-size:13px}
 .pg-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:#999;font-size:13px}
 
 /* GALERIE */
@@ -140,6 +163,10 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 .mbox-cancel{display:block;text-align:center;padding:12px;font-size:14px;color:#888;cursor:pointer;font-family:Jost,sans-serif;border:none;background:none;width:100%}
 
 .moteur-badge{position:fixed;bottom:4px;left:0;right:0;text-align:center;font-size:8px;color:rgba(0,0,0,.2);z-index:600;pointer-events:none}
+
+#demo-watermark{position:fixed;inset:0;z-index:550;pointer-events:none;overflow:hidden;display:none}
+#demo-watermark.show{display:block}
+.demo-stripe{position:absolute;left:-20%;width:140%;background:rgba(200,60,60,.16);color:rgba(160,30,30,.55);font-weight:800;font-size:15px;letter-spacing:.3em;text-transform:uppercase;text-align:center;padding:6px 0;transform:rotate(-24deg);white-space:nowrap;font-family:Jost,sans-serif}
 </style>
 </head>
 <body>
@@ -182,12 +209,29 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
     <div class="mbox-name" id="mbox-name"></div>
     <div class="mbox-desc" id="mbox-desc"></div>
     <div class="mbox-price" id="mbox-price"></div>
-    <a class="wa-bubble" id="mbox-wa" href="#" target="_blank">📱 Contacter sur WhatsApp</a>
+    <button class="wa-bubble" id="mbox-add" onclick="ajouterDepuisModal()">➕ Ajouter au panier</button>
     <button class="mbox-cancel" onclick="fermerModal()">Fermer</button>
   </div>
 </div>
 
+<div id="panier-overlay" onclick="fermerPanier()">
+  <div id="panier-box" onclick="event.stopPropagation()">
+    <div class="panier-titre">🛒 Mon panier</div>
+    <div class="panier-modes" id="panier-modes"></div>
+    <div id="panier-lignes"></div>
+    <div class="panier-total"><div>Total</div><div id="panier-total-val">0€</div></div>
+    <button class="wa-bubble" style="margin-top:16px" onclick="envoyerCommandePanier()">📱 Envoyer ma commande sur WhatsApp</button>
+    <button class="mbox-cancel" onclick="fermerPanier()">Continuer mes achats</button>
+  </div>
+</div>
+
 <div class="moteur-badge">Moteur générique multi-modules · Philomène IA</div>
+
+<div id="demo-watermark">
+  <div class="demo-stripe" style="top:12%;">DÉMO — EN ATTENTE DE VALIDATION</div>
+  <div class="demo-stripe" style="top:45%;">DÉMO — EN ATTENTE DE VALIDATION</div>
+  <div class="demo-stripe" style="top:78%;">DÉMO — EN ATTENTE DE VALIDATION</div>
+</div>
 
 <script>
 var API = "https://philo-backend-by2c.onrender.com";
@@ -238,11 +282,15 @@ function appliquerConfig(cfg) {
   construireTabs(cfg);
   construirePagesDynamiques(cfg);
 
+  if (cfg.valide === false) {
+    document.getElementById("demo-watermark").classList.add("show");
+  }
+
   setTimeout(function(){
     document.getElementById("splash").classList.add("gone");
     setTimeout(function(){
       document.getElementById("splash").style.display = "none";
-      addBot(cfg.messageAccueil, true);
+      if (cfg.chatActif !== false) addBot(cfg.messageAccueil, true);
     }, 900);
   }, 1600);
 }
@@ -258,12 +306,18 @@ var MODULE_LABELS = {
 
 function construireTabs(cfg) {
   var tabs = document.getElementById("tabs");
-  tabs.innerHTML = '<button class="tab active" onclick="showTab(this,\'chat\')"><span>💬</span>Assistant</button>';
-  (cfg.modulesActifs || []).forEach(function(mod){
+  var chatActif = cfg.chatActif !== false;
+  tabs.innerHTML = "";
+  if (chatActif) {
+    tabs.innerHTML = '<button class="tab active" onclick="showTab(this,\'chat\')"><span>💬</span>Assistant</button>';
+  }
+  document.getElementById("page-chat").style.display = chatActif ? "" : "none";
+
+  (cfg.modulesActifs || []).forEach(function(mod, i){
     var info = MODULE_LABELS[mod];
     if (!info) return;
     var b = document.createElement("button");
-    b.className = "tab";
+    b.className = "tab" + (!chatActif && i === 0 ? " active" : "");
     b.innerHTML = '<span>' + info.icone + '</span>' + info.nom;
     b.onclick = function(){ showTab(b, mod); };
     tabs.appendChild(b);
@@ -291,9 +345,10 @@ function ouvrirTabParNom(nomModule) {
 function construirePagesDynamiques(cfg) {
   var container = document.getElementById("pages-dynamiques");
   container.innerHTML = "";
-  (cfg.modulesActifs || []).forEach(function(mod){
+  var chatActif = cfg.chatActif !== false;
+  (cfg.modulesActifs || []).forEach(function(mod, i){
     var div = document.createElement("div");
-    div.className = "page";
+    div.className = "page" + (!chatActif && i === 0 ? " active" : "");
     div.id = "page-" + mod;
     container.appendChild(div);
     if (mod === "tarifs") construireTarifs(div, cfg);
@@ -318,6 +373,8 @@ function construireTarifs(div, cfg) {
 /* ---------- DEVIS ---------- */
 function construireDevis(div, cfg) {
   var options = (cfg.devisTypes || ["Autre"]).map(function(t){ return '<option>' + t + '</option>'; }).join('');
+  var labelSurface = cfg.devisSurfaceLabel || "Détails (taille, surface, quantité...)";
+  var placeholderSurface = cfg.devisSurfacePlaceholder || "Ex: 25m², 15cm, 3 pièces...";
   div.innerHTML =
     '<div class="pg">' +
     '<div class="pg-h">Devis gratuit<em>Décrivez votre projet</em></div>' +
@@ -325,11 +382,14 @@ function construireDevis(div, cfg) {
     '<select class="df-select" id="dv-type"><option value="">Sélectionnez...</option>' + options + '</select>' +
     '<div class="lbl">Description</div>' +
     '<textarea class="df-textarea" id="dv-desc" placeholder="Décrivez votre besoin..."></textarea>' +
-    '<div class="lbl">Surface / quantité</div>' +
-    '<input class="df-input" id="dv-surface" placeholder="Ex: 25m², 3 pièces..."/>' +
+    '<div class="lbl">' + labelSurface + '</div>' +
+    '<input class="df-input" id="dv-surface" placeholder="' + placeholderSurface + '"/>' +
     '<button class="df-btn" onclick="genererDevisForm()">✨ Générer mon devis</button>' +
+    '<div id="devis-resultat-inline"></div>' +
     '</div>';
 }
+
+var DEVIS_PROMPT_SECOURS = "Tu es un professionnel qui établit un devis approximatif à partir d'une demande décrite par un client. RÈGLE PRIORITAIRE : si un prix est explicitement mentionné dans la description, utilise-le exactement tel quel plutôt qu'un prix de marché. Réponds UNIQUEMENT en JSON valide, sans texte autour, avec ce format exact : {\"titre\":\"DEVIS APPROXIMATIF — ...\",\"materiaux\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"maindoeuvre\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}. Si la prestation n'a pas de matériaux (ex: un service), laisse materiaux à []. Montants réalistes, arrondis.";
 
 function genererDevisForm() {
   var type = document.getElementById("dv-type").value;
@@ -338,17 +398,25 @@ function genererDevisForm() {
   if (!type) { alert("Merci de sélectionner un type de prestation."); return; }
 
   var resume = "Devis pour : " + type + (desc ? " — " + desc : "") + (surface ? " — " + surface : "");
-  ouvrirTabParNom("chat") /* no-op safeguard */;
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
-  document.getElementById("page-chat").classList.add("active");
-  document.querySelectorAll(".tab")[0].classList.add("active");
+  var chatActif = CONFIG.chatActif !== false;
 
-  addUser(resume);
-  setTyping(true);
+  if (chatActif) {
+    document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+    document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+    document.getElementById("page-chat").classList.add("active");
+    document.querySelectorAll(".tab")[0].classList.add("active");
+    addUser(resume);
+    setTyping(true);
+  } else {
+    var zone = document.getElementById("devis-resultat-inline");
+    zone.innerHTML = '<div class="tybub" style="margin-top:16px"><span></span><span></span><span></span></div>';
+  }
 
   var messageIA = "Génère un devis pour cette demande :\nType : " + type + "\n" + (desc ? "Description : " + desc + "\n" : "") + (surface ? "Surface/quantité : " + surface : "");
-  var promptDevis = CONFIG.devisPrompt || CONFIG.systemPrompt;
+  var promptDevis = CONFIG.devisPrompt || DEVIS_PROMPT_SECOURS;
+  if (CONFIG.tauxHoraire) {
+    promptDevis += " Ton taux horaire de main d'oeuvre est de " + CONFIG.tauxHoraire + "€/heure : base-toi précisément dessus pour calculer chaque ligne de main d'oeuvre selon le temps estimé, au lieu d'un prix de marché générique.";
+  }
 
   fetch(API + "/vitrine", {
     method: "POST",
@@ -356,18 +424,58 @@ function genererDevisForm() {
     body: JSON.stringify({ message: messageIA, userId: getSlugFromUrl() + "_devis_" + Date.now(), systemPrompt: promptDevis })
   }).then(function(r){ return r.json(); })
   .then(function(d){
-    setTyping(false);
     try {
       var raw = (d && d.answer) ? d.answer : "{}";
       var clean = raw.replace(/```json/g,"").replace(/```/g,"").trim();
-      renderDevisCard(JSON.parse(clean));
+      var data = JSON.parse(clean);
+      if (chatActif) { setTyping(false); renderDevisCard(data); }
+      else { document.getElementById("devis-resultat-inline").innerHTML = ""; renderDevisCardInline(data, document.getElementById("devis-resultat-inline")); }
     } catch(e) {
-      addBot("Je n'ai pas réussi à générer le devis, réessayez avec une description plus précise.");
+      var msg = "Je n'ai pas réussi à générer le devis, réessayez avec une description plus précise.";
+      if (chatActif) { setTyping(false); addBot(msg); }
+      else { document.getElementById("devis-resultat-inline").innerHTML = '<div class="pg-empty">' + msg + '</div>'; }
     }
   }).catch(function(){
-    setTyping(false);
-    addBot("Erreur de connexion, réessayez.");
+    var msg = "Erreur de connexion, réessayez.";
+    if (chatActif) { setTyping(false); addBot(msg); }
+    else { document.getElementById("devis-resultat-inline").innerHTML = '<div class="pg-empty">' + msg + '</div>'; }
   });
+}
+
+function construireHtmlDevisCard(data) {
+  var html = '<div class="devis-approx-tag">⚠️ Devis approximatif — à confirmer</div>';
+  html += '<div class="devis-card-title">' + (CONFIG.logoImage ? '' : CONFIG.icone + ' ') + nettoyerMarkdown(data.titre || "DEVIS ESTIMATIF") + '</div>';
+
+  if (data.materiaux && data.materiaux.length) {
+    html += '<div class="devis-section">Matériaux</div>';
+    data.materiaux.forEach(function(l){
+      html += '<div class="devis-line"><div class="devis-line-label">' + nettoyerMarkdown(l.label) + (l.detail ? " — " + nettoyerMarkdown(l.detail) : "") + '</div><div class="devis-line-price">' + l.prix + '</div></div>';
+    });
+  }
+  if (data.maindoeuvre && data.maindoeuvre.length) {
+    html += '<div class="devis-section">Main d\'œuvre</div>';
+    data.maindoeuvre.forEach(function(l){
+      html += '<div class="devis-line"><div class="devis-line-label">' + nettoyerMarkdown(l.label) + (l.detail ? " — " + nettoyerMarkdown(l.detail) : "") + '</div><div class="devis-line-price">' + l.prix + '</div></div>';
+    });
+  }
+  if (data.lignes && data.lignes.length) {
+    data.lignes.forEach(function(l){
+      html += '<div class="devis-line"><div class="devis-line-label">' + nettoyerMarkdown(l.label) + (l.detail ? " — " + nettoyerMarkdown(l.detail) : "") + '</div><div class="devis-line-price">' + l.prix + '</div></div>';
+    });
+  }
+
+  html += '<div class="devis-total"><div class="devis-total-label">' + (data.duree ? "Total estimé (" + nettoyerMarkdown(data.duree) + ")" : "Total estimé") + '</div><div class="devis-total-price">' + (data.total || "Sur devis") + '</div></div>';
+  html += '<div class="devis-note">Devis estimatif — à confirmer.</div>';
+  return html;
+}
+
+function creerBoutonWaDevis(data) {
+  var waBtn = document.createElement("button");
+  waBtn.className = "wa-bubble";
+  var waMsg = "Bonjour " + CONFIG.nom + " ! J'ai reçu ce devis estimatif : " + (data.titre || "") + ", total " + (data.total || "") + ". Je voudrais confirmer.";
+  waBtn.onclick = function(){ window.open("https://wa.me/" + CONFIG.telephoneWhatsApp + "?text=" + encodeURIComponent(waMsg), "_blank"); };
+  waBtn.textContent = "✅ Confirmer sur WhatsApp";
+  return waBtn;
 }
 
 function renderDevisCard(data) {
@@ -376,25 +484,34 @@ function renderDevisCard(data) {
   row.className = "mrow bot";
   var card = document.createElement("div");
   card.className = "devis-card";
-  card.innerHTML = '<div class="devis-card-title">' + CONFIG.icone + ' ' + (data.titre || "DEVIS ESTIMATIF") + '</div>';
-  (data.lignes || []).forEach(function(l){
-    card.innerHTML += '<div class="devis-line"><div class="devis-line-label">' + l.label + (l.detail ? " — " + l.detail : "") + '</div><div class="devis-line-price">' + l.prix + '</div></div>';
-  });
-  card.innerHTML += '<div class="devis-total"><div class="devis-total-label">' + (data.duree ? "Total estimé (" + data.duree + ")" : "Total estimé") + '</div><div class="devis-total-price">' + (data.total || "Sur devis") + '</div></div>';
-  card.innerHTML += '<div class="devis-note">Devis estimatif — à confirmer.</div>';
-  var waBtn = document.createElement("button");
-  waBtn.className = "wa-bubble";
-  var waMsg = "Bonjour " + CONFIG.nom + " ! J'ai reçu ce devis estimatif : " + (data.titre || "") + ", total " + (data.total || "") + ". Je voudrais confirmer.";
-  waBtn.onclick = function(){ window.open("https://wa.me/" + CONFIG.telephoneWhatsApp + "?text=" + encodeURIComponent(waMsg), "_blank"); };
-  waBtn.textContent = "✅ Confirmer sur WhatsApp";
-  card.appendChild(waBtn);
+  card.innerHTML = construireHtmlDevisCard(data);
+  card.appendChild(creerBoutonWaDevis(data));
   row.appendChild(mkAv());
   row.appendChild(card);
   msgs.appendChild(row);
   scrollChat();
 }
 
-/* ---------- CATALOGUE ---------- */
+function renderDevisCardInline(data, container) {
+  var card = document.createElement("div");
+  card.className = "devis-card";
+  card.style.marginTop = "16px";
+  card.innerHTML = construireHtmlDevisCard(data);
+  card.appendChild(creerBoutonWaDevis(data));
+  container.appendChild(card);
+}
+
+/* ---------- CATALOGUE + PANIER ---------- */
+var PANIER = {};
+var modaleItemActuel = null;
+var modePanierActif = null;
+
+function parsePrix(str) {
+  if (!str) return 0;
+  var m = String(str).replace(',', '.').match(/[\d.]+/);
+  return m ? parseFloat(m[0]) : 0;
+}
+
 function construireCatalogue(div, cfg) {
   var items = cfg.catalogue || [];
   var cats = ["tous"];
@@ -405,8 +522,11 @@ function construireCatalogue(div, cfg) {
     cats.forEach(function(c,i){ html += '<button class="cat-tab' + (i===0?' active':'') + '" onclick="filtrerCatalogue(this,\'' + c + '\')">' + (c==="tous"?"Tout":c) + '</button>'; });
     html += '</div>';
   }
-  html += '<div class="item-grid" id="catalogue-grid"></div></div>';
+  html += '<div class="item-grid" id="catalogue-grid"></div>';
+  html += '<div class="panier-bar" id="panier-bar" onclick="ouvrirPanier()"><span id="panier-bar-txt">🛒 0 article</span><span id="panier-bar-total">0€</span></div>';
+  html += '</div>';
   div.innerHTML = html;
+  if (cfg.catalogueModes && cfg.catalogueModes.length) modePanierActif = cfg.catalogueModes[0];
   renderCatalogueGrid(items, "tous");
 }
 
@@ -423,24 +543,130 @@ function renderCatalogueGrid(items, filtre) {
   if (!liste.length) { grid.innerHTML = '<div class="pg-empty">Rien à afficher pour le moment.</div>'; return; }
   grid.innerHTML = "";
   liste.forEach(function(it){
+    var qte = PANIER[it.nom] ? PANIER[it.nom].qty : 0;
+    var tagsHtml = "";
+    if (it.tags) {
+      tagsHtml = '<div class="item-tags">' + it.tags.split(",").map(function(t){ return t.trim(); }).filter(Boolean).map(function(t){ return '<span class="item-tag">' + t + '</span>'; }).join('') + '</div>';
+    }
     var card = document.createElement("div");
     card.className = "item-card";
-    card.onclick = function(){ ouvrirItem(it); };
-    card.innerHTML = '<div class="item-thumb">' + (it.image ? '<img src="'+it.image+'">' : (CONFIG.icone||'📦')) + '</div><div class="item-info"><div class="item-name">' + it.nom + '</div><div class="item-price">' + it.prix + '</div></div>';
+    card.innerHTML =
+      '<div class="item-thumb" onclick="ouvrirItem(\'' + it.nom.replace(/'/g,"\\'") + '\')">' + (it.image ? '<img src="'+it.image+'">' : (CONFIG.icone||'📦')) + '</div>' +
+      '<div class="item-info">' +
+      '<div class="item-name" onclick="ouvrirItem(\'' + it.nom.replace(/'/g,"\\'") + '\')">' + it.nom + '</div>' +
+      '<div class="item-price">' + it.prix + '</div>' +
+      tagsHtml +
+      '<div class="qty-stepper"><button class="qty-btn" onclick="changerQuantite(\'' + it.nom.replace(/'/g,"\\'") + '\',-1)">−</button><span class="qty-val" id="qty-' + it.nom.replace(/[^a-zA-Z0-9]/g,'') + '">' + qte + '</span><button class="qty-btn" onclick="changerQuantite(\'' + it.nom.replace(/'/g,"\\'") + '\',1)">+</button></div>' +
+      '</div>';
     grid.appendChild(card);
   });
 }
 
-function ouvrirItem(it) {
+function trouverItem(nom) {
+  return (CONFIG.catalogue || []).filter(function(i){ return i.nom === nom; })[0];
+}
+
+function changerQuantite(nom, delta) {
+  var item = trouverItem(nom);
+  if (!item) return;
+  if (!PANIER[nom]) PANIER[nom] = { item: item, qty: 0 };
+  PANIER[nom].qty = Math.max(0, PANIER[nom].qty + delta);
+  if (PANIER[nom].qty === 0) delete PANIER[nom];
+  var span = document.getElementById('qty-' + nom.replace(/[^a-zA-Z0-9]/g,''));
+  if (span) span.textContent = PANIER[nom] ? PANIER[nom].qty : 0;
+  mettreAJourBarrePanier();
+}
+
+function mettreAJourBarrePanier() {
+  var bar = document.getElementById("panier-bar");
+  if (!bar) return;
+  var count = 0, total = 0;
+  Object.keys(PANIER).forEach(function(k){ count += PANIER[k].qty; total += PANIER[k].qty * parsePrix(PANIER[k].item.prix); });
+  if (count === 0) { bar.classList.remove("show"); return; }
+  bar.classList.add("show");
+  document.getElementById("panier-bar-txt").textContent = "🛒 " + count + " article" + (count>1?"s":"") + " — voir le panier";
+  document.getElementById("panier-bar-total").textContent = total.toFixed(2).replace(".00","") + "€";
+}
+
+function ouvrirItem(nom) {
+  var it = trouverItem(nom);
+  if (!it) return;
+  modaleItemActuel = it;
   document.getElementById("mbox-img-wrap").innerHTML = it.image ? '<img class="mbox-img" src="' + it.image + '">' : '';
   document.getElementById("mbox-name").textContent = it.nom;
   document.getElementById("mbox-desc").textContent = it.description || "";
   document.getElementById("mbox-price").textContent = it.prix;
-  var msg = "Bonjour " + CONFIG.nom + " ! Je suis intéressé(e) par : " + it.nom + " (" + it.prix + ").";
-  document.getElementById("mbox-wa").href = "https://wa.me/" + CONFIG.telephoneWhatsApp + "?text=" + encodeURIComponent(msg);
   document.getElementById("overlay").classList.add("open");
 }
+function ajouterDepuisModal() {
+  if (modaleItemActuel) changerQuantite(modaleItemActuel.nom, 1);
+  fermerModal();
+  ouvrirPanier();
+}
 function fermerModal() { document.getElementById("overlay").classList.remove("open"); }
+
+function ouvrirPanier() {
+  var lignes = document.getElementById("panier-lignes");
+  var modes = document.getElementById("panier-modes");
+  var cfg = CONFIG;
+
+  if (cfg.catalogueModes && cfg.catalogueModes.length) {
+    modes.style.display = "flex";
+    modes.innerHTML = "";
+    cfg.catalogueModes.forEach(function(m){
+      var b = document.createElement("button");
+      b.className = "panier-mode-btn" + (m === modePanierActif ? " active" : "");
+      b.textContent = m;
+      b.onclick = function(){ modePanierActif = m; ouvrirPanier(); };
+      modes.appendChild(b);
+    });
+  } else {
+    modes.style.display = "none";
+  }
+
+  var clefs = Object.keys(PANIER);
+  if (!clefs.length) {
+    lignes.innerHTML = '<div class="panier-vide">Votre panier est vide.</div>';
+  } else {
+    lignes.innerHTML = "";
+    clefs.forEach(function(nom){
+      var p = PANIER[nom];
+      var ligneTotal = (p.qty * parsePrix(p.item.prix)).toFixed(2).replace(".00","");
+      var row = document.createElement("div");
+      row.className = "panier-line";
+      row.innerHTML =
+        '<div><div class="panier-line-nom">' + p.item.nom + '</div><div class="panier-line-prix">' + p.item.prix + '</div></div>' +
+        '<div class="qty-stepper" style="width:auto"><button class="qty-btn" onclick="changerQuantite(\'' + nom.replace(/'/g,"\\'") + '\',-1); ouvrirPanier();">−</button><span class="qty-val">' + p.qty + '</span><button class="qty-btn" onclick="changerQuantite(\'' + nom.replace(/'/g,"\\'") + '\',1); ouvrirPanier();">+</button></div>' +
+        '<div style="font-weight:700;margin-left:10px">' + ligneTotal + '€</div>';
+      lignes.appendChild(row);
+    });
+  }
+
+  var total = 0;
+  clefs.forEach(function(nom){ total += PANIER[nom].qty * parsePrix(PANIER[nom].item.prix); });
+  document.getElementById("panier-total-val").textContent = total.toFixed(2).replace(".00","") + "€";
+
+  document.getElementById("panier-overlay").classList.add("open");
+}
+function fermerPanier() { document.getElementById("panier-overlay").classList.remove("open"); }
+
+function envoyerCommandePanier() {
+  var clefs = Object.keys(PANIER);
+  if (!clefs.length) { alert("Votre panier est vide."); return; }
+  var total = 0;
+  var msg = "Bonjour " + CONFIG.nom + " ! Je voudrais commander";
+  if (modePanierActif) msg += " (" + modePanierActif + ")";
+  msg += " :\n\n";
+  clefs.forEach(function(nom){
+    var p = PANIER[nom];
+    var lt = p.qty * parsePrix(p.item.prix);
+    total += lt;
+    msg += "· " + p.qty + "x " + p.item.nom + " — " + lt.toFixed(2).replace(".00","") + "€\n";
+  });
+  msg += "\nTOTAL : " + total.toFixed(2).replace(".00","") + "€";
+  msg += "\nJe réglerai sur place à la récupération.";
+  window.open("https://wa.me/" + CONFIG.telephoneWhatsApp + "?text=" + encodeURIComponent(msg), "_blank");
+}
 
 /* ---------- GALERIE ---------- */
 function construireGalerie(div, cfg) {
@@ -525,13 +751,22 @@ function mkAv() {
   else av.textContent = CONFIG.icone;
   return av;
 }
+function nettoyerMarkdown(txt) {
+  if (!txt) return txt;
+  return txt
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/^[-*]\s+/gm, '• ');
+}
+
 function addBot(txt, withQ) {
   var msgs = document.getElementById("messages");
   var row = document.createElement("div");
   row.className = "mrow bot";
   var bub = document.createElement("div");
   bub.className = "bub bot";
-  bub.textContent = txt;
+  bub.textContent = nettoyerMarkdown(txt);
   if (withQ && CONFIG.questionsRapides && CONFIG.questionsRapides.length) {
     var qw = document.createElement("div");
     qw.className = "qbtns";
