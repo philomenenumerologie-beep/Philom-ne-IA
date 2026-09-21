@@ -39,6 +39,8 @@ input[type=color]{padding:2px;height:38px}
 .status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
 .status.ok{background:rgba(46,204,113,.15);color:#6BCB77;display:block}
 .status.err{background:rgba(255,107,107,.1);color:#ff8a7a;display:block}
+.tabbtn{flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.05);color:rgba(242,234,216,.6);font-size:13px;font-weight:600;cursor:pointer}
+.tabbtn.active{background:#f2ead8;color:#1a2e20;border-color:#f2ead8}
 .logo-zone{border:2px dashed rgba(242,234,216,.25);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px}
 .logo-zone p{font-size:12px;color:rgba(242,234,216,.4)}
 .logo-zone img{max-width:90px;max-height:60px;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
@@ -52,6 +54,62 @@ input[type=color]{padding:2px;height:38px}
 
 <h1>🛠️ Créateur d'appli</h1>
 <div class="sub">Choisis un métier, tout se pré-remplit. Ajuste, complète, enregistre.</div>
+
+<div id="ecran-accueil">
+  <div class="card" style="text-align:center;padding:28px 22px">
+    <div style="font-size:44px;margin-bottom:14px">📱✨</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:10px">Créez votre appli professionnelle</h2>
+    <p style="font-size:13px;color:rgba(242,234,216,.6);line-height:1.6;margin-bottom:18px">
+      Une appli avec assistant IA, devis automatique, catalogue ou prise de rendez-vous — adaptée à votre métier, prête en quelques minutes.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Comment ça marche</h2>
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
+      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Choisissez votre métier — tout se pré-remplit automatiquement (couleurs, questions, tarifs).</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
+      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Ajustez ce qui vous concerne : nom, logo, tarifs, articles avec photos si besoin.</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
+      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Enregistrez — votre appli est immédiatement visible avec un lien et un QR code à partager.</div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Réglez le montant indiqué, envoyez la preuve de paiement — le bandeau "démo" disparaît sous 24h.</div>
+    </div>
+  </div>
+
+  <button class="save-btn" onclick="document.getElementById('ecran-accueil').style.display='none';document.getElementById('ecran-outil').style.display='block';">Commencer →</button>
+</div>
+
+<div id="ecran-outil" style="display:none">
+
+<div style="display:flex;gap:8px;margin-bottom:20px">
+  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer / Modifier</button>
+  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Espace client</button>
+</div>
+
+<div id="tab-creation">
+
+<div class="card">
+  <h2>0. Modifier un client existant ?</h2>
+  <label class="lbl">Slug du client à recharger</label>
+  <input id="cf-slug-charger" placeholder="Ex: renovnord"/>
+  <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger cette config pour la modifier</button>
+  <div class="status" id="status-charger"></div>
+
+  <div id="bloc-validation" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(107,203,119,.1);border:1.5px solid rgba(107,203,119,.3);border-radius:10px">
+    <label class="mod-check active" style="background:transparent;border:none;padding:0">
+      <input type="checkbox" id="cf-valide"/>
+      ✅ Paiement reçu — retirer le bandeau "démo"
+    </label>
+  </div>
+</div>
 
 <div class="card">
   <h2>1. Métier</h2>
@@ -77,6 +135,8 @@ input[type=color]{padding:2px;height:38px}
   <input id="cf-icone" placeholder="🏠"/>
   <label class="lbl">Numéro WhatsApp (international, sans +)</label>
   <input id="cf-whatsapp" placeholder="33612345678"/>
+  <label class="lbl">Mot de passe "espace client" (pour qu'il gère lui-même son contenu)</label>
+  <input id="cf-admin-password" placeholder="Ex: ninja2026"/>
 </div>
 
 <div class="card">
@@ -109,7 +169,18 @@ input[type=color]{padding:2px;height:38px}
 
 <div class="card">
   <h2>5. Modules à activer</h2>
+
+  <label class="mod-check" id="mod-check-chat" style="margin-bottom:8px">
+    <input type="checkbox" id="cf-chat-actif" checked onchange="this.parentElement.classList.toggle('active', this.checked); recalculerPrix();"/>
+    💬 Assistant IA (chat conversationnel)
+  </label>
+
   <div class="modules-grid" id="modules-grid"></div>
+
+  <div id="prix-total" style="margin-top:14px;padding:12px 14px;background:rgba(242,234,216,.08);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600">
+    <span>Prix estimé pour un an</span>
+    <span id="prix-total-val">0€</span>
+  </div>
 
   <div class="subsection" id="sub-tarifs">
     <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">💰 Tarifs</h3>
@@ -121,8 +192,14 @@ input[type=color]{padding:2px;height:38px}
 
   <div class="subsection" id="sub-devis">
     <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">📋 Devis</h3>
+    <label class="lbl">Mon taux horaire (optionnel — l'IA s'en servira pour calculer la main d'œuvre)</label>
+    <input id="cf-taux-horaire" type="number" placeholder="Ex: 45"/>
     <label class="lbl">Types de prestations proposées (une par ligne)</label>
     <textarea id="cf-devis-types" placeholder="Peinture intérieure&#10;Revêtement de sol&#10;..." style="min-height:80px"></textarea>
+    <label class="lbl">Libellé du champ "détails" (adapté au métier)</label>
+    <input id="cf-devis-surface-label" placeholder="Ex: Surface / quantité, ou Taille / emplacement"/>
+    <label class="lbl">Exemple affiché dans ce champ</label>
+    <input id="cf-devis-surface-placeholder" placeholder="Ex: 25m², 3 pièces... ou avant-bras, 15cm..."/>
     <label class="lbl">Consigne IA spécifique au devis (prix, règles de calcul)</label>
     <textarea id="cf-devis-prompt" style="min-height:80px"></textarea>
   </div>
@@ -160,6 +237,52 @@ input[type=color]{padding:2px;height:38px}
 
 <button class="save-btn" onclick="enregistrer()">💾 Enregistrer et créer le lien</button>
 <div class="status" id="status"></div>
+
+<div class="card" id="resultat-lien" style="display:none;text-align:center">
+  <h2 style="text-align:left">🔗 Lien à donner au client</h2>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <input id="lien-final" readonly style="flex:1;margin-bottom:0;font-size:12px"/>
+    <button onclick="copierLien()" style="background:#f2ead8;color:#1a2e20;border:none;border-radius:8px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">📋 Copier</button>
+  </div>
+  <img id="qr-code" style="width:180px;height:180px;border-radius:10px;background:#fff;padding:8px"/>
+  <div style="font-size:11px;color:rgba(242,234,216,.4);margin-top:8px">Ce QR code renvoie directement vers l'appli du client</div>
+</div>
+
+</div><!-- /tab-creation -->
+
+<div id="tab-admin" style="display:none">
+  <div class="card">
+    <h2>Connexion espace client</h2>
+    <label class="lbl">Slug du client</label>
+    <input id="ad-slug" placeholder="Ex: ninja"/>
+    <label class="lbl">Mot de passe</label>
+    <input id="ad-password" type="password" placeholder="••••••"/>
+    <button class="add-btn" onclick="entrerEspaceClient()">🔓 Entrer</button>
+    <div class="status" id="ad-status"></div>
+  </div>
+
+  <div id="ad-content" style="display:none">
+    <div class="card">
+      <h2>💰 Tarifs</h2>
+      <div id="tarifs-list-admin"></div>
+      <button class="add-btn" onclick="ajouterTarif('','','','tarifs-list-admin')">+ Ajouter un tarif</button>
+    </div>
+    <div class="card">
+      <h2>🛍️ Catalogue / Menu / Click &amp; Collect</h2>
+      <div id="catalogue-list-admin"></div>
+      <button class="add-btn" onclick="ajouterCatalogueItem('','','','','catalogue-list-admin')">+ Ajouter un article</button>
+    </div>
+    <div class="card">
+      <h2>🖼️ Galerie avant/après</h2>
+      <div id="galerie-list-admin"></div>
+      <button class="add-btn" onclick="ajouterGalerieItem('','','','galerie-list-admin')">+ Ajouter un avant/après</button>
+    </div>
+    <button class="save-btn" onclick="enregistrerEspaceClient()">💾 Enregistrer mes modifications</button>
+    <div class="status" id="ad-status-save"></div>
+  </div>
+</div>
+
+</div><!-- /ecran-outil -->
 
 <script>
 var API = "https://philo-backend-by2c.onrender.com";
@@ -243,7 +366,9 @@ var SECTEURS = {
     ],
     modules: ["devis","galerie","tarifs"],
     devisTypes: ["Peinture intérieure","Revêtement de sol","Cloisons et plâtrerie","Rénovation salle de bain","Rénovation cuisine","Rénovation complète"],
-    devisPrompt: "Tu es un artisan expert en rénovation intérieure. RÈGLE PRIORITAIRE : si un prix est mentionné dans la description, utilise-le exactement. Sinon utilise des prix de marché réalistes (peinture 20€/m², sol 35€/m², plâtrerie 40€/m², salle de bain 4000-9000€). Réponds UNIQUEMENT en JSON : {\"titre\":\"...\",\"lignes\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
+    devisSurfaceLabel: "Surface / quantité",
+    devisSurfacePlaceholder: "Ex: 25m², 3 pièces, salle de bain 6m²...",
+    devisPrompt: "Tu es un artisan expert en rénovation intérieure. RÈGLE PRIORITAIRE : si un prix est mentionné dans la description, utilise-le exactement. Sinon utilise des prix de marché réalistes (peinture 20€/m², sol 35€/m², plâtrerie 40€/m², salle de bain 4000-9000€). Réponds UNIQUEMENT en JSON : {\"titre\":\"DEVIS APPROXIMATIF — ...\",\"materiaux\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"maindoeuvre\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
     galerieTitre: "Nos chantiers",
     tarifs: [
       {nom:"Peinture intérieure", description:"Murs et plafonds", prix:"dès 20€/m²"},
@@ -263,7 +388,9 @@ var SECTEURS = {
     ],
     modules: ["devis","tarifs"],
     devisTypes: ["Fuite / dépannage","Installation chaudière","Remplacement sanitaire","Installation salle de bain","Chauffage central"],
-    devisPrompt: "Tu es un plombier-chauffagiste professionnel. RÈGLE PRIORITAIRE : si un prix est donné dans la description, utilise-le. Sinon prix de marché réalistes (dépannage 80-150€, chaudière posée 2000-4000€). Réponds UNIQUEMENT en JSON : {\"titre\":\"...\",\"lignes\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
+    devisSurfaceLabel: "Surface / quantité",
+    devisSurfacePlaceholder: "Ex: salle de bain 6m², 1 chaudière...",
+    devisPrompt: "Tu es un plombier-chauffagiste professionnel. RÈGLE PRIORITAIRE : si un prix est donné dans la description, utilise-le. Sinon prix de marché réalistes (dépannage 80-150€, chaudière posée 2000-4000€). Réponds UNIQUEMENT en JSON : {\"titre\":\"DEVIS APPROXIMATIF — ...\",\"materiaux\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"maindoeuvre\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
     tarifs: [
       {nom:"Déplacement + diagnostic", description:"Dans un rayon de 20km", prix:"50€"},
       {nom:"Dépannage fuite", description:"Main d'oeuvre", prix:"80-150€"},
@@ -282,7 +409,9 @@ var SECTEURS = {
     ],
     modules: ["devis","tarifs"],
     devisTypes: ["Mise aux normes tableau","Rénovation électrique complète","Installation prises/luminaires","Dépannage panne"],
-    devisPrompt: "Tu es un électricien professionnel. RÈGLE PRIORITAIRE : si un prix est donné, utilise-le. Sinon prix de marché réalistes (tableau électrique 800-1500€, rénovation complète 80-120€/m²). Réponds UNIQUEMENT en JSON : {\"titre\":\"...\",\"lignes\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
+    devisSurfaceLabel: "Surface / quantité",
+    devisSurfacePlaceholder: "Ex: 60m², tableau 1 rangée...",
+    devisPrompt: "Tu es un électricien professionnel. RÈGLE PRIORITAIRE : si un prix est donné, utilise-le. Sinon prix de marché réalistes (tableau électrique 800-1500€, rénovation complète 80-120€/m²). Réponds UNIQUEMENT en JSON : {\"titre\":\"DEVIS APPROXIMATIF — ...\",\"materiaux\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"maindoeuvre\":[{\"label\":\"...\",\"detail\":\"...\",\"prix\":\"...\"}],\"total\":\"...\",\"duree\":\"...\"}",
     tarifs: [
       {nom:"Mise aux normes tableau", description:"Selon ampérage", prix:"800-1500€"},
       {nom:"Rénovation électrique", description:"Complète", prix:"dès 80€/m²"}
@@ -318,6 +447,7 @@ var SECTEURS = {
     ],
     modules: ["catalogue","tarifs"],
     catalogueTitre: "Notre carte", catalogueSousTitre: "Préparé avec des produits de saison",
+    catalogueModes: ["Sur place","À emporter"],
     tarifs: [{nom:"Menu du jour", description:"Entrée + plat ou plat + dessert", prix:"14,50€"}]
   },
   pizzeria: {
@@ -332,6 +462,7 @@ var SECTEURS = {
     ],
     modules: ["catalogue","tarifs"],
     catalogueTitre: "Nos pizzas", catalogueSousTitre: "Commandez en Click & Collect",
+    catalogueModes: ["Sur place","À emporter","Livraison"],
     tarifs: [{nom:"Pizza Margherita", description:"Base tomate, mozzarella", prix:"9€"},{nom:"Pizza Regina", description:"Jambon, champignons", prix:"11€"}]
   },
   coach_sportif: {
@@ -470,11 +601,16 @@ var MODULES_DISPO = {
   tarifs: "💰 Tarifs", devis: "📋 Devis IA", catalogue: "🛍️ Catalogue",
   galerie: "🖼️ Galerie avant/après", planning: "🗓️ Planning", reservation: "📅 Réservation"
 };
+var PRIX_MODULES = {
+  chat: 150, tarifs: 0, devis: 120, catalogue: 150, galerie: 80, planning: 100, reservation: 90
+};
+var PRIX_BASE = 190; // socle : appli + hébergement + nom de domaine + 1 an
+
 var modulesGrid = document.getElementById("modules-grid");
 Object.keys(MODULES_DISPO).forEach(function(key){
   var label = document.createElement("label");
   label.className = "mod-check";
-  label.innerHTML = '<input type="checkbox" value="' + key + '" onchange="toggleSubsection(\'' + key + '\', this.checked); this.parentElement.classList.toggle(\'active\', this.checked)"/>' + MODULES_DISPO[key];
+  label.innerHTML = '<input type="checkbox" value="' + key + '" onchange="toggleSubsection(\'' + key + '\', this.checked); this.parentElement.classList.toggle(\'active\', this.checked); recalculerPrix();"/>' + MODULES_DISPO[key];
   modulesGrid.appendChild(label);
 });
 
@@ -483,9 +619,23 @@ function toggleSubsection(mod, show) {
   if (el) el.classList.toggle("show", show);
 }
 
+function recalculerPrix() {
+  var total = PRIX_BASE;
+  if (document.getElementById("cf-chat-actif").checked) total += PRIX_MODULES.chat;
+  document.querySelectorAll(".mod-check input[type=checkbox]").forEach(function(cb){
+    if (cb.checked && cb.value && PRIX_MODULES[cb.value] !== undefined) total += PRIX_MODULES[cb.value];
+  });
+  var el = document.getElementById("prix-total-val");
+  if (el) el.textContent = total + "€ / an";
+}
+recalculerPrix();
+
+var catalogueModesActuel = [];
+
 secteurSelect.addEventListener("change", function(){
   var s = SECTEURS[secteurSelect.value];
   if (!s) return;
+  catalogueModesActuel = s.catalogueModes || [];
   document.getElementById("cf-icone").value = s.icone;
   document.getElementById("cf-soustitre").value = s.sousTitre;
   document.getElementById("cf-accueil").value = s.accueil;
@@ -497,12 +647,15 @@ secteurSelect.addEventListener("change", function(){
   document.getElementById("qr-list").innerHTML = "";
   (s.questions || []).forEach(function(q){ ajouterQR(q.label, q.message); });
 
-  document.querySelectorAll(".mod-check input").forEach(function(cb){
+  document.querySelectorAll("#modules-grid .mod-check input").forEach(function(cb){
     var actif = (s.modules || []).indexOf(cb.value) >= 0;
     cb.checked = actif;
     cb.parentElement.classList.toggle("active", actif);
     toggleSubsection(cb.value, actif);
   });
+  document.getElementById("cf-chat-actif").checked = true;
+  document.getElementById("mod-check-chat").classList.add("active");
+  recalculerPrix();
 
   document.getElementById("cf-tarifs-soustitre").value = "Prix indicatifs";
   document.getElementById("tarifs-list").innerHTML = "";
@@ -539,7 +692,7 @@ function ajouterQR(label, message) {
 }
 
 /* ---------- TARIFS ---------- */
-function ajouterTarif(nom, desc, prix) {
+function ajouterTarif(nom, desc, prix, conteneurId) {
   var row = document.createElement("div");
   row.className = "item-row";
   row.innerHTML =
@@ -547,36 +700,38 @@ function ajouterTarif(nom, desc, prix) {
     '<input placeholder="Description" value="' + (desc||'').replace(/"/g,'&quot;') + '"/>' +
     '<input placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/>' +
     '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById("tarifs-list").appendChild(row);
+  document.getElementById(conteneurId || "tarifs-list").appendChild(row);
 }
 
 /* ---------- CATALOGUE ---------- */
-function ajouterCatalogueItem(nom, categorie, prix, image) {
+function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, description, tags) {
   var row = document.createElement("div");
   row.className = "day-block";
   var uid = "cat" + Date.now() + Math.floor(Math.random()*1000);
   row.innerHTML =
-    '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/><input class="ci-cat" placeholder="Catégorie (optionnel)" value="' + (categorie||'').replace(/"/g,'&quot;') + '"/></div>' +
-    '<div class="row2"><input class="ci-prix" placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/></div>' +
+    '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/><input class="ci-cat" placeholder="Catégorie (ex: Pizzas, Boissons, Desserts)" value="' + (categorie||'').replace(/"/g,'&quot;') + '"/></div>' +
+    '<textarea class="ci-desc" placeholder="Description (ex: buns brioché, triple steaks smashés...)" style="min-height:44px;margin-top:8px">' + (description||'') + '</textarea>' +
+    '<div class="row2" style="margin-top:8px"><input class="ci-prix" placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/><input class="ci-tags" placeholder="Tags: Best-seller, Végétarien..." value="' + (tags||'').replace(/"/g,'&quot;') + '"/></div>' +
+    '<input type="file" accept="image/*" style="margin-top:8px" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
     '<img id="prev-' + uid + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:6px;' + (image?'':'display:none') + '" src="' + (image||'') + '" data-img="' + (image||'') + '"/>' +
     '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
-  document.getElementById("catalogue-list").appendChild(row);
+  document.getElementById(conteneurId || "catalogue-list").appendChild(row);
 }
 
 /* ---------- GALERIE ---------- */
-function ajouterGalerieItem(titre, avant, apres) {
+function ajouterGalerieItem(titre, avant, apres, conteneurId) {
   var row = document.createElement("div");
   row.className = "day-block";
   var uidA = "gA" + Date.now() + Math.floor(Math.random()*1000);
   var uidP = "gP" + Date.now() + Math.floor(Math.random()*1000);
   row.innerHTML =
-    '<input class="gi-titre" placeholder="Titre du chantier/réalisation" value="' + (titre||'').replace(/"/g,'&quot;') + '" style="margin-bottom:8px"/>' +
+    '<input class="gi-titre" placeholder="Titre" value="' + (titre||'').replace(/"/g,'&quot;') + '" style="margin-bottom:8px"/>' +
     '<div class="row2">' +
     '<div><label class="lbl">Avant</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidA + '\')"/><img id="prev-' + uidA + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (avant?'':'display:none') + '" src="' + (avant||'') + '" data-img="' + (avant||'') + '"/></div>' +
     '<div><label class="lbl">Après</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidP + '\')"/><img id="prev-' + uidP + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (apres?'':'display:none') + '" src="' + (apres||'') + '" data-img="' + (apres||'') + '"/></div>' +
     '</div>' +
     '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer</button>';
-  document.getElementById("galerie-list").appendChild(row);
+  document.getElementById(conteneurId || "galerie-list").appendChild(row);
 }
 
 /* ---------- RESERVATION ---------- */
@@ -664,7 +819,8 @@ function enregistrer() {
   if (!slug) { showStatus("Renseigne un slug avant d'enregistrer.", "err"); return; }
 
   var modulesActifs = [];
-  document.querySelectorAll(".mod-check input:checked").forEach(function(cb){ modulesActifs.push(cb.value); });
+  document.querySelectorAll("#modules-grid .mod-check input:checked").forEach(function(cb){ modulesActifs.push(cb.value); });
+  var chatActif = document.getElementById("cf-chat-actif").checked;
 
   var qr = [];
   document.querySelectorAll("#qr-list .item-row").forEach(function(row){
@@ -686,6 +842,8 @@ function enregistrer() {
     catalogue.push({
       nom: nom,
       categorie: row.querySelector(".ci-cat").value.trim(),
+      description: row.querySelector(".ci-desc").value.trim(),
+      tags: row.querySelector(".ci-tags").value.trim(),
       prix: row.querySelector(".ci-prix").value.trim(),
       image: img ? img.getAttribute("data-img") : ""
     });
@@ -723,6 +881,7 @@ function enregistrer() {
     icone: document.getElementById("cf-icone").value.trim() || "🔧",
     logoImage: logoBase64 || "",
     telephoneWhatsApp: document.getElementById("cf-whatsapp").value.trim(),
+    adminPassword: document.getElementById("cf-admin-password").value.trim(),
     couleurs: {
       fond: document.getElementById("cf-fond").value,
       texte: document.getElementById("cf-texte").value,
@@ -735,12 +894,18 @@ function enregistrer() {
     systemPrompt: document.getElementById("cf-prompt").value.trim(),
     questionsRapides: qr,
     modulesActifs: modulesActifs,
+    chatActif: chatActif,
+    valide: document.getElementById("bloc-validation").style.display === "block"
+      ? document.getElementById("cf-valide").checked
+      : false,
     tarifsSousTitre: document.getElementById("cf-tarifs-soustitre").value.trim(),
     tarifs: tarifs,
     devisTypes: document.getElementById("cf-devis-types").value.split("\n").map(function(s){return s.trim();}).filter(Boolean),
+    tauxHoraire: document.getElementById("cf-taux-horaire").value.trim(),
     devisPrompt: document.getElementById("cf-devis-prompt").value.trim(),
     catalogueTitre: document.getElementById("cf-catalogue-titre").value.trim(),
     catalogueSousTitre: document.getElementById("cf-catalogue-soustitre").value.trim(),
+    catalogueModes: catalogueModesActuel,
     catalogue: catalogue,
     galerieTitre: document.getElementById("cf-galerie-titre").value.trim(),
     galerie: galerie,
@@ -755,7 +920,19 @@ function enregistrer() {
   }).then(function(r){ return r.json(); })
   .then(function(d){
     if (d && d.ok) {
-      showStatus("✅ Enregistré ! Lien à donner au client : moteur-v2.html?client=" + slug, "ok");
+      var lien = window.location.origin + "/moteur-v2.html?client=" + slug;
+      showStatus("✅ Config enregistrée pour \"" + (config.nom || slug) + "\" !", "ok");
+      document.getElementById("lien-final").value = lien;
+      document.getElementById("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
+      document.getElementById("resultat-lien").style.display = "block";
+      document.getElementById("resultat-lien").scrollIntoView({ behavior: "smooth" });
+
+      // Notification (best-effort — n'empêche jamais l'enregistrement si ça échoue)
+      fetch(API + "/notify-nouvelle-appli", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nom: config.nom, secteur: config.secteur, slug: slug, lien: lien })
+      }).catch(function(){});
     } else {
       showStatus("Erreur lors de l'enregistrement.", "err");
     }
@@ -764,10 +941,233 @@ function enregistrer() {
   });
 }
 
+function copierLien() {
+  var input = document.getElementById("lien-final");
+  input.select();
+  input.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(input.value).then(function(){
+    showStatus("Lien copié dans le presse-papier !", "ok");
+  }).catch(function(){
+    document.execCommand("copy");
+  });
+}
+
+var derniereConfigChargeeValide = undefined;
+
+function chargerConfigExistante() {
+  var slug = document.getElementById("cf-slug-charger").value.trim();
+  if (!slug) { showStatusCharger("Renseigne le slug du client à charger.", "err"); return; }
+  showStatusCharger("Chargement...", "ok");
+  fetch(API + "/memory/config_" + slug)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.value) { showStatusCharger("Aucune config trouvée pour \"" + slug + "\".", "err"); return; }
+      remplirFormulaireDepuisConfig(d.value, slug);
+      derniereConfigChargeeValide = d.value.valide;
+      document.getElementById("cf-valide").checked = d.value.valide === true;
+      document.getElementById("bloc-validation").style.display = "block";
+      showStatusCharger("✅ Config de \"" + (d.value.nom || slug) + "\" chargée — modifie ce qu'il faut puis ré-enregistre.", "ok");
+    }).catch(function(){
+      showStatusCharger("Erreur de connexion.", "err");
+    });
+}
+
+function showStatusCharger(msg, type) {
+  var s = document.getElementById("status-charger");
+  s.textContent = msg;
+  s.className = "status " + type;
+}
+
+function remplirFormulaireDepuisConfig(cfg, slug) {
+  document.getElementById("cf-slug").value = slug;
+  document.getElementById("cf-secteur").value = cfg.secteur || "";
+  document.getElementById("cf-nom").value = cfg.nom || "";
+  document.getElementById("cf-soustitre").value = cfg.sousTitre || "";
+  document.getElementById("cf-icone").value = cfg.icone || "";
+  document.getElementById("cf-whatsapp").value = cfg.telephoneWhatsApp || "";
+  document.getElementById("cf-admin-password").value = cfg.adminPassword || "";
+
+  if (cfg.logoImage) {
+    logoBase64 = cfg.logoImage;
+    var prev = document.getElementById('logo-preview');
+    prev.src = cfg.logoImage; prev.style.display = 'block';
+    document.getElementById('logo-txt').textContent = 'Toucher pour changer';
+  }
+
+  var c = cfg.couleurs || {};
+  document.getElementById("cf-fond").value = c.fond || "#f2ead8";
+  document.getElementById("cf-texte").value = c.texte || "#1a1a1a";
+  document.getElementById("cf-fonce").value = c.fonce || "#1a2e20";
+  document.getElementById("cf-accent").value = c.accent || "#2d5a3d";
+  document.getElementById("cf-clair").value = c.clair || "#e8dfcf";
+  document.getElementById("cf-alerte").value = c.alerte || "#c9a84c";
+
+  document.getElementById("cf-accueil").value = cfg.messageAccueil || "";
+  document.getElementById("cf-prompt").value = cfg.systemPrompt || "";
+
+  document.getElementById("qr-list").innerHTML = "";
+  (cfg.questionsRapides || []).forEach(function(q){ ajouterQR(q.label, q.message); });
+
+  document.querySelectorAll("#modules-grid .mod-check input").forEach(function(cb){
+    var actif = (cfg.modulesActifs || []).indexOf(cb.value) >= 0;
+    cb.checked = actif;
+    cb.parentElement.classList.toggle("active", actif);
+    toggleSubsection(cb.value, actif);
+  });
+  var chatActif = cfg.chatActif !== false;
+  document.getElementById("cf-chat-actif").checked = chatActif;
+  document.getElementById("mod-check-chat").classList.toggle("active", chatActif);
+  recalculerPrix();
+
+  document.getElementById("cf-tarifs-soustitre").value = cfg.tarifsSousTitre || "";
+  document.getElementById("tarifs-list").innerHTML = "";
+  (cfg.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix); });
+
+  document.getElementById("cf-devis-types").value = (cfg.devisTypes || []).join("\n");
+  document.getElementById("cf-taux-horaire").value = cfg.tauxHoraire || "";
+  document.getElementById("cf-devis-surface-label").value = cfg.devisSurfaceLabel || "";
+  document.getElementById("cf-devis-surface-placeholder").value = cfg.devisSurfacePlaceholder || "";
+  document.getElementById("cf-devis-prompt").value = cfg.devisPrompt || "";
+
+  document.getElementById("cf-catalogue-titre").value = cfg.catalogueTitre || "";
+  document.getElementById("cf-catalogue-soustitre").value = cfg.catalogueSousTitre || "";
+  catalogueModesActuel = cfg.catalogueModes || [];
+  document.getElementById("catalogue-list").innerHTML = "";
+  (cfg.catalogue && cfg.catalogue.length ? cfg.catalogue : [{}]).forEach(function(it){
+    ajouterCatalogueItem(it.nom, it.categorie, it.prix, it.image, "catalogue-list", it.description, it.tags);
+  });
+
+  document.getElementById("cf-galerie-titre").value = cfg.galerieTitre || "";
+  document.getElementById("galerie-list").innerHTML = "";
+  (cfg.galerie && cfg.galerie.length ? cfg.galerie : [{}]).forEach(function(it){
+    ajouterGalerieItem(it.titre, it.avant, it.apres);
+  });
+
+  document.getElementById("reservation-list").innerHTML = "";
+  (cfg.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix); });
+
+  construirePlanningJours(cfg.planning || {});
+
+  document.getElementById("resultat-lien").style.display = "none";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function showStatus(msg, type) {
   var s = document.getElementById("status");
   s.textContent = msg;
   s.className = "status " + type;
+}
+
+/* =====================================================================
+   ONGLETS PRINCIPAUX (Créer / Espace client)
+   ===================================================================== */
+function switchOnglet(nom) {
+  document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
+  document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
+  document.getElementById("tabbtn-creation").classList.toggle("active", nom === "creation");
+  document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
+}
+
+/* Si le lien contient ?admin=slug, on ouvre directement l'espace client */
+var paramsUrl = new URLSearchParams(window.location.search);
+if (paramsUrl.get("admin")) {
+  document.getElementById("ecran-accueil").style.display = "none";
+  document.getElementById("ecran-outil").style.display = "block";
+  switchOnglet("admin");
+  document.getElementById("ad-slug").value = paramsUrl.get("admin");
+}
+
+/* =====================================================================
+   ESPACE CLIENT — contenu uniquement (tarifs, catalogue, galerie)
+   ===================================================================== */
+var CONFIG_CLIENT_ACTUEL = null;
+var SLUG_CLIENT_ACTUEL = null;
+
+function entrerEspaceClient() {
+  var slug = document.getElementById("ad-slug").value.trim();
+  var mdp = document.getElementById("ad-password").value;
+  if (!slug || !mdp) { showStatusAd("Renseigne le slug et le mot de passe.", "err"); return; }
+  showStatusAd("Connexion...", "ok");
+  fetch(API + "/memory/config_" + slug)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.value) { showStatusAd("Aucun client trouvé pour ce lien.", "err"); return; }
+      if (!d.value.adminPassword || d.value.adminPassword !== mdp) { showStatusAd("Mot de passe incorrect.", "err"); return; }
+      CONFIG_CLIENT_ACTUEL = d.value;
+      SLUG_CLIENT_ACTUEL = slug;
+
+      document.getElementById("tarifs-list-admin").innerHTML = "";
+      (d.value.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix, "tarifs-list-admin"); });
+
+      document.getElementById("catalogue-list-admin").innerHTML = "";
+      (d.value.catalogue || []).forEach(function(it){ ajouterCatalogueItem(it.nom, it.categorie, it.prix, it.image, "catalogue-list-admin", it.description, it.tags); });
+
+      document.getElementById("galerie-list-admin").innerHTML = "";
+      (d.value.galerie || []).forEach(function(it){ ajouterGalerieItem(it.titre, it.avant, it.apres, "galerie-list-admin"); });
+
+      document.getElementById("ad-content").style.display = "block";
+      showStatusAd("Bienvenue " + (d.value.nom || slug) + " !", "ok");
+    }).catch(function(){
+      showStatusAd("Erreur de connexion.", "err");
+    });
+}
+
+function showStatusAd(msg, type) {
+  var s = document.getElementById("ad-status");
+  s.textContent = msg;
+  s.className = "status " + type;
+}
+
+function enregistrerEspaceClient() {
+  if (!CONFIG_CLIENT_ACTUEL || !SLUG_CLIENT_ACTUEL) return;
+
+  var tarifs = [];
+  document.querySelectorAll("#tarifs-list-admin .item-row").forEach(function(row){
+    var inputs = row.querySelectorAll("input");
+    if (inputs[0].value.trim()) tarifs.push({ nom: inputs[0].value.trim(), description: inputs[1].value.trim(), prix: inputs[2].value.trim() });
+  });
+
+  var catalogue = [];
+  document.querySelectorAll("#catalogue-list-admin .day-block").forEach(function(row){
+    var nom = row.querySelector(".ci-nom").value.trim();
+    if (!nom) return;
+    var img = row.querySelector("img");
+    catalogue.push({
+      nom: nom,
+      categorie: row.querySelector(".ci-cat").value.trim(),
+      description: row.querySelector(".ci-desc").value.trim(),
+      tags: row.querySelector(".ci-tags").value.trim(),
+      prix: row.querySelector(".ci-prix").value.trim(),
+      image: img ? img.getAttribute("data-img") : ""
+    });
+  });
+
+  var galerie = [];
+  document.querySelectorAll("#galerie-list-admin .day-block").forEach(function(row){
+    var titre = row.querySelector(".gi-titre").value.trim();
+    var imgs = row.querySelectorAll("img");
+    if (!titre && !imgs[0].getAttribute("data-img") && !imgs[1].getAttribute("data-img")) return;
+    galerie.push({ titre: titre, avant: imgs[0].getAttribute("data-img"), apres: imgs[1].getAttribute("data-img") });
+  });
+
+  // On ne touche qu'au contenu — tout le reste (couleurs, prompts, secteur...) reste inchangé
+  CONFIG_CLIENT_ACTUEL.tarifs = tarifs;
+  CONFIG_CLIENT_ACTUEL.catalogue = catalogue;
+  CONFIG_CLIENT_ACTUEL.galerie = galerie;
+
+  fetch(API + "/memory/config_" + SLUG_CLIENT_ACTUEL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value: CONFIG_CLIENT_ACTUEL })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    var s = document.getElementById("ad-status-save");
+    if (d && d.ok) { s.textContent = "✅ Modifications enregistrées !"; s.className = "status ok"; }
+    else { s.textContent = "Erreur lors de l'enregistrement."; s.className = "status err"; }
+  }).catch(function(){
+    var s = document.getElementById("ad-status-save");
+    s.textContent = "Erreur de connexion."; s.className = "status err";
+  });
 }
 </script>
 </body>
