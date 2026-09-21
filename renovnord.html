@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Rénov Nord</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#f2ead8;font-family:Jost,sans-serif;color:#16324F}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+#splash{position:fixed;inset:0;z-index:500;background:#16324F;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-logo{width:110px;height:110px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both;font-size:48px}
+.sp-name{font-family:'Playfair Display',serif;font-size:32px;color:#f2ead8;letter-spacing:.08em;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .5s both;text-align:center}
+.sp-sub{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(242,234,216,.5);margin-top:10px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .7s both}
+
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#topbar{background:#16324F;padding:13px 18px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(242,234,216,.08);flex-shrink:0}
+.tb-av{width:44px;height:44px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.tb-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#f2ead8;letter-spacing:.04em}
+.tb-sub{font-size:10px;color:rgba(242,234,216,.38);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.tb-dot{width:9px;height:9px;border-radius:50%;background:#6BCB77;box-shadow:0 0 8px #6BCB77;animation:pulse 2s infinite;margin-left:auto;flex-shrink:0}
+
+#tabs{background:#16324F;display:flex;border-bottom:1px solid rgba(242,234,216,.1);flex-shrink:0}
+.tab{flex:1;padding:10px 2px 9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,234,216,.35);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab span{font-size:14px}
+.tab.active{color:#f2ead8;border-bottom-color:#f2ead8}
+
+.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page.active{display:flex}
+.page::-webkit-scrollbar{width:0}
+#msg-banniere{display:none;background:#16324F;color:#f2ead8;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid rgba(242,234,216,.2);flex-shrink:0;line-height:1.5}
+#page-chat{background:#f2ead8}
+#messages{flex:1;padding:16px 14px 6px;display:flex;flex-direction:column;gap:12px}
+.mrow{display:flex;animation:msgIn .28s cubic-bezier(.16,1,.3,1)}
+.mrow.bot{justify-content:flex-start;gap:8px}
+.mrow.user{justify-content:flex-end}
+.bav{width:32px;height:32px;border-radius:50%;background:#16324F;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:16px}
+.bub{max-width:min(78%,320px);padding:11px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;border-radius:20px}
+.bub.bot{background:#fff;color:#111;border-top-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.bub.user{background:#16324F;color:#f2ead8;border-top-right-radius:4px}
+.qbtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;border-radius:22px;border:1.5px solid #16324F;background:transparent;color:#16324F;font-size:12px;font-weight:500;font-family:Jost,sans-serif;cursor:pointer}
+.tybub{background:#fff;border-radius:20px;border-top-left-radius:4px;padding:12px 15px;display:flex;gap:5px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.tybub span{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.tybub span:nth-child(2){animation-delay:.2s}
+.tybub span:nth-child(3){animation-delay:.4s}
+#composer{padding:10px 14px 22px;background:#f2ead8;border-top:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.crow{display:flex;gap:10px;align-items:center}
+#inp{flex:1;padding:12px 16px;border-radius:26px;border:1.5px solid rgba(0,0,0,.14);background:#fff;font-size:15px;font-family:Jost,sans-serif;outline:none;color:#111}
+#inp:focus{border-color:#16324F}
+#snd{width:46px;height:46px;border-radius:50%;border:none;background:#16324F;color:#f2ead8;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.wa-bubble{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:13px;font-family:Jost,sans-serif;text-decoration:none;margin-top:10px;border:none;width:100%;cursor:pointer}
+
+#page-realisations{background:#f2ead8;padding:20px 15px 32px}
+.rl-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700}
+.rl-h em{font-style:italic;color:#999;font-size:.7em;display:block;font-family:Jost,sans-serif;text-transform:none;letter-spacing:0;margin-top:2px}
+.rl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.rl-item{border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.rl-item .avap{display:grid;grid-template-columns:1fr 1fr}
+.rl-item img{width:100%;aspect-ratio:1;object-fit:cover}
+.rl-item-title{padding:8px 10px;font-size:12px;font-weight:600;background:#fff}
+.rl-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:#888}
+
+#page-tarifs{background:#f2ead8;padding:20px 15px 32px}
+.t-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.1;margin-bottom:6px}
+.t-h em{font-style:italic;color:#999;font-size:.72em;display:block}
+.t-intro{font-size:13px;color:#666;line-height:1.5;margin-bottom:18px}
+.tcard{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.tcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600}
+.tcard-sub{font-size:11px;color:#888;margin-top:3px}
+.tcard-badge{background:#16324F;color:#f2ead8;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:8px}
+.twa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:14px;padding:15px;text-decoration:none;font-weight:700;font-size:14px;font-family:Jost,sans-serif;margin-top:6px}
+
+#page-devis{background:#f2ead8;padding:20px 15px 32px;gap:14px}
+.dv-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700}
+.dv-h em{font-style:italic;color:#999;font-size:.68em;display:block;font-family:Jost,sans-serif;text-transform:none;letter-spacing:0;margin-top:2px}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#7a8c6a;margin:14px 0 7px}
+.df-select,.df-textarea,.df-input{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid rgba(22,50,79,.18);background:#fff;font-size:14px;font-family:Jost,sans-serif;color:#16324F;outline:none;-webkit-appearance:none}
+.df-textarea{resize:none;height:80px}
+.df-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;border-radius:15px;padding:16px;font-weight:700;font-size:15px;font-family:Jost,sans-serif;border:none;width:100%;cursor:pointer;margin-top:16px}
+.df-btn:disabled{opacity:.5}
+
+.devis-card{background:#f9f6ef;border:1.5px solid rgba(22,50,79,.2);border-radius:14px;padding:14px;width:100%;max-width:min(90%,340px)}
+.devis-card-title{font-size:11px;font-weight:700;color:#16324F;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(22,50,79,.15)}
+.devis-section{font-size:10px;font-weight:700;color:#7a8c6a;letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px}
+.devis-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#1a1a1a;padding:3px 0;border-bottom:1px solid rgba(22,50,79,.06)}
+.devis-line:last-child{border-bottom:none}
+.devis-line-label{flex:1;color:#444}
+.devis-line-price{font-weight:700;color:#16324F;margin-left:10px;white-space:nowrap}
+.devis-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid rgba(22,50,79,.2)}
+.devis-total-label{font-weight:700;font-size:14px;color:#16324F}
+.devis-total-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#2C5578}
+.devis-note{font-size:11px;font-style:italic;color:#888;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">🏠</div>
+  <div class="sp-name">RÉNOV NORD</div>
+  <div class="sp-sub">Rénovation intérieure &middot; Tous corps d'état</div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="tb-av">🏠</div>
+    <div>
+      <div class="tb-name">Rénov Nord</div>
+      <div class="tb-sub">Assistante IA &middot; 24h/24</div>
+    </div>
+    <div class="tb-dot"></div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab(this,'chat')"><span>💬</span>Assistant</button>
+    <button class="tab" onclick="showTab(this,'devis')"><span>📋</span>Devis</button>
+    <button class="tab" onclick="showTab(this,'realisations')"><span>🖼️</span>Chantiers</button>
+    <button class="tab" onclick="showTab(this,'tarifs')"><span>💰</span>Tarifs</button>
+  </div>
+
+  <div id="msg-banniere"></div>
+
+  <!-- CHAT -->
+  <div id="page-chat" class="page active">
+    <div id="messages"></div>
+    <div style="height:12px;flex-shrink:0"></div>
+    <div id="composer">
+      <div class="crow">
+        <input id="inp" type="text" placeholder="Posez votre question..."/>
+        <button id="snd" onclick="sendMsg()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVIS -->
+  <div id="page-devis" class="page">
+    <div class="dv-h">Devis gratuit<em>Décrivez votre projet, on s'occupe du reste</em></div>
+
+    <div class="lbl">Type de travaux</div>
+    <select class="df-select" id="dv-type">
+      <option value="">Sélectionnez...</option>
+      <option>Peinture intérieure — murs et plafonds</option>
+      <option>Revêtement de sol — carrelage, parquet</option>
+      <option>Cloisons et plâtrerie</option>
+      <option>Rénovation salle de bain</option>
+      <option>Rénovation cuisine</option>
+      <option>Électricité</option>
+      <option>Plomberie</option>
+      <option>Rénovation complète</option>
+      <option>Autre</option>
+    </select>
+
+    <div class="lbl">Description du projet</div>
+    <textarea class="df-textarea" id="dv-desc" placeholder="Ex: Salle de bain 6m², carrelage sol et mur à refaire, douche à l'italienne..."></textarea>
+
+    <div class="lbl">Surface / quantité</div>
+    <input class="df-input" id="dv-surface" type="text" placeholder="Ex: 25m², 3 pièces, salle de bain 6m²..."/>
+
+    <button class="df-btn" id="dv-gen-btn" onclick="genererDevisForm()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      Générer mon devis
+    </button>
+  </div>
+
+  <!-- REALISATIONS -->
+  <div id="page-realisations" class="page">
+    <div class="rl-h">Nos chantiers<em>Avant / Après</em></div>
+    <div class="rl-grid" id="rl-grid">
+      <div class="rl-empty">Les photos de chantiers arrivent bientôt !</div>
+    </div>
+  </div>
+
+  <!-- TARIFS -->
+  <div id="page-tarifs" class="page">
+    <div class="t-h">Tarifs indicatifs<em>Corps d'état principaux</em></div>
+    <div class="t-intro">Prix de base au m², hors matériaux spécifiques. Devis gratuit sur place pour un chiffrage précis.</div>
+
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Peinture intérieure</div><div class="tcard-sub">Murs et plafonds, préparation incluse</div></div><div class="tcard-badge">dès 20€/m²</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Revêtement de sol</div><div class="tcard-sub">Carrelage, parquet, sol souple</div></div><div class="tcard-badge">dès 35€/m²</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Cloisons / plâtrerie</div><div class="tcard-sub">Placo, isolation, faux plafonds</div></div><div class="tcard-badge">dès 40€/m²</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Rénovation salle de bain</div><div class="tcard-sub">Clé en main, plomberie incluse</div></div><div class="tcard-badge">sur devis</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Rénovation complète</div><div class="tcard-sub">Appartement ou maison, tous corps d'état</div></div><div class="tcard-badge">sur devis</div></div>
+    </div>
+
+    <a class="twa" href="https://wa.me/33600000000?text=Bonjour%20R%C3%A9nov%20Nord%20!" target="_blank">📱 Demander un devis</a>
+
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(0,0,0,.08);font-size:10.5px;line-height:1.7;color:#999;text-align:center;">
+      <b style="color:#666;">Rénov Nord</b> — Entreprise Individuelle<br/>
+      59200 Tourcoing<br/>
+      <span style="opacity:.8;">Site créé par <a href="https://philomeneia.com" target="_blank" style="color:inherit;">Philomène IA</a></span>
+    </div>
+  </div>
+</div>
+
+<script>
+var WA = "33600000000";
+var API = "https://philo-backend-by2c.onrender.com";
+var SLUG = "renovnord";
+fetch(API + "/ping/" + SLUG).catch(function(){});
+
+var SYS = "Tu es l'assistante IA de Rénov Nord, entreprise de rénovation intérieure basée à Tourcoing, tous corps d'état (peinture, sols, plâtrerie, plomberie, salle de bain). Tu réponds en français, chaleureuse et concise. IMPORTANT: N utilise JAMAIS le markdown, pas d asterisques, pas de gras - uniquement du texte simple. REGLE ABSOLUE: Tu réponds complètement aux questions sur les types de travaux, délais habituels, garanties. QUAND LA PERSONNE DEMANDE UN DEVIS: ne donne jamais un chiffre tout de suite. Pose d'abord, une question à la fois, les informations nécessaires si elles manquent : 1) le type de travaux (peinture, sol, plâtrerie, salle de bain, cuisine, électricité, plomberie, rénovation complète), 2) la pièce et sa surface approximative, 3) l'état actuel et le niveau de finition souhaité. Une fois que tu as ces informations (ou que la personne a déjà tout donné dans son premier message), présente un devis approximatif directement dans la conversation, clairement introduit par 'Voici un devis approximatif :' suivi du détail des postes (matériaux et main d'oeuvre) et d'une fourchette de prix totale, en te basant sur nos tarifs indicatifs. Précise ensuite que ce montant est estimatif et sera confirmé lors d'un rendez-vous gratuit sur place, et propose de fixer ce rendez-vous sur WhatsApp. Tarifs indicatifs: peinture intérieure dès 20€/m², revêtement de sol dès 35€/m², cloisons et plâtrerie dès 40€/m², salle de bain complète entre 4000€ et 9000€ selon surface et gamme, cuisine équipée posée entre 3000€ et 8000€ hors électroménager, rénovation complète sur devis uniquement. Délai moyen de réalisation: 1 à 3 semaines selon l ampleur du chantier. Garantie décennale sur le gros oeuvre.";
+
+var busy = false;
+
+var SYS_DEVIS_JSON = "Tu es un artisan expert en rénovation intérieure tous corps d'état à Tourcoing. On te donne les détails d'un projet décrit par un client sur le site. Réponds UNIQUEMENT en JSON valide avec ce format exact :\n{\"titre\":\"DEVIS — RÉNOVATION SALLE DE BAIN 6M²\",\"lignes\":[{\"label\":\"Carrelage sol et mur\",\"detail\":\"6m²\",\"prix\":\"320€\"},{\"label\":\"Pose et jointoiement\",\"detail\":\"2 jours\",\"prix\":\"480€\"}],\"total\":\"1450€\",\"duree\":\"4 à 6 jours\"}\nRègles : prix de marché français réalistes pour la rénovation intérieure (peinture 20€/m², sol 35€/m², plâtrerie 40€/m², salle de bain complète 4000-9000€, cuisine posée 3000-8000€ hors électroménager), 3 à 5 lignes mêlant matériaux et main d'oeuvre, montants arrondis. Réponds UNIQUEMENT avec le JSON, rien d'autre.";
+
+function genererDevisForm() {
+  var type = document.getElementById("dv-type").value;
+  var desc = document.getElementById("dv-desc").value.trim();
+  var surface = document.getElementById("dv-surface").value.trim();
+
+  if (!type) { alert("Merci de sélectionner un type de travaux."); return; }
+
+  var resume = "Devis pour : " + type + (desc ? " — " + desc : "") + (surface ? " — " + surface : "");
+
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelectorAll(".tab")[0].classList.add("active");
+
+  addUser(resume);
+  setTyping(true);
+
+  var messageIA = "Génère un devis pour ce projet :\nType : " + type + "\n" + (desc ? "Description : " + desc + "\n" : "") + (surface ? "Surface/quantité : " + surface : "");
+
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: messageIA, userId: SLUG + "_devisform_" + Date.now(), systemPrompt: SYS_DEVIS_JSON })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    try {
+      var raw = (d && d.answer) ? d.answer : "{}";
+      var clean = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+      var data = JSON.parse(clean);
+      renderDevisCard(data);
+    } catch(e) {
+      addBot("Je n'ai pas réussi à générer le devis, réessayez avec une description un peu plus précise.");
+    }
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+  });
+}
+
+function renderDevisCard(data) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+
+  var card = document.createElement("div");
+  card.className = "devis-card";
+
+  var cardTitle = document.createElement("div");
+  cardTitle.className = "devis-card-title";
+  cardTitle.textContent = "🔧 " + (data.titre || "DEVIS ESTIMATIF");
+  card.appendChild(cardTitle);
+
+  (data.lignes || []).forEach(function(l){
+    var line = document.createElement("div");
+    line.className = "devis-line";
+    var label = document.createElement("div");
+    label.className = "devis-line-label";
+    label.textContent = l.label + (l.detail ? " — " + l.detail : "");
+    var price = document.createElement("div");
+    price.className = "devis-line-price";
+    price.textContent = l.prix;
+    line.appendChild(label);
+    line.appendChild(price);
+    card.appendChild(line);
+  });
+
+  var total = document.createElement("div");
+  total.className = "devis-total";
+  var totalLabel = document.createElement("div");
+  totalLabel.className = "devis-total-label";
+  totalLabel.textContent = data.duree ? "Total estimé (" + data.duree + ")" : "Total estimé";
+  var totalPrice = document.createElement("div");
+  totalPrice.className = "devis-total-price";
+  totalPrice.textContent = data.total || "Sur devis";
+  total.appendChild(totalLabel);
+  total.appendChild(totalPrice);
+  card.appendChild(total);
+
+  var note = document.createElement("div");
+  note.className = "devis-note";
+  note.textContent = "Devis estimatif — visite gratuite pour confirmer.";
+  card.appendChild(note);
+
+  var waBtn = document.createElement("button");
+  waBtn.className = "wa-bubble";
+  var waMsg = "Bonjour Rénov Nord ! J'ai reçu ce devis estimatif : " + (data.titre || "") + ", total " + (data.total || "") + ". Je voudrais confirmer avec une visite sur place.";
+  waBtn.onclick = function(){ window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(waMsg), "_blank"); };
+  waBtn.textContent = "✅ Confirmer sur WhatsApp";
+  card.appendChild(waBtn);
+
+  row.appendChild(mkAv());
+  row.appendChild(card);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function showTab(btn, n) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-" + n).classList.add("active");
+  btn.classList.add("active");
+  if (n === "realisations") loadRealisations();
+}
+
+function scrollChat() {
+  setTimeout(function(){
+    var c = document.getElementById("page-chat");
+    c.scrollTop = c.scrollHeight;
+  }, 80);
+}
+
+function mkAv() {
+  var av = document.createElement("div");
+  av.className = "bav";
+  av.textContent = "🏠";
+  return av;
+}
+
+function addBot(txt, withQ) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  var bub = document.createElement("div");
+  bub.className = "bub bot";
+  bub.textContent = txt;
+  if (withQ) {
+    var qw = document.createElement("div");
+    qw.className = "qbtns";
+    var devisBtn = document.createElement("button");
+    devisBtn.className = "qb";
+    devisBtn.textContent = "Devis";
+    devisBtn.onclick = function(){
+      document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+      document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+      document.getElementById("page-devis").classList.add("active");
+      document.querySelectorAll(".tab")[1].classList.add("active");
+    };
+    qw.appendChild(devisBtn);
+    var exempleBtn = document.createElement("button");
+    exempleBtn.className = "qb";
+    exempleBtn.textContent = "🧪 Exemple de devis";
+    exempleBtn.onclick = function(){
+      addUser("Devis pour : Rénovation salle de bain — douche à l'italienne, carrelage sol et mur — salle de bain 6m²");
+      setTyping(true);
+      setTimeout(function(){
+        setTyping(false);
+        renderDevisCard({
+          titre: "DEVIS — RÉNOVATION SALLE DE BAIN 6M²",
+          lignes: [
+            { label: "Dépose ancien carrelage et sanitaires", detail: "1 jour", prix: "280€" },
+            { label: "Carrelage sol et mur", detail: "6m²", prix: "420€" },
+            { label: "Receveur douche à l'italienne + paroi", detail: "1 unité", prix: "890€" },
+            { label: "Plomberie — raccordement douche et vasque", detail: "1 jour", prix: "560€" },
+            { label: "Pose et jointoiement", detail: "3 jours", prix: "750€" }
+          ],
+          total: "2900€",
+          duree: "5 à 6 jours"
+        });
+      }, 1400);
+    };
+    qw.appendChild(exempleBtn);
+    [["Délais","Quel est le délai moyen d'un chantier ?"],["Garanties","Vos travaux sont-ils garantis ?"],["Salle de bain","Vous rénovez les salles de bain ?"]].forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "qb";
+      b.textContent = it[0];
+      (function(m){ b.onclick = function(){ send(m); }; })(it[1]);
+      qw.appendChild(b);
+    });
+    bub.appendChild(qw);
+  }
+  row.appendChild(mkAv());
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function addUser(txt) {
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow user";
+  var bub = document.createElement("div");
+  bub.className = "bub user";
+  bub.textContent = txt;
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function setTyping(on) {
+  var old = document.getElementById("ty-row");
+  if (old) old.remove();
+  if (!on) return;
+  var msgs = document.getElementById("messages");
+  var row = document.createElement("div");
+  row.className = "mrow bot";
+  row.id = "ty-row";
+  var ty = document.createElement("div");
+  ty.className = "tybub";
+  ty.innerHTML = "<span></span><span></span><span></span>";
+  row.appendChild(mkAv());
+  row.appendChild(ty);
+  msgs.appendChild(row);
+  scrollChat();
+}
+
+function send(txt) {
+  if (!txt || busy) return;
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.getElementById("page-chat").classList.add("active");
+  document.querySelector(".tab").classList.add("active");
+  addUser(txt);
+  busy = true;
+  setTyping(true);
+  fetch(API + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: SLUG + "_" + Date.now(), systemPrompt: SYS })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    setTyping(false);
+    var ans = (d && d.answer) ? d.answer : "Je suis là pour vous renseigner !";
+    var msgs = document.getElementById("messages");
+    var row = document.createElement("div");
+    row.className = "mrow bot";
+    var bub = document.createElement("div");
+    bub.className = "bub bot";
+    bub.textContent = ans;
+    var low = txt.toLowerCase();
+    if (low.indexOf("devis") >= 0 || low.indexOf("prix") >= 0 || low.indexOf("tarif") >= 0) {
+      var wa = document.createElement("button");
+      wa.className = "wa-bubble";
+      var waUrl = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour Rénov Nord ! Je voudrais un devis pour mon projet de rénovation.");
+      wa.onclick = function(){ window.open(waUrl, "_blank"); };
+      wa.textContent = "Demander un devis sur WhatsApp";
+      bub.appendChild(wa);
+    }
+    row.appendChild(mkAv());
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollChat();
+    busy = false;
+  }).catch(function(){
+    setTyping(false);
+    addBot("Erreur de connexion, réessayez.");
+    busy = false;
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  send(txt);
+}
+
+document.getElementById("inp").addEventListener("keydown", function(e){
+  if (e.key === "Enter") sendMsg();
+});
+
+function loadRealisations() {
+  var grid = document.getElementById("rl-grid");
+  grid.innerHTML = '<div class="rl-empty">Chargement...</div>';
+  fetch(API + "/memory/" + SLUG + "_galerie")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var chantiers = d.value || [];
+      if (chantiers.length === 0) {
+        grid.innerHTML = '<div class="rl-empty">Les photos de chantiers arrivent bientôt !</div>';
+        return;
+      }
+      grid.innerHTML = "";
+      chantiers.forEach(function(c){
+        var item = document.createElement("div");
+        item.className = "rl-item";
+        var avap = document.createElement("div");
+        avap.className = "avap";
+        if (c.avant) { var ia = document.createElement("img"); ia.src = c.avant; avap.appendChild(ia); }
+        if (c.apres) { var ip = document.createElement("img"); ip.src = c.apres; avap.appendChild(ip); }
+        var title = document.createElement("div");
+        title.className = "rl-item-title";
+        title.textContent = c.titre || "Chantier";
+        item.appendChild(avap);
+        item.appendChild(title);
+        grid.appendChild(item);
+      });
+    }).catch(function(){
+      grid.innerHTML = '<div class="rl-empty">Les photos de chantiers arrivent bientôt !</div>';
+    });
+}
+
+fetch(API + "/memory/" + SLUG + "_config")
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.value && d.value.message && d.value.message.trim()) {
+      var b = document.getElementById("msg-banniere");
+      b.textContent = "📢 " + d.value.message;
+      b.style.display = "block";
+    }
+  }).catch(function(){});
+
+setTimeout(function(){
+  document.getElementById("splash").classList.add("gone");
+  setTimeout(function(){
+    document.getElementById("splash").style.display = "none";
+    addBot("Bienvenue chez Rénov Nord, votre entreprise de rénovation à Tourcoing ! 🏠\n\nJe suis votre assistante disponible 24h/24. Je peux vous renseigner sur nos travaux, les délais, ou vous aider à obtenir un devis approximatif gratuit.", true);
+  }, 900);
+}, 2500);
+</script>
+</body>
+</html>
