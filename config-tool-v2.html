@@ -774,7 +774,8 @@ function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, descript
     '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/><input class="ci-cat" placeholder="Catégorie (ex: Pizzas, Boissons, Desserts)" value="' + (categorie||'').replace(/"/g,'&quot;') + '"/></div>' +
     '<textarea class="ci-desc" placeholder="Description (ex: buns brioché, triple steaks smashés...)" style="min-height:44px;margin-top:8px">' + (description||'') + '</textarea>' +
     '<div class="row2" style="margin-top:8px"><input class="ci-prix" placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/><input class="ci-tags" placeholder="Tags: Best-seller, Végétarien..." value="' + (tags||'').replace(/"/g,'&quot;') + '"/></div>' +
-    '<input type="file" accept="image/*" style="margin-top:8px" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
+    '<label class="lbl" style="margin-top:10px">Photo (facultatif)</label>' +
+    '<input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
     '<img id="prev-' + uid + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:6px;' + (image?'':'display:none') + '" src="' + (image||'') + '" data-img="' + (image||'') + '"/>' +
     '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
   document.getElementById(conteneurId || "catalogue-list").appendChild(row);
