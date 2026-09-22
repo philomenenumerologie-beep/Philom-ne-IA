@@ -85,6 +85,26 @@ input[type=color]{padding:2px;height:38px}
   </div>
 
   <button class="save-btn" onclick="document.getElementById('ecran-accueil').style.display='none';document.getElementById('ecran-outil').style.display='block';">Commencer →</button>
+
+  <div class="card" style="text-align:center;margin-top:16px">
+    <div style="font-size:12px;color:rgba(242,234,216,.5);margin-bottom:10px">Pour toute question, vous pouvez nous contacter via WhatsApp.</div>
+    <a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question%20sur%20la%20cr%C3%A9ation%20de%20mon%20appli." target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:10px 20px;border-radius:20px;font-weight:700;font-size:13px;text-decoration:none">📱 Nous contacter</a>
+  </div>
+
+  <div style="text-align:center;margin-top:20px">
+    <button onclick="document.getElementById('mentions-legales').style.display = document.getElementById('mentions-legales').style.display === 'block' ? 'none' : 'block';" style="background:none;border:none;color:rgba(242,234,216,.35);font-size:11px;text-decoration:underline;cursor:pointer">Mentions légales</button>
+    <div id="mentions-legales" style="display:none;text-align:left;font-size:11px;color:rgba(242,234,216,.5);line-height:1.7;margin-top:14px;padding:14px;background:rgba(242,234,216,.05);border-radius:10px">
+      <strong style="color:rgba(242,234,216,.7)">Éditeur du site</strong><br/>
+      Philomène IA — Entreprise Individuelle (micro-entreprise)<br/>
+      SIRET : 511 089 260 00026<br/>
+      Adresse : 18 Cour Delcroix, 239 Rue des Cinq Voies, 59200 Tourcoing, France<br/>
+      Contact : WhatsApp +33 6 17 12 39 10 — philomene.numerologie@gmail.com<br/><br/>
+      <strong style="color:rgba(242,234,216,.7)">Hébergement</strong><br/>
+      Site hébergé par Render (render.com) — Nom de domaine déposé auprès de Namecheap, Inc.<br/><br/>
+      <strong style="color:rgba(242,234,216,.7)">Données personnelles</strong><br/>
+      Les informations saisies dans ce formulaire (nom d'entreprise, coordonnées, contenu de l'appli) sont utilisées uniquement pour la création et le fonctionnement de votre appli. Pour toute demande de suppression ou de modification, contactez-nous via WhatsApp ou email ci-dessus.
+    </div>
+  </div>
 </div>
 
 <div id="ecran-outil" style="display:none">
@@ -96,6 +116,8 @@ input[type=color]{padding:2px;height:38px}
 </div>
 
 <button class="add-btn" style="margin-bottom:16px;border-color:rgba(255,138,122,.4);color:#ff8a7a" onclick="if(confirm('Repartir d\'un formulaire vide ? Les infos non enregistrées seront perdues.')) window.location.reload();">🔄 Nouveau client (réinitialiser le formulaire)</button>
+
+<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" style="display:block;text-align:center;font-size:11.5px;color:rgba(242,234,216,.4);margin-bottom:16px;text-decoration:underline">Pour toute question, contactez-nous via WhatsApp</a>
 
 <div id="tab-creation">
 
@@ -1350,6 +1372,86 @@ function enregistrerEspaceClient() {
     s.textContent = "Erreur de connexion."; s.className = "status err";
   });
 }
+</script>
+<button onclick="ouvrirAideIA()" style="position:fixed;bottom:82px;right:20px;width:52px;height:52px;background:#1a2e20;border:2px solid #f2ead8;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;cursor:pointer">🤖</button>
+
+<div id="aide-ia-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center" onclick="if(event.target===this)fermerAideIA()">
+  <div style="background:#1a2e20;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column">
+    <div style="padding:16px 18px;border-bottom:1px solid rgba(242,234,216,.12);display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>
+      <div style="flex:1">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#f2ead8">Assistant du créateur d'appli</div>
+        <div style="font-size:10px;color:rgba(242,234,216,.4)">Pose ta question, je réponds tout de suite</div>
+      </div>
+      <button onclick="fermerAideIA()" style="background:none;border:none;color:rgba(242,234,216,.5);font-size:22px;cursor:pointer;padding:4px 8px">✕</button>
+    </div>
+    <div id="aide-ia-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px"></div>
+    <div style="padding:12px 14px 18px;border-top:1px solid rgba(242,234,216,.1);display:flex;gap:8px">
+      <input id="aide-ia-input" type="text" placeholder="Ex: c'est quoi un slug ?" style="flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;outline:none"/>
+      <button onclick="envoyerAideIA()" style="width:42px;height:42px;border-radius:50%;border:none;background:#f2ead8;color:#1a2e20;font-size:16px;cursor:pointer;flex-shrink:0">➤</button>
+    </div>
+  </div>
+</div>
+
+<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" style="position:fixed;bottom:20px;right:20px;width:52px;height:52px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;text-decoration:none">💬</a>
+
+<script>
+var API_AIDE = "https://philo-backend-by2c.onrender.com";
+var AIDE_IA_PROMPT = "Tu es l'assistant du créateur d'appli de Philomène IA. Tu aides une personne (un artisan, un commerçant) qui est en train de remplir un formulaire pour créer sa propre appli professionnelle (assistant IA, devis, catalogue, planning ou réservation, selon son métier). Réponds en français, simplement, sans markdown, en 2-4 phrases maximum. Voici comment fonctionne l'outil : 1) La personne choisit son secteur d'activité dans une liste (coiffure, tatouage, rénovation, plomberie, restauration, pizzeria, coach sportif, etc.), ce qui pré-remplit automatiquement les couleurs, les questions et les modules adaptés. 2) Le 'slug' est juste un identifiant court sans espace ni accent (ex: chezmario) qui sert dans le lien final de l'appli. 3) Elle peut ajouter son logo, ses tarifs, des articles avec photos (pour un catalogue), des créneaux (pour un planning). 4) Un prix annuel se calcule automatiquement selon les modules cochés (un socle de base + un supplément par module). 5) Une fois enregistré, elle obtient un lien et un QR code, avec un bandeau 'démo' affiché tant que le paiement n'est pas confirmé sur Revolut. 6) Elle peut ensuite gérer elle-même son contenu (tarifs, catalogue, galerie) via un espace client protégé par mot de passe. Si la question sort de ce cadre (question technique complexe, problème de paiement, bug) ou si tu ne sais pas répondre, dis-le clairement et invite la personne à contacter Philomène IA directement sur WhatsApp.";
+
+function ajouterMsgAide(txt, role) {
+  var msgs = document.getElementById("aide-ia-messages");
+  var bub = document.createElement("div");
+  bub.style.maxWidth = "82%";
+  bub.style.padding = "10px 14px";
+  bub.style.borderRadius = "16px";
+  bub.style.fontSize = "13.5px";
+  bub.style.lineHeight = "1.5";
+  bub.style.whiteSpace = "pre-wrap";
+  if (role === "user") {
+    bub.style.background = "#f2ead8"; bub.style.color = "#1a2e20";
+    bub.style.alignSelf = "flex-end"; bub.style.borderBottomRightRadius = "4px";
+  } else {
+    bub.style.background = "rgba(242,234,216,.08)"; bub.style.color = "#f2ead8";
+    bub.style.alignSelf = "flex-start"; bub.style.borderBottomLeftRadius = "4px";
+  }
+  bub.textContent = txt;
+  msgs.appendChild(bub);
+  msgs.scrollTop = msgs.scrollHeight;
+  return bub;
+}
+
+function ouvrirAideIA() {
+  document.getElementById("aide-ia-overlay").style.display = "flex";
+  var msgs = document.getElementById("aide-ia-messages");
+  if (!msgs.children.length) {
+    ajouterMsgAide("Bonjour ! Je peux t'expliquer comment fonctionne le créateur d'appli — le choix du métier, les modules, le prix, le paiement... Qu'est-ce qui n'est pas clair ?", "bot");
+  }
+}
+function fermerAideIA() {
+  document.getElementById("aide-ia-overlay").style.display = "none";
+}
+
+function envoyerAideIA() {
+  var input = document.getElementById("aide-ia-input");
+  var txt = input.value.trim();
+  if (!txt) return;
+  input.value = "";
+  ajouterMsgAide(txt, "user");
+  var typingBub = ajouterMsgAide("...", "bot");
+
+  fetch(API_AIDE + "/vitrine", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: txt, userId: "configtool_aide_" + Date.now(), systemPrompt: AIDE_IA_PROMPT })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    typingBub.textContent = (d && d.answer) ? d.answer.replace(/\*\*(.*?)\*\*/g,'$1') : "Je n'ai pas compris, réessaie ou contacte-nous sur WhatsApp.";
+  }).catch(function(){
+    typingBub.textContent = "Erreur de connexion. Contacte-nous sur WhatsApp si besoin.";
+  });
+}
+document.getElementById("aide-ia-input").addEventListener("keydown", function(e){ if (e.key === "Enter") envoyerAideIA(); });
 </script>
 </body>
 </html>
