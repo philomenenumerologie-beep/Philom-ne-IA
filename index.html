@@ -163,22 +163,17 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
   <!-- DEVIS -->
   <div id="page-devis" class="page">
     <div class="df-title">Votre devis<em>en 2 minutes</em></div>
+
+    <a class="df-btn" href="https://www.philomeneia.com/config-tool-v2.html" style="background:#111;text-decoration:none;margin-bottom:4px">🚀 Créer mon appli en ligne maintenant</a>
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);margin:8px 0 4px">— ou décrivez votre projet, on s'en occupe pour vous —</div>
+
     <div class="pack-card">
-      <div class="pack-title">✨ Pack complet inclus</div>
+      <div class="pack-title">✨ Ce qui peut être inclus</div>
       <div class="pack-item">Chatbot IA — répond à vos clients 24h/24</div>
       <div class="pack-item">Devis automatique sur WhatsApp</div>
-      <div class="pack-item">Galerie photos gérée depuis votre admin</div>
-      <div class="pack-item">Page tarifs personnalisée</div>
-      <div class="pack-item">QR Code carte de visite</div>
+      <div class="pack-item">Catalogue ou galerie photos</div>
+      <div class="pack-item">Planning ou prise de rendez-vous</div>
       <div class="pack-item">Page admin privée pour gérer votre contenu</div>
-    </div>
-    <div>
-      <div class="lbl">Votre formule</div>
-      <div class="color-wrap" id="formule-wrap">
-        <div class="col-btn" onclick="selFormule(this,'Essentiel — 490€ + 390€/an')">🥉 Essentiel</div>
-        <div class="col-btn" onclick="selFormule(this,'Pro — 590€ + 390€/an')">🥈 Pro</div>
-        <div class="col-btn" onclick="selFormule(this,'Premium — 690€ + 490€/an')">🥇 Premium</div>
-      </div>
     </div>
     <div>
       <div class="lbl">Votre métier</div>
@@ -315,100 +310,71 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
         </div>
         <div class="g-prix"><div><div class="g-prix-val">690€ — puis 490€/an</div><div class="g-prix-sub">Formule Premium</div></div><span style="font-size:20px">👉</span></div>
       </div>
+      <div class="g-card" onclick="ouvrirApp(7)" style="border-color:var(--gold);background:linear-gradient(135deg,#fff,var(--bg2))">
+        <div class="g-new" style="background:var(--gold);color:#111">Nouveau</div>
+        <div class="g-card-top">
+          <div class="g-card-ico" style="background:#111">🚀</div>
+          <div><div class="g-card-name">Créez votre appli</div><div class="g-card-type">Libre-service · En quelques minutes</div></div>
+        </div>
+        <div class="g-features">
+          <div class="g-feat">Choisissez votre métier — tout se pré-remplit</div>
+          <div class="g-feat">Ajoutez logo, tarifs, catalogue, photos</div>
+          <div class="g-feat">Obtenez votre lien immédiatement</div>
+          <div class="g-feat">Prix calculé automatiquement selon vos besoins</div>
+        </div>
+        <div class="g-prix"><div><div class="g-prix-val">Dès 190€</div><div class="g-prix-sub">Selon les modules choisis</div></div><span style="font-size:20px">👉</span></div>
+      </div>
     </div>
   </div>
 
   <!-- TARIFS -->
   <div id="page-tarifs" class="page">
-    <div class="t-title">Tarifs<em>clairs et sans surprise</em></div>
-    <div class="t-intro">Première année incluse. Pas d'abonnement mensuel. Hébergement &amp; support inclus.</div>
+    <div class="t-title">Tarifs<em>un socle + vos modules</em></div>
+    <div class="t-intro">Chaque appli démarre par un socle de base, auquel vous ajoutez uniquement les fonctionnalités utiles à votre activité. Le prix total inclut la création, l'hébergement et 1 an d'utilisation — renouvelable au même tarif chaque année.</div>
 
-    <div id="promo-banner" class="promo-banner"></div>
-
-    <div class="t-sec">🥉 Essentiel — Sans IA</div>
+    <div class="t-sec">🧱 Socle de base</div>
     <div class="tcard">
       <div class="tcard-top">
-        <div><div class="tcard-name">App vitrine + menu + WhatsApp</div><div class="tcard-sub">Sans chatbot IA, sans lien admin</div></div>
-        <div class="tcard-badge">Entrée de gamme</div>
+        <div><div class="tcard-name">Appli professionnelle</div><div class="tcard-sub">Création, hébergement, nom de domaine — 1 an</div></div>
+        <div class="tcard-badge">Inclus toujours</div>
       </div>
-      <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-essentiel-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-essentiel">490€</div><div class="tpunit">création + hébergement</div></div>
-        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">390€</div><div class="tpunit">par an</div></div>
-      </div>
-      <div class="tcard-items">
-        <div class="tcard-item">App mobile personnalisée</div>
-        <div class="tcard-item">Menu / catalogue complet</div>
-        <div class="tcard-item">Commande ou contact WhatsApp</div>
-        <div class="tcard-item">QR Code carte de visite</div>
-      </div>
+      <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Prix</div><div class="tpval">190€</div><div class="tpunit">pour 1 an</div></div></div>
     </div>
 
-    <div class="t-sec">🥈 Pro — Sans IA + Admin</div>
+    <div class="t-sec">🧩 Modules à la carte</div>
     <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">App vitrine + menu + Admin</div><div class="tcard-sub">Sans chatbot IA, avec lien admin</div></div>
-        <div class="tcard-badge gold">Populaire</div>
-      </div>
-      <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-pro-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-pro">590€</div><div class="tpunit">création + hébergement</div></div>
-        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">390€</div><div class="tpunit">par an</div></div>
-      </div>
-      <div class="tcard-items">
-        <div class="tcard-item">Tout Essentiel inclus</div>
-        <div class="tcard-item">Lien admin privé pour gérer le contenu</div>
-        <div class="tcard-item">Spécial du mois, galerie photos...</div>
-        <div class="tcard-item">Mise à jour en temps réel</div>
-      </div>
+      <div class="tcard-top"><div><div class="tcard-name">💬 Assistant IA</div><div class="tcard-sub">Chatbot qui répond à vos clients 24h/24</div></div><div class="tcard-badge gold">+150€</div></div>
     </div>
-
-    <div class="t-sec">🥇 Premium — IA + Admin</div>
     <div class="tcard">
-      <div class="tcard-top">
-        <div><div class="tcard-name">App complète avec chatbot IA</div><div class="tcard-sub">Chatbot IA + Admin + tout inclus</div></div>
-        <div class="tcard-badge gold">Tout inclus</div>
-      </div>
-      <div class="tprices">
-        <div class="tpx"><div class="tplbl">Setup + 1 an</div><div id="px-premium-strike" class="promo-strike" style="display:none"></div><div class="tpval" id="px-premium">690€</div><div class="tpunit">création + hébergement</div></div>
-        <div class="tpx"><div class="tplbl">Renouvellement</div><div class="tpval">490€</div><div class="tpunit">par an</div></div>
-      </div>
-      <div class="tcard-items">
-        <div class="tcard-item">Tout Pro inclus</div>
-        <div class="tcard-item">Chatbot IA personnalisé 24h/24</div>
-        <div class="tcard-item">Répond aux clients automatiquement</div>
-        <div class="tcard-item">Devis automatique sur WhatsApp</div>
-      </div>
+      <div class="tcard-top"><div><div class="tcard-name">📋 Devis automatique</div><div class="tcard-sub">L'IA chiffre une demande sur WhatsApp</div></div><div class="tcard-badge gold">+120€</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">🛍️ Catalogue &amp; panier</div><div class="tcard-sub">Menu, boutique, articles avec photos</div></div><div class="tcard-badge gold">+150€</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">🖼️ Galerie avant/après</div><div class="tcard-sub">Réalisations, chantiers, transformations</div></div><div class="tcard-badge gold">+80€</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">🗓️ Planning</div><div class="tcard-sub">Créneaux et horaires par jour</div></div><div class="tcard-badge gold">+100€</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">📅 Réservation</div><div class="tcard-sub">Formulaire de prise de rendez-vous</div></div><div class="tcard-badge gold">+90€</div></div>
     </div>
 
-    <div class="t-sec">👥 Formules Groupées — Économisez !</div>
-    <div class="promo-card">
-      <div class="promo-name">Formule Duo 👥</div>
-      <div class="promo-desc">Vous + 1 autre commerçant — chacun sa propre app</div>
-      <div class="promo-prices">
-        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">450€</div><div class="promo-unit">au lieu de 690€</div></div>
-        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">390€</div><div class="promo-unit">/ an chacun</div></div>
-      </div>
-      <div class="promo-save">🎉 Économie de 240€ sur la création !</div>
+    <div class="t-sec">✨ Exemples concrets</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Pizzeria / Restaurant</div><div class="tcard-sub">Socle + Assistant + Catalogue</div></div><div class="tcard-badge">490€</div></div>
     </div>
-    <div class="promo-card">
-      <div class="promo-name">Formule Trio 👥👥👥</div>
-      <div class="promo-desc">Vous + 2 autres commerçants — chacun sa propre app</div>
-      <div class="promo-prices">
-        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">420€</div><div class="promo-unit">au lieu de 690€</div></div>
-        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">390€</div><div class="promo-unit">/ an chacun</div></div>
-      </div>
-      <div class="promo-save">🎉 Économie de 270€ sur la création !</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Artisan (rénovation, plomberie...)</div><div class="tcard-sub">Socle + Assistant + Devis + Galerie</div></div><div class="tcard-badge">540€</div></div>
     </div>
-    <div class="promo-card">
-      <div class="promo-name">Formule Rue 🏘️</div>
-      <div class="promo-desc">5 commerçants et plus — chacun sa propre app</div>
-      <div class="promo-prices">
-        <div class="promo-px"><div class="promo-lbl">Chacun paie</div><div class="promo-val">350€</div><div class="promo-unit">au lieu de 690€</div></div>
-        <div class="promo-px"><div class="promo-lbl">Renouvellement</div><div class="promo-val">390€</div><div class="promo-unit">/ an chacun</div></div>
-      </div>
-      <div class="promo-save">🎉 Économie de 340€ sur la création !</div>
+    <div class="tcard">
+      <div class="tcard-top"><div><div class="tcard-name">Coiffure / Esthétique</div><div class="tcard-sub">Socle + Assistant + Réservation</div></div><div class="tcard-badge">430€</div></div>
     </div>
 
-    <div class="t-sec">⚽ Coach IA — Clubs sportifs</div>
+    <a class="t-wa" href="https://www.philomeneia.com/config-tool-v2.html" style="background:#111;margin-top:6px">🚀 Créer mon appli et calculer mon prix exact</a>
+
+    <div class="t-sec" style="margin-top:20px">⚽ Coach IA — Clubs sportifs</div>
     <div class="tcard">
       <div class="tcard-top"><div><div class="tcard-name">Solo</div><div class="tcard-sub">1 coach</div></div><div class="tcard-badge">1 coach</div></div>
       <div class="tprices"><div class="tpx" style="grid-column:1/-1"><div class="tplbl">Par an</div><div class="tpval">50€</div></div></div>
@@ -457,7 +423,7 @@ html,body{height:100%;overflow:hidden;background:#FAFAF7;font-family:Jost,sans-s
 <script>
 var WA = "33617123910";
 var API = "https://philo-backend-by2c.onrender.com";
-var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. LANGUE: Detecte automatiquement la langue du message et reponds dans la meme langue. Tu parles francais, neerlandais et anglais. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes. Texte simple uniquement. TARIFS - 3 FORMULES: Essentiel (sans IA, sans admin) 490 euros setup + 390 euros/an. Pro (sans IA, avec admin) 590 euros setup + 390 euros/an. Premium (avec IA + admin) 690 euros setup + 490 euros/an. Formule Duo: 450 euros chacun + 390 euros/an. Formule Trio: 420 euros chacun + 390 euros/an. Formule Rue (5+): 350 euros chacun + 390 euros/an. Clubs sportifs: solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an. Pour toute demande orienter vers l onglet Devis ou WhatsApp.";
+var SYS = "Tu es Philomene I.A., l'assistante commerciale qui vend des apps IA personnalisees pour les professionnels. LANGUE: Detecte automatiquement la langue du message et reponds dans la meme langue. Tu parles francais, neerlandais et anglais. FORMAT ABSOLU: 3-4 phrases maximum. Jamais de ** ni de listes. Texte simple uniquement. TARIFS: chaque appli est composee d un socle de base a 190 euros (creation, hebergement et nom de domaine pour 1 an) auquel s ajoutent des modules selon les besoins : Assistant IA conversationnel +150 euros, Devis automatique +120 euros, Catalogue avec panier +150 euros, Galerie avant/apres +80 euros, Planning +100 euros, Reservation +90 euros. Le prix total se calcule en additionnant le socle et les modules choisis, pour 1 an, renouvelable au meme tarif chaque annee. Clubs sportifs (Coach IA) : solo 50/an, mini club 90/an, club 150/an, club pro 250/an, club max 390/an — tarif a part, non lie aux modules. Pour toute demande orienter vers l onglet Devis, l outil de creation en ligne, ou WhatsApp.";
 var busy = false;
 
 var APPS = [
@@ -467,7 +433,8 @@ var APPS = [
   {ico:"⚽",name:"Coach IA Football",type:"Club sportif — Belgique",desc:"App pour club avec générateur de séances par catégorie, schémas d'exercices automatiques et préparation physique intégrée.",wa:"Je suis intéressé par une app Coach IA pour mon club !"},
   {ico:"🎨",name:"Jo Déco",type:"Peintre-décorateur — France",desc:"App pour artisan avec chatbot expert bâtiment, devis automatique WhatsApp et galerie avant/après gérée en admin.",wa:"Je suis intéressé par une app comme Jo Déco !"},
   {ico:"🤘",name:"Direct Action",type:"Groupe Hardcore — Belgique",desc:"App style fanzine pour groupe de musique avec chatbot IA, dates de concerts, discographie et formulaire de booking.",wa:"Je suis intéressé par une app comme Direct Action !",url:"https://www.philomeneia.com/groupe.html"},
-  {ico:"🚚",name:"Le Camion Gourmand",type:"Food Truck — Événementiel",desc:"App pour food truck avec chatbot IA menu/tarifs/zone, formulaire de réservation avec acompte (CB ou virement), menu en photos géré depuis l'admin et blocage automatique des dates indisponibles.",wa:"Je suis intéressé par une app comme Le Camion Gourmand !",url:"https://www.philomeneia.com/food-truck.html"}
+  {ico:"🚚",name:"Le Camion Gourmand",type:"Food Truck — Événementiel",desc:"App pour food truck avec chatbot IA menu/tarifs/zone, formulaire de réservation avec acompte (CB ou virement), menu en photos géré depuis l'admin et blocage automatique des dates indisponibles.",wa:"Je suis intéressé par une app comme Le Camion Gourmand !",url:"https://www.philomeneia.com/food-truck.html"},
+  {ico:"🚀",name:"Créez votre appli",type:"Libre-service",desc:"Créez votre appli professionnelle vous-même : choisissez votre métier, personnalisez couleurs et contenu, obtenez votre lien immédiatement.",wa:"",url:"https://www.philomeneia.com/config-tool-v2.html"}
 ];
 
 var SOUS_METIERS = {
