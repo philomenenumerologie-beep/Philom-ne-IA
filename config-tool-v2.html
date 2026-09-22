@@ -45,6 +45,11 @@ input[type=color]{padding:2px;height:38px}
 .logo-zone{border:2px dashed rgba(242,234,216,.25);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px}
 .logo-zone p{font-size:12px;color:rgba(242,234,216,.4)}
 .logo-zone img{max-width:90px;max-height:60px;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
+.photo-zone{border:2px dashed rgba(242,234,216,.25);border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:rgba(242,234,216,.04);position:relative;overflow:hidden;margin-top:6px}
+.photo-zone .ph{color:rgba(242,234,216,.4);font-size:12px}
+.photo-zone .ph span{display:block;font-size:24px;margin-bottom:6px}
+.photo-zone img{max-width:100%;max-height:120px;border-radius:8px;display:none;margin:0 auto}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .subsection{display:none;border-top:1px solid rgba(242,234,216,.1);padding-top:12px;margin-top:12px}
 .subsection.show{display:block}
 .day-block{background:rgba(242,234,216,.04);border-radius:10px;padding:10px;margin-bottom:8px}
@@ -775,9 +780,12 @@ function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, descript
     '<textarea class="ci-desc" placeholder="Description (ex: buns brioché, triple steaks smashés...)" style="min-height:44px;margin-top:8px">' + (description||'') + '</textarea>' +
     '<div class="row2" style="margin-top:8px"><input class="ci-prix" placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/><input class="ci-tags" placeholder="Tags: Best-seller, Végétarien..." value="' + (tags||'').replace(/"/g,'&quot;') + '"/></div>' +
     '<label class="lbl" style="margin-top:10px">Photo (facultatif)</label>' +
-    '<input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
-    '<img id="prev-' + uid + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:6px;' + (image?'':'display:none') + '" src="' + (image||'') + '" data-img="' + (image||'') + '"/>' +
-    '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
+    '<div class="photo-zone">' +
+      '<div class="ph" id="ph-' + uid + '" style="' + (image?'display:none':'') + '"><span>📷</span>Prendre une photo ou choisir</div>' +
+      '<img id="prev-' + uid + '" style="' + (image?'display:block':'') + '" src="' + (image||'') + '" data-img="' + (image||'') + '"/>' +
+      '<input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
+    '</div>' +
+    '<button class="del-btn" style="margin-top:10px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
   document.getElementById(conteneurId || "catalogue-list").appendChild(row);
 }
 
@@ -871,6 +879,8 @@ function handleItemPhoto(input, uid) {
     var prev = document.getElementById('prev-' + uid);
     prev.src = b64; prev.style.display = 'block';
     prev.setAttribute('data-img', b64);
+    var ph = document.getElementById('ph-' + uid);
+    if (ph) ph.style.display = 'none';
   });
 }
 
