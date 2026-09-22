@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tous mes clients — Philomène IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
+body{background:#1a2e20;color:#f2ead8;padding:20px 16px 60px;max-width:540px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
+.sub{font-size:12px;color:rgba(242,234,216,.5);margin-bottom:20px}
+.card{background:rgba(242,234,216,.06);border:1px solid rgba(242,234,216,.12);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(242,234,216,.6);margin-bottom:12px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,234,216,.4);margin-bottom:5px;display:block}
+input{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;margin-bottom:12px;outline:none}
+.add-btn{background:none;border:1.5px dashed rgba(242,234,216,.25);color:rgba(242,234,216,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px}
+.status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
+.status.ok{background:rgba(46,204,113,.15);color:#6BCB77;display:block}
+.status.err{background:rgba(255,107,107,.1);color:#ff8a7a;display:block}
+.ga-item{background:#fff;border-radius:14px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:#1a2e20}
+.ga-item-title{font-size:13px;font-weight:600}
+.ga-item-title span{display:block;font-size:11px;font-weight:400;color:#7a7a7a;margin-top:2px}
+.ga-empty{text-align:center;color:rgba(242,234,216,.4);font-size:13px;padding:20px 0}
+.compte{font-size:12px;color:rgba(242,234,216,.5);text-align:right;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<h1>📊 Tous mes clients</h1>
+<div class="sub">Vue d'ensemble réservée à Philomène IA — clique sur un client pour le modifier.</div>
+
+<div class="card" id="verrou-dashboard">
+  <label class="lbl">Mot de passe</label>
+  <input id="pwd-dashboard" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')deverrouillerDashboard()"/>
+  <button class="add-btn" onclick="deverrouillerDashboard()">🔓 Déverrouiller</button>
+  <div class="status" id="status-verrou-dashboard"></div>
+</div>
+
+<div id="contenu-dashboard" style="display:none">
+  <div class="compte" id="compte-clients"></div>
+  <div id="dashboard-liste"><div class="ga-empty">Chargement...</div></div>
+</div>
+
+<script>
+/* ⚠️ Même mot de passe que dans config-tool-v2.html — change les deux ensemble si tu le modifies */
+var MOT_DE_PASSE_PHILOMENE = "philomene2026";
+var API = "https://philo-backend-by2c.onrender.com";
+/* Nom exact du fichier outil de création, pour le lien "modifier ce client" */
+var LIEN_OUTIL_CREATION = "config-tool-v2.html";
+
+function deverrouillerDashboard() {
+  if (document.getElementById("pwd-dashboard").value === MOT_DE_PASSE_PHILOMENE) {
+    document.getElementById("verrou-dashboard").style.display = "none";
+    document.getElementById("contenu-dashboard").style.display = "block";
+    chargerDashboard();
+  } else {
+    var s = document.getElementById("status-verrou-dashboard");
+    s.textContent = "Mot de passe incorrect."; s.className = "status err";
+  }
+}
+
+function chargerDashboard() {
+  var zone = document.getElementById("dashboard-liste");
+  zone.innerHTML = '<div class="ga-empty">Chargement...</div>';
+  fetch(API + "/memory/app_index")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var index = (d && d.value) ? d.value : [];
+      document.getElementById("compte-clients").textContent = index.length + " client" + (index.length>1?"s":"") + " créé" + (index.length>1?"s":"");
+      if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun client créé pour l\'instant.</div>'; return; }
+      zone.innerHTML = "";
+      index.forEach(function(entree){
+        var row = document.createElement("div");
+        row.className = "ga-item";
+        row.innerHTML = '<div class="ga-item-title">' + entree.nom + '<span>' + entree.slug + ' · ' + (entree.secteur||'') + '</span></div><span id="badge-' + entree.slug + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:#eee">...</span>';
+        row.onclick = function(){
+          window.location.href = LIEN_OUTIL_CREATION + "?philomene=1&modifier=" + encodeURIComponent(entree.slug);
+        };
+        zone.appendChild(row);
+
+        fetch(API + "/memory/config_" + entree.slug)
+          .then(function(r){ return r.json(); })
+          .then(function(dd){
+            var badge = document.getElementById("badge-" + entree.slug);
+            if (!badge || !dd || !dd.value) return;
+            var cfg = dd.value;
+            var expire = cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
+            if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "#ffdada"; badge.style.color = "#a01f10"; }
+            else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "#dff6e0"; badge.style.color = "#2E7D32"; }
+            else { badge.textContent = "⏳ En attente"; badge.style.background = "#fff3d6"; badge.style.color = "#8a5a00"; }
+          }).catch(function(){});
+      });
+    }).catch(function(){
+      zone.innerHTML = '<div class="ga-empty">Erreur de chargement.</div>';
+    });
+}
+</script>
+</body>
+</html>
