@@ -1239,6 +1239,8 @@ function switchOnglet(nom) {
 /* Si le lien contient ?philomene=1, on révèle la section réservée ; avec ?modifier=slug en plus, on pré-remplit le slug */
 var paramsUrl = new URLSearchParams(window.location.search);
 if (paramsUrl.get("philomene")) {
+  document.getElementById("ecran-accueil").style.display = "none";
+  document.getElementById("ecran-outil").style.display = "block";
   document.getElementById("carte-modifier-existant").style.display = "block";
   if (paramsUrl.get("modifier")) {
     document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
