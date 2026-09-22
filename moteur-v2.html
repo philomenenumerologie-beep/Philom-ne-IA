@@ -2,7 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#1a2e20"/>
 <title id="page-title">Chargement...</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -260,6 +264,41 @@ function chargerConfig() {
     .catch(function(){ appliquerConfig(CONFIG_PAR_DEFAUT); });
 }
 
+function definirIconePWA(cfg) {
+  if (cfg.logoImage) {
+    injecterIconePWA(cfg.logoImage);
+    return;
+  }
+  // Pas de logo : on génère une icône carrée colorée avec l'emoji, pour un rendu propre sur l'écran d'accueil
+  var canvas = document.createElement("canvas");
+  canvas.width = 180; canvas.height = 180;
+  var ctx = canvas.getContext("2d");
+  ctx.fillStyle = cfg.couleurs.fonce || "#1a2e20";
+  ctx.fillRect(0, 0, 180, 180);
+  ctx.font = "96px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(cfg.icone || "🔧", 90, 100);
+  injecterIconePWA(canvas.toDataURL("image/png"));
+}
+
+function injecterIconePWA(dataUrl) {
+  document.querySelectorAll('link[rel="apple-touch-icon"], link[rel="icon"]').forEach(function(l){ l.remove(); });
+  ["apple-touch-icon", "icon"].forEach(function(rel){
+    var link = document.createElement("link");
+    link.rel = rel;
+    link.href = dataUrl;
+    document.head.appendChild(link);
+  });
+  var metaTitre = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if (!metaTitre) {
+    metaTitre = document.createElement("meta");
+    metaTitre.name = "apple-mobile-web-app-title";
+    document.head.appendChild(metaTitre);
+  }
+  metaTitre.content = CONFIG.nom;
+}
+
 function appliquerConfig(cfg) {
   CONFIG = cfg;
   document.title = cfg.nom;
@@ -278,12 +317,17 @@ function appliquerConfig(cfg) {
   document.getElementById("sp-sub").textContent = cfg.sousTitre;
   definirIcone("tb-av", cfg);
   document.getElementById("tb-name").textContent = cfg.nom;
+  definirIconePWA(cfg);
 
   construireTabs(cfg);
   construirePagesDynamiques(cfg);
 
   if (cfg.valide === false) {
     document.getElementById("demo-watermark").classList.add("show");
+    document.querySelectorAll(".demo-stripe").forEach(function(s){ s.textContent = "DÉMO — EN ATTENTE DE VALIDATION"; });
+  } else if (cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration)) {
+    document.getElementById("demo-watermark").classList.add("show");
+    document.querySelectorAll(".demo-stripe").forEach(function(s){ s.textContent = "ABONNEMENT EXPIRÉ — CONTACTEZ PHILOMÈNE IA"; });
   }
 
   setTimeout(function(){
