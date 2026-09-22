@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif}
-html,body{max-width:100%;overflow-x:hidden}
+html,body{max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
 body{background:#1a2e20;color:#f2ead8;padding:20px 16px 60px;max-width:540px;margin:0 auto}
 h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
 .sub{font-size:12px;color:rgba(242,234,216,.5);margin-bottom:20px}
@@ -16,7 +16,7 @@ h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
 .lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,234,216,.4);margin-bottom:5px;display:block}
 input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;margin-bottom:12px;outline:none;-webkit-appearance:none}
 select option{background:#1a2e20;color:#f2ead8}
-textarea{resize:vertical;min-height:56px}
+textarea{resize:vertical;min-height:56px;word-break:break-all;overflow-wrap:anywhere}
 
 /* PALETTE DE BULLES DE COULEUR */
 .palette-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
@@ -118,7 +118,6 @@ input[type=color]{padding:2px;height:38px}
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
   <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer</button>
   <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Client</button>
-  <button id="tabbtn-dashboard" class="tabbtn" onclick="switchOnglet('dashboard')">📊 Tous mes clients</button>
 </div>
 
 <button class="add-btn" style="margin-bottom:16px;border-color:rgba(255,138,122,.4);color:#ff8a7a" onclick="if(confirm('Repartir d\'un formulaire vide ? Les infos non enregistrées seront perdues.')) window.location.reload();">🔄 Nouveau client (réinitialiser le formulaire)</button>
@@ -127,7 +126,7 @@ input[type=color]{padding:2px;height:38px}
 
 <div id="tab-creation">
 
-<div class="card">
+<div class="card" id="carte-modifier-existant" style="display:none">
   <h2>0. Modifier un client existant ?</h2>
   <div id="verrou-admin-general">
     <label class="lbl">Mot de passe (réservé à Philomène IA)</label>
@@ -272,7 +271,9 @@ input[type=color]{padding:2px;height:38px}
 
   <div class="subsection" id="sub-reservation">
     <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">📅 Réservation</h3>
-    <label class="lbl">Services proposés</label>
+    <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...) — laisser vide sinon</label>
+    <input id="cf-reservation-lien" placeholder="Ex: https://www.planity.com/nom-du-salon"/>
+    <label class="lbl">Services proposés (utilisé seulement si pas de lien externe)</label>
     <div id="reservation-list"></div>
     <button class="add-btn" onclick="ajouterReservationService()">+ Ajouter un service</button>
   </div>
@@ -327,21 +328,20 @@ input[type=color]{padding:2px;height:38px}
       <div id="galerie-list-admin"></div>
       <button class="add-btn" onclick="ajouterGalerieItem('','','','galerie-list-admin')">+ Ajouter un avant/après</button>
     </div>
+    <div class="card">
+      <h2>🗓️ Planning</h2>
+      <div id="planning-jours-admin"></div>
+    </div>
+    <div class="card">
+      <h2>📅 Services de réservation</h2>
+      <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...) — laisser vide sinon</label>
+      <input id="ad-reservation-lien" placeholder="Ex: https://www.planity.com/nom-du-salon"/>
+      <label class="lbl" style="margin-top:10px">Services proposés (utilisé seulement si pas de lien externe)</label>
+      <div id="reservation-list-admin"></div>
+      <button class="add-btn" onclick="ajouterReservationService('','','reservation-list-admin')">+ Ajouter un service</button>
+    </div>
     <button class="save-btn" onclick="enregistrerEspaceClient()">💾 Enregistrer mes modifications</button>
     <div class="status" id="ad-status-save"></div>
-  </div>
-</div>
-
-<div id="tab-dashboard" style="display:none">
-  <div class="card">
-    <h2>📊 Tous mes clients</h2>
-    <div id="verrou-dashboard">
-      <label class="lbl">Mot de passe (réservé à Philomène IA)</label>
-      <input id="pwd-dashboard" type="password" placeholder="••••••"/>
-      <button class="add-btn" onclick="deverrouillerDashboard()">🔓 Déverrouiller</button>
-      <div class="status" id="status-verrou-dashboard"></div>
-    </div>
-    <div id="dashboard-liste" style="display:none"><div class="ga-empty">Chargement...</div></div>
   </div>
 </div>
 
@@ -807,7 +807,7 @@ function ajouterGalerieItem(titre, avant, apres, conteneurId) {
 }
 
 /* ---------- RESERVATION ---------- */
-function ajouterReservationService(nom, prix) {
+function ajouterReservationService(nom, prix, conteneurId) {
   var row = document.createElement("div");
   row.className = "item-row";
   row.style.gridTemplateColumns = "2fr 1fr auto";
@@ -815,24 +815,26 @@ function ajouterReservationService(nom, prix) {
     '<input placeholder="Nom du service" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
     '<input placeholder="Prix (optionnel)" value="' + (prix||'').replace(/"/g,'&quot;') + '"/>' +
     '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById("reservation-list").appendChild(row);
+  document.getElementById(conteneurId || "reservation-list").appendChild(row);
 }
 
 /* ---------- PLANNING ---------- */
 var JOURS_SEMAINE = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-function construirePlanningJours(planningExistant) {
-  var wrap = document.getElementById("planning-jours");
+function construirePlanningJours(planningExistant, wrapId) {
+  wrapId = wrapId || "planning-jours";
+  var wrap = document.getElementById(wrapId);
   wrap.innerHTML = "";
   JOURS_SEMAINE.forEach(function(jour){
     var block = document.createElement("div");
     block.className = "day-block";
-    block.innerHTML = '<h3>' + jour + '</h3><div class="pj-cours" data-jour="' + jour + '"></div><button class="add-btn" onclick="ajouterCoursJour(\'' + jour + '\')">+ Ajouter un cours ce jour</button>';
+    block.innerHTML = '<h3>' + jour + '</h3><div class="pj-cours" data-jour="' + jour + '"></div><button class="add-btn" onclick="ajouterCoursJour(\'' + jour + '\',null,null,null,\'' + wrapId + '\')">+ Ajouter un cours ce jour</button>';
     wrap.appendChild(block);
-    (planningExistant[jour] || []).forEach(function(c){ ajouterCoursJour(jour, c.heure, c.nom, c.meta); });
+    (planningExistant[jour] || []).forEach(function(c){ ajouterCoursJour(jour, c.heure, c.nom, c.meta, wrapId); });
   });
 }
-function ajouterCoursJour(jour, heure, nom, meta) {
-  var container = document.querySelector('.pj-cours[data-jour="' + jour + '"]');
+function ajouterCoursJour(jour, heure, nom, meta, wrapId) {
+  wrapId = wrapId || "planning-jours";
+  var container = document.querySelector('#' + wrapId + ' .pj-cours[data-jour="' + jour + '"]');
   var row = document.createElement("div");
   row.className = "item-row";
   row.style.marginTop = "6px";
@@ -986,6 +988,7 @@ function enregistrer() {
     galerieTitre: document.getElementById("cf-galerie-titre").value.trim(),
     galerie: galerie,
     reservationServices: reservationServices,
+    lienReservationExterne: document.getElementById("cf-reservation-lien").value.trim(),
     planning: planning
   };
 
@@ -1173,6 +1176,7 @@ function remplirFormulaireDepuisConfig(cfg, slug) {
   });
 
   document.getElementById("reservation-list").innerHTML = "";
+  document.getElementById("cf-reservation-lien").value = cfg.lienReservationExterne || "";
   (cfg.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix); });
 
   construirePlanningJours(cfg.planning || {});
@@ -1198,46 +1202,6 @@ function mettreAJourIndexClients(slug, nom, secteur) {
     });
 }
 
-function chargerDashboard() {
-  var zone = document.getElementById("dashboard-liste");
-  zone.innerHTML = '<div class="ga-empty">Chargement...</div>';
-  fetch(API + "/memory/app_index")
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var index = (d && d.value) ? d.value : [];
-      if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun client créé pour l\'instant.</div>'; return; }
-      zone.innerHTML = "";
-      index.forEach(function(entree){
-        var row = document.createElement("div");
-        row.className = "ga-item";
-        row.style.cursor = "pointer";
-        row.innerHTML = '<div class="ga-item-title">' + entree.nom + '<br><span style="font-size:11px;color:rgba(242,234,216,.4)">' + entree.slug + ' · ' + (entree.secteur||'') + '</span></div><span id="badge-' + entree.slug + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:rgba(242,234,216,.1)">...</span>';
-        row.onclick = function(){
-          document.getElementById("cf-slug-charger").value = entree.slug;
-          switchOnglet("creation");
-          document.getElementById("verrou-admin-general").style.display = "none";
-          document.getElementById("contenu-admin-general").style.display = "block";
-          chargerConfigExistante();
-        };
-        zone.appendChild(row);
-
-        fetch(API + "/memory/config_" + entree.slug)
-          .then(function(r){ return r.json(); })
-          .then(function(dd){
-            var badge = document.getElementById("badge-" + entree.slug);
-            if (!badge || !dd || !dd.value) return;
-            var cfg = dd.value;
-            var expire = cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
-            if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "rgba(255,107,107,.2)"; badge.style.color = "#ff8a7a"; }
-            else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "rgba(107,203,119,.2)"; badge.style.color = "#6BCB77"; }
-            else { badge.textContent = "⏳ En attente"; badge.style.background = "rgba(233,183,104,.2)"; badge.style.color = "#e8b768"; }
-          }).catch(function(){});
-      });
-    }).catch(function(){
-      zone.innerHTML = '<div class="ga-empty">Erreur de chargement.</div>';
-    });
-}
-
 function showStatus(msg, type) {
   var s = document.getElementById("status");
   s.textContent = msg;
@@ -1258,19 +1222,9 @@ function deverrouillerAdminGeneral() {
   if (document.getElementById("pwd-admin-general").value === MOT_DE_PASSE_PHILOMENE) {
     document.getElementById("verrou-admin-general").style.display = "none";
     document.getElementById("contenu-admin-general").style.display = "block";
+    if (document.getElementById("cf-slug-charger").value.trim()) chargerConfigExistante();
   } else {
     var s = document.getElementById("status-verrou");
-    s.textContent = "Mot de passe incorrect."; s.className = "status err";
-  }
-}
-
-function deverrouillerDashboard() {
-  if (document.getElementById("pwd-dashboard").value === MOT_DE_PASSE_PHILOMENE) {
-    document.getElementById("verrou-dashboard").style.display = "none";
-    document.getElementById("dashboard-liste").style.display = "block";
-    chargerDashboard();
-  } else {
-    var s = document.getElementById("status-verrou-dashboard");
     s.textContent = "Mot de passe incorrect."; s.className = "status err";
   }
 }
@@ -1278,14 +1232,18 @@ function deverrouillerDashboard() {
 function switchOnglet(nom) {
   document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
   document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
-  document.getElementById("tab-dashboard").style.display = nom === "dashboard" ? "block" : "none";
   document.getElementById("tabbtn-creation").classList.toggle("active", nom === "creation");
   document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
-  document.getElementById("tabbtn-dashboard").classList.toggle("active", nom === "dashboard");
 }
 
-/* Si le lien contient ?admin=slug, on ouvre directement l'espace client */
+/* Si le lien contient ?philomene=1, on révèle la section réservée ; avec ?modifier=slug en plus, on pré-remplit le slug */
 var paramsUrl = new URLSearchParams(window.location.search);
+if (paramsUrl.get("philomene")) {
+  document.getElementById("carte-modifier-existant").style.display = "block";
+  if (paramsUrl.get("modifier")) {
+    document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
+  }
+}
 if (paramsUrl.get("admin")) {
   document.getElementById("ecran-accueil").style.display = "none";
   document.getElementById("ecran-outil").style.display = "block";
@@ -1320,6 +1278,12 @@ function entrerEspaceClient() {
 
       document.getElementById("galerie-list-admin").innerHTML = "";
       (d.value.galerie || []).forEach(function(it){ ajouterGalerieItem(it.titre, it.avant, it.apres, "galerie-list-admin"); });
+
+      construirePlanningJours(d.value.planning || {}, "planning-jours-admin");
+
+      document.getElementById("ad-reservation-lien").value = d.value.lienReservationExterne || "";
+      document.getElementById("reservation-list-admin").innerHTML = "";
+      (d.value.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix, "reservation-list-admin"); });
 
       document.getElementById("ad-content").style.display = "block";
       showStatusAd("Bienvenue " + (d.value.nom || slug) + " !", "ok");
@@ -1366,10 +1330,32 @@ function enregistrerEspaceClient() {
     galerie.push({ titre: titre, avant: imgs[0].getAttribute("data-img"), apres: imgs[1].getAttribute("data-img") });
   });
 
+  var planning = {};
+  JOURS_SEMAINE.forEach(function(jour){
+    var container = document.querySelector('#planning-jours-admin .pj-cours[data-jour="' + jour + '"]');
+    var cours = [];
+    if (container) {
+      container.querySelectorAll(".item-row").forEach(function(row){
+        var inputs = row.querySelectorAll("input");
+        if (inputs[1].value.trim()) cours.push({ heure: inputs[0].value.trim(), nom: inputs[1].value.trim(), meta: inputs[2].value.trim() });
+      });
+    }
+    if (cours.length) planning[jour] = cours;
+  });
+
+  var reservationServices = [];
+  document.querySelectorAll("#reservation-list-admin .item-row").forEach(function(row){
+    var inputs = row.querySelectorAll("input");
+    if (inputs[0].value.trim()) reservationServices.push({ nom: inputs[0].value.trim(), prix: inputs[1].value.trim() });
+  });
+
   // On ne touche qu'au contenu — tout le reste (couleurs, prompts, secteur...) reste inchangé
   CONFIG_CLIENT_ACTUEL.tarifs = tarifs;
   CONFIG_CLIENT_ACTUEL.catalogue = catalogue;
   CONFIG_CLIENT_ACTUEL.galerie = galerie;
+  CONFIG_CLIENT_ACTUEL.planning = planning;
+  CONFIG_CLIENT_ACTUEL.reservationServices = reservationServices;
+  CONFIG_CLIENT_ACTUEL.lienReservationExterne = document.getElementById("ad-reservation-lien").value.trim();
 
   fetch(API + "/memory/config_" + SLUG_CLIENT_ACTUEL, {
     method: "POST",
