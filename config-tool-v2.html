@@ -80,7 +80,7 @@ input[type=color]{padding:2px;height:38px}
     </div>
     <div style="display:flex;gap:12px;align-items:flex-start">
       <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
-      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Réglez le montant indiqué, envoyez la preuve de paiement — le bandeau "démo" disparaît sous 24h.</div>
+      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Réglez le montant indiqué à la fin (il dépend des options choisies), envoyez-nous la preuve de paiement — le bandeau "démo" disparaît sous 24h.</div>
     </div>
   </div>
 
@@ -89,25 +89,38 @@ input[type=color]{padding:2px;height:38px}
 
 <div id="ecran-outil" style="display:none">
 
-<div style="display:flex;gap:8px;margin-bottom:20px">
-  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer / Modifier</button>
-  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Espace client</button>
+<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer</button>
+  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Client</button>
+  <button id="tabbtn-dashboard" class="tabbtn" onclick="switchOnglet('dashboard')">📊 Tous mes clients</button>
 </div>
+
+<button class="add-btn" style="margin-bottom:16px;border-color:rgba(255,138,122,.4);color:#ff8a7a" onclick="if(confirm('Repartir d\'un formulaire vide ? Les infos non enregistrées seront perdues.')) window.location.reload();">🔄 Nouveau client (réinitialiser le formulaire)</button>
 
 <div id="tab-creation">
 
 <div class="card">
   <h2>0. Modifier un client existant ?</h2>
-  <label class="lbl">Slug du client à recharger</label>
-  <input id="cf-slug-charger" placeholder="Ex: renovnord"/>
-  <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger cette config pour la modifier</button>
-  <div class="status" id="status-charger"></div>
+  <div id="verrou-admin-general">
+    <label class="lbl">Mot de passe (réservé à Philomène IA)</label>
+    <input id="pwd-admin-general" type="password" placeholder="••••••"/>
+    <button class="add-btn" onclick="deverrouillerAdminGeneral()">🔓 Déverrouiller</button>
+    <div class="status" id="status-verrou"></div>
+  </div>
+  <div id="contenu-admin-general" style="display:none">
+    <label class="lbl">Slug du client à recharger</label>
+    <input id="cf-slug-charger" placeholder="Ex: renovnord"/>
+    <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger cette config pour la modifier</button>
+    <div class="status" id="status-charger"></div>
 
-  <div id="bloc-validation" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(107,203,119,.1);border:1.5px solid rgba(107,203,119,.3);border-radius:10px">
-    <label class="mod-check active" style="background:transparent;border:none;padding:0">
-      <input type="checkbox" id="cf-valide"/>
-      ✅ Paiement reçu — retirer le bandeau "démo"
-    </label>
+    <div id="bloc-validation" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(107,203,119,.1);border:1.5px solid rgba(107,203,119,.3);border-radius:10px">
+      <label class="mod-check active" style="background:transparent;border:none;padding:0">
+        <input type="checkbox" id="cf-valide"/>
+        ✅ Paiement reçu — retirer le bandeau "démo"
+      </label>
+      <div id="info-expiration" style="font-size:11.5px;color:rgba(242,234,216,.5);margin-top:8px"></div>
+      <button class="add-btn" style="margin-top:10px" onclick="confirmerRenouvellement()">🔄 Confirmer un nouveau paiement (renouvelle pour 1 an)</button>
+    </div>
   </div>
 </div>
 
@@ -135,6 +148,8 @@ input[type=color]{padding:2px;height:38px}
   <input id="cf-icone" placeholder="🏠"/>
   <label class="lbl">Numéro WhatsApp (international, sans +)</label>
   <input id="cf-whatsapp" placeholder="33612345678"/>
+  <label class="lbl">Email du client (pour te recontacter, retrouver un mot de passe...)</label>
+  <input id="cf-email" type="email" placeholder="contact@exemple.fr"/>
   <label class="lbl">Mot de passe "espace client" (pour qu'il gère lui-même son contenu)</label>
   <input id="cf-admin-password" placeholder="Ex: ninja2026"/>
 </div>
@@ -245,7 +260,13 @@ input[type=color]{padding:2px;height:38px}
     <button onclick="copierLien()" style="background:#f2ead8;color:#1a2e20;border:none;border-radius:8px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">📋 Copier</button>
   </div>
   <img id="qr-code" style="width:180px;height:180px;border-radius:10px;background:#fff;padding:8px"/>
-  <div style="font-size:11px;color:rgba(242,234,216,.4);margin-top:8px">Ce QR code renvoie directement vers l'appli du client</div>
+  <div style="font-size:11px;color:rgba(242,234,216,.4);margin:8px 0 16px">Ce QR code renvoie directement vers l'appli du client</div>
+
+  <div style="background:rgba(37,211,102,.1);border:1.5px solid rgba(37,211,102,.3);border-radius:12px;padding:16px">
+    <div style="font-size:13px;color:rgba(242,234,216,.7);margin-bottom:4px">Montant à régler pour activer l'appli (1 an)</div>
+    <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px">0€</div>
+    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none">💳 Payer sur Revolut</a>
+  </div>
 </div>
 
 </div><!-- /tab-creation -->
@@ -282,11 +303,27 @@ input[type=color]{padding:2px;height:38px}
   </div>
 </div>
 
+<div id="tab-dashboard" style="display:none">
+  <div class="card">
+    <h2>📊 Tous mes clients</h2>
+    <div id="verrou-dashboard">
+      <label class="lbl">Mot de passe (réservé à Philomène IA)</label>
+      <input id="pwd-dashboard" type="password" placeholder="••••••"/>
+      <button class="add-btn" onclick="deverrouillerDashboard()">🔓 Déverrouiller</button>
+      <div class="status" id="status-verrou-dashboard"></div>
+    </div>
+    <div id="dashboard-liste" style="display:none"><div class="ga-empty">Chargement...</div></div>
+  </div>
+</div>
+
 </div><!-- /ecran-outil -->
 
 <script>
 var API = "https://philo-backend-by2c.onrender.com";
 var logoBase64 = "";
+
+/* ⚠️ Remplace ce lien par ton vrai lien de paiement Revolut */
+var LIEN_REVOLUT = "https://revolut.me/TON-LIEN-ICI";
 
 /* =====================================================================
    PALETTES DE COULEURS — beaucoup de choix, cliquables en un tap
@@ -619,12 +656,14 @@ function toggleSubsection(mod, show) {
   if (el) el.classList.toggle("show", show);
 }
 
+var prixTotalActuel = 0;
 function recalculerPrix() {
   var total = PRIX_BASE;
   if (document.getElementById("cf-chat-actif").checked) total += PRIX_MODULES.chat;
   document.querySelectorAll(".mod-check input[type=checkbox]").forEach(function(cb){
     if (cb.checked && cb.value && PRIX_MODULES[cb.value] !== undefined) total += PRIX_MODULES[cb.value];
   });
+  prixTotalActuel = total;
   var el = document.getElementById("prix-total-val");
   if (el) el.textContent = total + "€ / an";
 }
@@ -881,6 +920,7 @@ function enregistrer() {
     icone: document.getElementById("cf-icone").value.trim() || "🔧",
     logoImage: logoBase64 || "",
     telephoneWhatsApp: document.getElementById("cf-whatsapp").value.trim(),
+    email: document.getElementById("cf-email").value.trim(),
     adminPassword: document.getElementById("cf-admin-password").value.trim(),
     couleurs: {
       fond: document.getElementById("cf-fond").value,
@@ -898,6 +938,7 @@ function enregistrer() {
     valide: document.getElementById("bloc-validation").style.display === "block"
       ? document.getElementById("cf-valide").checked
       : false,
+    dateExpiration: derniereDateExpiration,
     tarifsSousTitre: document.getElementById("cf-tarifs-soustitre").value.trim(),
     tarifs: tarifs,
     devisTypes: document.getElementById("cf-devis-types").value.split("\n").map(function(s){return s.trim();}).filter(Boolean),
@@ -927,12 +968,18 @@ function enregistrer() {
       document.getElementById("resultat-lien").style.display = "block";
       document.getElementById("resultat-lien").scrollIntoView({ behavior: "smooth" });
 
+      document.getElementById("montant-a-payer").textContent = prixTotalActuel + "€";
+      document.getElementById("lien-revolut-resultat").href = LIEN_REVOLUT;
+
       // Notification (best-effort — n'empêche jamais l'enregistrement si ça échoue)
       fetch(API + "/notify-nouvelle-appli", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nom: config.nom, secteur: config.secteur, slug: slug, lien: lien })
       }).catch(function(){});
+
+      // Mise à jour de l'index global des clients (pour le tableau de bord)
+      mettreAJourIndexClients(slug, config.nom, config.secteur);
     } else {
       showStatus("Erreur lors de l'enregistrement.", "err");
     }
@@ -953,6 +1000,8 @@ function copierLien() {
 }
 
 var derniereConfigChargeeValide = undefined;
+var derniereDateExpiration = undefined;
+var slugChargeActuel = null;
 
 function chargerConfigExistante() {
   var slug = document.getElementById("cf-slug-charger").value.trim();
@@ -964,9 +1013,53 @@ function chargerConfigExistante() {
       if (!d || !d.value) { showStatusCharger("Aucune config trouvée pour \"" + slug + "\".", "err"); return; }
       remplirFormulaireDepuisConfig(d.value, slug);
       derniereConfigChargeeValide = d.value.valide;
+      derniereDateExpiration = d.value.dateExpiration;
+      slugChargeActuel = slug;
       document.getElementById("cf-valide").checked = d.value.valide === true;
       document.getElementById("bloc-validation").style.display = "block";
+
+      var infoEl = document.getElementById("info-expiration");
+      if (d.value.dateExpiration) {
+        var dExp = new Date(d.value.dateExpiration);
+        var expire = new Date() > dExp;
+        infoEl.textContent = (expire ? "⚠️ Abonnement expiré depuis le " : "Abonnement valide jusqu'au ") + dExp.toLocaleDateString("fr-FR");
+        infoEl.style.color = expire ? "#ff8a7a" : "rgba(242,234,216,.5)";
+      } else {
+        infoEl.textContent = "Aucun paiement confirmé pour l'instant.";
+        infoEl.style.color = "rgba(242,234,216,.5)";
+      }
+
       showStatusCharger("✅ Config de \"" + (d.value.nom || slug) + "\" chargée — modifie ce qu'il faut puis ré-enregistre.", "ok");
+    }).catch(function(){
+      showStatusCharger("Erreur de connexion.", "err");
+    });
+}
+
+function confirmerRenouvellement() {
+  if (!slugChargeActuel) { showStatusCharger("Charge d'abord une config existante ci-dessus.", "err"); return; }
+  fetch(API + "/memory/config_" + slugChargeActuel)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.value) { showStatusCharger("Config introuvable.", "err"); return; }
+      var cfg = d.value;
+      cfg.valide = true;
+      var dansUnAn = new Date();
+      dansUnAn.setFullYear(dansUnAn.getFullYear() + 1);
+      cfg.dateExpiration = dansUnAn.toISOString();
+      return fetch(API + "/memory/config_" + slugChargeActuel, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: cfg })
+      }).then(function(r){ return r.json(); }).then(function(res){
+        if (res && res.ok) {
+          document.getElementById("cf-valide").checked = true;
+          document.getElementById("info-expiration").textContent = "Abonnement valide jusqu'au " + dansUnAn.toLocaleDateString("fr-FR");
+          document.getElementById("info-expiration").style.color = "rgba(242,234,216,.5)";
+          showStatusCharger("✅ Renouvelé pour 1 an, jusqu'au " + dansUnAn.toLocaleDateString("fr-FR") + " !", "ok");
+        } else {
+          showStatusCharger("Erreur lors du renouvellement.", "err");
+        }
+      });
     }).catch(function(){
       showStatusCharger("Erreur de connexion.", "err");
     });
@@ -985,6 +1078,7 @@ function remplirFormulaireDepuisConfig(cfg, slug) {
   document.getElementById("cf-soustitre").value = cfg.sousTitre || "";
   document.getElementById("cf-icone").value = cfg.icone || "";
   document.getElementById("cf-whatsapp").value = cfg.telephoneWhatsApp || "";
+  document.getElementById("cf-email").value = cfg.email || "";
   document.getElementById("cf-admin-password").value = cfg.adminPassword || "";
 
   if (cfg.logoImage) {
@@ -1052,6 +1146,63 @@ function remplirFormulaireDepuisConfig(cfg, slug) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function mettreAJourIndexClients(slug, nom, secteur) {
+  fetch(API + "/memory/app_index")
+    .then(function(r){ return r.json(); })
+    .then(function(d){ return (d && d.value) ? d.value : []; })
+    .catch(function(){ return []; })
+    .then(function(index){
+      var i = index.findIndex(function(e){ return e.slug === slug; });
+      var entree = { slug: slug, nom: nom, secteur: secteur, dateCreation: (i>=0 ? index[i].dateCreation : new Date().toISOString()) };
+      if (i >= 0) index[i] = entree; else index.push(entree);
+      fetch(API + "/memory/app_index", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: index })
+      }).catch(function(){});
+    });
+}
+
+function chargerDashboard() {
+  var zone = document.getElementById("dashboard-liste");
+  zone.innerHTML = '<div class="ga-empty">Chargement...</div>';
+  fetch(API + "/memory/app_index")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var index = (d && d.value) ? d.value : [];
+      if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun client créé pour l\'instant.</div>'; return; }
+      zone.innerHTML = "";
+      index.forEach(function(entree){
+        var row = document.createElement("div");
+        row.className = "ga-item";
+        row.style.cursor = "pointer";
+        row.innerHTML = '<div class="ga-item-title">' + entree.nom + '<br><span style="font-size:11px;color:rgba(242,234,216,.4)">' + entree.slug + ' · ' + (entree.secteur||'') + '</span></div><span id="badge-' + entree.slug + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:rgba(242,234,216,.1)">...</span>';
+        row.onclick = function(){
+          document.getElementById("cf-slug-charger").value = entree.slug;
+          switchOnglet("creation");
+          document.getElementById("verrou-admin-general").style.display = "none";
+          document.getElementById("contenu-admin-general").style.display = "block";
+          chargerConfigExistante();
+        };
+        zone.appendChild(row);
+
+        fetch(API + "/memory/config_" + entree.slug)
+          .then(function(r){ return r.json(); })
+          .then(function(dd){
+            var badge = document.getElementById("badge-" + entree.slug);
+            if (!badge || !dd || !dd.value) return;
+            var cfg = dd.value;
+            var expire = cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
+            if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "rgba(255,107,107,.2)"; badge.style.color = "#ff8a7a"; }
+            else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "rgba(107,203,119,.2)"; badge.style.color = "#6BCB77"; }
+            else { badge.textContent = "⏳ En attente"; badge.style.background = "rgba(233,183,104,.2)"; badge.style.color = "#e8b768"; }
+          }).catch(function(){});
+      });
+    }).catch(function(){
+      zone.innerHTML = '<div class="ga-empty">Erreur de chargement.</div>';
+    });
+}
+
 function showStatus(msg, type) {
   var s = document.getElementById("status");
   s.textContent = msg;
@@ -1061,11 +1212,41 @@ function showStatus(msg, type) {
 /* =====================================================================
    ONGLETS PRINCIPAUX (Créer / Espace client)
    ===================================================================== */
+/* =====================================================================
+   MOT DE PASSE MAÎTRE — change cette valeur pour la tienne.
+   Protège : le rechargement/modification d'un client existant,
+   et le tableau de bord. La création d'un NOUVEAU client reste libre.
+   ===================================================================== */
+var MOT_DE_PASSE_PHILOMENE = "philomene2026";
+
+function deverrouillerAdminGeneral() {
+  if (document.getElementById("pwd-admin-general").value === MOT_DE_PASSE_PHILOMENE) {
+    document.getElementById("verrou-admin-general").style.display = "none";
+    document.getElementById("contenu-admin-general").style.display = "block";
+  } else {
+    var s = document.getElementById("status-verrou");
+    s.textContent = "Mot de passe incorrect."; s.className = "status err";
+  }
+}
+
+function deverrouillerDashboard() {
+  if (document.getElementById("pwd-dashboard").value === MOT_DE_PASSE_PHILOMENE) {
+    document.getElementById("verrou-dashboard").style.display = "none";
+    document.getElementById("dashboard-liste").style.display = "block";
+    chargerDashboard();
+  } else {
+    var s = document.getElementById("status-verrou-dashboard");
+    s.textContent = "Mot de passe incorrect."; s.className = "status err";
+  }
+}
+
 function switchOnglet(nom) {
   document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
   document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
+  document.getElementById("tab-dashboard").style.display = nom === "dashboard" ? "block" : "none";
   document.getElementById("tabbtn-creation").classList.toggle("active", nom === "creation");
   document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
+  document.getElementById("tabbtn-dashboard").classList.toggle("active", nom === "dashboard");
 }
 
 /* Si le lien contient ?admin=slug, on ouvre directement l'espace client */
