@@ -44,11 +44,11 @@ input{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242
 </div>
 
 <script>
-/* ⚠️ Même mot de passe que dans config-tool-v2.html — change les deux ensemble si tu le modifies */
+/* ⚠️ Même mot de passe que dans config-tool-v2.html / config-site.html — change les deux ensemble si tu le modifies */
 var MOT_DE_PASSE_PHILOMENE = "philomene2026";
 var API = "https://philo-backend-by2c.onrender.com";
-/* Nom exact du fichier outil de création, pour le lien "modifier ce client" */
-var LIEN_OUTIL_CREATION = "config-tool-v2.html";
+var LIEN_OUTIL_APPLI = "config-tool-v2.html";
+var LIEN_OUTIL_SITE = "config-site.html";
 
 function deverrouillerDashboard() {
   if (document.getElementById("pwd-dashboard").value === MOT_DE_PASSE_PHILOMENE) {
@@ -64,37 +64,45 @@ function deverrouillerDashboard() {
 function chargerDashboard() {
   var zone = document.getElementById("dashboard-liste");
   zone.innerHTML = '<div class="ga-empty">Chargement...</div>';
-  fetch(API + "/memory/app_index")
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var index = (d && d.value) ? d.value : [];
-      document.getElementById("compte-clients").textContent = index.length + " client" + (index.length>1?"s":"") + " créé" + (index.length>1?"s":"");
-      if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun client créé pour l\'instant.</div>'; return; }
-      zone.innerHTML = "";
-      index.forEach(function(entree){
-        var row = document.createElement("div");
-        row.className = "ga-item";
-        row.innerHTML = '<div class="ga-item-title">' + entree.nom + '<span>' + entree.slug + ' · ' + (entree.secteur||'') + '</span></div><span id="badge-' + entree.slug + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:#eee">...</span>';
-        row.onclick = function(){
-          window.location.href = LIEN_OUTIL_CREATION + "?philomene=1&modifier=" + encodeURIComponent(entree.slug);
-        };
-        zone.appendChild(row);
+  Promise.all([
+    fetch(API + "/memory/app_index").then(function(r){ return r.json() }).catch(function(){ return {value:[]} }),
+    fetch(API + "/memory/site_index").then(function(r){ return r.json() }).catch(function(){ return {value:[]} })
+  ]).then(function(results){
+    var apps = ((results[0] && results[0].value) ? results[0].value : []).map(function(e){ return Object.assign({type:"appli"}, e) });
+    var sites = ((results[1] && results[1].value) ? results[1].value : []).map(function(e){ return Object.assign({type:"site"}, e) });
+    var index = apps.concat(sites);
+    document.getElementById("compte-clients").textContent = index.length + " projet" + (index.length>1?"s":"") + " créé" + (index.length>1?"s":"") + " (" + apps.length + " appli" + (apps.length>1?"s":"") + ", " + sites.length + " site" + (sites.length>1?"s":"") + ")";
+    if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun projet créé pour l\'instant.</div>'; return; }
+    zone.innerHTML = "";
+    index.forEach(function(entree){
+      var isApp = entree.type === "appli";
+      var outil = isApp ? LIEN_OUTIL_APPLI : LIEN_OUTIL_SITE;
+      var cle = (isApp ? "config_" : "site_") + entree.slug;
+      var icone = isApp ? "📱" : "🖥️";
+      var uid = entree.type + "_" + entree.slug;
+      var row = document.createElement("div");
+      row.className = "ga-item";
+      row.innerHTML = '<div class="ga-item-title">' + icone + ' ' + entree.nom + '<span>' + entree.slug + ' · ' + (entree.secteur||entree.categorie||'') + '</span></div><span id="badge-' + uid + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:#eee">...</span>';
+      row.onclick = function(){
+        window.location.href = outil + "?philomene=1&modifier=" + encodeURIComponent(entree.slug);
+      };
+      zone.appendChild(row);
 
-        fetch(API + "/memory/config_" + entree.slug)
-          .then(function(r){ return r.json(); })
-          .then(function(dd){
-            var badge = document.getElementById("badge-" + entree.slug);
-            if (!badge || !dd || !dd.value) return;
-            var cfg = dd.value;
-            var expire = cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
-            if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "#ffdada"; badge.style.color = "#a01f10"; }
-            else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "#dff6e0"; badge.style.color = "#2E7D32"; }
-            else { badge.textContent = "⏳ En attente"; badge.style.background = "#fff3d6"; badge.style.color = "#8a5a00"; }
-          }).catch(function(){});
-      });
-    }).catch(function(){
-      zone.innerHTML = '<div class="ga-empty">Erreur de chargement.</div>';
+      fetch(API + "/memory/" + cle)
+        .then(function(r){ return r.json(); })
+        .then(function(dd){
+          var badge = document.getElementById("badge-" + uid);
+          if (!badge || !dd || !dd.value) return;
+          var cfg = dd.value;
+          var expire = cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
+          if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "#ffdada"; badge.style.color = "#a01f10"; }
+          else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "#dff6e0"; badge.style.color = "#2E7D32"; }
+          else { badge.textContent = "⏳ En attente"; badge.style.background = "#fff3d6"; badge.style.color = "#8a5a00"; }
+        }).catch(function(){});
     });
+  }).catch(function(){
+    zone.innerHTML = '<div class="ga-empty">Erreur de chargement.</div>';
+  });
 }
 </script>
 </body>
