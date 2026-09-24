@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="light"/>
+<title>Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&family=Work+Sans:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Fraunces:ital,wght@0,400;1,300;1,500&family=Karla:wght@400;500;600&family=Cormorant:wght@500;600;700&family=Manrope:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{max-width:100%;overflow-x:hidden}
+body{max-width:100%;overflow-x:hidden;line-height:1.55}
+a{color:inherit}
+img{max-width:100%;display:block}
+
+/* ===== THEMES ===== */
+/* Chaque thème définit ses variables ; la structure HTML reste commune */
+[data-theme="atelier"]{
+  --bg:#F6F1E7; --bg2:#EFE7D6; --fg:#2B2621; --fg-mute:rgba(43,38,33,.7); --accent:#B5502E; --accent2:#5B6B4F;
+  --line:rgba(43,38,33,.14); --radius:2px; --font-h:'Newsreader',serif; --font-b:'Work Sans',sans-serif;
+  --h-weight:600; --align:left; --shape:square;
+}
+[data-theme="terrain"]{
+  --bg:#132A1E; --bg2:#0D1F16; --fg:#F7F7F2; --fg-mute:rgba(247,247,242,.72); --accent:#FF6B35; --accent2:#F7F7F2;
+  --line:rgba(247,247,242,.16); --radius:0px; --font-h:'Barlow Condensed',sans-serif; --font-b:'Barlow',sans-serif;
+  --h-weight:700; --align:center; --shape:diagonal;
+}
+[data-theme="feuillage"]{
+  --bg:#F2EFE6; --bg2:#E7E3D4; --fg:#2F3E2E; --fg-mute:rgba(47,62,46,.7); --accent:#C97B5E; --accent2:#8A9A7E;
+  --line:rgba(47,62,46,.14); --radius:999px; --font-h:'Fraunces',serif; --font-b:'Karla',sans-serif;
+  --h-weight:400; --align:center; --shape:round;
+}
+[data-theme="maison"]{
+  --bg:#14110D; --bg2:#1C1712; --fg:#EDE6D8; --fg-mute:rgba(237,230,216,.65); --accent:#B8935A; --accent2:#EDE6D8;
+  --line:rgba(237,230,216,.18); --radius:1px; --font-h:'Cormorant',serif; --font-b:'Manrope',sans-serif;
+  --h-weight:600; --align:center; --shape:hairline;
+}
+[data-theme="marche"]{
+  --bg:#FAFAF5; --bg2:#F0EFE8; --fg:#171717; --fg-mute:rgba(23,23,23,.68); --accent:#2954E6; --accent2:#F5C400;
+  --line:rgba(23,23,23,.12); --radius:10px; --font-h:'Space Grotesk',sans-serif; --font-b:'Inter',sans-serif;
+  --h-weight:600; --align:left; --shape:block;
+}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--font-b)}
+h1,h2,h3{font-family:var(--font-h);font-weight:var(--h-weight);line-height:1.08;letter-spacing:-.01em}
+[data-theme="terrain"] h1,[data-theme="terrain"] h2{text-transform:uppercase;letter-spacing:.01em}
+[data-theme="feuillage"] h1{font-style:italic;font-weight:300}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
+.navrow{max-width:1080px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.brand{font-family:var(--font-h);font-weight:700;font-size:19px}
+.navlinks{display:flex;gap:22px;font-size:13.5px;flex-wrap:wrap;order:3;width:100%;padding-top:8px;border-top:1px solid var(--line)}
+.navlinks button{background:none;border:none;font:inherit;color:var(--fg);cursor:pointer;padding:0;opacity:.62}
+.navlinks button.active{opacity:1;border-bottom:2px solid var(--accent)}
+.nav-cta{background:var(--accent);color:var(--bg);padding:9px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+[data-theme="terrain"] .nav-cta,[data-theme="maison"] .nav-cta{color:#fff}
+@media(min-width:760px){.navlinks{width:auto;order:2;border-top:none;padding-top:0}}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block;animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{padding:64px 24px 48px;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+[data-align="center"] .hero{grid-template-columns:1fr;text-align:center;max-width:760px}
+.hero-eyebrow{font-size:13.5px;color:var(--accent2);font-weight:600;margin-bottom:12px}
+[data-theme="terrain"] .hero-eyebrow{color:var(--accent)}
+.hero h1{font-size:44px;margin-bottom:18px}
+.hero p{font-size:16.5px;color:var(--fg-mute);margin-bottom:26px;max-width:46ch}
+[data-align="center"] .hero p{margin-left:auto;margin-right:auto}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+[data-align="center"] .hero-actions{justify-content:center}
+.btn-primary{background:var(--fg);color:var(--bg);padding:13px 24px;border-radius:var(--radius);text-decoration:none;font-size:14.5px;font-weight:600}
+[data-theme="terrain"] .btn-primary{background:var(--accent);color:#fff}
+[data-theme="maison"] .btn-primary{background:var(--accent);color:#14110D}
+.btn-ghost{border:1.5px solid var(--fg);padding:11.5px 22px;border-radius:var(--radius);text-decoration:none;font-size:14.5px;font-weight:600}
+.hero-img{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius);overflow:hidden}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+[data-shape="diagonal"] .hero-img{clip-path:polygon(6% 0,100% 0,100% 100%,0 100%)}
+[data-shape="round"] .hero-img{border-radius:28px}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:40px}.hero h1{font-size:32px}.hero-img{order:-1}}
+
+/* STRIP */
+.strip{background:var(--fg);color:var(--bg);padding:20px 24px}
+[data-theme="terrain"] .strip,[data-theme="maison"] .strip{background:var(--bg2)}
+.strip-row{max-width:1080px;margin:0 auto;display:flex;gap:36px;flex-wrap:wrap;justify-content:center;font-size:13.5px}
+.strip-item{display:flex;align-items:baseline;gap:8px}
+.strip-item b{font-family:var(--font-h);font-size:21px;font-weight:var(--h-weight)}
+
+/* SECTIONS */
+section{padding:60px 24px}
+.sec-head{max-width:640px;margin-bottom:36px}
+[data-align="center"] .sec-head{margin-left:auto;margin-right:auto;text-align:center}
+.sec-head h2{font-size:30px;margin-bottom:10px}
+.sec-head p{color:var(--fg-mute);font-size:15px}
+
+/* SERVICES */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+[data-theme="marche"] .svc-grid,[data-theme="feuillage"] .svc-grid{gap:16px;background:none;border:none}
+.svc-card{background:var(--bg);padding:28px 24px}
+[data-theme="marche"] .svc-card{background:var(--bg2);border-radius:var(--radius)}
+[data-theme="feuillage"] .svc-card{background:var(--bg2);border-radius:22px;text-align:center}
+.svc-card h3{font-size:18px;margin-bottom:8px}
+.svc-card p{font-size:14px;color:var(--fg-mute)}
+@media(max-width:760px){.svc-grid{grid-template-columns:1fr}}
+
+/* GALERIE */
+.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.gal-item{aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent2));position:relative}
+.gal-item img{width:100%;height:100%;object-fit:cover}
+.gal-tag{position:absolute;bottom:10px;left:10px;background:var(--bg);color:var(--fg);padding:4px 11px;font-size:12px;border-radius:20px;font-weight:500}
+@media(max-width:760px){.gal-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.gal-grid{grid-template-columns:1fr}}
+
+/* A PROPOS */
+.apropos-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center}
+[data-align="center"] .apropos-grid{grid-template-columns:1fr;text-align:center;max-width:680px;margin:0 auto}
+.apropos-img{aspect-ratio:1;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent2));overflow:hidden}
+.apropos-img img{width:100%;height:100%;object-fit:cover}
+@media(max-width:760px){.apropos-grid{grid-template-columns:1fr}}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.contact-info h3{font-size:14px;color:var(--accent2);margin-bottom:6px;font-weight:600}
+[data-theme="terrain"] .contact-info h3{color:var(--accent)}
+.contact-info p{margin-bottom:22px;font-size:15px}
+.wa-btn{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:13px 22px;border-radius:var(--radius);text-decoration:none;font-weight:600;font-size:14.5px}
+.zone-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.zone-list span{border:1px solid var(--line);padding:5px 12px;border-radius:20px;font-size:12.5px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;margin-bottom:5px;color:var(--fg-mute)}
+.field input,.field textarea{width:100%;padding:11px 13px;border:1px solid var(--line);background:var(--bg2);color:var(--fg);border-radius:var(--radius);font:inherit;font-size:14px}
+.field textarea{resize:vertical;min-height:86px}
+@media(max-width:760px){.contact-grid{grid-template-columns:1fr}}
+
+footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--fg-mute)}
+
+/* DEMO BANNER */
+.demo-band{position:fixed;top:38%;left:-25%;width:150%;padding:8px 0;background:rgba(200,60,40,.88);color:#fff;text-align:center;font-weight:700;font-size:13px;letter-spacing:.08em;transform:rotate(-8deg);z-index:999;pointer-events:none;display:none;text-transform:uppercase}
+body.is-demo .demo-band{display:block}
+.expired-band{position:fixed;inset:0;background:rgba(0,0,0,.75);color:#fff;z-index:1000;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:sans-serif}
+body.is-expired .expired-band{display:flex}
+
+#loading{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#999;font-size:14px;z-index:2000}
+</style>
+</head>
+<body>
+
+<div id="loading">Chargement...</div>
+<div class="demo-band">Démo — en attente de validation</div>
+<div class="expired-band"><div><h2 style="font-family:sans-serif;margin-bottom:10px">Ce site n'est plus actif</h2><p>Contactez le propriétaire de ce site pour plus d'informations.</p></div></div>
+
+<div id="app" style="display:none">
+<nav>
+  <div class="navrow">
+    <div class="brand" id="v-brand"></div>
+    <div class="navlinks" id="v-navlinks"></div>
+  </div>
+</nav>
+
+<div class="page active" id="page-accueil">
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow" id="v-eyebrow"></div>
+      <h1 id="v-h1"></h1>
+      <p id="v-herotext"></p>
+      <div class="hero-actions">
+        <a class="btn-primary" id="v-cta1" target="_blank"></a>
+        <a class="btn-ghost" id="v-cta2"></a>
+      </div>
+    </div>
+    <div class="hero-img"><img id="v-heroimg" alt=""/></div>
+  </div>
+  <div class="strip" id="v-strip" style="display:none">
+    <div class="strip-row" id="v-strip-row"></div>
+  </div>
+  <section id="v-apercu-services" style="display:none">
+    <div class="sec-head"><h2 id="v-apercu-titre">Ce qu'on propose</h2><p id="v-apercu-sous"></p></div>
+    <div class="svc-grid" id="v-apercu-grid"></div>
+  </section>
+</div>
+
+<div class="page" id="page-services">
+  <section style="padding-top:52px">
+    <div class="sec-head"><h2 id="v-svc-titre">Nos prestations</h2><p id="v-svc-sous"></p></div>
+    <div class="svc-grid" id="v-svc-grid"></div>
+  </section>
+</div>
+
+<div class="page" id="page-galerie">
+  <section style="padding-top:52px">
+    <div class="sec-head"><h2 id="v-gal-titre">Réalisations</h2><p id="v-gal-sous"></p></div>
+    <div class="gal-grid" id="v-gal-grid"></div>
+  </section>
+</div>
+
+<div class="page" id="page-apropos">
+  <section style="padding-top:52px">
+    <div class="apropos-grid">
+      <div class="apropos-img"><img id="v-apropos-img" alt=""/></div>
+      <div><h2 id="v-apropos-titre" style="font-size:30px;margin-bottom:16px"></h2><p id="v-apropos-texte" style="color:var(--fg-mute);font-size:15.5px"></p></div>
+    </div>
+  </section>
+</div>
+
+<div class="page" id="page-contact">
+  <section style="padding-top:52px">
+    <div class="sec-head"><h2 id="v-contact-titre">Nous contacter</h2><p id="v-contact-sous"></p></div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Téléphone</h3><p id="v-tel"></p>
+        <div id="v-zones-wrap"><h3>Zone d'intervention</h3><div class="zone-list" id="v-zones"></div></div>
+        <div style="height:18px"></div>
+        <a class="wa-btn" id="v-wa" target="_blank">💬 Écrire sur WhatsApp</a>
+      </div>
+      <div>
+        <div class="field"><label>Nom</label><input id="v-f-nom" placeholder="Votre nom"/></div>
+        <div class="field"><label>Téléphone</label><input id="v-f-tel" placeholder="Votre numéro"/></div>
+        <div class="field"><label>Votre message</label><textarea id="v-f-msg" placeholder="Décrivez votre demande..."></textarea></div>
+        <a class="btn-primary" style="cursor:pointer" onclick="envoyerContact()">Envoyer la demande</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer id="v-footer"></footer>
+</div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var params = new URLSearchParams(window.location.search);
+var slug = params.get("client") || "";
+var CFG = null;
+
+fetch(API + "/memory/site_" + slug)
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d || !d.value) { document.getElementById("loading").textContent = "Site introuvable."; return; }
+    CFG = d.value;
+    render();
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  })
+  .catch(function(){ document.getElementById("loading").textContent = "Erreur de chargement."; });
+
+function render(){
+  document.documentElement.setAttribute("data-theme", CFG.style || "atelier");
+  var cs = getComputedStyle(document.documentElement);
+  document.documentElement.setAttribute("data-align", (cs.getPropertyValue('--align')||'left').trim());
+  document.documentElement.setAttribute("data-shape", (cs.getPropertyValue('--shape')||'square').trim());
+
+  if (CFG.valide === false) document.body.classList.add("is-demo");
+  if (CFG.valide === true && CFG.dateExpiration && new Date() > new Date(CFG.dateExpiration)) {
+    document.body.classList.add("is-expired");
+  }
+
+  document.title = CFG.nom || "Site";
+  document.getElementById("v-brand").textContent = CFG.nom || "";
+  document.getElementById("v-footer").textContent = (CFG.nom||"") + " · Site réalisé par Philomène IA";
+
+  // NAV
+  var pages = CFG.pages || ["accueil","contact"];
+  var labels = {accueil:"Accueil", services:CFG.servicesTitreNav || "Prestations", galerie:"Réalisations", apropos:"À propos", contact:"Contact"};
+  var navwrap = document.getElementById("v-navlinks");
+  navwrap.innerHTML = "";
+  pages.forEach(function(p, i){
+    var b = document.createElement("button");
+    b.textContent = labels[p];
+    if (i===0) b.classList.add("active");
+    b.onclick = function(){ goPage(b, p); };
+    navwrap.appendChild(b);
+  });
+
+  // HERO
+  document.getElementById("v-eyebrow").textContent = CFG.hero?.eyebrow || "";
+  document.getElementById("v-h1").innerHTML = (CFG.hero?.titre || CFG.nom || "").replace(/\n/g,"<br/>");
+  document.getElementById("v-herotext").textContent = CFG.hero?.texte || "";
+  var cta1 = document.getElementById("v-cta1");
+  cta1.textContent = CFG.hero?.cta1 || "Nous contacter";
+  cta1.href = waLink(CFG.hero?.cta1 || "Bonjour, je vous contacte depuis votre site.");
+  var cta2 = document.getElementById("v-cta2");
+  if (CFG.telephone) { cta2.textContent = CFG.telephone; cta2.href = "tel:" + CFG.telephone.replace(/\s/g,""); }
+  else cta2.style.display = "none";
+  if (CFG.hero?.image) document.getElementById("v-heroimg").src = CFG.hero.image;
+
+  // STRIP (chiffres clés, optionnel)
+  if (CFG.strip && CFG.strip.length) {
+    document.getElementById("v-strip").style.display = "block";
+    document.getElementById("v-strip-row").innerHTML = CFG.strip.map(function(s){
+      return '<div class="strip-item"><b>'+s.val+'</b><span>'+s.label+'</span></div>';
+    }).join("");
+  }
+
+  // APERCU SERVICES SUR ACCUEIL (si module services actif)
+  if (pages.includes("services") && CFG.services && CFG.services.length) {
+    document.getElementById("v-apercu-services").style.display = "block";
+    document.getElementById("v-apercu-sous").textContent = CFG.servicesSousTitre || "";
+    document.getElementById("v-apercu-grid").innerHTML = CFG.services.slice(0,3).map(cardHtml).join("");
+  }
+
+  // PAGE SERVICES
+  if (pages.includes("services")) {
+    document.getElementById("v-svc-titre").textContent = CFG.servicesTitre || "Nos prestations";
+    document.getElementById("v-svc-sous").textContent = CFG.servicesSousTitre || "";
+    document.getElementById("v-svc-grid").innerHTML = (CFG.services||[]).map(cardHtml).join("");
+  }
+
+  // GALERIE
+  if (pages.includes("galerie")) {
+    document.getElementById("v-gal-titre").textContent = CFG.galerieTitre || "Réalisations";
+    document.getElementById("v-gal-grid").innerHTML = (CFG.galerie||[]).map(function(g){
+      return '<div class="gal-item">' + (g.image ? '<img src="'+g.image+'"/>' : '') + (g.legende ? '<span class="gal-tag">'+g.legende+'</span>' : '') + '</div>';
+    }).join("");
+  }
+
+  // A PROPOS
+  if (pages.includes("apropos")) {
+    document.getElementById("v-apropos-titre").textContent = CFG.aproposTitre || "Qui sommes-nous";
+    document.getElementById("v-apropos-texte").textContent = CFG.aproposTexte || "";
+    if (CFG.aproposImage) document.getElementById("v-apropos-img").src = CFG.aproposImage;
+  }
+
+  // CONTACT
+  document.getElementById("v-tel").innerHTML = CFG.telephone ? '<a href="tel:'+CFG.telephone.replace(/\s/g,'')+'">'+CFG.telephone+'</a>' : '—';
+  if (CFG.zones && CFG.zones.length) {
+    document.getElementById("v-zones").innerHTML = CFG.zones.map(function(z){ return '<span>'+z+'</span>'; }).join("");
+  } else {
+    document.getElementById("v-zones-wrap").style.display = "none";
+  }
+  document.getElementById("v-wa").href = waLink("Bonjour, je vous contacte depuis votre site.");
+
+  // Masquer les onglets de pages non activées
+  ["services","galerie","apropos"].forEach(function(p){
+    if (!pages.includes(p)) document.getElementById("page-"+p).remove();
+  });
+}
+
+function cardHtml(s){
+  return '<div class="svc-card"><h3>'+s.titre+'</h3><p>'+s.texte+'</p></div>';
+}
+
+function waLink(msg){
+  var num = (CFG.whatsapp || CFG.telephone || "").replace(/[^0-9]/g,"");
+  return "https://wa.me/" + num + "?text=" + encodeURIComponent(msg);
+}
+
+function goPage(btn, nom){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.navlinks button').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('page-'+nom).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function envoyerContact(){
+  var nom = document.getElementById("v-f-nom").value.trim();
+  var tel = document.getElementById("v-f-tel").value.trim();
+  var msg = document.getElementById("v-f-msg").value.trim();
+  var texte = "Bonjour, je m'appelle " + (nom||"...") + " (" + (tel||"...") + "). " + msg;
+  window.open(waLink(texte), "_blank");
+}
+</script>
+</body>
+</html>
