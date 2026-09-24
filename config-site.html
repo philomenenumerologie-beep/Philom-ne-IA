@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="dark"/>
+<title>Créateur de site — Philomène IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif;-webkit-tap-highlight-color:transparent}
+html{background:#1a2e20 !important;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
+body{background-color:#1a2e20 !important;color:#f2ead8;padding:20px 16px 60px;max-width:540px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
+.sub{font-size:12px;color:rgba(242,234,216,.5);margin-bottom:20px}
+.card{background:rgba(242,234,216,.06);border:1px solid rgba(242,234,216,.12);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(242,234,216,.6);margin-bottom:12px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,234,216,.4);margin-bottom:5px;display:block}
+input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;margin-bottom:12px;outline:none;word-break:break-all;overflow-wrap:anywhere}
+textarea{resize:vertical;min-height:70px}
+.add-btn{background:none;border:1.5px dashed rgba(242,234,216,.25);color:rgba(242,234,216,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px}
+.tabbtn{flex:1;padding:11px;border-radius:10px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.04);color:rgba(242,234,216,.6);font-size:12.5px;cursor:pointer}
+.tabbtn.active{background:#f2ead8;color:#1a2e20;font-weight:600}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{padding:9px 14px;border-radius:20px;border:1.5px solid rgba(242,234,216,.18);background:rgba(242,234,216,.05);font-size:12.5px;cursor:pointer}
+.chip.sel{background:#c9a84c;color:#1a2e20;border-color:#c9a84c;font-weight:600}
+.style-card{border:2px solid rgba(242,234,216,.15);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer}
+.style-card.sel{border-color:#c9a84c}
+.style-swatch{display:flex;gap:6px;margin-bottom:8px}
+.style-swatch span{width:22px;height:22px;border-radius:5px}
+.style-card b{font-size:14px}
+.style-card p{font-size:12px;color:rgba(242,234,216,.5);margin-top:3px}
+.page-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid rgba(242,234,216,.08)}
+.page-toggle:last-child{border-bottom:none}
+.page-toggle .lock{font-size:11px;color:rgba(242,234,216,.35)}
+.switch{width:42px;height:24px;border-radius:14px;background:rgba(242,234,216,.15);position:relative;cursor:pointer;flex-shrink:0}
+.switch.on{background:#6BCB77}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .18s}
+.switch.on::after{transform:translateX(18px)}
+.status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
+.status.ok{background:rgba(46,204,113,.15);color:#6BCB77;display:block}
+.status.err{background:rgba(255,107,107,.1);color:#ff8a7a;display:block}
+.save-btn{background:#f2ead8;color:#1a2e20;font-weight:700;padding:15px;border-radius:12px;border:none;width:100%;cursor:pointer;font-size:15px;margin-top:8px}
+.item-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
+.del-btn{background:rgba(255,107,107,.15);color:#ff8a7a;border:none;border-radius:8px;padding:0 12px;cursor:pointer;font-size:14px}
+.photo-zone{border:1.5px dashed rgba(242,234,216,.25);border-radius:10px;padding:14px;text-align:center;font-size:12px;color:rgba(242,234,216,.5);margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden}
+.photo-zone img{width:100%;border-radius:8px;margin-top:8px}
+.prix-box{background:rgba(201,168,76,.12);border:1.5px solid #c9a84c;border-radius:14px;padding:20px;text-align:center;margin-top:6px}
+.prix-val{font-family:'Playfair Display',serif;font-size:32px;color:#c9a84c;font-weight:700}
+.wa-link{display:block;text-align:center;font-size:11.5px;color:rgba(242,234,216,.4);margin:14px 0;text-decoration:underline}
+</style>
+</head>
+<body>
+
+<h1>🖥️ Créateur de site</h1>
+<div class="sub">4-5 pages, un vrai style visuel, prêt en 15 minutes.</div>
+
+<div style="display:flex;gap:8px;margin-bottom:20px">
+  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer</button>
+  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Client</button>
+  <button id="tabbtn-dashboard" class="tabbtn" onclick="switchOnglet('dashboard')" style="display:none">📊 Tous mes sites</button>
+</div>
+
+<a class="wa-link" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20IA%20!%20J%27ai%20une%20question." target="_blank">Pour toute question, contactez-nous via WhatsApp</a>
+
+<!-- ============ CREATION ============ -->
+<div id="tab-creation">
+
+<div class="card" id="carte-modifier-existant" style="display:none">
+  <h2>0. Modifier un site existant ?</h2>
+  <div id="verrou-admin-general">
+    <label class="lbl">Mot de passe</label>
+    <input id="pwd-admin-general" type="password" placeholder="••••••"/>
+    <button class="add-btn" onclick="deverrouillerAdminGeneral()">🔓 Déverrouiller</button>
+    <div class="status" id="status-verrou"></div>
+  </div>
+  <div id="contenu-admin-general" style="display:none">
+    <label class="lbl">Slug du site à charger</label>
+    <input id="cf-slug-charger" placeholder="Ex: fontaineetfils"/>
+    <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger cette config</button>
+    <div id="bloc-validation" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(242,234,216,.1)">
+      <div class="lbl">Statut actuel : <span id="statut-actuel">—</span></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0"><input type="checkbox" id="chk-paiement-recu" style="width:auto;margin:0"/> Paiement reçu</label>
+      <button class="add-btn" style="border-color:#6BCB77;color:#6BCB77" onclick="confirmerPaiement()">🔄 Confirmer nouveau paiement (1 an)</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>1. Type de projet</h2>
+  <label class="lbl">Catégorie</label>
+  <select id="cf-categorie" onchange="appliquerCategorie()">
+    <option value="">Sélectionnez...</option>
+    <option value="artisan">Artisan / Bâtiment</option>
+    <option value="beaute">Beauté / Bien-être</option>
+    <option value="commerce">Commerce / Boutique</option>
+    <option value="restauration">Restaurant / Food</option>
+    <option value="sport">Club sportif / Coach</option>
+    <option value="asso">Association</option>
+    <option value="evenement">Événement (mariage, fête...)</option>
+    <option value="perso">Site personnel / Portfolio</option>
+    <option value="autre">Autre</option>
+  </select>
+  <label class="lbl">Slug (utilisé dans le lien ?client=...)</label>
+  <input id="cf-slug" placeholder="Ex: fontaineetfils"/>
+</div>
+
+<div class="card">
+  <h2>2. Style visuel</h2>
+  <div class="style-card sel" data-style="atelier" onclick="choisirStyle(this,'atelier')">
+    <div class="style-swatch"><span style="background:#F6F1E7"></span><span style="background:#B5502E"></span><span style="background:#5B6B4F"></span><span style="background:#2B2621"></span></div>
+    <b>Atelier</b><p>Chaleureux, artisanal — artisans, bâtiment, métiers manuels</p>
+  </div>
+  <div class="style-card" data-style="terrain" onclick="choisirStyle(this,'terrain')">
+    <div class="style-swatch"><span style="background:#132A1E"></span><span style="background:#FF6B35"></span><span style="background:#F7F7F2"></span></div>
+    <b>Terrain</b><p>Dynamique, énergique — clubs sportifs, coachs, événements</p>
+  </div>
+  <div class="style-card" data-style="feuillage" onclick="choisirStyle(this,'feuillage')">
+    <div class="style-swatch"><span style="background:#F2EFE6"></span><span style="background:#C97B5E"></span><span style="background:#8A9A7E"></span></div>
+    <b>Feuillage</b><p>Calme, organique — bien-être, yoga, associations, nature</p>
+  </div>
+  <div class="style-card" data-style="maison" onclick="choisirStyle(this,'maison')">
+    <div class="style-swatch"><span style="background:#14110D"></span><span style="background:#B8935A"></span><span style="background:#EDE6D8"></span></div>
+    <b>Maison</b><p>Élégant, premium — beauté, boutiques haut de gamme</p>
+  </div>
+  <div class="style-card" data-style="marche" onclick="choisirStyle(this,'marche')">
+    <div class="style-swatch"><span style="background:#FAFAF5"></span><span style="background:#2954E6"></span><span style="background:#F5C400"></span></div>
+    <b>Marché</b><p>Moderne, franc — commerces, food, événementiel</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>3. Identité</h2>
+  <label class="lbl">Nom</label>
+  <input id="cf-nom" placeholder="Ex: Fontaine & Fils"/>
+  <label class="lbl">Sous-titre / activité</label>
+  <input id="cf-eyebrow" placeholder="Ex: Plomberie · Chauffage · Tourcoing"/>
+  <label class="lbl">Téléphone</label>
+  <input id="cf-tel" placeholder="03 00 00 00 00"/>
+  <label class="lbl">Numéro WhatsApp (avec indicatif, sans espaces)</label>
+  <input id="cf-whatsapp" placeholder="33600000000"/>
+  <label class="lbl">Zones / villes desservies (séparées par des virgules)</label>
+  <input id="cf-zones" placeholder="Tourcoing, Roubaix, Lille"/>
+  <label class="lbl">Mot de passe "espace client" (pour qu'il gère lui-même son contenu)</label>
+  <input id="cf-pwd-client" placeholder="Choisir un mot de passe simple"/>
+</div>
+
+<div class="card">
+  <h2>4. Page d'accueil</h2>
+  <label class="lbl">Titre principal</label>
+  <textarea id="cf-h1" placeholder="Ex: Le bon geste, la première fois."></textarea>
+  <label class="lbl">Texte d'introduction</label>
+  <textarea id="cf-herotexte" placeholder="Une ou deux phrases qui présentent l'activité..."></textarea>
+  <label class="lbl">Texte du bouton principal</label>
+  <input id="cf-cta1" placeholder="Ex: Demander un devis"/>
+  <label class="lbl">Photo principale</label>
+  <div class="photo-zone" onclick="document.getElementById('inp-hero').click()">📷 Ajouter une photo<input type="file" id="inp-hero" accept="image/*" style="display:none" onchange="chargerPhoto(this,'hero-preview')"/><img id="hero-preview" style="display:none"/></div>
+</div>
+
+<div class="card">
+  <h2>5. Pages à inclure</h2>
+  <div class="page-toggle"><div>Accueil <span class="lock">toujours inclus</span></div><div class="switch on" style="opacity:.4;pointer-events:none"></div></div>
+  <div class="page-toggle"><div>Prestations / Services <span class="lock">+90€</span></div><div class="switch" id="tog-services" onclick="togglePage(this)"></div></div>
+  <div class="page-toggle"><div>Galerie <span class="lock">+90€</span></div><div class="switch" id="tog-galerie" onclick="togglePage(this)"></div></div>
+  <div class="page-toggle"><div>À propos <span class="lock">+90€</span></div><div class="switch" id="tog-apropos" onclick="togglePage(this)"></div></div>
+  <div class="page-toggle"><div>Contact <span class="lock">toujours inclus</span></div><div class="switch on" style="opacity:.4;pointer-events:none"></div></div>
+</div>
+
+<div class="card" id="bloc-services" style="display:none">
+  <h2>Contenu — Prestations</h2>
+  <label class="lbl">Titre de la page</label>
+  <input id="cf-svc-titre" placeholder="Nos prestations"/>
+  <div id="services-list"></div>
+  <button class="add-btn" onclick="ajouterService()">+ Ajouter une prestation</button>
+</div>
+
+<div class="card" id="bloc-galerie" style="display:none">
+  <h2>Contenu — Galerie</h2>
+  <label class="lbl">Titre de la page</label>
+  <input id="cf-gal-titre" placeholder="Réalisations"/>
+  <div id="galerie-list"></div>
+  <button class="add-btn" onclick="ajouterGalerieItem()">+ Ajouter une photo</button>
+</div>
+
+<div class="card" id="bloc-apropos" style="display:none">
+  <h2>Contenu — À propos</h2>
+  <label class="lbl">Titre</label>
+  <input id="cf-apropos-titre" placeholder="Qui sommes-nous"/>
+  <label class="lbl">Texte</label>
+  <textarea id="cf-apropos-texte" placeholder="Votre histoire, votre équipe, vos valeurs..."></textarea>
+  <label class="lbl">Photo</label>
+  <div class="photo-zone" onclick="document.getElementById('inp-apropos').click()">📷 Ajouter une photo<input type="file" id="inp-apropos" accept="image/*" style="display:none" onchange="chargerPhoto(this,'apropos-preview')"/><img id="apropos-preview" style="display:none"/></div>
+</div>
+
+<div class="card">
+  <h2>Prix</h2>
+  <div class="prix-box">
+    <div class="prix-val" id="prix-total">190€</div>
+    <div style="font-size:12px;color:rgba(242,234,216,.5);margin-top:4px">Création + 1 an d'hébergement</div>
+  </div>
+</div>
+
+<button class="save-btn" onclick="enregistrer()">💾 Enregistrer et créer le lien</button>
+<div class="status" id="status"></div>
+
+<div class="card" id="carte-resultat" style="display:none;text-align:center">
+  <h2>🔗 Lien à donner au client</h2>
+  <input id="lien-final" readonly style="text-align:center;font-size:12px"/>
+  <button class="add-btn" onclick="copierLien()">📋 Copier</button>
+  <div id="qr-zone" style="margin-top:14px"></div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(242,234,216,.1)">
+    <div class="lbl">Montant à régler pour activer le site (1 an)</div>
+    <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px"></div>
+    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none">💳 Payer sur Revolut</a>
+    <div style="font-size:11px;color:rgba(242,234,216,.45);margin-top:8px">⚠️ Indiquez ce montant exact sur la page Revolut</div>
+  </div>
+</div>
+
+</div>
+
+<!-- ============ ESPACE CLIENT ============ -->
+<div id="tab-admin" style="display:none">
+  <div class="card">
+    <h2>👤 Espace client</h2>
+    <div id="verrou-client">
+      <label class="lbl">Slug de votre site</label>
+      <input id="ad-slug" placeholder="Ex: fontaineetfils"/>
+      <label class="lbl">Mot de passe</label>
+      <input id="ad-pwd" type="password" placeholder="••••••"/>
+      <button class="add-btn" onclick="entrerEspaceClient()">🔓 Accéder</button>
+      <div class="status" id="ad-status-verrou"></div>
+    </div>
+  </div>
+  <div id="ad-content" style="display:none">
+    <div class="card">
+      <h2>Page d'accueil</h2>
+      <label class="lbl">Titre principal</label>
+      <textarea id="ad-h1"></textarea>
+      <label class="lbl">Texte d'introduction</label>
+      <textarea id="ad-herotexte"></textarea>
+    </div>
+    <div class="card" id="ad-bloc-services" style="display:none">
+      <h2>Prestations</h2>
+      <div id="ad-services-list"></div>
+      <button class="add-btn" onclick="ajouterService('ad-services-list')">+ Ajouter une prestation</button>
+    </div>
+    <div class="card" id="ad-bloc-galerie" style="display:none">
+      <h2>Galerie</h2>
+      <div id="ad-galerie-list"></div>
+      <button class="add-btn" onclick="ajouterGalerieItem('ad-galerie-list')">+ Ajouter une photo</button>
+    </div>
+    <button class="save-btn" onclick="enregistrerEspaceClient()">💾 Enregistrer mes modifications</button>
+    <div class="status" id="ad-status-save"></div>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD (accès caché ?philomene=1) ============ -->
+<div id="tab-dashboard" style="display:none"></div>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var MOT_DE_PASSE_PHILOMENE = "philomene2026";
+var LIEN_REVOLUT = "https://checkout.revolut.com/pay/3e15f5b0-a69e-4322-a00a-12ea7d8b359f";
+var LIEN_MOTEUR = "https://www.philomeneia.com/site-v1.html";
+var STYLE_ACTUEL = "atelier";
+var CONFIG_CLIENT_ACTUEL = null;
+
+var CATEGORIES = {
+  artisan: { style:"atelier", eyebrow:"Artisan · Bâtiment", h1:"Le savoir-faire\nau bon prix.", herotexte:"Un travail soigné, un devis clair, sans mauvaise surprise.", cta1:"Demander un devis", pages:["services","galerie"] },
+  beaute: { style:"maison", eyebrow:"Beauté · Bien-être", h1:"Prenez soin\nde vous.", herotexte:"Un moment rien qu'à vous, dans un cadre soigné.", cta1:"Prendre rendez-vous", pages:["services","galerie"] },
+  commerce: { style:"marche", eyebrow:"Commerce", h1:"Découvrez\nnotre boutique.", herotexte:"Des produits choisis avec soin, un accueil qui fait la différence.", cta1:"Nous rendre visite", pages:["services","galerie"] },
+  restauration: { style:"marche", eyebrow:"Restaurant", h1:"Une table,\nune histoire.", herotexte:"Des produits frais, une cuisine sincère.", cta1:"Réserver une table", pages:["services","galerie"] },
+  sport: { style:"terrain", eyebrow:"Club sportif", h1:"Dépassez-vous\nensemble.", herotexte:"Rejoignez un club à taille humaine, encadré par des passionnés.", cta1:"Nous rejoindre", pages:["services","galerie"] },
+  asso: { style:"feuillage", eyebrow:"Association", h1:"Ensemble,\non va plus loin.", herotexte:"Une communauté active, ouverte à tous.", cta1:"Nous rejoindre", pages:["apropos","galerie"] },
+  evenement: { style:"feuillage", eyebrow:"Événement", h1:"Un jour\ninoubliable.", herotexte:"Tous les détails de notre événement, au même endroit.", cta1:"Confirmer ma venue", pages:["apropos","galerie"] },
+  perso: { style:"maison", eyebrow:"", h1:"Bienvenue.", herotexte:"Un espace pour partager ce qui me passionne.", cta1:"Me contacter", pages:["apropos","galerie"] },
+  autre: { style:"atelier", eyebrow:"", h1:"Bienvenue.", herotexte:"", cta1:"Nous contacter", pages:["services"] }
+};
+
+function appliquerCategorie(){
+  var cat = CATEGORIES[document.getElementById("cf-categorie").value];
+  if (!cat) return;
+  document.getElementById("cf-eyebrow").value = cat.eyebrow;
+  document.getElementById("cf-h1").value = cat.h1;
+  document.getElementById("cf-herotexte").value = cat.herotexte;
+  document.getElementById("cf-cta1").value = cat.cta1;
+  document.querySelectorAll(".style-card").forEach(function(c){ c.classList.toggle("sel", c.dataset.style === cat.style) });
+  STYLE_ACTUEL = cat.style;
+  ["services","galerie","apropos"].forEach(function(p){
+    document.getElementById("tog-"+p).classList.toggle("on", cat.pages.includes(p));
+  });
+  document.getElementById("bloc-services").style.display = cat.pages.includes("services") ? "block" : "none";
+  document.getElementById("bloc-galerie").style.display = cat.pages.includes("galerie") ? "block" : "none";
+  document.getElementById("bloc-apropos").style.display = cat.pages.includes("apropos") ? "block" : "none";
+  calculerPrix();
+}
+
+function choisirStyle(el, style){
+  document.querySelectorAll(".style-card").forEach(function(c){ c.classList.remove("sel") });
+  el.classList.add("sel");
+  STYLE_ACTUEL = style;
+}
+
+function togglePage(el){
+  el.classList.toggle("on");
+  var id = el.id.replace("tog-","");
+  document.getElementById("bloc-"+id).style.display = el.classList.contains("on") ? "block" : "none";
+  calculerPrix();
+}
+
+function calculerPrix(){
+  var extra = ["services","galerie","apropos"].filter(function(p){ return document.getElementById("tog-"+p).classList.contains("on") }).length;
+  var total = 190 + extra * 90;
+  document.getElementById("prix-total").textContent = total + "€";
+  return total;
+}
+["tog-services","tog-galerie","tog-apropos"].forEach(function(id){ /* déjà géré par togglePage */ });
+
+function chargerPhoto(input, previewId){
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement("canvas");
+      var max = 900;
+      var w = img.width, h = img.height;
+      if (w > h && w > max) { h = h * max / w; w = max; }
+      else if (h > max) { w = w * max / h; h = max; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      var dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+      var prev = document.getElementById(previewId);
+      prev.src = dataUrl; prev.style.display = "block";
+      prev.setAttribute("data-img", dataUrl);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function ajouterService(conteneurId, titre, texte){
+  var row = document.createElement("div");
+  row.className = "item-row";
+  row.innerHTML =
+    '<div><input placeholder="Titre" value="'+(titre||'').replace(/"/g,'&quot;')+'" class="svc-titre" style="margin-bottom:6px"/><textarea placeholder="Description" class="svc-texte" style="min-height:50px">'+(texte||'')+'</textarea></div>'+
+    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById(conteneurId || "services-list").appendChild(row);
+}
+
+function ajouterGalerieItem(conteneurId, image, legende){
+  conteneurId = conteneurId || "galerie-list";
+  var uid = "gph_" + Math.random().toString(36).slice(2,8);
+  var row = document.createElement("div");
+  row.className = "item-row";
+  row.innerHTML =
+    '<div><div class="photo-zone" onclick="document.getElementById(\''+uid+'\').click()" style="margin-bottom:6px">📷 Photo<input type="file" id="'+uid+'" accept="image/*" style="display:none" onchange="chargerPhoto(this,\''+uid+'_prev\')"/><img id="'+uid+'_prev" style="display:'+(image?'block':'none')+'" '+(image?'src="'+image+'" data-img="'+image+'"':'')+'/></div><input placeholder="Légende (optionnel)" value="'+(legende||'').replace(/"/g,'&quot;')+'" class="gal-legende"/></div>'+
+    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById(conteneurId).appendChild(row);
+}
+
+function enregistrer(){
+  var slug = document.getElementById("cf-slug").value.trim();
+  var nom = document.getElementById("cf-nom").value.trim();
+  if (!slug || !nom) { showStatus("Slug et nom obligatoires.", "err"); return; }
+
+  var pages = ["accueil"];
+  ["services","galerie","apropos"].forEach(function(p){ if (document.getElementById("tog-"+p).classList.contains("on")) pages.push(p); });
+  pages.push("contact");
+
+  var services = [];
+  document.querySelectorAll("#services-list .item-row").forEach(function(r){
+    var t = r.querySelector(".svc-titre").value.trim();
+    var x = r.querySelector(".svc-texte").value.trim();
+    if (t) services.push({titre:t, texte:x});
+  });
+
+  var galerie = [];
+  document.querySelectorAll("#galerie-list .item-row").forEach(function(r){
+    var img = r.querySelector("img");
+    var leg = r.querySelector(".gal-legende").value.trim();
+    if (img && img.getAttribute("data-img")) galerie.push({image:img.getAttribute("data-img"), legende:leg});
+  });
+
+  var zones = document.getElementById("cf-zones").value.split(",").map(function(z){return z.trim()}).filter(Boolean);
+  var heroImg = document.getElementById("hero-preview");
+  var aproposImg = document.getElementById("apropos-preview");
+
+  var cfg = {
+    style: STYLE_ACTUEL,
+    nom: nom,
+    telephone: document.getElementById("cf-tel").value.trim(),
+    whatsapp: document.getElementById("cf-whatsapp").value.trim(),
+    zones: zones,
+    motDePasseClient: document.getElementById("cf-pwd-client").value.trim(),
+    pages: pages,
+    hero: {
+      eyebrow: document.getElementById("cf-eyebrow").value.trim(),
+      titre: document.getElementById("cf-h1").value.trim(),
+      texte: document.getElementById("cf-herotexte").value.trim(),
+      cta1: document.getElementById("cf-cta1").value.trim(),
+      image: heroImg.getAttribute("data-img") || ""
+    },
+    servicesTitre: document.getElementById("cf-svc-titre").value.trim() || "Nos prestations",
+    services: services,
+    galerieTitre: document.getElementById("cf-gal-titre").value.trim() || "Réalisations",
+    galerie: galerie,
+    aproposTitre: document.getElementById("cf-apropos-titre").value.trim(),
+    aproposTexte: document.getElementById("cf-apropos-texte").value.trim(),
+    aproposImage: aproposImg.getAttribute("data-img") || "",
+    valide: false,
+    dateCreation: new Date().toISOString()
+  };
+
+  fetch(API + "/memory/site_" + slug, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ value: cfg })
+  }).then(function(r){ return r.json() }).then(function(){
+    showStatus('Config enregistrée pour "' + nom + '" !', "ok");
+    var lien = LIEN_MOTEUR + "?client=" + encodeURIComponent(slug);
+    document.getElementById("lien-final").value = lien;
+    document.getElementById("carte-resultat").style.display = "block";
+    document.getElementById("qr-zone").innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent(lien)+'" style="border-radius:10px"/>';
+    var prix = calculerPrix();
+    document.getElementById("montant-a-payer").textContent = prix + "€";
+    document.getElementById("lien-revolut-resultat").href = LIEN_REVOLUT;
+    mettreAJourIndexSites(slug, nom, document.getElementById("cf-categorie").value);
+  }).catch(function(){ showStatus("Erreur d'enregistrement.", "err"); });
+}
+
+function mettreAJourIndexSites(slug, nom, categorie){
+  fetch(API + "/memory/site_index")
+    .then(function(r){ return r.json() })
+    .then(function(d){
+      var index = (d && d.value) ? d.value : [];
+      var existant = index.find(function(e){ return e.slug === slug });
+      if (existant) { existant.nom = nom; existant.categorie = categorie; }
+      else index.push({slug:slug, nom:nom, categorie:categorie});
+      fetch(API + "/memory/site_index", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ value: index })
+      }).catch(function(){});
+    });
+}
+
+function copierLien(){
+  var el = document.getElementById("lien-final");
+  el.select(); document.execCommand("copy");
+}
+
+function showStatus(msg, type){
+  var s = document.getElementById("status");
+  s.textContent = msg; s.className = "status " + type;
+}
+
+/* ===== Section 0 : modifier un client existant (réservé) ===== */
+function deverrouillerAdminGeneral(){
+  if (document.getElementById("pwd-admin-general").value === MOT_DE_PASSE_PHILOMENE) {
+    document.getElementById("verrou-admin-general").style.display = "none";
+    document.getElementById("contenu-admin-general").style.display = "block";
+    if (document.getElementById("cf-slug-charger").value.trim()) chargerConfigExistante();
+  } else {
+    var s = document.getElementById("status-verrou");
+    s.textContent = "Mot de passe incorrect."; s.className = "status err";
+  }
+}
+
+function chargerConfigExistante(){
+  var slug = document.getElementById("cf-slug-charger").value.trim();
+  if (!slug) return;
+  fetch(API + "/memory/site_" + slug)
+    .then(function(r){ return r.json() })
+    .then(function(d){
+      if (!d || !d.value) { alert("Aucune config trouvée pour ce slug."); return; }
+      var cfg = d.value;
+      CONFIG_CLIENT_ACTUEL = cfg;
+      document.getElementById("cf-slug").value = slug;
+      document.getElementById("cf-nom").value = cfg.nom || "";
+      document.getElementById("cf-eyebrow").value = cfg.hero?.eyebrow || "";
+      document.getElementById("cf-h1").value = cfg.hero?.titre || "";
+      document.getElementById("cf-herotexte").value = cfg.hero?.texte || "";
+      document.getElementById("cf-cta1").value = cfg.hero?.cta1 || "";
+      document.getElementById("cf-tel").value = cfg.telephone || "";
+      document.getElementById("cf-whatsapp").value = cfg.whatsapp || "";
+      document.getElementById("cf-zones").value = (cfg.zones||[]).join(", ");
+      document.getElementById("cf-pwd-client").value = cfg.motDePasseClient || "";
+      STYLE_ACTUEL = cfg.style || "atelier";
+      document.querySelectorAll(".style-card").forEach(function(c){ c.classList.toggle("sel", c.dataset.style === STYLE_ACTUEL) });
+      ["services","galerie","apropos"].forEach(function(p){
+        var on = (cfg.pages||[]).includes(p);
+        document.getElementById("tog-"+p).classList.toggle("on", on);
+        document.getElementById("bloc-"+p).style.display = on ? "block" : "none";
+      });
+      document.getElementById("cf-svc-titre").value = cfg.servicesTitre || "";
+      document.getElementById("services-list").innerHTML = "";
+      (cfg.services||[]).forEach(function(s){ ajouterService("services-list", s.titre, s.texte) });
+      document.getElementById("cf-gal-titre").value = cfg.galerieTitre || "";
+      document.getElementById("galerie-list").innerHTML = "";
+      (cfg.galerie||[]).forEach(function(g){ ajouterGalerieItem("galerie-list", g.image, g.legende) });
+      document.getElementById("cf-apropos-titre").value = cfg.aproposTitre || "";
+      document.getElementById("cf-apropos-texte").value = cfg.aproposTexte || "";
+      calculerPrix();
+
+      document.getElementById("bloc-validation").style.display = "block";
+      var statutEl = document.getElementById("statut-actuel");
+      if (cfg.valide === true) {
+        var expire = cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
+        statutEl.textContent = expire ? "⚠️ Expiré (" + cfg.dateExpiration.slice(0,10) + ")" : "✅ Actif jusqu'au " + (cfg.dateExpiration||"").slice(0,10);
+      } else {
+        statutEl.textContent = "⏳ En attente de validation";
+      }
+    }).catch(function(){ alert("Erreur de chargement."); });
+}
+
+function confirmerPaiement(){
+  if (!document.getElementById("chk-paiement-recu").checked) { alert("Coche d'abord la case 'Paiement reçu'."); return; }
+  var slug = document.getElementById("cf-slug-charger").value.trim();
+  if (!slug || !CONFIG_CLIENT_ACTUEL) return;
+  var dans1an = new Date(); dans1an.setFullYear(dans1an.getFullYear() + 1);
+  CONFIG_CLIENT_ACTUEL.valide = true;
+  CONFIG_CLIENT_ACTUEL.dateExpiration = dans1an.toISOString();
+  fetch(API + "/memory/site_" + slug, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ value: CONFIG_CLIENT_ACTUEL })
+  }).then(function(){
+    alert("Paiement confirmé ! Site actif jusqu'au " + dans1an.toISOString().slice(0,10));
+    document.getElementById("statut-actuel").textContent = "✅ Actif jusqu'au " + dans1an.toISOString().slice(0,10);
+  }).catch(function(){ alert("Erreur."); });
+}
+
+/* ===== Espace client ===== */
+function entrerEspaceClient(){
+  var slug = document.getElementById("ad-slug").value.trim();
+  var pwd = document.getElementById("ad-pwd").value.trim();
+  if (!slug || !pwd) return;
+  fetch(API + "/memory/site_" + slug)
+    .then(function(r){ return r.json() })
+    .then(function(d){
+      if (!d || !d.value) { showAdStatus("Site introuvable.", "err"); return; }
+      if ((d.value.motDePasseClient || "") !== pwd) { showAdStatus("Mot de passe incorrect.", "err"); return; }
+      CONFIG_CLIENT_ACTUEL = d.value;
+      document.getElementById("ad-h1").value = d.value.hero?.titre || "";
+      document.getElementById("ad-herotexte").value = d.value.hero?.texte || "";
+      var pages = d.value.pages || [];
+      if (pages.includes("services")) {
+        document.getElementById("ad-bloc-services").style.display = "block";
+        document.getElementById("ad-services-list").innerHTML = "";
+        (d.value.services||[]).forEach(function(s){ ajouterService("ad-services-list", s.titre, s.texte) });
+      }
+      if (pages.includes("galerie")) {
+        document.getElementById("ad-bloc-galerie").style.display = "block";
+        document.getElementById("ad-galerie-list").innerHTML = "";
+        (d.value.galerie||[]).forEach(function(g){ ajouterGalerieItem("ad-galerie-list", g.image, g.legende) });
+      }
+      document.getElementById("verrou-client").style.display = "none";
+      document.getElementById("ad-content").style.display = "block";
+    }).catch(function(){ showAdStatus("Erreur de connexion.", "err"); });
+}
+
+function showAdStatus(msg, type){
+  var s = document.getElementById("ad-status-verrou");
+  s.textContent = msg; s.className = "status " + type;
+}
+
+function enregistrerEspaceClient(){
+  if (!CONFIG_CLIENT_ACTUEL) return;
+  CONFIG_CLIENT_ACTUEL.hero.titre = document.getElementById("ad-h1").value.trim();
+  CONFIG_CLIENT_ACTUEL.hero.texte = document.getElementById("ad-herotexte").value.trim();
+
+  var services = [];
+  document.querySelectorAll("#ad-services-list .item-row").forEach(function(r){
+    var t = r.querySelector(".svc-titre").value.trim();
+    var x = r.querySelector(".svc-texte").value.trim();
+    if (t) services.push({titre:t, texte:x});
+  });
+  if (document.getElementById("ad-bloc-services").style.display !== "none") CONFIG_CLIENT_ACTUEL.services = services;
+
+  var galerie = [];
+  document.querySelectorAll("#ad-galerie-list .item-row").forEach(function(r){
+    var img = r.querySelector("img");
+    var leg = r.querySelector(".gal-legende").value.trim();
+    if (img && img.getAttribute("data-img")) galerie.push({image:img.getAttribute("data-img"), legende:leg});
+  });
+  if (document.getElementById("ad-bloc-galerie").style.display !== "none") CONFIG_CLIENT_ACTUEL.galerie = galerie;
+
+  var slug = document.getElementById("ad-slug").value.trim();
+  fetch(API + "/memory/site_" + slug, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ value: CONFIG_CLIENT_ACTUEL })
+  }).then(function(){
+    var s = document.getElementById("ad-status-save");
+    s.textContent = "Modifications enregistrées !"; s.className = "status ok";
+  }).catch(function(){
+    var s = document.getElementById("ad-status-save");
+    s.textContent = "Erreur d'enregistrement."; s.className = "status err";
+  });
+}
+
+function switchOnglet(nom){
+  document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
+  document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
+  document.getElementById("tabbtn-creation").classList.toggle("active", nom === "creation");
+  document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
+}
+
+var paramsUrl = new URLSearchParams(window.location.search);
+if (paramsUrl.get("philomene")) {
+  document.getElementById("carte-modifier-existant").style.display = "block";
+  if (paramsUrl.get("modifier")) document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
+}
+
+/* recalcul prix quand on coche/décoche */
+document.addEventListener("click", function(e){
+  if (e.target.classList && e.target.classList.contains("switch")) calculerPrix();
+});
+</script>
+</body>
+</html>
