@@ -61,6 +61,30 @@ function deverrouillerDashboard() {
   }
 }
 
+function supprimerProjet(type, slug, nom){
+  if (!confirm('Supprimer définitivement "' + nom + '" ?\n\nSon lien ne fonctionnera plus. Cette action est irréversible.')) return;
+  var cle = (type === "appli" ? "config_" : "site_") + slug;
+  var indexKey = type === "appli" ? "app_index" : "site_index";
+
+  fetch(API + "/memory/" + cle, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ value: null })
+  }).then(function(){
+    return fetch(API + "/memory/" + indexKey).then(function(r){ return r.json() });
+  }).then(function(d){
+    var index = (d && d.value) ? d.value : [];
+    var nouvelIndex = index.filter(function(e){ return e.slug !== slug; });
+    return fetch(API + "/memory/" + indexKey, {
+      method: "POST", headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ value: nouvelIndex })
+    });
+  }).then(function(){
+    chargerDashboard();
+  }).catch(function(){
+    alert("Erreur pendant la suppression.");
+  });
+}
+
 function chargerDashboard() {
   var zone = document.getElementById("dashboard-liste");
   zone.innerHTML = '<div class="ga-empty">Chargement...</div>';
@@ -82,7 +106,7 @@ function chargerDashboard() {
       var uid = entree.type + "_" + entree.slug;
       var row = document.createElement("div");
       row.className = "ga-item";
-      row.innerHTML = '<div class="ga-item-title">' + icone + ' ' + entree.nom + '<span>' + entree.slug + ' · ' + (entree.secteur||entree.categorie||'') + '</span></div><span id="badge-' + uid + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:#eee">...</span>';
+      row.innerHTML = '<div class="ga-item-title">' + icone + ' ' + entree.nom + '<span>' + entree.slug + ' · ' + (entree.secteur||entree.categorie||'') + '</span></div><div style="display:flex;align-items:center;gap:8px"><span id="badge-' + uid + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:#eee">...</span><button onclick="event.stopPropagation();supprimerProjet(\'' + entree.type + '\',\'' + entree.slug.replace(/'/g,"\\'") + '\',\'' + entree.nom.replace(/'/g,"\\'") + '\')" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px">🗑️</button></div>';
       row.onclick = function(){
         window.location.href = outil + "?philomene=1&modifier=" + encodeURIComponent(entree.slug);
       };
