@@ -3,111 +3,106 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="light"/>
 <title>Créateur d'appli — Philomène IA</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif}
-html,body{max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
-body{background:#1a2e20;color:#f2ead8;padding:20px 16px 60px;max-width:540px;margin:0 auto}
+html{background:#FAFAF7 !important;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
+body{background:#FAFAF7 !important;color:#111;padding:20px 16px 60px;max-width:540px;margin:0 auto}
 h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
-.sub{font-size:12px;color:rgba(242,234,216,.5);margin-bottom:20px}
-.card{background:rgba(242,234,216,.06);border:1px solid rgba(242,234,216,.12);border-radius:14px;padding:18px;margin-bottom:16px}
-.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(242,234,216,.6);margin-bottom:12px}
-.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,234,216,.4);margin-bottom:5px;display:block}
-input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;margin-bottom:12px;outline:none;-webkit-appearance:none}
-select option{background:#1a2e20;color:#f2ead8}
+.sub{font-size:12px;color:rgba(17,17,17,.5);margin-bottom:20px}
+.card{background:rgba(17,17,17,.06);border:1px solid rgba(17,17,17,.12);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(17,17,17,.6);margin-bottom:12px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(17,17,17,.4);margin-bottom:5px;display:block}
+.hint{font-size:11.5px;color:rgba(17,17,17,.5);margin:-6px 0 12px}
+input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(17,17,17,.15);background:#fff;color:#111;font-size:14px;margin-bottom:12px;outline:none;-webkit-appearance:none}
+select option{background:#fff;color:#111}
 textarea{resize:vertical;min-height:56px;word-break:break-all;overflow-wrap:anywhere}
-
-/* PALETTE DE BULLES DE COULEUR */
 .palette-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.palette-bulle{width:42px;height:42px;border-radius:50%;cursor:pointer;border:2px solid rgba(242,234,216,.2);position:relative;flex-shrink:0}
-.palette-bulle.selected{border-color:#f2ead8;box-shadow:0 0 0 2px rgba(242,234,216,.3)}
-.palette-bulle span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;white-space:nowrap;color:rgba(242,234,216,.4)}
-
+.palette-bulle{width:42px;height:42px;border-radius:50%;cursor:pointer;border:2px solid rgba(17,17,17,.2);position:relative;flex-shrink:0}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 input[type=color]{padding:2px;height:38px}
-
 .modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
-.mod-check{display:flex;align-items:center;gap:8px;background:rgba(242,234,216,.05);border:1.5px solid rgba(242,234,216,.12);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px}
+.mod-check{display:flex;align-items:center;gap:8px;background:rgba(17,17,17,.05);border:1.5px solid rgba(17,17,17,.12);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px}
 .mod-check input{width:16px;height:16px;margin:0;flex-shrink:0}
 .mod-check.active{border-color:#6BCB77;background:rgba(107,203,119,.08)}
-
 .item-row{display:grid;grid-template-columns:1fr 1fr 0.7fr auto;gap:6px;margin-bottom:8px;align-items:center}
-.del-btn{background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);color:#ff8a7a;border-radius:8px;font-size:14px;cursor:pointer;padding:8px}
-.add-btn{background:none;border:1.5px dashed rgba(242,234,216,.25);color:rgba(242,234,216,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px;margin-top:2px}
-.save-btn{width:100%;padding:15px;border-radius:12px;border:none;background:#f2ead8;color:#1a2e20;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
+.del-btn{background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);color:#c0392b;border-radius:8px;font-size:14px;cursor:pointer;padding:8px}
+.add-btn{background:none;border:1.5px dashed rgba(17,17,17,.25);color:rgba(17,17,17,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px;margin-top:2px}
+.save-btn{width:100%;padding:15px;border-radius:12px;border:none;background:#111;color:#FAFAF7;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
 .status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
-.status.ok{background:rgba(46,204,113,.15);color:#6BCB77;display:block}
-.status.err{background:rgba(255,107,107,.1);color:#ff8a7a;display:block}
-.tabbtn{flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.05);color:rgba(242,234,216,.6);font-size:13px;font-weight:600;cursor:pointer}
-.tabbtn.active{background:#f2ead8;color:#1a2e20;border-color:#f2ead8}
-.logo-zone{border:2px dashed rgba(242,234,216,.25);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px}
-.logo-zone p{font-size:12px;color:rgba(242,234,216,.4)}
+.status.ok{background:rgba(46,204,113,.15);color:#1e8449;display:block}
+.status.err{background:rgba(255,107,107,.12);color:#c0392b;display:block}
+.tabbtn{flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(17,17,17,.15);background:rgba(17,17,17,.05);color:rgba(17,17,17,.6);font-size:13px;font-weight:600;cursor:pointer}
+.tabbtn.active{background:#111;color:#FAFAF7;border-color:#111}
+.logo-zone{border:2px dashed rgba(17,17,17,.25);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px}
+.logo-zone p{font-size:12px;color:rgba(17,17,17,.4)}
 .logo-zone img{max-width:90px;max-height:60px;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
-.photo-zone{border:2px dashed rgba(242,234,216,.25);border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:rgba(242,234,216,.04);position:relative;overflow:hidden;margin-top:6px}
-.photo-zone .ph{color:rgba(242,234,216,.4);font-size:12px}
+.photo-zone{border:2px dashed rgba(17,17,17,.25);border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:rgba(17,17,17,.04);position:relative;overflow:hidden;margin-top:6px}
+.photo-zone .ph{color:rgba(17,17,17,.4);font-size:12px}
 .photo-zone .ph span{display:block;font-size:24px;margin-bottom:6px}
 .photo-zone img{max-width:100%;max-height:120px;border-radius:8px;display:none;margin:0 auto}
 .photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.subsection{display:none;border-top:1px solid rgba(242,234,216,.1);padding-top:12px;margin-top:12px}
+.subsection{display:none;border-top:1px solid rgba(17,17,17,.1);padding-top:12px;margin-top:12px}
 .subsection.show{display:block}
-.day-block{background:rgba(242,234,216,.04);border-radius:10px;padding:10px;margin-bottom:8px}
-.day-block h3{font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)}
+.day-block{background:rgba(17,17,17,.04);border-radius:10px;padding:10px;margin-bottom:8px}
+.day-block h3{font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)}
 </style>
 </head>
 <body>
 
 <h1>🛠️ Créateur d'appli</h1>
-<div class="sub">Choisis un métier, tout se pré-remplit. Ajuste, complète, enregistre.</div>
+<div class="sub">Choisissez votre métier, tout se pré-remplit. Ajustez, complétez, enregistrez.</div>
 
 <div id="ecran-accueil">
   <div class="card" style="text-align:center;padding:28px 22px">
     <div style="font-size:44px;margin-bottom:14px">📱✨</div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:10px">Créez votre appli professionnelle</h2>
-    <p style="font-size:13px;color:rgba(242,234,216,.6);line-height:1.6;margin-bottom:18px">
-      Une appli avec assistant IA, devis automatique, catalogue ou prise de rendez-vous — adaptée à votre métier, prête en quelques minutes.
+    <h2 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:10px;text-transform:none;letter-spacing:0;color:#111">Créez votre appli professionnelle</h2>
+    <p style="font-size:13px;color:rgba(17,17,17,.6);line-height:1.6;margin-bottom:18px">
+      Une appli avec assistant IA, devis automatique, catalogue ou prise de rendez-vous, adaptée à votre métier et prête en quelques minutes.
     </p>
   </div>
 
   <div class="card">
     <h2>Comment ça marche</h2>
     <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
-      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
-      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Choisissez votre métier — tout se pré-remplit automatiquement (couleurs, questions, tarifs).</div>
+      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Choisissez votre métier : couleurs, questions et tarifs se pré-remplissent.</div>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
-      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
-      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Ajustez ce qui vous concerne : nom, logo, tarifs, articles avec photos si besoin.</div>
+      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Ajustez ce qui vous concerne : nom, logo, tarifs, articles avec photos si besoin.</div>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
-      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
-      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Enregistrez — votre appli est immédiatement visible avec un lien et un QR code à partager.</div>
+      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Enregistrez : votre appli est visible tout de suite, avec un lien et un QR code à partager.</div>
     </div>
     <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="background:#f2ead8;color:#1a2e20;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
-      <div style="font-size:13px;color:rgba(242,234,216,.75);line-height:1.5">Réglez le montant indiqué à la fin (il dépend des options choisies), envoyez-nous la preuve de paiement — le bandeau "démo" disparaît sous 24h.</div>
+      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Réglez le montant indiqué à la fin et envoyez-nous la preuve de paiement : le bandeau « démo » disparaît sous 24h.</div>
     </div>
   </div>
 
-  <button class="save-btn" onclick="document.getElementById('ecran-accueil').style.display='none';document.getElementById('ecran-outil').style.display='block';">Commencer →</button>
+  <button class="save-btn" onclick="ouvrirOutil()">Commencer</button>
 
   <div class="card" style="text-align:center;margin-top:16px">
-    <div style="font-size:12px;color:rgba(242,234,216,.5);margin-bottom:10px">Pour toute question, vous pouvez nous contacter via WhatsApp.</div>
+    <div style="font-size:12px;color:rgba(17,17,17,.5);margin-bottom:10px">Une question ? Écrivez-nous sur WhatsApp.</div>
     <a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question%20sur%20la%20cr%C3%A9ation%20de%20mon%20appli." target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:10px 20px;border-radius:20px;font-weight:700;font-size:13px;text-decoration:none">📱 Nous contacter</a>
   </div>
 
   <div style="text-align:center;margin-top:20px">
-    <button onclick="document.getElementById('mentions-legales').style.display = document.getElementById('mentions-legales').style.display === 'block' ? 'none' : 'block';" style="background:none;border:none;color:rgba(242,234,216,.35);font-size:11px;text-decoration:underline;cursor:pointer">Mentions légales</button>
-    <div id="mentions-legales" style="display:none;text-align:left;font-size:11px;color:rgba(242,234,216,.5);line-height:1.7;margin-top:14px;padding:14px;background:rgba(242,234,216,.05);border-radius:10px">
-      <strong style="color:rgba(242,234,216,.7)">Éditeur du site</strong><br/>
+    <button onclick="var m=document.getElementById('mentions-legales');m.style.display=m.style.display==='block'?'none':'block';" style="background:none;border:none;color:rgba(17,17,17,.35);font-size:11px;text-decoration:underline;cursor:pointer">Mentions légales</button>
+    <div id="mentions-legales" style="display:none;text-align:left;font-size:11px;color:rgba(17,17,17,.5);line-height:1.7;margin-top:14px;padding:14px;background:rgba(17,17,17,.05);border-radius:10px">
+      <strong style="color:rgba(17,17,17,.7)">Éditeur du site</strong><br/>
       Philomène IA — Entreprise Individuelle (micro-entreprise)<br/>
       SIRET : 511 089 260 00026<br/>
       Adresse : 18 Cour Delcroix, 239 Rue des Cinq Voies, 59200 Tourcoing, France<br/>
       Contact : WhatsApp +33 6 17 12 39 10 — philomene.numerologie@gmail.com<br/><br/>
-      <strong style="color:rgba(242,234,216,.7)">Hébergement</strong><br/>
+      <strong style="color:rgba(17,17,17,.7)">Hébergement</strong><br/>
       Site hébergé par Render (render.com) — Nom de domaine déposé auprès de Namecheap, Inc.<br/><br/>
-      <strong style="color:rgba(242,234,216,.7)">Données personnelles</strong><br/>
+      <strong style="color:rgba(17,17,17,.7)">Données personnelles</strong><br/>
       Les informations saisies dans ce formulaire (nom d'entreprise, coordonnées, contenu de l'appli) sont utilisées uniquement pour la création et le fonctionnement de votre appli. Pour toute demande de suppression ou de modification, contactez-nous via WhatsApp ou email ci-dessus.
     </div>
   </div>
@@ -116,36 +111,35 @@ input[type=color]{padding:2px;height:38px}
 <div id="ecran-outil" style="display:none">
 
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer</button>
-  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Client</button>
+  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer mon appli</button>
+  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Modifier mon appli</button>
 </div>
 
-<button class="add-btn" style="margin-bottom:16px;border-color:rgba(255,138,122,.4);color:#ff8a7a" onclick="if(confirm('Repartir d\'un formulaire vide ? Les infos non enregistrées seront perdues.')) window.location.reload();">🔄 Nouveau client (réinitialiser le formulaire)</button>
-
-<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" style="display:block;text-align:center;font-size:11.5px;color:rgba(242,234,216,.4);margin-bottom:16px;text-decoration:underline">Pour toute question, contactez-nous via WhatsApp</a>
+<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" style="display:block;text-align:center;font-size:11.5px;color:rgba(17,17,17,.4);margin-bottom:16px;text-decoration:underline">Une question ? Contactez-nous sur WhatsApp</a>
 
 <div id="tab-creation">
 
 <div class="card" id="carte-modifier-existant" style="display:none">
-  <h2>0. Modifier un client existant ?</h2>
+  <h2>Espace Philomène IA</h2>
   <div id="verrou-admin-general">
-    <label class="lbl">Mot de passe (réservé à Philomène IA)</label>
-    <input id="pwd-admin-general" type="password" placeholder="••••••"/>
+    <label class="lbl">Code admin</label>
+    <input id="pwd-admin-general" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')deverrouillerAdminGeneral()"/>
     <button class="add-btn" onclick="deverrouillerAdminGeneral()">🔓 Déverrouiller</button>
     <div class="status" id="status-verrou"></div>
   </div>
   <div id="contenu-admin-general" style="display:none">
-    <label class="lbl">Slug du client à recharger</label>
+    <label class="lbl">Identifiant du client à recharger</label>
     <input id="cf-slug-charger" placeholder="Ex: renovnord"/>
-    <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger cette config pour la modifier</button>
+    <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger ce client</button>
+    <button class="add-btn" style="margin-top:8px" onclick="if(confirm('Repartir d\'un formulaire vide ?')) nouveauClient();">🔄 Nouveau client (formulaire vide)</button>
     <div class="status" id="status-charger"></div>
 
     <div id="bloc-validation" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(107,203,119,.1);border:1.5px solid rgba(107,203,119,.3);border-radius:10px">
       <label class="mod-check active" style="background:transparent;border:none;padding:0">
         <input type="checkbox" id="cf-valide"/>
-        ✅ Paiement reçu — retirer le bandeau "démo"
+        ✅ Paiement reçu (retire le bandeau « démo »)
       </label>
-      <div id="info-expiration" style="font-size:11.5px;color:rgba(242,234,216,.5);margin-top:8px"></div>
+      <div id="info-expiration" style="font-size:11.5px;color:rgba(17,17,17,.5);margin-top:8px"></div>
       <button class="add-btn" style="margin-top:10px" onclick="confirmerRenouvellement()">🔄 Confirmer un nouveau paiement (renouvelle pour 1 an)</button>
     </div>
   </div>
@@ -155,35 +149,36 @@ input[type=color]{padding:2px;height:38px}
   <h2>1. Métier</h2>
   <label class="lbl">Secteur d'activité</label>
   <select id="cf-secteur"></select>
-  <label class="lbl">Slug (utilisé dans l'URL ?client=...)</label>
-  <input id="cf-slug" placeholder="Ex: renovnord"/>
 </div>
 
 <div class="card">
   <h2>2. Identité</h2>
   <label class="lbl">Nom de l'entreprise</label>
-  <input id="cf-nom" placeholder="Ex: Rénov Nord"/>
+  <input id="cf-nom" placeholder="Ex: Rénov Nord" oninput="majSlugAuto()"/>
+  <label class="lbl">Adresse de votre appli</label>
+  <input id="cf-slug" placeholder="Ex: renovnord" oninput="slugTouche=true;this.value=slugifier(this.value);majApercuLien()"/>
+  <div class="hint" id="apercu-lien">Remplie automatiquement à partir du nom.</div>
   <label class="lbl">Sous-titre</label>
   <input id="cf-soustitre" placeholder="Ex: Rénovation intérieure"/>
-  <label class="lbl">Logo / photo (remplace l'icône si ajouté)</label>
+  <label class="lbl">Logo ou photo (remplace l'icône si ajouté)</label>
   <div class="logo-zone" id="logo-zone" onclick="document.getElementById('logo-input').click()">
     <img id="logo-preview" style="display:none"/>
-    <p id="logo-txt">Appuyez pour ajouter un logo (facultatif)</p>
+    <p id="logo-txt">Touchez pour ajouter un logo (facultatif)</p>
   </div>
   <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
   <label class="lbl">Icône de secours (emoji)</label>
   <input id="cf-icone" placeholder="🏠"/>
   <label class="lbl">Numéro WhatsApp (international, sans +)</label>
   <input id="cf-whatsapp" placeholder="33612345678"/>
-  <label class="lbl">Email du client (pour te recontacter, retrouver un mot de passe...)</label>
+  <label class="lbl">Votre email (pour vous recontacter)</label>
   <input id="cf-email" type="email" placeholder="contact@exemple.fr"/>
-  <label class="lbl">Mot de passe "espace client" (pour qu'il gère lui-même son contenu)</label>
-  <input id="cf-admin-password" placeholder="Ex: ninja2026"/>
+  <label class="lbl">Mot de passe de votre espace client</label>
+  <input id="cf-admin-password" type="password" placeholder="Pour modifier vous-même votre contenu"/>
 </div>
 
 <div class="card">
   <h2>3. Couleurs</h2>
-  <label class="lbl">Palettes suggérées (clique pour appliquer)</label>
+  <label class="lbl">Palettes suggérées (touchez pour appliquer)</label>
   <div class="palette-grid" id="palette-grid"></div>
   <label class="lbl" style="margin-top:6px">Ajustement fin</label>
   <div class="row3">
@@ -219,13 +214,13 @@ input[type=color]{padding:2px;height:38px}
 
   <div class="modules-grid" id="modules-grid"></div>
 
-  <div id="prix-total" style="margin-top:14px;padding:12px 14px;background:rgba(242,234,216,.08);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600">
-    <span>Prix estimé pour un an</span>
+  <div id="prix-total" style="margin-top:14px;padding:12px 14px;background:rgba(17,17,17,.08);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600">
+    <span>Prix pour un an</span>
     <span id="prix-total-val">0€</span>
   </div>
 
   <div class="subsection" id="sub-tarifs">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">💰 Tarifs</h3>
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">💰 Tarifs</h3>
     <label class="lbl">Sous-titre</label>
     <input id="cf-tarifs-soustitre" placeholder="Ex: Prix indicatifs"/>
     <div id="tarifs-list"></div>
@@ -233,21 +228,21 @@ input[type=color]{padding:2px;height:38px}
   </div>
 
   <div class="subsection" id="sub-devis">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">📋 Devis</h3>
-    <label class="lbl">Mon taux horaire (optionnel — l'IA s'en servira pour calculer la main d'œuvre)</label>
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">📋 Devis</h3>
+    <label class="lbl">Taux horaire (optionnel, pour calculer la main d'œuvre)</label>
     <input id="cf-taux-horaire" type="number" placeholder="Ex: 45"/>
-    <label class="lbl">Types de prestations proposées (une par ligne)</label>
+    <label class="lbl">Types de prestations (une par ligne)</label>
     <textarea id="cf-devis-types" placeholder="Peinture intérieure&#10;Revêtement de sol&#10;..." style="min-height:80px"></textarea>
-    <label class="lbl">Libellé du champ "détails" (adapté au métier)</label>
+    <label class="lbl">Libellé du champ « détails »</label>
     <input id="cf-devis-surface-label" placeholder="Ex: Surface / quantité, ou Taille / emplacement"/>
     <label class="lbl">Exemple affiché dans ce champ</label>
     <input id="cf-devis-surface-placeholder" placeholder="Ex: 25m², 3 pièces... ou avant-bras, 15cm..."/>
-    <label class="lbl">Consigne IA spécifique au devis (prix, règles de calcul)</label>
+    <label class="lbl">Consigne IA pour le devis (prix, règles de calcul)</label>
     <textarea id="cf-devis-prompt" style="min-height:80px"></textarea>
   </div>
 
   <div class="subsection" id="sub-catalogue">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">🛍️ Catalogue</h3>
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🛍️ Catalogue</h3>
     <label class="lbl">Titre de la page</label>
     <input id="cf-catalogue-titre" placeholder="Ex: Notre carte"/>
     <label class="lbl">Sous-titre</label>
@@ -257,7 +252,7 @@ input[type=color]{padding:2px;height:38px}
   </div>
 
   <div class="subsection" id="sub-galerie">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">🖼️ Galerie</h3>
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🖼️ Galerie</h3>
     <label class="lbl">Titre de la page</label>
     <input id="cf-galerie-titre" placeholder="Ex: Nos réalisations"/>
     <div id="galerie-list"></div>
@@ -265,15 +260,15 @@ input[type=color]{padding:2px;height:38px}
   </div>
 
   <div class="subsection" id="sub-planning">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">🗓️ Planning</h3>
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🗓️ Planning</h3>
     <div id="planning-jours"></div>
   </div>
 
   <div class="subsection" id="sub-reservation">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(242,234,216,.7)">📅 Réservation</h3>
-    <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...) — laisser vide sinon</label>
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">📅 Réservation</h3>
+    <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...), sinon laisser vide</label>
     <input id="cf-reservation-lien" placeholder="Ex: https://www.planity.com/nom-du-salon"/>
-    <label class="lbl">Services proposés (utilisé seulement si pas de lien externe)</label>
+    <label class="lbl">Services proposés (si pas de lien externe)</label>
     <div id="reservation-list"></div>
     <button class="add-btn" onclick="ajouterReservationService()">+ Ajouter un service</button>
   </div>
@@ -283,19 +278,19 @@ input[type=color]{padding:2px;height:38px}
 <div class="status" id="status"></div>
 
 <div class="card" id="resultat-lien" style="display:none;text-align:center">
-  <h2 style="text-align:left">🔗 Lien à donner au client</h2>
+  <h2 style="text-align:left">🔗 Lien de votre appli</h2>
   <div style="display:flex;gap:8px;margin-bottom:14px">
     <input id="lien-final" readonly style="flex:1;margin-bottom:0;font-size:12px"/>
-    <button onclick="copierLien()" style="background:#f2ead8;color:#1a2e20;border:none;border-radius:8px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">📋 Copier</button>
+    <button onclick="copierLien()" style="background:#111;color:#FAFAF7;border:none;border-radius:8px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">📋 Copier</button>
   </div>
   <img id="qr-code" style="width:180px;height:180px;border-radius:10px;background:#fff;padding:8px"/>
-  <div style="font-size:11px;color:rgba(242,234,216,.4);margin:8px 0 16px">Ce QR code renvoie directement vers l'appli du client</div>
+  <div style="font-size:11px;color:rgba(17,17,17,.4);margin:8px 0 16px">Ce QR code ouvre directement votre appli</div>
 
   <div style="background:rgba(37,211,102,.1);border:1.5px solid rgba(37,211,102,.3);border-radius:12px;padding:16px">
-    <div style="font-size:13px;color:rgba(242,234,216,.7);margin-bottom:4px">Montant à régler pour activer l'appli (1 an)</div>
+    <div style="font-size:13px;color:rgba(17,17,17,.7);margin-bottom:4px">Montant à régler pour activer l'appli (1 an)</div>
     <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px">0€</div>
     <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none">💳 Payer sur Revolut</a>
-    <div style="font-size:11px;color:rgba(242,234,216,.45);margin-top:8px">⚠️ Indiquez ce montant exact sur la page Revolut — il n'est pas rempli automatiquement</div>
+    <div style="font-size:11px;color:rgba(17,17,17,.45);margin-top:8px">⚠️ Indiquez ce montant exact sur la page Revolut, il n'est pas rempli automatiquement</div>
   </div>
 </div>
 
@@ -303,12 +298,12 @@ input[type=color]{padding:2px;height:38px}
 
 <div id="tab-admin" style="display:none">
   <div class="card">
-    <h2>Connexion espace client</h2>
-    <label class="lbl">Slug du client</label>
-    <input id="ad-slug" placeholder="Ex: ninja"/>
+    <h2>Connexion à votre espace</h2>
+    <label class="lbl">Adresse de votre appli</label>
+    <input id="ad-slug" placeholder="Ex: renovnord"/>
     <label class="lbl">Mot de passe</label>
-    <input id="ad-password" type="password" placeholder="••••••"/>
-    <button class="add-btn" onclick="entrerEspaceClient()">🔓 Entrer</button>
+    <input id="ad-password" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')entrerEspaceClient()"/>
+    <button class="add-btn" onclick="entrerEspaceClient()">🔓 Me connecter</button>
     <div class="status" id="ad-status"></div>
   </div>
 
@@ -334,9 +329,9 @@ input[type=color]{padding:2px;height:38px}
     </div>
     <div class="card">
       <h2>📅 Services de réservation</h2>
-      <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...) — laisser vide sinon</label>
+      <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...), sinon laisser vide</label>
       <input id="ad-reservation-lien" placeholder="Ex: https://www.planity.com/nom-du-salon"/>
-      <label class="lbl" style="margin-top:10px">Services proposés (utilisé seulement si pas de lien externe)</label>
+      <label class="lbl" style="margin-top:10px">Services proposés (si pas de lien externe)</label>
       <div id="reservation-list-admin"></div>
       <button class="add-btn" onclick="ajouterReservationService('','','reservation-list-admin')">+ Ajouter un service</button>
     </div>
@@ -349,13 +344,48 @@ input[type=color]{padding:2px;height:38px}
 
 <script>
 var API = "https://philo-backend-by2c.onrender.com";
-var logoBase64 = "";
-
-/* ⚠️ Remplace ce lien par ton vrai lien de paiement Revolut */
 var LIEN_REVOLUT = "https://checkout.revolut.com/pay/3e15f5b0-a69e-4322-a00a-12ea7d8b359f";
 
+/* 🔐 Aucun secret dans ce fichier : le code admin est tapé au déverrouillage
+   et vérifié par le serveur. Il reste en mémoire le temps de l'onglet. */
+var ADMIN_TOKEN = "";
+var CLE_SESSION_ADMIN = "philoAdminToken";
+
+/* ---------- Outils ---------- */
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function slugifier(s){
+  return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 30);
+}
+function entetes(extra){
+  var h = { "Content-Type": "application/json" };
+  if (ADMIN_TOKEN) h["x-admin-token"] = ADMIN_TOKEN;
+  if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
+  return h;
+}
+function ouvrirOutil(){
+  document.getElementById("ecran-accueil").style.display = "none";
+  document.getElementById("ecran-outil").style.display = "block";
+}
+
+var slugTouche = false;
+function majSlugAuto(){
+  if (slugTouche || slugChargeActuel) return;
+  document.getElementById("cf-slug").value = slugifier(document.getElementById("cf-nom").value);
+  majApercuLien();
+}
+function majApercuLien(){
+  var s = document.getElementById("cf-slug").value;
+  document.getElementById("apercu-lien").textContent = s
+    ? "Votre lien : " + window.location.host + "/moteur-v2.html?client=" + s
+    : "Remplie automatiquement à partir du nom.";
+}
+
 /* =====================================================================
-   PALETTES DE COULEURS — beaucoup de choix, cliquables en un tap
+   PALETTES DE COULEURS
    ===================================================================== */
 var PALETTES = [
   {nom:"Sauge",     fond:"#F3EEE5", texte:"#2E2A24", fonce:"#5C6A54", accent:"#7C8B72", clair:"#E8DFCF", alerte:"#C17A5A"},
@@ -377,7 +407,7 @@ var PALETTES = [
 ];
 
 /* =====================================================================
-   PRÉRÉGLAGES PAR MÉTIER — palette, icône, questions, modules, devis...
+   PRÉRÉGLAGES PAR MÉTIER
    ===================================================================== */
 var SECTEURS = {
   tatoueur: {
@@ -637,6 +667,11 @@ var SECTEURS = {
    INITIALISATION UI
    ===================================================================== */
 var secteurSelect = document.getElementById("cf-secteur");
+(function(){
+  var opt0 = document.createElement("option");
+  opt0.value = ""; opt0.textContent = "Sélectionnez votre métier...";
+  secteurSelect.appendChild(opt0);
+})();
 Object.keys(SECTEURS).forEach(function(key){
   var opt = document.createElement("option");
   opt.value = key;
@@ -662,14 +697,13 @@ function appliquerPalette(p) {
   document.getElementById("cf-clair").value = p.clair;
   document.getElementById("cf-alerte").value = p.alerte;
 }
+appliquerPalette(PALETTES[3]);
 
 var MODULES_DISPO = {
   tarifs: "💰 Tarifs", devis: "📋 Devis IA", catalogue: "🛍️ Catalogue",
   galerie: "🖼️ Galerie avant/après", planning: "🗓️ Planning", reservation: "📅 Réservation"
 };
-var PRIX_MODULES = {
-  chat: 150, tarifs: 0, devis: 120, catalogue: 150, galerie: 80, planning: 100, reservation: 90
-};
+var PRIX_MODULES = { chat: 150, tarifs: 0, devis: 120, catalogue: 150, galerie: 80, planning: 100, reservation: 90 };
 var PRIX_BASE = 190; // socle : appli + hébergement + nom de domaine + 1 an
 
 var modulesGrid = document.getElementById("modules-grid");
@@ -689,12 +723,11 @@ var prixTotalActuel = 0;
 function recalculerPrix() {
   var total = PRIX_BASE;
   if (document.getElementById("cf-chat-actif").checked) total += PRIX_MODULES.chat;
-  document.querySelectorAll(".mod-check input[type=checkbox]").forEach(function(cb){
-    if (cb.checked && cb.value && PRIX_MODULES[cb.value] !== undefined) total += PRIX_MODULES[cb.value];
+  document.querySelectorAll("#modules-grid input[type=checkbox]").forEach(function(cb){
+    if (cb.checked && PRIX_MODULES[cb.value] !== undefined) total += PRIX_MODULES[cb.value];
   });
   prixTotalActuel = total;
-  var el = document.getElementById("prix-total-val");
-  if (el) el.textContent = total + "€ / an";
+  document.getElementById("prix-total-val").textContent = total + "€ / an";
 }
 recalculerPrix();
 
@@ -730,6 +763,8 @@ secteurSelect.addEventListener("change", function(){
   (s.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix); });
 
   document.getElementById("cf-devis-types").value = (s.devisTypes || []).join("\n");
+  document.getElementById("cf-devis-surface-label").value = s.devisSurfaceLabel || "";
+  document.getElementById("cf-devis-surface-placeholder").value = s.devisSurfacePlaceholder || "";
   document.getElementById("cf-devis-prompt").value = s.devisPrompt || "";
 
   document.getElementById("cf-catalogue-titre").value = s.catalogueTitre || "";
@@ -753,8 +788,8 @@ function ajouterQR(label, message) {
   row.className = "item-row";
   row.style.gridTemplateColumns = "1fr 2fr auto";
   row.innerHTML =
-    '<input placeholder="Label" value="' + (label||'').replace(/"/g,'&quot;') + '"/>' +
-    '<input placeholder="Question envoyée à l\'IA" value="' + (message||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Texte du bouton" value="' + esc(label) + '"/>' +
+    '<input placeholder="Question envoyée à l\'IA" value="' + esc(message) + '"/>' +
     '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
   document.getElementById("qr-list").appendChild(row);
 }
@@ -764,9 +799,9 @@ function ajouterTarif(nom, desc, prix, conteneurId) {
   var row = document.createElement("div");
   row.className = "item-row";
   row.innerHTML =
-    '<input placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
-    '<input placeholder="Description" value="' + (desc||'').replace(/"/g,'&quot;') + '"/>' +
-    '<input placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Nom" value="' + esc(nom) + '"/>' +
+    '<input placeholder="Description" value="' + esc(desc) + '"/>' +
+    '<input placeholder="Prix" value="' + esc(prix) + '"/>' +
     '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
   document.getElementById(conteneurId || "tarifs-list").appendChild(row);
 }
@@ -775,15 +810,15 @@ function ajouterTarif(nom, desc, prix, conteneurId) {
 function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, description, tags) {
   var row = document.createElement("div");
   row.className = "day-block";
-  var uid = "cat" + Date.now() + Math.floor(Math.random()*1000);
+  var uid = "cat" + Date.now() + Math.floor(Math.random()*100000);
   row.innerHTML =
-    '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + (nom||'').replace(/"/g,'&quot;') + '"/><input class="ci-cat" placeholder="Catégorie (ex: Pizzas, Boissons, Desserts)" value="' + (categorie||'').replace(/"/g,'&quot;') + '"/></div>' +
-    '<textarea class="ci-desc" placeholder="Description (ex: buns brioché, triple steaks smashés...)" style="min-height:44px;margin-top:8px">' + (description||'') + '</textarea>' +
-    '<div class="row2" style="margin-top:8px"><input class="ci-prix" placeholder="Prix" value="' + (prix||'').replace(/"/g,'&quot;') + '"/><input class="ci-tags" placeholder="Tags: Best-seller, Végétarien..." value="' + (tags||'').replace(/"/g,'&quot;') + '"/></div>' +
+    '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + esc(nom) + '"/><input class="ci-cat" placeholder="Catégorie (ex: Pizzas, Boissons)" value="' + esc(categorie) + '"/></div>' +
+    '<textarea class="ci-desc" placeholder="Description" style="min-height:44px;margin-top:8px">' + esc(description) + '</textarea>' +
+    '<div class="row2" style="margin-top:8px"><input class="ci-prix" placeholder="Prix" value="' + esc(prix) + '"/><input class="ci-tags" placeholder="Tags : Best-seller, Végétarien..." value="' + esc(tags) + '"/></div>' +
     '<label class="lbl" style="margin-top:10px">Photo (facultatif)</label>' +
     '<div class="photo-zone">' +
-      '<div class="ph" id="ph-' + uid + '" style="' + (image?'display:none':'') + '"><span>📷</span>Prendre une photo ou choisir</div>' +
-      '<img id="prev-' + uid + '" style="' + (image?'display:block':'') + '" src="' + (image||'') + '" data-img="' + (image||'') + '"/>' +
+      '<div class="ph" id="ph-' + uid + '" style="' + (image ? 'display:none' : '') + '"><span>📷</span>Prendre une photo ou choisir</div>' +
+      '<img id="prev-' + uid + '" style="' + (image ? 'display:block' : '') + '" src="' + esc(image) + '" data-img="' + esc(image) + '"/>' +
       '<input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
     '</div>' +
     '<button class="del-btn" style="margin-top:10px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
@@ -794,26 +829,26 @@ function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, descript
 function ajouterGalerieItem(titre, avant, apres, conteneurId) {
   var row = document.createElement("div");
   row.className = "day-block";
-  var uidA = "gA" + Date.now() + Math.floor(Math.random()*1000);
-  var uidP = "gP" + Date.now() + Math.floor(Math.random()*1000);
+  var uidA = "gA" + Date.now() + Math.floor(Math.random()*100000);
+  var uidP = "gP" + Date.now() + Math.floor(Math.random()*100000);
   row.innerHTML =
-    '<input class="gi-titre" placeholder="Titre" value="' + (titre||'').replace(/"/g,'&quot;') + '" style="margin-bottom:8px"/>' +
+    '<input class="gi-titre" placeholder="Titre" value="' + esc(titre) + '" style="margin-bottom:8px"/>' +
     '<div class="row2">' +
-    '<div><label class="lbl">Avant</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidA + '\')"/><img id="prev-' + uidA + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (avant?'':'display:none') + '" src="' + (avant||'') + '" data-img="' + (avant||'') + '"/></div>' +
-    '<div><label class="lbl">Après</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidP + '\')"/><img id="prev-' + uidP + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (apres?'':'display:none') + '" src="' + (apres||'') + '" data-img="' + (apres||'') + '"/></div>' +
+    '<div><label class="lbl">Avant</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidA + '\')"/><img id="prev-' + uidA + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (avant ? '' : 'display:none') + '" src="' + esc(avant) + '" data-img="' + esc(avant) + '"/></div>' +
+    '<div><label class="lbl">Après</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidP + '\')"/><img id="prev-' + uidP + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (apres ? '' : 'display:none') + '" src="' + esc(apres) + '" data-img="' + esc(apres) + '"/></div>' +
     '</div>' +
     '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer</button>';
   document.getElementById(conteneurId || "galerie-list").appendChild(row);
 }
 
-/* ---------- RESERVATION ---------- */
+/* ---------- RÉSERVATION ---------- */
 function ajouterReservationService(nom, prix, conteneurId) {
   var row = document.createElement("div");
   row.className = "item-row";
   row.style.gridTemplateColumns = "2fr 1fr auto";
   row.innerHTML =
-    '<input placeholder="Nom du service" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
-    '<input placeholder="Prix (optionnel)" value="' + (prix||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Nom du service" value="' + esc(nom) + '"/>' +
+    '<input placeholder="Prix (optionnel)" value="' + esc(prix) + '"/>' +
     '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
   document.getElementById(conteneurId || "reservation-list").appendChild(row);
 }
@@ -827,7 +862,7 @@ function construirePlanningJours(planningExistant, wrapId) {
   JOURS_SEMAINE.forEach(function(jour){
     var block = document.createElement("div");
     block.className = "day-block";
-    block.innerHTML = '<h3>' + jour + '</h3><div class="pj-cours" data-jour="' + jour + '"></div><button class="add-btn" onclick="ajouterCoursJour(\'' + jour + '\',null,null,null,\'' + wrapId + '\')">+ Ajouter un cours ce jour</button>';
+    block.innerHTML = '<h3>' + jour + '</h3><div class="pj-cours" data-jour="' + jour + '"></div><button class="add-btn" onclick="ajouterCoursJour(\'' + jour + '\',null,null,null,\'' + wrapId + '\')">+ Ajouter un créneau ce jour</button>';
     wrap.appendChild(block);
     (planningExistant[jour] || []).forEach(function(c){ ajouterCoursJour(jour, c.heure, c.nom, c.meta, wrapId); });
   });
@@ -839,15 +874,15 @@ function ajouterCoursJour(jour, heure, nom, meta, wrapId) {
   row.className = "item-row";
   row.style.marginTop = "6px";
   row.innerHTML =
-    '<input placeholder="Horaire" value="' + (heure||'').replace(/"/g,'&quot;') + '" style="max-width:90px"/>' +
-    '<input placeholder="Nom du cours" value="' + (nom||'').replace(/"/g,'&quot;') + '"/>' +
-    '<input placeholder="Infos (niveau, prof...)" value="' + (meta||'').replace(/"/g,'&quot;') + '"/>' +
+    '<input placeholder="Horaire" value="' + esc(heure) + '" style="max-width:90px"/>' +
+    '<input placeholder="Nom du cours" value="' + esc(nom) + '"/>' +
+    '<input placeholder="Infos (niveau, prof...)" value="' + esc(meta) + '"/>' +
     '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
   container.appendChild(row);
 }
 construirePlanningJours({});
 
-/* ---------- PHOTOS (logo + items) ---------- */
+/* ---------- PHOTOS ---------- */
 function compressPhoto(file, maxSize, callback) {
   var reader = new FileReader();
   reader.onload = function(e) {
@@ -865,6 +900,7 @@ function compressPhoto(file, maxSize, callback) {
   };
   reader.readAsDataURL(file);
 }
+var logoBase64 = "";
 function handleLogo(input) {
   var f = input.files[0];
   if (!f) return;
@@ -872,7 +908,7 @@ function handleLogo(input) {
     logoBase64 = b64;
     var prev = document.getElementById('logo-preview');
     prev.src = b64; prev.style.display = 'block';
-    document.getElementById('logo-txt').textContent = 'Toucher pour changer';
+    document.getElementById('logo-txt').textContent = 'Touchez pour changer';
   });
 }
 function handleItemPhoto(input, uid) {
@@ -887,67 +923,91 @@ function handleItemPhoto(input, uid) {
   });
 }
 
-/* =====================================================================
-   ENREGISTREMENT
-   ===================================================================== */
-function enregistrer() {
-  var slug = document.getElementById("cf-slug").value.trim();
-  if (!slug) { showStatus("Renseigne un slug avant d'enregistrer.", "err"); return; }
-
-  var modulesActifs = [];
-  document.querySelectorAll("#modules-grid .mod-check input:checked").forEach(function(cb){ modulesActifs.push(cb.value); });
-  var chatActif = document.getElementById("cf-chat-actif").checked;
-
-  var qr = [];
-  document.querySelectorAll("#qr-list .item-row").forEach(function(row){
-    var inputs = row.querySelectorAll("input");
-    if (inputs[0].value.trim()) qr.push({ label: inputs[0].value.trim(), message: inputs[1].value.trim() });
+/* ---------- Lecture des listes ---------- */
+function lireTarifs(id){
+  var out = [];
+  document.querySelectorAll("#" + id + " .item-row").forEach(function(row){
+    var i = row.querySelectorAll("input");
+    if (i[0].value.trim()) out.push({ nom: i[0].value.trim(), description: i[1].value.trim(), prix: i[2].value.trim() });
   });
-
-  var tarifs = [];
-  document.querySelectorAll("#tarifs-list .item-row").forEach(function(row){
-    var inputs = row.querySelectorAll("input");
-    if (inputs[0].value.trim()) tarifs.push({ nom: inputs[0].value.trim(), description: inputs[1].value.trim(), prix: inputs[2].value.trim() });
-  });
-
-  var catalogue = [];
-  document.querySelectorAll("#catalogue-list .day-block").forEach(function(row){
+  return out;
+}
+function lireCatalogue(id){
+  var out = [];
+  document.querySelectorAll("#" + id + " .day-block").forEach(function(row){
     var nom = row.querySelector(".ci-nom").value.trim();
     if (!nom) return;
     var img = row.querySelector("img");
-    catalogue.push({
+    out.push({
       nom: nom,
       categorie: row.querySelector(".ci-cat").value.trim(),
       description: row.querySelector(".ci-desc").value.trim(),
       tags: row.querySelector(".ci-tags").value.trim(),
       prix: row.querySelector(".ci-prix").value.trim(),
-      image: img ? img.getAttribute("data-img") : ""
+      image: img ? (img.getAttribute("data-img") || "") : ""
     });
   });
-
-  var galerie = [];
-  document.querySelectorAll("#galerie-list .day-block").forEach(function(row){
+  return out;
+}
+function lireGalerie(id){
+  var out = [];
+  document.querySelectorAll("#" + id + " .day-block").forEach(function(row){
     var titre = row.querySelector(".gi-titre").value.trim();
     var imgs = row.querySelectorAll("img");
-    if (!titre && !imgs[0].getAttribute("data-img") && !imgs[1].getAttribute("data-img")) return;
-    galerie.push({ titre: titre, avant: imgs[0].getAttribute("data-img"), apres: imgs[1].getAttribute("data-img") });
+    var a = imgs[0].getAttribute("data-img") || "", p = imgs[1].getAttribute("data-img") || "";
+    if (!titre && !a && !p) return;
+    out.push({ titre: titre, avant: a, apres: p });
   });
-
-  var reservationServices = [];
-  document.querySelectorAll("#reservation-list .item-row").forEach(function(row){
-    var inputs = row.querySelectorAll("input");
-    if (inputs[0].value.trim()) reservationServices.push({ nom: inputs[0].value.trim(), prix: inputs[1].value.trim() });
+  return out;
+}
+function lireReservation(id){
+  var out = [];
+  document.querySelectorAll("#" + id + " .item-row").forEach(function(row){
+    var i = row.querySelectorAll("input");
+    if (i[0].value.trim()) out.push({ nom: i[0].value.trim(), prix: i[1].value.trim() });
   });
-
+  return out;
+}
+function lirePlanning(wrapId){
   var planning = {};
   JOURS_SEMAINE.forEach(function(jour){
-    var container = document.querySelector('.pj-cours[data-jour="' + jour + '"]');
+    var container = document.querySelector('#' + wrapId + ' .pj-cours[data-jour="' + jour + '"]');
     var cours = [];
-    container.querySelectorAll(".item-row").forEach(function(row){
-      var inputs = row.querySelectorAll("input");
-      if (inputs[1].value.trim()) cours.push({ heure: inputs[0].value.trim(), nom: inputs[1].value.trim(), meta: inputs[2].value.trim() });
+    if (container) container.querySelectorAll(".item-row").forEach(function(row){
+      var i = row.querySelectorAll("input");
+      if (i[1].value.trim()) cours.push({ heure: i[0].value.trim(), nom: i[1].value.trim(), meta: i[2].value.trim() });
     });
     if (cours.length) planning[jour] = cours;
+  });
+  return planning;
+}
+
+/* =====================================================================
+   ENREGISTREMENT
+   ===================================================================== */
+function enregistrer() {
+  var slug = slugifier(document.getElementById("cf-slug").value);
+  document.getElementById("cf-slug").value = slug;
+  if (!document.getElementById("cf-nom").value.trim()) { showStatus("Indiquez le nom de votre entreprise.", "err"); return; }
+  if (!slug) { showStatus("Indiquez une adresse pour votre appli.", "err"); return; }
+  if (slug === slugChargeActuel) { enregistrerInterne(slug); return; }
+  fetch(API + "/memory/config_" + slug)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.value) showStatus('L\'adresse « ' + slug + ' » est déjà prise. Choisissez-en une autre.', "err");
+      else enregistrerInterne(slug);
+    })
+    .catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
+}
+
+function enregistrerInterne(slug) {
+  var modulesActifs = [];
+  document.querySelectorAll("#modules-grid .mod-check input:checked").forEach(function(cb){ modulesActifs.push(cb.value); });
+
+  var qr = [];
+  document.querySelectorAll("#qr-list .item-row").forEach(function(row){
+    var i = row.querySelectorAll("input");
+    if (i[0].value.trim()) qr.push({ label: i[0].value.trim(), message: i[1].value.trim() });
   });
 
   var config = {
@@ -956,7 +1016,7 @@ function enregistrer() {
     sousTitre: document.getElementById("cf-soustitre").value.trim(),
     icone: document.getElementById("cf-icone").value.trim() || "🔧",
     logoImage: logoBase64 || "",
-    telephoneWhatsApp: document.getElementById("cf-whatsapp").value.trim(),
+    telephoneWhatsApp: document.getElementById("cf-whatsapp").value.replace(/[^0-9]/g, ""),
     email: document.getElementById("cf-email").value.trim(),
     adminPassword: document.getElementById("cf-admin-password").value.trim(),
     couleurs: {
@@ -971,58 +1031,53 @@ function enregistrer() {
     systemPrompt: document.getElementById("cf-prompt").value.trim(),
     questionsRapides: qr,
     modulesActifs: modulesActifs,
-    chatActif: chatActif,
-    valide: document.getElementById("bloc-validation").style.display === "block"
-      ? document.getElementById("cf-valide").checked
-      : false,
-    dateExpiration: derniereDateExpiration,
+    chatActif: document.getElementById("cf-chat-actif").checked,
+    // Le serveur ignore ces deux champs si le code admin n'est pas fourni
+    valide: slugChargeActuel ? document.getElementById("cf-valide").checked : false,
+    dateExpiration: slugChargeActuel ? derniereDateExpiration : undefined,
     tarifsSousTitre: document.getElementById("cf-tarifs-soustitre").value.trim(),
-    tarifs: tarifs,
-    devisTypes: document.getElementById("cf-devis-types").value.split("\n").map(function(s){return s.trim();}).filter(Boolean),
+    tarifs: lireTarifs("tarifs-list"),
+    devisTypes: document.getElementById("cf-devis-types").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean),
     tauxHoraire: document.getElementById("cf-taux-horaire").value.trim(),
+    devisSurfaceLabel: document.getElementById("cf-devis-surface-label").value.trim(),
+    devisSurfacePlaceholder: document.getElementById("cf-devis-surface-placeholder").value.trim(),
     devisPrompt: document.getElementById("cf-devis-prompt").value.trim(),
     catalogueTitre: document.getElementById("cf-catalogue-titre").value.trim(),
     catalogueSousTitre: document.getElementById("cf-catalogue-soustitre").value.trim(),
     catalogueModes: catalogueModesActuel,
-    catalogue: catalogue,
+    catalogue: lireCatalogue("catalogue-list"),
     galerieTitre: document.getElementById("cf-galerie-titre").value.trim(),
-    galerie: galerie,
-    reservationServices: reservationServices,
+    galerie: lireGalerie("galerie-list"),
+    reservationServices: lireReservation("reservation-list"),
     lienReservationExterne: document.getElementById("cf-reservation-lien").value.trim(),
-    planning: planning
+    planning: lirePlanning("planning-jours")
   };
 
+  if (!slugChargeActuel && !config.adminPassword) {
+    showStatus("Choisissez un mot de passe pour votre espace client.", "err"); return;
+  }
+
+  showStatus("Enregistrement...", "ok");
   fetch(API + "/memory/config_" + slug, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: entetes(motDePasseCreation ? { "x-client-password": motDePasseCreation } : null),
     body: JSON.stringify({ value: config })
   }).then(function(r){ return r.json(); })
   .then(function(d){
-    if (d && d.ok) {
-      var lien = window.location.origin + "/moteur-v2.html?client=" + slug;
-      showStatus("✅ Config enregistrée pour \"" + (config.nom || slug) + "\" !", "ok");
-      document.getElementById("lien-final").value = lien;
-      document.getElementById("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
-      document.getElementById("resultat-lien").style.display = "block";
-      document.getElementById("resultat-lien").scrollIntoView({ behavior: "smooth" });
-
-      document.getElementById("montant-a-payer").textContent = prixTotalActuel + "€";
-      document.getElementById("lien-revolut-resultat").href = LIEN_REVOLUT;
-
-      // Notification (best-effort — n'empêche jamais l'enregistrement si ça échoue)
-      fetch(API + "/notify-nouvelle-appli", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nom: config.nom, secteur: config.secteur, slug: slug, lien: lien })
-      }).catch(function(){});
-
-      // Mise à jour de l'index global des clients (pour le tableau de bord)
-      mettreAJourIndexClients(slug, config.nom, config.secteur);
-    } else {
-      showStatus("Erreur lors de l'enregistrement.", "err");
-    }
+    if (!d || !d.ok) { showStatus((d && d.error) || "L'enregistrement a échoué.", "err"); return; }
+    var lien = window.location.origin + "/moteur-v2.html?client=" + slug;
+    // Permet de ré-enregistrer après une correction sans repasser par l'espace client
+    if (!ADMIN_TOKEN && config.adminPassword) motDePasseCreation = config.adminPassword;
+    slugChargeActuel = slug;
+    showStatus("✅ Appli enregistrée pour « " + (config.nom || slug) + " ».", "ok");
+    document.getElementById("lien-final").value = lien;
+    document.getElementById("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
+    document.getElementById("resultat-lien").style.display = "block";
+    document.getElementById("resultat-lien").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("montant-a-payer").textContent = prixTotalActuel + "€";
+    document.getElementById("lien-revolut-resultat").href = LIEN_REVOLUT;
   }).catch(function(){
-    showStatus("Erreur de connexion.", "err");
+    showStatus("Connexion impossible. Réessayez dans un instant.", "err");
   });
 }
 
@@ -1030,27 +1085,60 @@ function copierLien() {
   var input = document.getElementById("lien-final");
   input.select();
   input.setSelectionRange(0, 99999);
-  navigator.clipboard.writeText(input.value).then(function(){
-    showStatus("Lien copié dans le presse-papier !", "ok");
-  }).catch(function(){
-    document.execCommand("copy");
-  });
+  (navigator.clipboard ? navigator.clipboard.writeText(input.value) : Promise.reject())
+    .then(function(){ showStatus("Lien copié.", "ok"); })
+    .catch(function(){ document.execCommand("copy"); });
 }
 
-var derniereConfigChargeeValide = undefined;
+function showStatus(msg, type) {
+  var s = document.getElementById("status");
+  s.textContent = msg;
+  s.className = "status " + type;
+}
+
+/* =====================================================================
+   ESPACE PHILOMÈNE (admin)
+   ===================================================================== */
 var derniereDateExpiration = undefined;
 var slugChargeActuel = null;
+var motDePasseCreation = "";
 
-function chargerConfigExistante() {
-  var slug = document.getElementById("cf-slug-charger").value.trim();
-  if (!slug) { showStatusCharger("Renseigne le slug du client à charger.", "err"); return; }
-  showStatusCharger("Chargement...", "ok");
-  fetch(API + "/memory/config_" + slug)
+function deverrouillerAdminGeneral(tokenAuto) {
+  var t = tokenAuto || document.getElementById("pwd-admin-general").value.trim();
+  if (!t) return;
+  fetch(API + "/admin-check", { method: "POST", headers: { "x-admin-token": t } })
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if (!d || !d.value) { showStatusCharger("Aucune config trouvée pour \"" + slug + "\".", "err"); return; }
+      if (!d || !d.ok) {
+        try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){}
+        if (!tokenAuto) { var s = document.getElementById("status-verrou"); s.textContent = "Code incorrect."; s.className = "status err"; }
+        return;
+      }
+      ADMIN_TOKEN = t;
+      try { sessionStorage.setItem(CLE_SESSION_ADMIN, t); } catch(e){}
+      document.getElementById("verrou-admin-general").style.display = "none";
+      document.getElementById("contenu-admin-general").style.display = "block";
+      if (document.getElementById("cf-slug-charger").value.trim()) chargerConfigExistante();
+    })
+    .catch(function(){
+      var s = document.getElementById("status-verrou"); s.textContent = "Serveur injoignable, réessayez."; s.className = "status err";
+    });
+}
+
+function nouveauClient(){
+  var garde = window.location.pathname + "?philomene=1";
+  window.location.href = garde;
+}
+
+function chargerConfigExistante() {
+  var slug = slugifier(document.getElementById("cf-slug-charger").value);
+  if (!slug) { showStatusCharger("Indiquez l'identifiant du client.", "err"); return; }
+  showStatusCharger("Chargement...", "ok");
+  fetch(API + "/memory/config_" + slug, { headers: entetes() })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.value) { showStatusCharger("Aucun client « " + slug + " ».", "err"); return; }
       remplirFormulaireDepuisConfig(d.value, slug);
-      derniereConfigChargeeValide = d.value.valide;
       derniereDateExpiration = d.value.dateExpiration;
       slugChargeActuel = slug;
       document.getElementById("cf-valide").checked = d.value.valide === true;
@@ -1061,45 +1149,43 @@ function chargerConfigExistante() {
         var dExp = new Date(d.value.dateExpiration);
         var expire = new Date() > dExp;
         infoEl.textContent = (expire ? "⚠️ Abonnement expiré depuis le " : "Abonnement valide jusqu'au ") + dExp.toLocaleDateString("fr-FR");
-        infoEl.style.color = expire ? "#ff8a7a" : "rgba(242,234,216,.5)";
+        infoEl.style.color = expire ? "#c0392b" : "rgba(17,17,17,.5)";
       } else {
         infoEl.textContent = "Aucun paiement confirmé pour l'instant.";
-        infoEl.style.color = "rgba(242,234,216,.5)";
+        infoEl.style.color = "rgba(17,17,17,.5)";
       }
-
-      showStatusCharger("✅ Config de \"" + (d.value.nom || slug) + "\" chargée — modifie ce qu'il faut puis ré-enregistre.", "ok");
+      showStatusCharger("✅ « " + (d.value.nom || slug) + " » chargé. Modifiez puis ré-enregistrez.", "ok");
     }).catch(function(){
-      showStatusCharger("Erreur de connexion.", "err");
+      showStatusCharger("Connexion impossible.", "err");
     });
 }
 
 function confirmerRenouvellement() {
-  if (!slugChargeActuel) { showStatusCharger("Charge d'abord une config existante ci-dessus.", "err"); return; }
-  fetch(API + "/memory/config_" + slugChargeActuel)
+  if (!slugChargeActuel) { showStatusCharger("Chargez d'abord un client.", "err"); return; }
+  fetch(API + "/memory/config_" + slugChargeActuel, { headers: entetes() })
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if (!d || !d.value) { showStatusCharger("Config introuvable.", "err"); return; }
+      if (!d || !d.value) { showStatusCharger("Client introuvable.", "err"); return; }
       var cfg = d.value;
       cfg.valide = true;
       var dansUnAn = new Date();
       dansUnAn.setFullYear(dansUnAn.getFullYear() + 1);
       cfg.dateExpiration = dansUnAn.toISOString();
       return fetch(API + "/memory/config_" + slugChargeActuel, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: cfg })
+        method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg })
       }).then(function(r){ return r.json(); }).then(function(res){
         if (res && res.ok) {
+          derniereDateExpiration = cfg.dateExpiration;
           document.getElementById("cf-valide").checked = true;
           document.getElementById("info-expiration").textContent = "Abonnement valide jusqu'au " + dansUnAn.toLocaleDateString("fr-FR");
-          document.getElementById("info-expiration").style.color = "rgba(242,234,216,.5)";
-          showStatusCharger("✅ Renouvelé pour 1 an, jusqu'au " + dansUnAn.toLocaleDateString("fr-FR") + " !", "ok");
+          document.getElementById("info-expiration").style.color = "rgba(17,17,17,.5)";
+          showStatusCharger("✅ Renouvelé jusqu'au " + dansUnAn.toLocaleDateString("fr-FR") + ".", "ok");
         } else {
-          showStatusCharger("Erreur lors du renouvellement.", "err");
+          showStatusCharger((res && res.error) || "Le renouvellement a échoué.", "err");
         }
       });
     }).catch(function(){
-      showStatusCharger("Erreur de connexion.", "err");
+      showStatusCharger("Connexion impossible.", "err");
     });
 }
 
@@ -1111,20 +1197,20 @@ function showStatusCharger(msg, type) {
 
 function remplirFormulaireDepuisConfig(cfg, slug) {
   document.getElementById("cf-slug").value = slug;
+  majApercuLien();
   document.getElementById("cf-secteur").value = cfg.secteur || "";
   document.getElementById("cf-nom").value = cfg.nom || "";
   document.getElementById("cf-soustitre").value = cfg.sousTitre || "";
   document.getElementById("cf-icone").value = cfg.icone || "";
   document.getElementById("cf-whatsapp").value = cfg.telephoneWhatsApp || "";
   document.getElementById("cf-email").value = cfg.email || "";
-  document.getElementById("cf-admin-password").value = cfg.adminPassword || "";
+  document.getElementById("cf-admin-password").value = "";
+  document.getElementById("cf-admin-password").placeholder = "Laisser vide pour garder le mot de passe actuel";
 
-  if (cfg.logoImage) {
-    logoBase64 = cfg.logoImage;
-    var prev = document.getElementById('logo-preview');
-    prev.src = cfg.logoImage; prev.style.display = 'block';
-    document.getElementById('logo-txt').textContent = 'Toucher pour changer';
-  }
+  logoBase64 = cfg.logoImage || "";
+  var prev = document.getElementById('logo-preview');
+  if (logoBase64) { prev.src = logoBase64; prev.style.display = 'block'; document.getElementById('logo-txt').textContent = 'Touchez pour changer'; }
+  else { prev.style.display = 'none'; }
 
   var c = cfg.couleurs || {};
   document.getElementById("cf-fond").value = c.fond || "#f2ead8";
@@ -1185,50 +1271,6 @@ function remplirFormulaireDepuisConfig(cfg, slug) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function mettreAJourIndexClients(slug, nom, secteur) {
-  fetch(API + "/memory/app_index")
-    .then(function(r){ return r.json(); })
-    .then(function(d){ return (d && d.value) ? d.value : []; })
-    .catch(function(){ return []; })
-    .then(function(index){
-      var i = index.findIndex(function(e){ return e.slug === slug; });
-      var entree = { slug: slug, nom: nom, secteur: secteur, dateCreation: (i>=0 ? index[i].dateCreation : new Date().toISOString()) };
-      if (i >= 0) index[i] = entree; else index.push(entree);
-      fetch(API + "/memory/app_index", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: index })
-      }).catch(function(){});
-    });
-}
-
-function showStatus(msg, type) {
-  var s = document.getElementById("status");
-  s.textContent = msg;
-  s.className = "status " + type;
-}
-
-/* =====================================================================
-   ONGLETS PRINCIPAUX (Créer / Espace client)
-   ===================================================================== */
-/* =====================================================================
-   MOT DE PASSE MAÎTRE — change cette valeur pour la tienne.
-   Protège : le rechargement/modification d'un client existant,
-   et le tableau de bord. La création d'un NOUVEAU client reste libre.
-   ===================================================================== */
-var MOT_DE_PASSE_PHILOMENE = "philomene2026";
-
-function deverrouillerAdminGeneral() {
-  if (document.getElementById("pwd-admin-general").value === MOT_DE_PASSE_PHILOMENE) {
-    document.getElementById("verrou-admin-general").style.display = "none";
-    document.getElementById("contenu-admin-general").style.display = "block";
-    if (document.getElementById("cf-slug-charger").value.trim()) chargerConfigExistante();
-  } else {
-    var s = document.getElementById("status-verrou");
-    s.textContent = "Mot de passe incorrect."; s.className = "status err";
-  }
-}
-
 function switchOnglet(nom) {
   document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
   document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
@@ -1236,41 +1278,49 @@ function switchOnglet(nom) {
   document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
 }
 
-/* Si le lien contient ?philomene=1, on révèle la section réservée ; avec ?modifier=slug en plus, on pré-remplit le slug */
+/* ?philomene=1 révèle l'espace admin ; ?modifier=slug pré-remplit ; ?admin=slug ouvre l'espace client */
 var paramsUrl = new URLSearchParams(window.location.search);
 if (paramsUrl.get("philomene")) {
-  document.getElementById("ecran-accueil").style.display = "none";
-  document.getElementById("ecran-outil").style.display = "block";
+  ouvrirOutil();
   document.getElementById("carte-modifier-existant").style.display = "block";
-  if (paramsUrl.get("modifier")) {
-    document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
-  }
+  if (paramsUrl.get("modifier")) document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
+  var tokenMemo = null;
+  try { tokenMemo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
+  if (tokenMemo) deverrouillerAdminGeneral(tokenMemo);
 }
 if (paramsUrl.get("admin")) {
-  document.getElementById("ecran-accueil").style.display = "none";
-  document.getElementById("ecran-outil").style.display = "block";
+  ouvrirOutil();
   switchOnglet("admin");
   document.getElementById("ad-slug").value = paramsUrl.get("admin");
 }
 
 /* =====================================================================
-   ESPACE CLIENT — contenu uniquement (tarifs, catalogue, galerie)
+   ESPACE CLIENT — contenu uniquement
    ===================================================================== */
 var CONFIG_CLIENT_ACTUEL = null;
 var SLUG_CLIENT_ACTUEL = null;
+var CLIENT_PWD = "";
 
 function entrerEspaceClient() {
-  var slug = document.getElementById("ad-slug").value.trim();
+  var slug = slugifier(document.getElementById("ad-slug").value);
   var mdp = document.getElementById("ad-password").value;
-  if (!slug || !mdp) { showStatusAd("Renseigne le slug et le mot de passe.", "err"); return; }
+  if (!slug || !mdp) { showStatusAd("Indiquez l'adresse de votre appli et votre mot de passe.", "err"); return; }
   showStatusAd("Connexion...", "ok");
-  fetch(API + "/memory/config_" + slug)
+  fetch(API + "/verify-client/config_" + slug, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ password: mdp })
+  })
     .then(function(r){ return r.json(); })
+    .then(function(v){
+      if (!v || !v.ok) { showStatusAd((v && v.error) || "Adresse ou mot de passe incorrect.", "err"); return null; }
+      return fetch(API + "/memory/config_" + slug).then(function(r){ return r.json(); });
+    })
     .then(function(d){
-      if (!d || !d.value) { showStatusAd("Aucun client trouvé pour ce lien.", "err"); return; }
-      if (!d.value.adminPassword || d.value.adminPassword !== mdp) { showStatusAd("Mot de passe incorrect.", "err"); return; }
+      if (!d) return;
+      if (!d.value) { showStatusAd("Aucune appli à cette adresse.", "err"); return; }
       CONFIG_CLIENT_ACTUEL = d.value;
       SLUG_CLIENT_ACTUEL = slug;
+      CLIENT_PWD = mdp;
 
       document.getElementById("tarifs-list-admin").innerHTML = "";
       (d.value.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix, "tarifs-list-admin"); });
@@ -1290,7 +1340,7 @@ function entrerEspaceClient() {
       document.getElementById("ad-content").style.display = "block";
       showStatusAd("Bienvenue " + (d.value.nom || slug) + " !", "ok");
     }).catch(function(){
-      showStatusAd("Erreur de connexion.", "err");
+      showStatusAd("Connexion impossible.", "err");
     });
 }
 
@@ -1303,120 +1353,63 @@ function showStatusAd(msg, type) {
 function enregistrerEspaceClient() {
   if (!CONFIG_CLIENT_ACTUEL || !SLUG_CLIENT_ACTUEL) return;
 
-  var tarifs = [];
-  document.querySelectorAll("#tarifs-list-admin .item-row").forEach(function(row){
-    var inputs = row.querySelectorAll("input");
-    if (inputs[0].value.trim()) tarifs.push({ nom: inputs[0].value.trim(), description: inputs[1].value.trim(), prix: inputs[2].value.trim() });
-  });
-
-  var catalogue = [];
-  document.querySelectorAll("#catalogue-list-admin .day-block").forEach(function(row){
-    var nom = row.querySelector(".ci-nom").value.trim();
-    if (!nom) return;
-    var img = row.querySelector("img");
-    catalogue.push({
-      nom: nom,
-      categorie: row.querySelector(".ci-cat").value.trim(),
-      description: row.querySelector(".ci-desc").value.trim(),
-      tags: row.querySelector(".ci-tags").value.trim(),
-      prix: row.querySelector(".ci-prix").value.trim(),
-      image: img ? img.getAttribute("data-img") : ""
-    });
-  });
-
-  var galerie = [];
-  document.querySelectorAll("#galerie-list-admin .day-block").forEach(function(row){
-    var titre = row.querySelector(".gi-titre").value.trim();
-    var imgs = row.querySelectorAll("img");
-    if (!titre && !imgs[0].getAttribute("data-img") && !imgs[1].getAttribute("data-img")) return;
-    galerie.push({ titre: titre, avant: imgs[0].getAttribute("data-img"), apres: imgs[1].getAttribute("data-img") });
-  });
-
-  var planning = {};
-  JOURS_SEMAINE.forEach(function(jour){
-    var container = document.querySelector('#planning-jours-admin .pj-cours[data-jour="' + jour + '"]');
-    var cours = [];
-    if (container) {
-      container.querySelectorAll(".item-row").forEach(function(row){
-        var inputs = row.querySelectorAll("input");
-        if (inputs[1].value.trim()) cours.push({ heure: inputs[0].value.trim(), nom: inputs[1].value.trim(), meta: inputs[2].value.trim() });
-      });
-    }
-    if (cours.length) planning[jour] = cours;
-  });
-
-  var reservationServices = [];
-  document.querySelectorAll("#reservation-list-admin .item-row").forEach(function(row){
-    var inputs = row.querySelectorAll("input");
-    if (inputs[0].value.trim()) reservationServices.push({ nom: inputs[0].value.trim(), prix: inputs[1].value.trim() });
-  });
-
-  // On ne touche qu'au contenu — tout le reste (couleurs, prompts, secteur...) reste inchangé
-  CONFIG_CLIENT_ACTUEL.tarifs = tarifs;
-  CONFIG_CLIENT_ACTUEL.catalogue = catalogue;
-  CONFIG_CLIENT_ACTUEL.galerie = galerie;
-  CONFIG_CLIENT_ACTUEL.planning = planning;
-  CONFIG_CLIENT_ACTUEL.reservationServices = reservationServices;
+  // On ne touche qu'au contenu : couleurs, prompts, secteur... restent inchangés
+  CONFIG_CLIENT_ACTUEL.tarifs = lireTarifs("tarifs-list-admin");
+  CONFIG_CLIENT_ACTUEL.catalogue = lireCatalogue("catalogue-list-admin");
+  CONFIG_CLIENT_ACTUEL.galerie = lireGalerie("galerie-list-admin");
+  CONFIG_CLIENT_ACTUEL.planning = lirePlanning("planning-jours-admin");
+  CONFIG_CLIENT_ACTUEL.reservationServices = lireReservation("reservation-list-admin");
   CONFIG_CLIENT_ACTUEL.lienReservationExterne = document.getElementById("ad-reservation-lien").value.trim();
 
+  var s = document.getElementById("ad-status-save");
   fetch(API + "/memory/config_" + SLUG_CLIENT_ACTUEL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD },
     body: JSON.stringify({ value: CONFIG_CLIENT_ACTUEL })
   }).then(function(r){ return r.json(); })
   .then(function(d){
-    var s = document.getElementById("ad-status-save");
-    if (d && d.ok) { s.textContent = "✅ Modifications enregistrées !"; s.className = "status ok"; }
-    else { s.textContent = "Erreur lors de l'enregistrement."; s.className = "status err"; }
+    if (d && d.ok) { s.textContent = "✅ Modifications enregistrées."; s.className = "status ok"; }
+    else { s.textContent = (d && d.error) || "L'enregistrement a échoué."; s.className = "status err"; }
   }).catch(function(){
-    var s = document.getElementById("ad-status-save");
-    s.textContent = "Erreur de connexion."; s.className = "status err";
+    s.textContent = "Connexion impossible."; s.className = "status err";
   });
 }
 </script>
-<button onclick="ouvrirAideIA()" style="position:fixed;bottom:82px;right:20px;width:52px;height:52px;background:#1a2e20;border:2px solid #f2ead8;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;cursor:pointer">🤖</button>
+
+<button onclick="ouvrirAideIA()" aria-label="Aide" style="position:fixed;bottom:82px;right:20px;width:52px;height:52px;background:#111;border:2px solid #c9a84c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;cursor:pointer">🤖</button>
 
 <div id="aide-ia-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center" onclick="if(event.target===this)fermerAideIA()">
-  <div style="background:#1a2e20;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column">
-    <div style="padding:16px 18px;border-bottom:1px solid rgba(242,234,216,.12);display:flex;align-items:center;gap:10px">
-      <div style="width:36px;height:36px;border-radius:50%;background:#f2ead8;display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>
+  <div style="background:#FAFAF7;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column">
+    <div style="padding:16px 18px;border-bottom:1px solid rgba(17,17,17,.12);display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>
       <div style="flex:1">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#f2ead8">Assistant du créateur d'appli</div>
-        <div style="font-size:10px;color:rgba(242,234,216,.4)">Pose ta question, je réponds tout de suite</div>
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#111">Aide à la création</div>
+        <div style="font-size:10px;color:rgba(17,17,17,.4)">Posez votre question, réponse immédiate</div>
       </div>
-      <button onclick="fermerAideIA()" style="background:none;border:none;color:rgba(242,234,216,.5);font-size:22px;cursor:pointer;padding:4px 8px">✕</button>
+      <button onclick="fermerAideIA()" style="background:none;border:none;color:rgba(17,17,17,.5);font-size:22px;cursor:pointer;padding:4px 8px">✕</button>
     </div>
     <div id="aide-ia-messages" style="flex:1;min-width:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px"></div>
-    <div style="padding:12px 14px 18px;border-top:1px solid rgba(242,234,216,.1);display:flex;gap:8px">
-      <input id="aide-ia-input" type="text" placeholder="Ex: c'est quoi un slug ?" style="flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;outline:none"/>
-      <button onclick="envoyerAideIA()" style="width:42px;height:42px;border-radius:50%;border:none;background:#f2ead8;color:#1a2e20;font-size:16px;cursor:pointer;flex-shrink:0">➤</button>
+    <div style="padding:12px 14px 18px;border-top:1px solid rgba(17,17,17,.1);display:flex;gap:8px">
+      <input id="aide-ia-input" type="text" placeholder="Ex : comment ajouter mes tarifs ?" style="flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid rgba(17,17,17,.15);background:#fff;color:#111;font-size:14px;outline:none;margin:0"/>
+      <button onclick="envoyerAideIA()" style="width:42px;height:42px;border-radius:50%;border:none;background:#111;color:#FAFAF7;font-size:16px;cursor:pointer;flex-shrink:0">➤</button>
     </div>
   </div>
 </div>
 
-<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" style="position:fixed;bottom:20px;right:20px;width:52px;height:52px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;text-decoration:none">💬</a>
+<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" aria-label="WhatsApp" style="position:fixed;bottom:20px;right:20px;width:52px;height:52px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;text-decoration:none">💬</a>
 
 <script>
-var API_AIDE = "https://philo-backend-by2c.onrender.com";
-var AIDE_IA_PROMPT = "Tu es l'assistant du créateur d'appli de Philomène IA. Tu aides une personne (un artisan, un commerçant) qui est en train de remplir un formulaire pour créer sa propre appli professionnelle (assistant IA, devis, catalogue, planning ou réservation, selon son métier). Réponds en français, simplement, sans markdown, en 2-4 phrases maximum. Voici comment fonctionne l'outil : 1) La personne choisit son secteur d'activité dans une liste (coiffure, tatouage, rénovation, plomberie, restauration, pizzeria, coach sportif, etc.), ce qui pré-remplit automatiquement les couleurs, les questions et les modules adaptés. 2) Le 'slug' est juste un identifiant court sans espace ni accent (ex: chezmario) qui sert dans le lien final de l'appli. 3) Elle peut ajouter son logo, ses tarifs, des articles avec photos (pour un catalogue), des créneaux (pour un planning). 4) Un prix annuel se calcule automatiquement selon les modules cochés (un socle de base + un supplément par module). 5) Une fois enregistré, elle obtient un lien et un QR code, avec un bandeau 'démo' affiché tant que le paiement n'est pas confirmé sur Revolut. 6) Elle peut ensuite gérer elle-même son contenu (tarifs, catalogue, galerie) via un espace client protégé par mot de passe. Si la question sort de ce cadre (question technique complexe, problème de paiement, bug) ou si tu ne sais pas répondre, dis-le clairement et invite la personne à contacter Philomène IA directement sur WhatsApp.";
+var AIDE_IA_PROMPT = "Tu es l'assistant du créateur d'appli de Philomène IA. Tu aides une personne (un artisan, un commerçant) qui remplit un formulaire pour créer sa propre appli professionnelle. Réponds en français, simplement, sans markdown, en 2-4 phrases maximum. Fonctionnement : 1) La personne choisit son métier dans une liste, ce qui pré-remplit couleurs, questions et modules. 2) L'adresse de l'appli se remplit toute seule à partir du nom de l'entreprise ; c'est un identifiant court sans espace ni accent qui sert dans le lien final. 3) Elle peut ajouter son logo, ses tarifs, des articles avec photos, des créneaux. 4) Le prix annuel se calcule selon les modules cochés (un socle de base plus un supplément par module). 5) Une fois enregistrée, elle obtient un lien et un QR code, avec un bandeau 'démo' tant que le paiement n'est pas confirmé sur Revolut. 6) Elle peut ensuite modifier son contenu (tarifs, catalogue, galerie) via l'onglet 'Modifier mon appli', avec son mot de passe. Si la question sort de ce cadre ou si tu ne sais pas, dis-le et invite à contacter Philomène IA sur WhatsApp.";
 
 function ajouterMsgAide(txt, role) {
   var msgs = document.getElementById("aide-ia-messages");
   var bub = document.createElement("div");
-  bub.style.maxWidth = "82%";
-  bub.style.boxSizing = "border-box";
-  bub.style.wordBreak = "break-word";
-  bub.style.overflowWrap = "break-word";
-  bub.style.padding = "10px 14px";
-  bub.style.borderRadius = "16px";
-  bub.style.fontSize = "13.5px";
-  bub.style.lineHeight = "1.5";
-  bub.style.whiteSpace = "pre-wrap";
+  bub.style.cssText = "max-width:82%;box-sizing:border-box;word-break:break-word;overflow-wrap:break-word;padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.5;white-space:pre-wrap";
   if (role === "user") {
-    bub.style.background = "#f2ead8"; bub.style.color = "#1a2e20";
+    bub.style.background = "#111"; bub.style.color = "#FAFAF7";
     bub.style.alignSelf = "flex-end"; bub.style.borderBottomRightRadius = "4px";
   } else {
-    bub.style.background = "rgba(242,234,216,.08)"; bub.style.color = "#f2ead8";
+    bub.style.background = "rgba(17,17,17,.06)"; bub.style.color = "#111";
     bub.style.alignSelf = "flex-start"; bub.style.borderBottomLeftRadius = "4px";
   }
   bub.textContent = txt;
@@ -1429,7 +1422,7 @@ function ouvrirAideIA() {
   document.getElementById("aide-ia-overlay").style.display = "flex";
   var msgs = document.getElementById("aide-ia-messages");
   if (!msgs.children.length) {
-    ajouterMsgAide("Bonjour ! Je peux t'expliquer comment fonctionne le créateur d'appli — le choix du métier, les modules, le prix, le paiement... Qu'est-ce qui n'est pas clair ?", "bot");
+    ajouterMsgAide("Bonjour ! Je peux vous expliquer le choix du métier, les modules, le prix ou le paiement. Qu'est-ce qui n'est pas clair ?", "bot");
   }
 }
 function fermerAideIA() {
@@ -1443,16 +1436,15 @@ function envoyerAideIA() {
   input.value = "";
   ajouterMsgAide(txt, "user");
   var typingBub = ajouterMsgAide("...", "bot");
-
-  fetch(API_AIDE + "/vitrine", {
+  fetch(API + "/vitrine", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: txt, userId: "configtool_aide_" + Date.now(), systemPrompt: AIDE_IA_PROMPT })
   }).then(function(r){ return r.json(); })
   .then(function(d){
-    typingBub.textContent = (d && d.answer) ? d.answer.replace(/\*\*(.*?)\*\*/g,'$1') : "Je n'ai pas compris, réessaie ou contacte-nous sur WhatsApp.";
+    typingBub.textContent = (d && d.answer) ? d.answer.replace(/\*\*(.*?)\*\*/g,'$1') : "Je n'ai pas compris. Réessayez ou contactez-nous sur WhatsApp.";
   }).catch(function(){
-    typingBub.textContent = "Erreur de connexion. Contacte-nous sur WhatsApp si besoin.";
+    typingBub.textContent = "Connexion impossible. Contactez-nous sur WhatsApp si besoin.";
   });
 }
 document.getElementById("aide-ia-input").addEventListener("keydown", function(e){ if (e.key === "Enter") envoyerAideIA(); });
