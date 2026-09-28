@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex"/>
 <title>Tous mes clients — Philomène IA</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -12,122 +13,187 @@ body{background:#1a2e20;color:#f2ead8;padding:20px 16px 60px;max-width:540px;mar
 h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
 .sub{font-size:12px;color:rgba(242,234,216,.5);margin-bottom:20px}
 .card{background:rgba(242,234,216,.06);border:1px solid rgba(242,234,216,.12);border-radius:14px;padding:18px;margin-bottom:16px}
-.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(242,234,216,.6);margin-bottom:12px}
 .lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,234,216,.4);margin-bottom:5px;display:block}
 input{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(242,234,216,.15);background:rgba(242,234,216,.06);color:#f2ead8;font-size:14px;margin-bottom:12px;outline:none}
-.add-btn{background:none;border:1.5px dashed rgba(242,234,216,.25);color:rgba(242,234,216,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px}
+.add-btn{background:none;border:1.5px dashed rgba(242,234,216,.25);color:rgba(242,234,216,.7);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px}
 .status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
 .status.ok{background:rgba(46,204,113,.15);color:#6BCB77;display:block}
 .status.err{background:rgba(255,107,107,.1);color:#ff8a7a;display:block}
-.ga-item{background:#fff;border-radius:14px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:#1a2e20}
-.ga-item-title{font-size:13px;font-weight:600}
-.ga-item-title span{display:block;font-size:11px;font-weight:400;color:#7a7a7a;margin-top:2px}
+.ga-item{background:#fff;border-radius:14px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;color:#1a2e20}
+.ga-item-title{font-size:13px;font-weight:600;min-width:0;overflow:hidden}
+.ga-item-title small{display:block;font-size:11px;font-weight:400;color:#7a7a7a;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-size:11px;padding:4px 9px;border-radius:12px;background:#eee;white-space:nowrap}
+.suppr{background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px}
 .ga-empty{text-align:center;color:rgba(242,234,216,.4);font-size:13px;padding:20px 0}
 .compte{font-size:12px;color:rgba(242,234,216,.5);text-align:right;margin-bottom:10px}
+.filtres{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filtres button{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(242,234,216,.2);background:none;color:rgba(242,234,216,.7);font-size:12px;cursor:pointer}
+.filtres button.on{background:#f2ead8;color:#1a2e20;font-weight:600}
 </style>
 </head>
 <body>
 
 <h1>📊 Tous mes clients</h1>
-<div class="sub">Vue d'ensemble réservée à Philomène IA — clique sur un client pour le modifier.</div>
+<div class="sub">Réservé à Philomène IA. Touchez un client pour le modifier.</div>
 
 <div class="card" id="verrou-dashboard">
-  <label class="lbl">Mot de passe</label>
+  <label class="lbl">Code admin</label>
   <input id="pwd-dashboard" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')deverrouillerDashboard()"/>
   <button class="add-btn" onclick="deverrouillerDashboard()">🔓 Déverrouiller</button>
   <div class="status" id="status-verrou-dashboard"></div>
 </div>
 
 <div id="contenu-dashboard" style="display:none">
+  <div class="filtres">
+    <button class="on" data-f="tous" onclick="filtrer(this)">Tous</button>
+    <button data-f="attente" onclick="filtrer(this)">⏳ En attente</button>
+    <button data-f="actif" onclick="filtrer(this)">✅ Actifs</button>
+    <button data-f="expire" onclick="filtrer(this)">⚠️ Expirés</button>
+  </div>
   <div class="compte" id="compte-clients"></div>
   <div id="dashboard-liste"><div class="ga-empty">Chargement...</div></div>
+  <button class="add-btn" style="margin-top:14px" onclick="verrouiller()">🔒 Verrouiller</button>
 </div>
 
 <script>
-/* ⚠️ Même mot de passe que dans config-tool-v2.html / config-site.html — change les deux ensemble si tu le modifies */
-var MOT_DE_PASSE_PHILOMENE = "philomene2026";
+/* 🔐 Aucun secret ici : le code admin est vérifié par le serveur,
+   puis gardé le temps de l'onglet pour ouvrir les créateurs sans le retaper. */
 var API = "https://philo-backend-by2c.onrender.com";
 var LIEN_OUTIL_APPLI = "config-tool-v2.html";
 var LIEN_OUTIL_SITE = "config-site.html";
+var CLE_SESSION_ADMIN = "philoAdminToken";
+var ADMIN_TOKEN = "";
+var FILTRE = "tous";
 
-function deverrouillerDashboard() {
-  if (document.getElementById("pwd-dashboard").value === MOT_DE_PASSE_PHILOMENE) {
-    document.getElementById("verrou-dashboard").style.display = "none";
-    document.getElementById("contenu-dashboard").style.display = "block";
-    chargerDashboard();
-  } else {
-    var s = document.getElementById("status-verrou-dashboard");
-    s.textContent = "Mot de passe incorrect."; s.className = "status err";
-  }
+function entetes(){
+  return { "Content-Type": "application/json", "x-admin-token": ADMIN_TOKEN };
+}
+
+function deverrouillerDashboard(tokenAuto) {
+  var t = tokenAuto || document.getElementById("pwd-dashboard").value.trim();
+  if (!t) return;
+  fetch(API + "/admin-check", { method: "POST", headers: { "x-admin-token": t } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.ok) {
+        try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){}
+        if (!tokenAuto) { var s = document.getElementById("status-verrou-dashboard"); s.textContent = "Code incorrect."; s.className = "status err"; }
+        return;
+      }
+      ADMIN_TOKEN = t;
+      try { sessionStorage.setItem(CLE_SESSION_ADMIN, t); } catch(e){}
+      document.getElementById("verrou-dashboard").style.display = "none";
+      document.getElementById("contenu-dashboard").style.display = "block";
+      chargerDashboard();
+    })
+    .catch(function(){
+      var s = document.getElementById("status-verrou-dashboard"); s.textContent = "Serveur injoignable (il se réveille peut-être), réessayez."; s.className = "status err";
+    });
+}
+
+function verrouiller(){
+  try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){}
+  window.location.reload();
+}
+
+function filtrer(btn){
+  FILTRE = btn.dataset.f;
+  document.querySelectorAll(".filtres button").forEach(function(b){ b.classList.toggle("on", b === btn); });
+  document.querySelectorAll(".ga-item").forEach(function(row){
+    row.style.display = (FILTRE === "tous" || row.dataset.statut === FILTRE) ? "flex" : "none";
+  });
 }
 
 function supprimerProjet(type, slug, nom){
-  if (!confirm('Supprimer définitivement "' + nom + '" ?\n\nSon lien ne fonctionnera plus. Cette action est irréversible.')) return;
+  if (!confirm('Supprimer définitivement « ' + nom + ' » ?\n\nSon lien ne fonctionnera plus. Action irréversible.')) return;
   var cle = (type === "appli" ? "config_" : "site_") + slug;
-  var indexKey = type === "appli" ? "app_index" : "site_index";
-
+  // Le serveur retire aussi le client de l'index
   fetch(API + "/memory/" + cle, {
-    method: "POST", headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ value: null })
-  }).then(function(){
-    return fetch(API + "/memory/" + indexKey).then(function(r){ return r.json() });
-  }).then(function(d){
-    var index = (d && d.value) ? d.value : [];
-    var nouvelIndex = index.filter(function(e){ return e.slug !== slug; });
-    return fetch(API + "/memory/" + indexKey, {
-      method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ value: nouvelIndex })
-    });
-  }).then(function(){
+    method: "POST", headers: entetes(), body: JSON.stringify({ value: null })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) { alert((d && d.error) || "La suppression a échoué."); return; }
     chargerDashboard();
-  }).catch(function(){
-    alert("Erreur pendant la suppression.");
-  });
+  }).catch(function(){ alert("Connexion impossible."); });
+}
+
+function lireIndex(cle){
+  return fetch(API + "/memory/" + cle, { headers: entetes() })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ return (d && Array.isArray(d.value)) ? d.value : []; })
+    .catch(function(){ return []; });
 }
 
 function chargerDashboard() {
   var zone = document.getElementById("dashboard-liste");
   zone.innerHTML = '<div class="ga-empty">Chargement...</div>';
-  Promise.all([
-    fetch(API + "/memory/app_index").then(function(r){ return r.json() }).catch(function(){ return {value:[]} }),
-    fetch(API + "/memory/site_index").then(function(r){ return r.json() }).catch(function(){ return {value:[]} })
-  ]).then(function(results){
-    var apps = ((results[0] && results[0].value) ? results[0].value : []).map(function(e){ return Object.assign({type:"appli"}, e) });
-    var sites = ((results[1] && results[1].value) ? results[1].value : []).map(function(e){ return Object.assign({type:"site"}, e) });
-    var index = apps.concat(sites);
-    document.getElementById("compte-clients").textContent = index.length + " projet" + (index.length>1?"s":"") + " créé" + (index.length>1?"s":"") + " (" + apps.length + " appli" + (apps.length>1?"s":"") + ", " + sites.length + " site" + (sites.length>1?"s":"") + ")";
-    if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun projet créé pour l\'instant.</div>'; return; }
+  Promise.all([lireIndex("app_index"), lireIndex("site_index")]).then(function(res){
+    var apps = res[0].map(function(e){ return Object.assign({ type: "appli" }, e); });
+    var sites = res[1].map(function(e){ return Object.assign({ type: "site" }, e); });
+    var index = apps.concat(sites).sort(function(a, b){ return String(b.dateCreation || "").localeCompare(String(a.dateCreation || "")); });
+
+    document.getElementById("compte-clients").textContent =
+      index.length + " projet" + (index.length > 1 ? "s" : "") + " (" + apps.length + " appli" + (apps.length > 1 ? "s" : "") + ", " + sites.length + " site" + (sites.length > 1 ? "s" : "") + ")";
+
     zone.innerHTML = "";
+    if (!index.length) { zone.innerHTML = '<div class="ga-empty">Aucun projet pour l\'instant.</div>'; return; }
+
     index.forEach(function(entree){
       var isApp = entree.type === "appli";
       var outil = isApp ? LIEN_OUTIL_APPLI : LIEN_OUTIL_SITE;
       var cle = (isApp ? "config_" : "site_") + entree.slug;
-      var icone = isApp ? "📱" : "🖥️";
-      var uid = entree.type + "_" + entree.slug;
+
+      // Construction sans innerHTML : aucun texte client ne peut injecter de code
       var row = document.createElement("div");
       row.className = "ga-item";
-      row.innerHTML = '<div class="ga-item-title">' + icone + ' ' + entree.nom + '<span>' + entree.slug + ' · ' + (entree.secteur||entree.categorie||'') + '</span></div><div style="display:flex;align-items:center;gap:8px"><span id="badge-' + uid + '" style="font-size:11px;padding:4px 9px;border-radius:12px;background:#eee">...</span><button onclick="event.stopPropagation();supprimerProjet(\'' + entree.type + '\',\'' + entree.slug.replace(/'/g,"\\'") + '\',\'' + entree.nom.replace(/'/g,"\\'") + '\')" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px">🗑️</button></div>';
+      row.dataset.statut = "attente";
+
+      var titre = document.createElement("div");
+      titre.className = "ga-item-title";
+      titre.textContent = (isApp ? "📱 " : "🖥️ ") + (entree.nom || entree.slug);
+      var sous = document.createElement("small");
+      sous.textContent = entree.slug + (entree.secteur ? " · " + entree.secteur : "");
+      titre.appendChild(sous);
+
+      var droite = document.createElement("div");
+      droite.style.cssText = "display:flex;align-items:center;gap:8px;flex-shrink:0";
+      var badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = "...";
+      var suppr = document.createElement("button");
+      suppr.className = "suppr";
+      suppr.textContent = "🗑️";
+      suppr.setAttribute("aria-label", "Supprimer");
+      suppr.onclick = function(ev){ ev.stopPropagation(); supprimerProjet(entree.type, entree.slug, entree.nom || entree.slug); };
+      droite.appendChild(badge);
+      droite.appendChild(suppr);
+
+      row.appendChild(titre);
+      row.appendChild(droite);
       row.onclick = function(){
         window.location.href = outil + "?philomene=1&modifier=" + encodeURIComponent(entree.slug);
       };
       zone.appendChild(row);
 
-      fetch(API + "/memory/" + cle)
+      fetch(API + "/memory/" + cle, { headers: entetes() })
         .then(function(r){ return r.json(); })
         .then(function(dd){
-          var badge = document.getElementById("badge-" + uid);
-          if (!badge || !dd || !dd.value) return;
+          if (!dd || !dd.value) { badge.textContent = "Introuvable"; return; }
           var cfg = dd.value;
           var expire = cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
-          if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "#ffdada"; badge.style.color = "#a01f10"; }
-          else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "#dff6e0"; badge.style.color = "#2E7D32"; }
-          else { badge.textContent = "⏳ En attente"; badge.style.background = "#fff3d6"; badge.style.color = "#8a5a00"; }
+          if (expire) { badge.textContent = "⚠️ Expiré"; badge.style.background = "#ffdada"; badge.style.color = "#a01f10"; row.dataset.statut = "expire"; }
+          else if (cfg.valide === true) { badge.textContent = "✅ Actif"; badge.style.background = "#dff6e0"; badge.style.color = "#2E7D32"; row.dataset.statut = "actif"; }
+          else { badge.textContent = "⏳ En attente"; badge.style.background = "#fff3d6"; badge.style.color = "#8a5a00"; row.dataset.statut = "attente"; }
+          row.style.display = (FILTRE === "tous" || row.dataset.statut === FILTRE) ? "flex" : "none";
         }).catch(function(){});
     });
-  }).catch(function(){
-    zone.innerHTML = '<div class="ga-empty">Erreur de chargement.</div>';
   });
 }
+
+(function(){
+  var memo = null;
+  try { memo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
+  if (memo) deverrouillerDashboard(memo);
+})();
 </script>
 </body>
 </html>
