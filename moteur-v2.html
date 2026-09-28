@@ -159,6 +159,10 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 
 .moteur-badge{position:fixed;bottom:4px;left:0;right:0;text-align:center;font-size:8px;color:rgba(0,0,0,.2);z-index:600;pointer-events:none}
 
+#paiement-banner{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top, 0px));z-index:700;background:#fff;color:#111;border-radius:16px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.25);display:none;max-width:456px;margin:0 auto;font-size:14px;line-height:1.5}
+#paiement-banner.show{display:block;animation:fadeUp .4s cubic-bezier(.16,1,.3,1)}
+#paiement-banner b{font-size:16px}
+#paiement-banner button{margin-top:10px;width:100%;padding:10px;border-radius:10px;border:none;background:var(--couleur-fonce);color:var(--couleur-fond);font-weight:600;font-family:Jost,sans-serif;cursor:pointer}
 #demo-watermark{position:fixed;inset:0;z-index:550;pointer-events:none;overflow:hidden;display:none}
 #demo-watermark.show{display:block}
 .demo-stripe{position:absolute;left:-20%;width:140%;background:rgba(200,60,60,.16);color:rgba(160,30,30,.55);font-weight:800;font-size:15px;letter-spacing:.3em;text-transform:uppercase;text-align:center;padding:6px 0;transform:rotate(-24deg);white-space:nowrap;font-family:Jost,sans-serif}
@@ -215,10 +219,13 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
     <div class="panier-modes" id="panier-modes"></div>
     <div id="panier-lignes"></div>
     <div class="panier-total"><div>Total</div><div id="panier-total-val">0€</div></div>
-    <button class="wa-bubble" style="margin-top:16px" onclick="envoyerCommandePanier()">📱 Envoyer ma commande sur WhatsApp</button>
+    <button class="wa-bubble" id="btn-payer-carte" style="margin-top:16px;display:none;background:var(--couleur-fonce);color:var(--couleur-fond)" onclick="payerParCarte()">💳 Payer par carte</button>
+    <button class="wa-bubble" id="btn-commande-wa" style="margin-top:16px" onclick="envoyerCommandePanier()">📱 Envoyer ma commande sur WhatsApp</button>
     <button class="mbox-cancel" onclick="fermerPanier()">Continuer mes achats</button>
   </div>
 </div>
+
+<div id="paiement-banner" role="status"></div>
 
 <div class="moteur-badge">Moteur générique multi-modules · Philomène IA</div>
 
@@ -345,6 +352,9 @@ function appliquerConfig(cfg) {
     document.getElementById("demo-watermark").classList.add("show");
     document.querySelectorAll(".demo-stripe").forEach(function(s){ s.textContent = "ABONNEMENT EXPIRÉ — CONTACTEZ PHILOMÈNE IA"; });
   }
+
+  verifierPaiementCarte(cfg);
+  gererRetourPaiement();
 
   setTimeout(function(){
     document.getElementById("splash").classList.add("gone");
@@ -753,6 +763,78 @@ function envoyerCommandePanier() {
   msg += "\nTOTAL : " + formatPrix(total);
   msg += "\nJe réglerai sur place à la récupération.";
   window.open(lienWa(msg), "_blank");
+}
+
+/* ---------- PAIEMENT PAR CARTE (Stripe) ---------- */
+var PAIEMENT_CARTE = false;
+
+function verifierPaiementCarte(cfg) {
+  if (cfg.valide !== true || (cfg.modulesActifs || []).indexOf("catalogue") < 0) return;
+  fetch(API + "/stripe/status/" + getSlugFromUrl())
+    .then(function(r){ return r.json(); })
+    .then(function(s){
+      PAIEMENT_CARTE = !!(s && s.actif);
+      document.getElementById("btn-payer-carte").style.display = PAIEMENT_CARTE ? "flex" : "none";
+      if (PAIEMENT_CARTE) {
+        var wa = document.getElementById("btn-commande-wa");
+        wa.textContent = "📱 Ou commander sur WhatsApp (paiement sur place)";
+        wa.style.marginTop = "8px";
+      }
+    }).catch(function(){});
+}
+
+function payerParCarte() {
+  var clefs = Object.keys(PANIER);
+  if (!clefs.length) { alert("Votre panier est vide."); return; }
+  var btn = document.getElementById("btn-payer-carte");
+  btn.disabled = true; btn.textContent = "Ouverture du paiement...";
+  var items = clefs.map(function(nom){ return { nom: nom, qty: PANIER[nom].qty }; });
+  fetch(API + "/stripe/checkout/" + getSlugFromUrl(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items: items, mode: modePanierActif || "" })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d && d.ok && d.url) { window.location.href = d.url; return; }
+    alert((d && d.error) || "Paiement indisponible, réessayez.");
+    btn.disabled = false; btn.textContent = "💳 Payer par carte";
+  }).catch(function(){
+    alert("Connexion impossible, réessayez.");
+    btn.disabled = false; btn.textContent = "💳 Payer par carte";
+  });
+}
+
+function afficherBanniere(titre, texte) {
+  var b = document.getElementById("paiement-banner");
+  b.innerHTML = "";
+  b.appendChild(el("b", null, titre));
+  if (texte) b.appendChild(el("div", null, texte));
+  var ok = el("button", null, "OK");
+  ok.onclick = function(){ b.classList.remove("show"); };
+  b.appendChild(ok);
+  b.classList.add("show");
+}
+
+function gererRetourPaiement() {
+  var p = new URLSearchParams(window.location.search);
+  var etat = p.get("paiement");
+  if (!etat) return;
+  var propre = window.location.pathname + "?client=" + encodeURIComponent(getSlugFromUrl());
+  window.history.replaceState(null, "", propre);
+  if (etat === "annule") { afficherBanniere("Paiement annulé", "Aucun montant n'a été débité. Votre panier est toujours disponible."); return; }
+  var session = p.get("session") || "";
+  afficherBanniere("Vérification du paiement...", "");
+  fetch(API + "/stripe/verif/" + getSlugFromUrl() + "/" + encodeURIComponent(session))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.paye) {
+        afficherBanniere("✅ Commande n° " + d.numero + " payée", "Total : " + String(d.total).replace(".", ",") + " €. Merci ! " + (CONFIG.nom || "") + " a bien reçu votre commande. Gardez ce numéro.");
+      } else {
+        afficherBanniere("Paiement non confirmé", "Si vous avez été débité, contactez directement le commerçant.");
+      }
+    }).catch(function(){
+      afficherBanniere("Vérification impossible", "Si vous avez été débité, contactez directement le commerçant.");
+    });
 }
 
 /* ---------- GALERIE ---------- */
