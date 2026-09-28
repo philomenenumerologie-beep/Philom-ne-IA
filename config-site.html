@@ -344,7 +344,7 @@ function togglePage(el){
 
 function calculerPrix(){
   var extra = ["services","galerie","apropos"].filter(function(p){ return document.getElementById("tog-"+p).classList.contains("on"); }).length;
-  var total = 190 + extra * 90;
+  var total = 190 + extra * 90; /* ⚠️ mêmes prix que dans server.js */
   document.getElementById("prix-total").textContent = total + "€";
   return total;
 }
