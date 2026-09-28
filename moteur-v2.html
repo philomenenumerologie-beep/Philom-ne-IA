@@ -394,7 +394,8 @@ function construireTabs(cfg) {
   document.getElementById("page-chat").style.display = chatActif ? "" : "none";
   modulesValides(cfg).forEach(function(mod, i){
     var info = MODULE_LABELS[mod];
-    tabs.appendChild(creerTab(info.icone, info.nom, !chatActif && i === 0, function(b){ showTab(b, mod); }));
+    var nom = (mod === "catalogue" && cfg.catalogueOnglet) ? String(cfg.catalogueOnglet).slice(0, 14) : info.nom;
+    tabs.appendChild(creerTab(info.icone, nom, !chatActif && i === 0, function(b){ showTab(b, mod); }));
   });
 }
 
@@ -769,7 +770,8 @@ function envoyerCommandePanier() {
 var PAIEMENT_CARTE = false;
 
 function verifierPaiementCarte(cfg) {
-  if (cfg.valide !== true || (cfg.modulesActifs || []).indexOf("catalogue") < 0) return;
+  var mods = cfg.modulesActifs || [];
+  if (cfg.valide !== true || mods.indexOf("catalogue") < 0 || mods.indexOf("paiement") < 0) return;
   fetch(API + "/stripe/status/" + getSlugFromUrl())
     .then(function(r){ return r.json(); })
     .then(function(s){
