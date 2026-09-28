@@ -289,8 +289,9 @@ input[type=color]{padding:2px;height:38px}
   <div style="background:rgba(37,211,102,.1);border:1.5px solid rgba(37,211,102,.3);border-radius:12px;padding:16px">
     <div style="font-size:13px;color:rgba(17,17,17,.7);margin-bottom:4px">Montant à régler pour activer l'appli (1 an)</div>
     <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px">0€</div>
-    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none">💳 Payer sur Revolut</a>
-    <div style="font-size:11px;color:rgba(17,17,17,.45);margin-top:8px">⚠️ Indiquez ce montant exact sur la page Revolut, il n'est pas rempli automatiquement</div>
+    <button id="btn-payer-abonnement" onclick="payerAbonnement()" style="display:inline-block;background:#111;color:#FAFAF7;padding:13px 26px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">💳 Payer par carte et activer</button>
+    <div style="font-size:11px;color:rgba(17,17,17,.5);margin-top:8px">Paiement sécurisé par Stripe. Votre appli s'active automatiquement.</div>
+    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;font-size:11px;color:rgba(17,17,17,.45);margin-top:10px;text-decoration:underline">Autre moyen : payer via Revolut</a>
   </div>
 </div>
 
@@ -308,6 +309,17 @@ input[type=color]{padding:2px;height:38px}
   </div>
 
   <div id="ad-content" style="display:none">
+    <div class="card" id="ad-bloc-commandes" style="display:none">
+      <h2>🧾 Commandes payées</h2>
+      <div class="hint" style="margin:0 0 10px">Mise à jour automatique toutes les 20 secondes, avec un bip à chaque nouvelle commande.</div>
+      <div id="ad-commandes-liste"></div>
+    </div>
+    <div class="card" id="ad-bloc-paiement" style="display:none">
+      <h2>💳 Paiement en ligne</h2>
+      <div id="ad-stripe-statut" style="font-size:13px;margin-bottom:10px">Vérification...</div>
+      <button class="save-btn" id="ad-stripe-btn" style="display:none;margin-top:0" onclick="connecterStripe()">Connecter mon compte Stripe</button>
+      <div class="hint" style="margin:10px 0 0">L'argent de vos ventes va directement sur votre compte bancaire. Stripe vous demandera votre pièce d'identité et votre RIB.</div>
+    </div>
     <div class="card">
       <h2>💰 Tarifs</h2>
       <div id="tarifs-list-admin"></div>
@@ -1288,10 +1300,14 @@ if (paramsUrl.get("philomene")) {
   try { tokenMemo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
   if (tokenMemo) deverrouillerAdminGeneral(tokenMemo);
 }
+gererRetourAbonnement();
 if (paramsUrl.get("admin")) {
   ouvrirOutil();
   switchOnglet("admin");
   document.getElementById("ad-slug").value = paramsUrl.get("admin");
+  if (paramsUrl.get("stripe") === "retour") {
+    showStatusAd("De retour de Stripe. Connectez-vous pour voir si le paiement en ligne est actif.", "ok");
+  }
 }
 
 /* =====================================================================
@@ -1338,10 +1354,183 @@ function entrerEspaceClient() {
       (d.value.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix, "reservation-list-admin"); });
 
       document.getElementById("ad-content").style.display = "block";
+      initPaiementEnLigne(d.value);
       showStatusAd("Bienvenue " + (d.value.nom || slug) + " !", "ok");
     }).catch(function(){
       showStatusAd("Connexion impossible.", "err");
     });
+}
+
+/* =====================================================================
+   PAIEMENT DE L'ABONNEMENT (vers Philomène IA)
+   ===================================================================== */
+function payerAbonnement() {
+  if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre appli.", "err"); return; }
+  var btn = document.getElementById("btn-payer-abonnement");
+  btn.disabled = true; btn.textContent = "Ouverture du paiement...";
+  fetch(API + "/abonnement/checkout/appli/" + encodeURIComponent(slugChargeActuel), { method: "POST" })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.ok && d.url) { window.location.href = d.url; return; }
+      showStatus((d && d.error) || "Paiement indisponible.", "err");
+      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
+    })
+    .catch(function(){
+      showStatus("Connexion impossible. Réessayez.", "err");
+      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
+    });
+}
+
+function gererRetourAbonnement() {
+  var p = new URLSearchParams(window.location.search);
+  if (p.get("abonnement") !== "appli") return;
+  ouvrirOutil();
+  var projet = p.get("projet") || "";
+  if (p.get("paiement") === "annule") {
+    showStatus("Paiement annulé. Votre appli reste en démo, vous pouvez payer quand vous voulez.", "err");
+    return;
+  }
+  var session = p.get("session") || "";
+  showStatus("Vérification du paiement...", "ok");
+  fetch(API + "/abonnement/verif/" + encodeURIComponent(session))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.paye) {
+        var lien = window.location.origin + "/moteur-v2.html?client=" + encodeURIComponent(projet);
+        showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est activée jusqu'au " + new Date(d.dateExpiration).toLocaleDateString("fr-FR") + ". Lien : " + lien, "ok");
+      } else {
+        showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, contactez-nous sur WhatsApp.", "err");
+      }
+      window.history.replaceState(null, "", window.location.pathname);
+    })
+    .catch(function(){ showStatus("Vérification impossible. Contactez-nous sur WhatsApp si besoin.", "err"); });
+}
+
+/* =====================================================================
+   PAIEMENT EN LIGNE DU COMMERÇANT (Stripe Connect) + COMMANDES
+   ===================================================================== */
+var timerCommandes = null;
+var idsCommandesConnus = null;
+
+function initPaiementEnLigne(cfg) {
+  var avecCatalogue = (cfg.modulesActifs || []).indexOf("catalogue") >= 0;
+  document.getElementById("ad-bloc-paiement").style.display = avecCatalogue ? "block" : "none";
+  if (avecCatalogue) majStatutStripe();
+}
+
+function majStatutStripe() {
+  var st = document.getElementById("ad-stripe-statut");
+  var btn = document.getElementById("ad-stripe-btn");
+  fetch(API + "/stripe/status/" + encodeURIComponent(SLUG_CLIENT_ACTUEL))
+    .then(function(r){ return r.json(); })
+    .then(function(s){
+      if (s.actif) {
+        st.textContent = "✅ Paiement par carte actif : vos clients peuvent payer en ligne.";
+        btn.style.display = "none";
+        demarrerCommandes();
+      } else if (s.connecte) {
+        st.textContent = "⏳ Votre inscription Stripe n'est pas encore terminée.";
+        btn.textContent = "Terminer mon inscription Stripe";
+        btn.style.display = "block";
+      } else {
+        st.textContent = "Pas encore activé. Vos clients commandent via WhatsApp et paient sur place.";
+        btn.textContent = "Connecter mon compte Stripe";
+        btn.style.display = "block";
+      }
+    })
+    .catch(function(){ st.textContent = "Statut indisponible pour le moment."; });
+}
+
+function connecterStripe() {
+  var btn = document.getElementById("ad-stripe-btn");
+  btn.disabled = true; btn.textContent = "Ouverture de Stripe...";
+  fetch(API + "/stripe/connect/" + encodeURIComponent(SLUG_CLIENT_ACTUEL), {
+    method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD }
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d && d.ok && d.url) { window.location.href = d.url; return; }
+    document.getElementById("ad-stripe-statut").textContent = (d && d.error) || "Connexion Stripe impossible.";
+    btn.disabled = false; btn.textContent = "Réessayer";
+  }).catch(function(){
+    document.getElementById("ad-stripe-statut").textContent = "Connexion impossible.";
+    btn.disabled = false; btn.textContent = "Réessayer";
+  });
+}
+
+function demarrerCommandes() {
+  document.getElementById("ad-bloc-commandes").style.display = "block";
+  chargerCommandes();
+  clearInterval(timerCommandes);
+  timerCommandes = setInterval(chargerCommandes, 20000);
+}
+
+function bip() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.25].forEach(function(t){
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880; g.gain.value = 0.25;
+      o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.18);
+    });
+    setTimeout(function(){ ctx.close(); }, 800);
+  } catch(e){}
+}
+
+function el2(tag, texte, style) {
+  var e = document.createElement(tag);
+  if (texte != null) e.textContent = texte;
+  if (style) e.style.cssText = style;
+  return e;
+}
+
+function chargerCommandes() {
+  fetch(API + "/commandes/" + encodeURIComponent(SLUG_CLIENT_ACTUEL), { headers: { "x-client-password": CLIENT_PWD } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.ok) return;
+      var liste = d.commandes || [];
+      var ids = liste.map(function(c){ return c.id; });
+      if (idsCommandesConnus && ids.some(function(id){ return idsCommandesConnus.indexOf(id) < 0; })) bip();
+      idsCommandesConnus = ids;
+
+      var zone = document.getElementById("ad-commandes-liste");
+      zone.innerHTML = "";
+      var actives = liste.filter(function(c){ return c.statut !== "terminee"; });
+      if (!actives.length) { zone.appendChild(el2("div", "Aucune commande en cours.", "font-size:13px;color:rgba(17,17,17,.5);text-align:center;padding:10px")); return; }
+      actives.forEach(function(c){
+        var neuve = c.statut === "nouvelle";
+        var carte = el2("div", null, "background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;border-left:5px solid " + (neuve ? "#2ecc71" : "#c9a84c"));
+        var heure = new Date(c.date).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+        carte.appendChild(el2("div", "N° " + c.numero + " · " + heure + " · " + String(c.total).replace(".", ",") + " €" + (c.mode ? " · " + c.mode : ""), "font-weight:700;font-size:14px;margin-bottom:6px"));
+        (c.articles || []).forEach(function(a){ carte.appendChild(el2("div", a.qty + " × " + a.nom, "font-size:13px")); });
+        var cl = c.client || {};
+        var infos = [cl.nom, cl.tel].filter(Boolean).join(" · ");
+        if (infos) carte.appendChild(el2("div", "👤 " + infos, "font-size:12px;color:rgba(17,17,17,.6);margin-top:6px"));
+        if (c.livraison) {
+          var l = c.livraison;
+          carte.appendChild(el2("div", "📦 " + [l.nom, l.adresse, (l.codePostal + " " + l.ville).trim(), l.pays].filter(Boolean).join(", "), "font-size:12px;color:rgba(17,17,17,.75);margin-top:4px"));
+        }
+        var actions = el2("div", null, "display:flex;gap:8px;margin-top:10px");
+        if (neuve) {
+          var b1 = el2("button", "✅ Prête", "flex:1;padding:9px;border-radius:9px;border:none;background:#111;color:#fff;font-weight:600;cursor:pointer");
+          b1.onclick = function(){ changerStatutCommande(c.id, "prete"); };
+          actions.appendChild(b1);
+        }
+        var b2 = el2("button", "✔ Terminée", "flex:1;padding:9px;border-radius:9px;border:1px solid rgba(17,17,17,.2);background:none;cursor:pointer");
+        b2.onclick = function(){ changerStatutCommande(c.id, "terminee"); };
+        actions.appendChild(b2);
+        carte.appendChild(actions);
+        zone.appendChild(carte);
+      });
+    }).catch(function(){});
+}
+
+function changerStatutCommande(id, statut) {
+  fetch(API + "/commandes/" + encodeURIComponent(SLUG_CLIENT_ACTUEL) + "/" + encodeURIComponent(id) + "/statut", {
+    method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD },
+    body: JSON.stringify({ statut: statut })
+  }).then(function(){ chargerCommandes(); }).catch(function(){});
 }
 
 function showStatusAd(msg, type) {
