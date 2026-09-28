@@ -210,8 +210,9 @@ textarea{resize:vertical;min-height:70px}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(17,17,17,.1)">
     <div class="lbl">Montant à régler pour activer le site (1 an)</div>
     <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px"></div>
-    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none">💳 Payer sur Revolut</a>
-    <div style="font-size:11px;color:rgba(17,17,17,.45);margin-top:8px">⚠️ Indiquez ce montant exact sur la page Revolut</div>
+    <button id="btn-payer-abonnement" onclick="payerAbonnement()" style="display:inline-block;background:#111;color:#FAFAF7;padding:13px 26px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">💳 Payer par carte et activer</button>
+    <div style="font-size:11px;color:rgba(17,17,17,.5);margin-top:8px">Paiement sécurisé par Stripe. Votre site s'active automatiquement.</div>
+    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;font-size:11px;color:rgba(17,17,17,.45);margin-top:10px;text-decoration:underline">Autre moyen : payer via Revolut</a>
   </div>
 </div>
 
@@ -677,6 +678,46 @@ function enregistrerEspaceClient(){
   });
 }
 
+/* ===== Paiement de l'abonnement (vers Philomène IA) ===== */
+function payerAbonnement(){
+  if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre site.", "err"); return; }
+  var btn = document.getElementById("btn-payer-abonnement");
+  btn.disabled = true; btn.textContent = "Ouverture du paiement...";
+  fetch(API + "/abonnement/checkout/site/" + encodeURIComponent(slugChargeActuel), { method: "POST" })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.ok && d.url) { window.location.href = d.url; return; }
+      showStatus((d && d.error) || "Paiement indisponible.", "err");
+      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
+    })
+    .catch(function(){
+      showStatus("Connexion impossible. Réessayez.", "err");
+      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
+    });
+}
+
+function gererRetourAbonnement(){
+  var p = new URLSearchParams(window.location.search);
+  if (p.get("abonnement") !== "site") return;
+  var projet = p.get("projet") || "";
+  if (p.get("paiement") === "annule") {
+    showStatus("Paiement annulé. Votre site reste en démo, vous pouvez payer quand vous voulez.", "err");
+    return;
+  }
+  showStatus("Vérification du paiement...", "ok");
+  fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || ""))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.paye) {
+        showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est actif jusqu'au " + new Date(d.dateExpiration).toLocaleDateString("fr-FR") + ". Lien : " + LIEN_MOTEUR + "?client=" + projet, "ok");
+      } else {
+        showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, contactez-nous sur WhatsApp.", "err");
+      }
+      window.history.replaceState(null, "", window.location.pathname);
+    })
+    .catch(function(){ showStatus("Vérification impossible. Contactez-nous sur WhatsApp si besoin.", "err"); });
+}
+
 function switchOnglet(nom){
   document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
   document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
@@ -686,6 +727,7 @@ function switchOnglet(nom){
 
 /* ?philomene=1 révèle l'espace admin ; ?modifier=slug pré-remplit ; ?admin=slug ouvre l'espace client */
 var paramsUrl = new URLSearchParams(window.location.search);
+gererRetourAbonnement();
 if (paramsUrl.get("philomene")) {
   document.getElementById("carte-modifier-existant").style.display = "block";
   if (paramsUrl.get("modifier")) document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
