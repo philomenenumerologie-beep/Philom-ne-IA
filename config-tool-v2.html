@@ -27,6 +27,8 @@ input[type=color]{padding:2px;height:38px}
 .modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
 .mod-check{display:flex;align-items:center;gap:8px;background:rgba(17,17,17,.05);border:1.5px solid rgba(17,17,17,.12);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px}
 .mod-check input{width:16px;height:16px;margin:0;flex-shrink:0}
+/* iPhone : on rend aux cases à cocher leur apparence normale (coche visible) */
+input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;width:20px;height:20px;padding:0;margin:0;flex-shrink:0;accent-color:#1e8449;background:none;border:none}
 .mod-check.active{border-color:#6BCB77;background:rgba(107,203,119,.08)}
 .item-row{display:grid;grid-template-columns:1fr 1fr 0.7fr auto;gap:6px;margin-bottom:8px;align-items:center}
 .del-btn{background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);color:#c0392b;border-radius:8px;font-size:14px;cursor:pointer;padding:8px}
@@ -207,7 +209,7 @@ input[type=color]{padding:2px;height:38px}
 <div class="card">
   <h2>5. Modules à activer</h2>
 
-  <label class="mod-check" id="mod-check-chat" style="margin-bottom:8px">
+  <label class="mod-check active" id="mod-check-chat" style="margin-bottom:8px">
     <input type="checkbox" id="cf-chat-actif" checked onchange="this.parentElement.classList.toggle('active', this.checked); recalculerPrix();"/>
     💬 Assistant IA (chat conversationnel)
   </label>
@@ -243,6 +245,8 @@ input[type=color]{padding:2px;height:38px}
 
   <div class="subsection" id="sub-catalogue">
     <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🛍️ Catalogue</h3>
+    <label class="lbl">Nom de l'onglet</label>
+    <input id="cf-catalogue-onglet" placeholder="Ex: Menu, Carte, Boutique, Catalogue"/>
     <label class="lbl">Titre de la page</label>
     <input id="cf-catalogue-titre" placeholder="Ex: Notre carte"/>
     <label class="lbl">Sous-titre</label>
@@ -262,6 +266,11 @@ input[type=color]{padding:2px;height:38px}
   <div class="subsection" id="sub-planning">
     <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🗓️ Planning</h3>
     <div id="planning-jours"></div>
+  </div>
+
+  <div class="subsection" id="sub-paiement">
+    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">💳 Paiement en ligne</h3>
+    <div class="hint" style="margin:0">Vos clients paient leur panier par carte, Apple Pay ou Google Pay. L'argent arrive directement sur votre compte. Si le client choisit « Livraison », son adresse est demandée au paiement.<br/><br/>👉 Après l'enregistrement : onglet « Modifier mon appli » → « Connecter mon compte Stripe » (10 minutes, avec votre pièce d'identité et votre RIB).</div>
   </div>
 
   <div class="subsection" id="sub-reservation">
@@ -554,6 +563,7 @@ var SECTEURS = {
       {label:"Réserver", message:"Je voudrais réserver une table"}
     ],
     modules: ["catalogue","tarifs"],
+    catalogueOnglet: "Carte",
     catalogueTitre: "Notre carte", catalogueSousTitre: "Préparé avec des produits de saison",
     catalogueModes: ["Sur place","À emporter"],
     tarifs: [{nom:"Menu du jour", description:"Entrée + plat ou plat + dessert", prix:"14,50€"}]
@@ -568,8 +578,10 @@ var SECTEURS = {
       {label:"Délai", message:"Combien de temps pour une commande ?"},
       {label:"Allergènes", message:"Vous avez des options sans gluten ?"}
     ],
-    modules: ["catalogue","tarifs"],
-    catalogueTitre: "Nos pizzas", catalogueSousTitre: "Commandez en Click & Collect",
+    modules: ["catalogue","paiement"],
+    chat: false,
+    catalogueOnglet: "Menu",
+    catalogueTitre: "Nos pizzas", catalogueSousTitre: "Commandez et payez en ligne",
     catalogueModes: ["Sur place","À emporter","Livraison"],
     tarifs: [{nom:"Pizza Margherita", description:"Base tomate, mozzarella", prix:"9€"},{nom:"Pizza Regina", description:"Jambon, champignons", prix:"11€"}]
   },
@@ -713,9 +725,11 @@ appliquerPalette(PALETTES[3]);
 
 var MODULES_DISPO = {
   tarifs: "💰 Tarifs", devis: "📋 Devis IA", catalogue: "🛍️ Catalogue",
-  galerie: "🖼️ Galerie avant/après", planning: "🗓️ Planning", reservation: "📅 Réservation"
+  galerie: "🖼️ Galerie avant/après", planning: "🗓️ Planning", reservation: "📅 Réservation",
+  paiement: "💳 Paiement en ligne"
 };
-var PRIX_MODULES = { chat: 150, tarifs: 0, devis: 120, catalogue: 150, galerie: 80, planning: 100, reservation: 90 };
+/* ⚠️ Si tu changes un prix ici, change-le aussi dans server.js (PRIX_APPLI) */
+var PRIX_MODULES = { chat: 150, tarifs: 0, devis: 120, catalogue: 150, galerie: 80, planning: 100, reservation: 90, paiement: 0 };
 var PRIX_BASE = 190; // socle : appli + hébergement + nom de domaine + 1 an
 
 var modulesGrid = document.getElementById("modules-grid");
@@ -724,6 +738,19 @@ Object.keys(MODULES_DISPO).forEach(function(key){
   label.className = "mod-check";
   label.innerHTML = '<input type="checkbox" value="' + key + '" onchange="toggleSubsection(\'' + key + '\', this.checked); this.parentElement.classList.toggle(\'active\', this.checked); recalculerPrix();"/>' + MODULES_DISPO[key];
   modulesGrid.appendChild(label);
+});
+
+/* Le paiement en ligne passe par le panier : il a besoin du Catalogue */
+document.getElementById("modules-grid").addEventListener("change", function(e){
+  var cb = e.target;
+  if (cb.value === "paiement" && cb.checked) {
+    var cat = document.querySelector('#modules-grid input[value="catalogue"]');
+    if (cat && !cat.checked) { cat.checked = true; cat.parentElement.classList.add("active"); toggleSubsection("catalogue", true); recalculerPrix(); }
+  }
+  if (cb.value === "catalogue" && !cb.checked) {
+    var pay = document.querySelector('#modules-grid input[value="paiement"]');
+    if (pay && pay.checked) { pay.checked = false; pay.parentElement.classList.remove("active"); toggleSubsection("paiement", false); recalculerPrix(); }
+  }
 });
 
 function toggleSubsection(mod, show) {
@@ -766,8 +793,9 @@ secteurSelect.addEventListener("change", function(){
     cb.parentElement.classList.toggle("active", actif);
     toggleSubsection(cb.value, actif);
   });
-  document.getElementById("cf-chat-actif").checked = true;
-  document.getElementById("mod-check-chat").classList.add("active");
+  var chatPrevu = s.chat !== false;
+  document.getElementById("cf-chat-actif").checked = chatPrevu;
+  document.getElementById("mod-check-chat").classList.toggle("active", chatPrevu);
   recalculerPrix();
 
   document.getElementById("cf-tarifs-soustitre").value = "Prix indicatifs";
@@ -779,6 +807,7 @@ secteurSelect.addEventListener("change", function(){
   document.getElementById("cf-devis-surface-placeholder").value = s.devisSurfacePlaceholder || "";
   document.getElementById("cf-devis-prompt").value = s.devisPrompt || "";
 
+  document.getElementById("cf-catalogue-onglet").value = s.catalogueOnglet || "Catalogue";
   document.getElementById("cf-catalogue-titre").value = s.catalogueTitre || "";
   document.getElementById("cf-catalogue-soustitre").value = s.catalogueSousTitre || "";
   document.getElementById("catalogue-list").innerHTML = "";
@@ -1054,6 +1083,7 @@ function enregistrerInterne(slug) {
     devisSurfaceLabel: document.getElementById("cf-devis-surface-label").value.trim(),
     devisSurfacePlaceholder: document.getElementById("cf-devis-surface-placeholder").value.trim(),
     devisPrompt: document.getElementById("cf-devis-prompt").value.trim(),
+    catalogueOnglet: document.getElementById("cf-catalogue-onglet").value.trim(),
     catalogueTitre: document.getElementById("cf-catalogue-titre").value.trim(),
     catalogueSousTitre: document.getElementById("cf-catalogue-soustitre").value.trim(),
     catalogueModes: catalogueModesActuel,
@@ -1259,6 +1289,7 @@ function remplirFormulaireDepuisConfig(cfg, slug) {
   document.getElementById("cf-devis-surface-placeholder").value = cfg.devisSurfacePlaceholder || "";
   document.getElementById("cf-devis-prompt").value = cfg.devisPrompt || "";
 
+  document.getElementById("cf-catalogue-onglet").value = cfg.catalogueOnglet || "Catalogue";
   document.getElementById("cf-catalogue-titre").value = cfg.catalogueTitre || "";
   document.getElementById("cf-catalogue-soustitre").value = cfg.catalogueSousTitre || "";
   catalogueModesActuel = cfg.catalogueModes || [];
@@ -1413,9 +1444,9 @@ var timerCommandes = null;
 var idsCommandesConnus = null;
 
 function initPaiementEnLigne(cfg) {
-  var avecCatalogue = (cfg.modulesActifs || []).indexOf("catalogue") >= 0;
-  document.getElementById("ad-bloc-paiement").style.display = avecCatalogue ? "block" : "none";
-  if (avecCatalogue) majStatutStripe();
+  var avecPaiement = (cfg.modulesActifs || []).indexOf("paiement") >= 0;
+  document.getElementById("ad-bloc-paiement").style.display = avecPaiement ? "block" : "none";
+  if (avecPaiement) majStatutStripe();
 }
 
 function majStatutStripe() {
