@@ -349,8 +349,17 @@ function appliquerConfig(cfg) {
   if (cfg.valide === false) {
     document.getElementById("demo-watermark").classList.add("show");
   } else if (cfg.valide === true && cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration)) {
-    document.getElementById("demo-watermark").classList.add("show");
-    document.querySelectorAll(".demo-stripe").forEach(function(s){ s.textContent = "ABONNEMENT EXPIRÉ — CONTACTEZ PHILOMÈNE IA"; });
+    // Abonnement mensuel : on demande d'abord à Stripe si le mois suivant est payé
+    fetch(API + "/abonnement/rafraichir/appli/" + getSlugFromUrl(), { method: "POST" })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.dateExpiration && new Date(d.dateExpiration) > new Date()) return;
+        document.getElementById("demo-watermark").classList.add("show");
+        document.querySelectorAll(".demo-stripe").forEach(function(s){ s.textContent = "ABONNEMENT EXPIRÉ — CONTACTEZ PHILOMÈNE IA"; });
+      })
+      .catch(function(){
+        document.getElementById("demo-watermark").classList.add("show");
+      });
   }
 
   verifierPaiementCarte(cfg);
