@@ -444,6 +444,7 @@ details.avance[open] summary{margin-bottom:12px}
         <button class="btn btn-encre" type="button" onclick="copierLien()">Copier le lien</button>
         <a class="btn btn-encre" id="lien-ouvrir" target="_blank" rel="noopener" style="background:#fff;color:var(--encre);box-shadow:inset 0 0 0 2px var(--encre)">Voir mon appli</a>
       </div>
+      <button class="btn-lien" type="button" onclick="allerAuCompte(slugChargeActuel || new URLSearchParams(location.search).get('projet') || (function(){try{return localStorage.getItem(CLE_DERNIER)}catch(e){return ''}})())">Modifier mon appli plus tard : Mon compte</button>
       <img id="qr-code" alt="QR code de votre appli"/>
       <div style="width:100%;border-top:1px solid var(--ligne);padding-top:14px;display:flex;flex-direction:column;gap:10px;align-items:center">
         <b id="montant-a-payer" style="font:800 28px 'Bricolage Grotesque',sans-serif"></b>
@@ -1340,6 +1341,7 @@ function enregistrerInterne(slug) {
     if (!d || !d.ok) { showStatus((d && d.error) || "L'enregistrement a échoué.", "err"); return; }
     if (!ADMIN_TOKEN && config.adminPassword) motDePasseCreation = config.adminPassword;
     slugChargeActuel = slug;
+    if (!ADMIN_TOKEN) memoriserSlug(slug);
     var lien = window.location.origin + "/moteur-v2.html?client=" + slug;
     showStatus("✅ « " + nom + " » est enregistrée.", "ok");
     $("lien-final").value = lien;
@@ -1361,6 +1363,10 @@ function copierLien() {
     .then(function(){ showStatus("Lien copié.", "ok"); }).catch(function(){ document.execCommand("copy"); });
 }
 
+var CLE_DERNIER = 'philoDerniereAppli';
+/* Se souvenir du dernier site / appli créé sur ce téléphone, pour « Mon compte » */
+function memoriserSlug(slug) { try { localStorage.setItem(CLE_DERNIER, slug); } catch(e){} }
+function allerAuCompte(slug) { switchOnglet("admin"); if (slug) $("ad-slug").value = slug; var p = $("ad-password"); if (p) p.focus(); }
 /* ===================== PAIEMENT DE L'ABONNEMENT ===================== */
 function payerAbonnement() {
   if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre appli.", "err"); return; }
@@ -1382,7 +1388,14 @@ function gererRetourAbonnement() {
   fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
     if (d && d.paye) {
       var lien = window.location.origin + "/moteur-v2.html?client=" + encodeURIComponent(projet);
-      showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est active. Votre lien : " + lien, "ok");
+      showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est active.", "ok");
+      memoriserSlug(projet); slugChargeActuel = projet;
+      afficherPas("recap");
+      $("lien-final").value = lien; $("lien-ouvrir").href = lien;
+      $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
+      ["montant-a-payer", "btn-payer-abonnement", "lien-revolut-resultat"].forEach(function(id){ $(id).style.display = "none"; });
+      montrer("resultat-lien", true);
+      $("btn-suivant").textContent = "Voir mon appli"; $("btn-suivant").onclick = function(){ window.open(lien, "_blank"); };
     } else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
     $("status").scrollIntoView();
     window.history.replaceState(null, "", window.location.pathname);
@@ -1734,6 +1747,7 @@ if (paramsUrl.get("philomene")) {
   var memo = null; try { memo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
   if (memo) deverrouillerAdminGeneral(memo);
 }
+try { var dernier = localStorage.getItem(CLE_DERNIER); if (dernier) $("ad-slug").value = dernier; } catch(e){}
 if (paramsUrl.has("admin")) {
   switchOnglet("admin");
   var a = paramsUrl.get("admin"); if (a && a !== "1") $("ad-slug").value = a;
