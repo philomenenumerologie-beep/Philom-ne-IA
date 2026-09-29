@@ -142,7 +142,8 @@ main,body{background:#FFFFFF!important}
 
 /* ---------- Formules ---------- */
 .bascule{display:inline-flex;padding:5px;gap:4px;background:var(--ciel-pale);border-radius:999px;margin-bottom:28px}
-.bascule button{min-height:44px;padding:0 18px;border-radius:999px;border:none;background:transparent;color:var(--gris);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+#formules .bascule{background:#fff;box-shadow:inset 0 0 0 2px #E4E6F5}
+.bascule button{white-space:nowrap;min-height:44px;padding:0 18px;border-radius:999px;border:none;background:transparent;color:var(--gris);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
 .bascule button[aria-pressed="true"]{background:var(--encre);color:#fff}
 .formules{display:grid;gap:16px;align-items:stretch}
 .formule{border-radius:var(--rayon-l);padding:28px 24px;display:flex;flex-direction:column;gap:14px;background:#fff;box-shadow:inset 0 0 0 2px #E4E6F5}
@@ -161,7 +162,7 @@ main,body{background:#FFFFFF!important}
 .formule .btn{width:100%;margin-top:8px}
 .formule.favorite .btn{background:var(--soleil);color:#3B2A00}
 .bon-a-savoir{margin-top:22px;color:var(--gris);font-size:15px;max-width:70ch}
-@media(min-width:900px){.formules{grid-template-columns:repeat(3,1fr)}.formule.favorite{transform:translateY(-10px)}}
+@media(min-width:900px){.formules{grid-template-columns:repeat(3,1fr)}#formules-site .formule.favorite{transform:none}.formule.favorite{transform:translateY(-10px)}}
 
 /* ---------- Réalisations ---------- */
 .realisations{background:var(--ciel-pale)}
@@ -394,11 +395,15 @@ footer b{color:#fff}
     <div class="conteneur">
       <h2 class="titre-section" id="titre-formules">Un prix clair, tout compris.</h2>
       <p class="intro-section">Création, hébergement, mises à jour et support WhatsApp inclus dans chaque formule.</p>
-      <div class="bascule" role="group" aria-label="Période de paiement">
+      <div class="bascule" id="bascule-format" role="group" aria-label="Appli ou site internet" style="margin-right:8px">
+        <button type="button" data-format="appli" aria-pressed="true">Une appli</button>
+        <button type="button" data-format="site" aria-pressed="false">Un site internet</button>
+      </div>
+      <div class="bascule" id="bascule-periode" role="group" aria-label="Période de paiement">
         <button type="button" data-periode="mois" aria-pressed="true">Au mois</button>
         <button type="button" data-periode="an" aria-pressed="false">À l'année, 2 mois offerts</button>
       </div>
-      <div class="formules">
+      <div class="formules" id="formules-appli">
         <div class="formule">
           <h3>Essentiel</h3>
           <div class="pour">Coiffeurs, artisans, coachs</div>
@@ -410,7 +415,7 @@ footer b{color:#fff}
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Réservation ou planning</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Contact WhatsApp en un geste</li>
           </ul>
-          <a class="btn btn-contour" href="config-tool-v2.html">Choisir Essentiel</a>
+          <a class="btn btn-contour" href="config-tool-v2.html?formule=essentiel" data-lien-formule="essentiel">Choisir Essentiel</a>
         </div>
         <div class="formule favorite">
           <div class="formule-badge">La plus choisie</div>
@@ -425,7 +430,7 @@ footer b{color:#fff}
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Écran Commandes en temps réel</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Livraison avec adresse du client</li>
           </ul>
-          <a class="btn" href="config-tool-v2.html">Choisir Commerce</a>
+          <a class="btn" href="config-tool-v2.html?formule=commerce" data-lien-formule="commerce">Choisir Commerce</a>
         </div>
         <div class="formule">
           <h3>Premium IA</h3>
@@ -438,7 +443,49 @@ footer b{color:#fff}
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Devis automatiques par IA</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Réponses adaptées à votre métier</li>
           </ul>
-          <a class="btn btn-contour" href="config-tool-v2.html">Choisir Premium IA</a>
+          <a class="btn btn-contour" href="config-tool-v2.html?formule=premium" data-lien-formule="premium">Choisir Premium IA</a>
+        </div>
+      </div>
+      <div class="formules" id="formules-site" style="display:none">
+        <div class="formule">
+          <h3>Site Essentiel</h3>
+          <div class="pour">1 page, pour être trouvé sur Google</div>
+          <div class="prix"><b data-mois="19,90 €" data-an="199 €">19,90 €</b><span data-mois="/ mois" data-an="/ an">/ mois</span></div>
+          <div class="note-prix" data-mois="Engagement 12 mois" data-an="Soit 2 mois offerts">Engagement 12 mois</div>
+          <ul><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Une belle page d'accueil</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Coordonnées et bouton WhatsApp</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>5 styles au choix</li></ul>
+          <a class="btn btn-contour" href="config-site.html?formule=site_essentiel" data-lien-site="site_essentiel">Choisir Site Essentiel</a>
+        </div>
+        <div class="formule favorite">
+          <div class="formule-badge">La plus choisie</div><h3>Site Pro</h3>
+          <div class="pour">3 pages, artisans et indépendants</div>
+          <div class="prix"><b data-mois="24,90 €" data-an="249 €">24,90 €</b><span data-mois="/ mois" data-an="/ an">/ mois</span></div>
+          <div class="note-prix" data-mois="Engagement 12 mois" data-an="Soit 2 mois offerts">Engagement 12 mois</div>
+          <ul><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Accueil et contact</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>2 pages au choix : Prestations, Galerie ou À propos</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Modifiable depuis votre compte</li></ul>
+          <a class="btn" href="config-site.html?formule=site_pro" data-lien-site="site_pro">Choisir Site Pro</a>
+        </div>
+        <div class="formule">
+          <h3>Site Complet</h3>
+          <div class="pour">5 pages, pour tout présenter</div>
+          <div class="prix"><b data-mois="29,90 €" data-an="299 €">29,90 €</b><span data-mois="/ mois" data-an="/ an">/ mois</span></div>
+          <div class="note-prix" data-mois="Engagement 12 mois" data-an="Soit 2 mois offerts">Engagement 12 mois</div>
+          <ul><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Accueil, Prestations, Galerie, À propos, Contact</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Photos et textes modifiables</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Le plus complet des sites vitrines</li></ul>
+          <a class="btn btn-contour" href="config-site.html?formule=site_complet" data-lien-site="site_complet">Choisir Site Complet</a>
+        </div>
+        <div class="formule">
+          <div class="formule-badge" style="background:#E4E6F5;color:#1D1B4C">Bientôt disponible</div><h3>Site Boutique</h3>
+          <div class="pour">Vendre vos produits en ligne</div>
+          <div class="prix"><b data-mois="34,90 €" data-an="349 €">34,90 €</b><span data-mois="/ mois" data-an="/ an">/ mois</span></div>
+          <div class="note-prix" data-mois="Engagement 12 mois" data-an="Soit 2 mois offerts">Engagement 12 mois</div>
+          <ul><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tout Site Complet</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Panier et paiement par carte</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Commandes et livraison</li></ul>
+          <a class="btn btn-contour" id="wa-site_boutique" target="_blank" rel="noopener">Me prévenir</a>
+        </div>
+        <div class="formule">
+          <div class="formule-badge" style="background:#E4E6F5;color:#1D1B4C">Bientôt disponible</div><h3>Site Boutique + IA</h3>
+          <div class="pour">Le maximum</div>
+          <div class="prix"><b data-mois="49,90 €" data-an="499 €">49,90 €</b><span data-mois="/ mois" data-an="/ an">/ mois</span></div>
+          <div class="note-prix" data-mois="Engagement 12 mois" data-an="Soit 2 mois offerts">Engagement 12 mois</div>
+          <ul><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tout Site Boutique</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Assistant IA 24 h/24 sur le site</li><li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12A06B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Devis automatiques</li></ul>
+          <a class="btn btn-contour" id="wa-site_boutique_ia" target="_blank" rel="noopener">Me prévenir</a>
         </div>
       </div>
       <p class="bon-a-savoir">Sans commission sur vos ventes : seuls les frais de carte bancaire de Stripe s'appliquent. Au mois, engagement de 12 mois prélevé automatiquement. À l'année, 10 mois payés sur 12.</p>
@@ -512,6 +559,8 @@ footer b{color:#fff}
     <div style="display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:8px">
       <a href="config-tool-v2.html">Créer mon appli</a>
       <a href="config-site.html">Créer mon site</a>
+      <a href="config-tool-v2.html?admin=1">Modifier mon appli</a>
+      <a href="config-site.html?admin=1">Modifier mon site</a>
     </div>
   </div>
 </footer>
@@ -599,16 +648,37 @@ document.querySelectorAll(".metier").forEach(function(m){
 afficherExemple("pizzeria");
 
 /* ---------- Formules : au mois / à l'année ---------- */
-document.querySelectorAll(".bascule button").forEach(function(btn){
+document.querySelectorAll("#bascule-periode button").forEach(function(btn){
   btn.addEventListener("click", function(){
     var p = btn.dataset.periode;
-    document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+    document.querySelectorAll("#bascule-periode button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
     document.querySelectorAll("[data-mois]").forEach(function(el){ el.textContent = el.getAttribute("data-" + p); });
+    document.querySelectorAll("[data-lien-formule]").forEach(function(a){ a.href = "config-tool-v2.html?formule=" + a.dataset.lienFormule + (p === "an" ? "&periode=an" : ""); });
   });
 });
 
+/* ---------- Formules : appli / site ---------- */
+document.querySelectorAll("#bascule-format button").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var site = btn.dataset.format === "site";
+    document.querySelectorAll("#bascule-format button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+    document.getElementById("formules-appli").style.display = site ? "none" : "";
+    document.getElementById("formules-site").style.display = site ? "" : "none";
+  });
+});
+document.querySelectorAll("#bascule-periode button").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var an = btn.dataset.periode === "an";
+    document.querySelectorAll("[data-lien-site]").forEach(function(a){ a.href = "config-site.html?formule=" + a.dataset.lienSite + (an ? "&periode=an" : ""); });
+  });
+});
+["site_boutique","site_boutique_ia"].forEach(function(c){
+  var a = document.getElementById("wa-" + c);
+  if (a) a.href = lienWa("Bonjour ! Prévenez-moi quand la formule " + (c === "site_boutique" ? "Site Boutique" : "Site Boutique + IA") + " sera disponible.");
+});
+
 /* ---------- Philomène, l'assistante ---------- */
-var SYS = "Tu es Philomène, l'assistante de Philomène IA, basée à Tourcoing. Tu aides les commerçants et artisans (Tourcoing, Roubaix, Lille, Mouscron, Flandres) à choisir leur appli. LANGUE : réponds dans la langue du message (français, néerlandais ou anglais). FORMAT : 3 ou 4 phrases maximum, texte simple, jamais de ** ni de listes. FORMULES : Essentiel 24,90 euros par mois ou 249 euros par an (appli ou site vitrine, tarifs, galerie, réservation ou planning, contact WhatsApp). Commerce 34,90 euros par mois ou 349 euros par an (tout Essentiel plus menu ou catalogue avec panier, paiement en ligne, écran commandes, livraison avec adresse). Premium IA 49,90 euros par mois ou 499 euros par an (tout Commerce plus assistant IA 24h/24 et devis automatiques). Au mois : engagement de 12 mois. À l'année : 2 mois offerts. Création, hébergement, mises à jour et support WhatsApp compris. Aucune commission sur les ventes, seuls les frais de carte Stripe. Le client peut créer son appli lui-même en ligne en une quinzaine de minutes, ou demander à Philomène IA de la faire via WhatsApp. Il peut modifier son contenu et les consignes de son assistant quand il veut. Clubs de football : produit Coach IA à part, de 50 à 390 euros par an selon le nombre de coachs. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
+var SYS = "Tu es Philomène, l'assistante de Philomène IA, basée à Tourcoing. Tu aides les commerçants et artisans (Tourcoing, Roubaix, Lille, Mouscron, Flandres) à choisir leur appli. LANGUE : réponds dans la langue du message (français, néerlandais ou anglais). FORMAT : 3 ou 4 phrases maximum, texte simple, jamais de ** ni de listes. FORMULES : Essentiel 24,90 euros par mois ou 249 euros par an (appli ou site vitrine, tarifs, galerie, réservation ou planning, contact WhatsApp). Commerce 34,90 euros par mois ou 349 euros par an (tout Essentiel plus menu ou catalogue avec panier, paiement en ligne, écran commandes, livraison avec adresse). Premium IA 49,90 euros par mois ou 499 euros par an (tout Commerce plus assistant IA 24h/24 et devis automatiques). Pour un site internet classique : Site Essentiel 1 page 19,90 euros par mois ou 199 euros par an, Site Pro 3 pages 24,90 euros par mois ou 249 euros par an, Site Complet 5 pages 29,90 euros par mois ou 299 euros par an ; Site Boutique et Site Boutique + IA arrivent bientôt. Au mois : engagement de 12 mois. À l'année : 2 mois offerts. Création, hébergement, mises à jour et support WhatsApp compris. Aucune commission sur les ventes, seuls les frais de carte Stripe. Le client peut créer son appli lui-même en ligne en une quinzaine de minutes, ou demander à Philomène IA de la faire via WhatsApp. Il peut modifier son contenu et les consignes de son assistant quand il veut. Clubs de football : produit Coach IA à part, de 50 à 390 euros par an selon le nombre de coachs. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
 var chatOuvert = false, chatOccupe = false, chatAccueil = false;
 var panneau = document.getElementById("chat-panneau");
 var boutonChat = document.getElementById("chat-bouton");
