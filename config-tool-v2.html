@@ -253,6 +253,8 @@ details.avance[open] summary{margin-bottom:12px}
         <label class="page-ligne" style="background:#fff"><input type="checkbox" id="cf-valide"/><div><b>Paiement reçu</b><span>Retire le bandeau « démo »</span></div></label>
         <div id="info-expiration" style="font-size:14px;color:var(--gris);margin:8px 0"></div>
         <button class="btn-lien" type="button" onclick="confirmerRenouvellement()">Confirmer un paiement (1 an de plus)</button>
+        <div class="champ" style="margin-top:14px"><label for="cf-domaine">Nom de domaine du client</label><input id="cf-domaine" type="text" placeholder="pizzaflo.fr"/><small>À remplir une fois le domaine acheté et ajouté dans Render.</small></div>
+        <button class="btn btn-encre" type="button" onclick="enregistrerDomaine()">Enregistrer le domaine</button>
       </div>
     </div>
   </div>
@@ -267,7 +269,7 @@ details.avance[open] summary{margin-bottom:12px}
   <!-- 2. Format + formule -->
   <section class="etape pas" data-pas="formule" aria-labelledby="t2">
     <div class="etape-tete"><div class="etape-num" aria-hidden="true">2</div><h2 id="t2">Votre formule</h2></div>
-    <p class="etape-aide">Création, hébergement, mises à jour et support WhatsApp compris. 0 % de commission sur vos ventes.</p>
+    <p class="etape-aide">Création, nom de domaine offert, hébergement, mises à jour et support WhatsApp compris. 0 % de commission sur vos ventes.</p>
     <div class="bascule" role="group" aria-label="Paiement">
       <button type="button" data-periode="mois" aria-pressed="true">Au mois</button>
       <button type="button" data-periode="an" aria-pressed="false">À l'année, 2 mois offerts</button>
@@ -301,6 +303,7 @@ details.avance[open] summary{margin-bottom:12px}
       <div class="champ"><label for="cf-whatsapp">Votre WhatsApp</label><input id="cf-whatsapp" type="tel" placeholder="33612345678"/></div>
     </div>
     <div class="champ"><label for="cf-email">Votre email</label><input id="cf-email" type="email" placeholder="contact@exemple.fr"/><small>Pour vous envoyer les infos importantes.</small></div>
+    <div class="champ"><label for="cf-domaine-souhaite">Nom de domaine souhaité (offert)</label><input id="cf-domaine-souhaite" type="text" inputmode="url" autocapitalize="off" placeholder="Ex : pizzaflo.fr" oninput="verifierDomaine()"/><small id="domaine-info">Facultatif. On vérifie qu'il est libre et on s'en occupe.</small></div>
     <div class="champ"><label for="cf-admin-password">Mot de passe de votre espace</label><input id="cf-admin-password" type="password" placeholder="Pour modifier votre appli vous-même"/></div>
   </section>
 
@@ -1291,6 +1294,7 @@ function enregistrerInterne(slug) {
   var qr = lireLignes("qr-list", 2).map(function(v){ return { label: v[0], message: v[1] }; });
   var config = {
     secteur: SECTEUR, formule: FORMULE, periode: PERIODE,
+    domaineSouhaite: $("cf-domaine-souhaite").value.trim(),
     nom: nom, sousTitre: $("cf-soustitre").value.trim(),
     icone: $("cf-icone").value.trim() || "✨", logoImage: logoBase64 || "",
     telephoneWhatsApp: $("cf-whatsapp").value.replace(/[^0-9]/g, ""),
@@ -1411,6 +1415,8 @@ function chargerConfigExistante() {
     slugChargeActuel = slug;
     $("cf-valide").checked = d.value.valide === true;
     montrer("bloc-validation", true);
+    $("cf-domaine").value = d.value.domaine || "";
+    $("cf-domaine").placeholder = d.value.domaineSouhaite ? "Souhaité : " + d.value.domaineSouhaite : "pizzaflo.fr";
     var info = $("info-expiration");
     if (d.value.dateExpiration) {
       var dExp = new Date(d.value.dateExpiration), exp = new Date() > dExp;
@@ -1432,6 +1438,18 @@ function confirmerRenouvellement() {
     });
   }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
 }
+function enregistrerDomaine() {
+  if (!slugChargeActuel || !ADMIN_TOKEN) { showStatusCharger("Chargez d'abord un client.", "err"); return; }
+  fetch(API + "/memory/config_" + slugChargeActuel, { headers: entetes() }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.value) return;
+    var cfg = d.value; cfg.domaine = $("cf-domaine").value.trim();
+    return fetch(API + "/memory/config_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(res){
+      if (res && res.ok) showStatusCharger(cfg.domaine ? "✅ Domaine enregistré : https://" + cfg.domaine.replace(/^https?:\/\//, "").replace(/^www\./, "") : "Domaine retiré.", "ok");
+      else showStatusCharger((res && res.error) || "Échec.", "err");
+    });
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
+}
+
 function remplirDepuisConfig(cfg, slug) {
   choisirMetier(cfg.secteur || "autre", true);
   FORMULE = FORMULES[cfg.formule] ? cfg.formule : (cfg.chatActif !== false ? "premium" : ((cfg.modulesActifs || []).indexOf("catalogue") >= 0 ? "commerce" : "essentiel"));
@@ -1442,6 +1460,7 @@ function remplirDepuisConfig(cfg, slug) {
   dessinerPages(actives);
   $("cf-slug").value = slug; majApercuLien();
   $("cf-nom").value = cfg.nom || ""; $("cf-soustitre").value = cfg.sousTitre || ""; $("cf-icone").value = cfg.icone || "";
+  $("cf-domaine-souhaite").value = cfg.domaineSouhaite || "";
   $("cf-whatsapp").value = cfg.telephoneWhatsApp || ""; $("cf-email").value = cfg.email || "";
   $("cf-admin-password").value = ""; $("cf-admin-password").placeholder = "Laisser vide pour garder le mot de passe actuel";
   logoBase64 = cfg.logoImage || "";
@@ -1601,6 +1620,26 @@ function changerStatutCommande(id, statut) {
     .then(function(){ chargerCommandes(); }).catch(function(){});
 }
 
+
+/* Nom de domaine souhaité : libre ou déjà pris ? */
+var timerDomaine = null;
+function verifierDomaine() {
+  var champ = $("cf-domaine-souhaite"), info = $("domaine-info");
+  var nom = champ.value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
+  clearTimeout(timerDomaine);
+  if (!nom) { info.textContent = "Facultatif. On vérifie qu'il est libre et on s'en occupe."; info.style.color = ""; return; }
+  if (nom.indexOf(".") < 0) { info.textContent = "Ajoutez l'extension : .fr, .com, .be…"; info.style.color = ""; return; }
+  info.textContent = "Vérification…"; info.style.color = "";
+  timerDomaine = setTimeout(function(){
+    fetch(API + "/domaine/dispo?nom=" + encodeURIComponent(nom)).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.ok) { info.textContent = "Ce nom n'est pas valide. Exemple : mon-commerce.fr"; info.style.color = "#B42318"; }
+      else if (d.libre === true) { info.textContent = "✅ " + d.nom + " est libre, il vous est offert."; info.style.color = "#0B6B47"; }
+      else if (d.libre === false) { info.textContent = "❌ " + d.nom + " est déjà pris. Essayez une variante, par exemple avec un tiret ou votre ville."; info.style.color = "#B42318"; }
+      else { info.textContent = "Impossible de vérifier pour l'instant. On le vérifiera pour vous."; info.style.color = ""; }
+    }).catch(function(){ info.textContent = "Impossible de vérifier pour l'instant. On le vérifiera pour vous."; });
+  }, 700);
+}
+
 /* ===================== PARCOURS PAS À PAS ===================== */
 var NOMS_PAS = { metier:"Votre métier", formule:"Votre formule", commerce:"Votre commerce", couleurs:"Vos couleurs", contenu:"Votre contenu", ia:"Ce que l'IA doit savoir", recap:"C'est prêt" };
 var PAS_ACTUEL = "metier";
@@ -1684,7 +1723,7 @@ var FORMULE_IMPOSEE = FORMULES[paramsUrl.get("formule")] ? paramsUrl.get("formul
 
 <script>
 /* ===================== AIDE (assistant du créateur) ===================== */
-var AIDE_PROMPT = "Tu es l'assistante du créateur d'appli de Philomène IA. Tu aides un commerçant ou un artisan à remplir le formulaire. Réponds en français, simplement, sans markdown, en 2 à 4 phrases. Étapes : 1) choisir son métier, tout se pré-remplit ; 2) choisir la formule (pour un site internet, bouton Créer mon site en haut) : Essentiel 24,90 € par mois ou 249 € par an, Commerce 34,90 € par mois ou 349 € par an (menu avec panier et paiement en ligne), Premium IA 49,90 € par mois ou 499 € par an (assistant IA et devis automatiques) ; au mois engagement 12 mois, à l'année 2 mois offerts ; 3) nom, logo, WhatsApp, mot de passe, l'adresse de l'appli se remplit toute seule ; 4) couleurs avec aperçu ; 5) pages à afficher et leur contenu ; 6) ce que l'IA doit savoir : horaires, zone, spécialités, taux horaire, frais de déplacement, minimum, ce qu'elle ne doit jamais promettre ; 7) enregistrer puis payer par carte, l'appli s'active toute seule. Tout se modifie ensuite dans Mon compte, en haut à droite. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
+var AIDE_PROMPT = "Tu es l'assistante du créateur d'appli de Philomène IA. Tu aides un commerçant ou un artisan à remplir le formulaire. Réponds en français, simplement, sans markdown, en 2 à 4 phrases. Étapes : 1) choisir son métier, tout se pré-remplit ; 2) choisir la formule (pour un site internet, bouton Créer mon site en haut) : Essentiel 24,90 € par mois ou 249 € par an, Commerce 34,90 € par mois ou 349 € par an (menu avec panier et paiement en ligne), Premium IA 49,90 € par mois ou 499 € par an (assistant IA et devis automatiques) ; au mois engagement 12 mois, à l'année 2 mois offerts ; nom de domaine offert dans toutes les formules ; 3) nom, logo, WhatsApp, mot de passe, l'adresse de l'appli se remplit toute seule ; 4) couleurs avec aperçu ; 5) pages à afficher et leur contenu ; 6) ce que l'IA doit savoir : horaires, zone, spécialités, taux horaire, frais de déplacement, minimum, ce qu'elle ne doit jamais promettre ; 7) enregistrer puis payer par carte, l'appli s'active toute seule. Tout se modifie ensuite dans Mon compte, en haut à droite. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
 function ouvrirAideIA() {
   $("aide-panneau").classList.add("ouvert");
   var m = $("aide-msgs");
