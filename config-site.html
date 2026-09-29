@@ -815,10 +815,15 @@ function confirmerPaiement() {
   }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
 }
 
+/* Un vrai nom de domaine : nom + extension (ex : joliefringue.fr) */
+function nettoyerDomaine(v) { return String(v || "").toLowerCase().trim().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, ""); }
+function domaineValide(v) { return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9-]{2,})+$/.test(v); }
 function enregistrerDomaine() {
   if (!slugChargeActuel || !CONFIG_CHARGEE || !ADMIN_TOKEN) { showStatusCharger("Chargez d'abord un site.", "err"); return; }
   var cfg = JSON.parse(JSON.stringify(CONFIG_CHARGEE));
-  cfg.domaine = $("cf-domaine").value.trim();
+  cfg.domaine = nettoyerDomaine($("cf-domaine").value);
+  if (cfg.domaine && !domaineValide(cfg.domaine)) { showStatusCharger("« " + cfg.domaine + " » n'est pas un nom de domaine : il faut l'extension, par exemple " + cfg.domaine.replace(/[^a-z0-9-]/g, "") + ".fr", "err"); return; }
+  $("cf-domaine").value = cfg.domaine;
   fetch(API + "/memory/site_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(d){
     if (!d || !d.ok) { showStatusCharger((d && d.error) || "Échec.", "err"); return; }
     CONFIG_CHARGEE = cfg;
