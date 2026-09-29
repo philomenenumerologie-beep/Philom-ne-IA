@@ -250,7 +250,7 @@ details.avance[open] summary{margin-bottom:12px}
       </div>
       <div class="status" id="status-charger"></div>
       <div id="bloc-validation" class="cache" style="margin-top:14px">
-        <label class="page-ligne" style="background:#fff"><input type="checkbox" id="cf-valide"/><div><b>Paiement reçu</b><span>Retire le bandeau « démo »</span></div></label>
+        <label class="page-ligne" style="background:#fff"><input type="checkbox" id="cf-valide" onchange="basculerValide(this.checked)"/><div><b>Paiement reçu</b><span>Enregistré dès que vous cochez : retire le bandeau « démo »</span></div></label>
         <div id="info-expiration" style="font-size:14px;color:var(--gris);margin:8px 0"></div>
         <button class="btn-lien" type="button" onclick="confirmerRenouvellement()">Confirmer un paiement (1 an de plus)</button>
         <div class="champ" style="margin-top:14px"><label for="cf-domaine">Nom de domaine du client</label><input id="cf-domaine" type="text" placeholder="pizzaflo.fr"/><small>À remplir une fois le domaine acheté et ajouté dans Render.</small></div>
@@ -1438,16 +1438,41 @@ function confirmerRenouvellement() {
     });
   }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
 }
+/* Un vrai nom de domaine : nom + extension (ex : joliefringue.fr) */
+function nettoyerDomaine(v) { return String(v || "").toLowerCase().trim().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, ""); }
+function domaineValide(v) { return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9-]{2,})+$/.test(v); }
 function enregistrerDomaine() {
   if (!slugChargeActuel || !ADMIN_TOKEN) { showStatusCharger("Chargez d'abord un client.", "err"); return; }
   fetch(API + "/memory/config_" + slugChargeActuel, { headers: entetes() }).then(function(r){ return r.json(); }).then(function(d){
     if (!d || !d.value) return;
-    var cfg = d.value; cfg.domaine = $("cf-domaine").value.trim();
+    var cfg = d.value; cfg.domaine = nettoyerDomaine($("cf-domaine").value);
+    if (cfg.domaine && !domaineValide(cfg.domaine)) { showStatusCharger("« " + cfg.domaine + " » n'est pas un nom de domaine : il faut l'extension, par exemple " + cfg.domaine.replace(/[^a-z0-9-]/g, "") + ".fr", "err"); return; }
+    $("cf-domaine").value = cfg.domaine;
     return fetch(API + "/memory/config_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(res){
       if (res && res.ok) showStatusCharger(cfg.domaine ? "✅ Domaine enregistré : https://" + cfg.domaine.replace(/^https?:\/\//, "").replace(/^www\./, "") : "Domaine retiré.", "ok");
       else showStatusCharger((res && res.error) || "Échec.", "err");
     });
   }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
+}
+
+/* Coche / décoche « Paiement reçu » : enregistré immédiatement */
+function basculerValide(coche) {
+  if (!slugChargeActuel || !ADMIN_TOKEN) { showStatusCharger("Chargez d'abord un client.", "err"); $("cf-valide").checked = !coche; return; }
+  showStatusCharger("Enregistrement...", "ok");
+  fetch(API + "/memory/config_" + slugChargeActuel, { headers: entetes() }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.value) return;
+    var cfg = d.value;
+    cfg.valide = coche;
+    if (coche && !(cfg.dateExpiration && new Date(cfg.dateExpiration) > new Date())) {
+      var fin = new Date(); fin.setFullYear(fin.getFullYear() + 1); cfg.dateExpiration = fin.toISOString();
+    }
+    return fetch(API + "/memory/config_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(res){
+      if (!res || !res.ok) { showStatusCharger((res && res.error) || "Échec.", "err"); $("cf-valide").checked = !coche; return; }
+      derniereDateExpiration = cfg.dateExpiration;
+      $("info-expiration").textContent = coche ? "Actif jusqu'au " + new Date(cfg.dateExpiration).toLocaleDateString("fr-FR") : "Repassé en démo.";
+      showStatusCharger(coche ? "✅ Activé : le bandeau démo a disparu." : "Repassé en démo.", "ok");
+    });
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); $("cf-valide").checked = !coche; });
 }
 
 function remplirDepuisConfig(cfg, slug) {
