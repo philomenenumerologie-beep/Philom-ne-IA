@@ -263,6 +263,8 @@ details.avance[open] summary{margin-bottom:12px}
         <div id="statut-actuel" style="font-weight:700;margin-bottom:8px"></div>
         <label class="page-ligne" style="background:#fff"><input type="checkbox" id="chk-paiement-recu"/><div><b>Paiement reçu</b><span>Active le site pour 1 an</span></div></label>
         <button class="btn-lien" type="button" onclick="confirmerPaiement()">Confirmer le paiement</button>
+        <div class="champ" style="margin-top:14px"><label for="cf-domaine">Nom de domaine du client</label><input id="cf-domaine" type="text" placeholder="fontaine-et-fils.fr"/><small>À remplir une fois le domaine acheté et relié à Render.</small></div>
+        <button class="btn btn-encre" type="button" onclick="enregistrerDomaine()">Enregistrer le domaine</button>
       </div>
     </div>
   </div>
@@ -277,7 +279,7 @@ details.avance[open] summary{margin-bottom:12px}
   <!-- 2. Formule -->
   <section class="etape pas" data-pas="formule" aria-labelledby="t2">
     <div class="etape-tete"><div class="etape-num" aria-hidden="true">2</div><h2 id="t2">Votre formule</h2></div>
-    <p class="etape-aide">Selon le nombre de pages. Création, hébergement, mises à jour et support WhatsApp compris.</p>
+    <p class="etape-aide">Selon le nombre de pages. Création, nom de domaine offert, hébergement, mises à jour et support WhatsApp compris.</p>
     <div class="bascule" role="group" aria-label="Paiement">
       <button type="button" data-periode="mois" aria-pressed="true">Au mois</button>
       <button type="button" data-periode="an" aria-pressed="false">À l'année, 2 mois offerts</button>
@@ -301,6 +303,7 @@ details.avance[open] summary{margin-bottom:12px}
       <div class="champ"><label for="cf-whatsapp">WhatsApp</label><input id="cf-whatsapp" type="tel" placeholder="33612345678"/></div>
     </div>
     <div class="champ"><label for="cf-zones">Villes où vous travaillez</label><input id="cf-zones" type="text" placeholder="Tourcoing, Roubaix, Lille"/><small>Séparées par des virgules.</small></div>
+    <div class="champ"><label for="cf-domaine-souhaite">Nom de domaine souhaité (offert)</label><input id="cf-domaine-souhaite" type="text" inputmode="url" autocapitalize="off" placeholder="Ex : fontaine-et-fils.fr" oninput="verifierDomaine()"/><small id="domaine-info">Facultatif. On vérifie qu'il est libre et on s'en occupe.</small></div>
     <div class="champ"><label for="cf-pwd-client">Mot de passe de votre compte</label><input id="cf-pwd-client" type="password" placeholder="Pour modifier votre site vous-même"/></div>
   </section>
 
@@ -423,6 +426,9 @@ var API = "https://philo-backend-by2c.onrender.com";
 var WA = "33617123910";
 var LIEN_REVOLUT = "https://checkout.revolut.com/pay/3e15f5b0-a69e-4322-a00a-12ea7d8b359f";
 var LIEN_MOTEUR = "https://www.philomeneia.com/site-v1.html";
+/* Passe à true quand sites.philomeneia.com est relié à Render : les liens deviennent sites.philomeneia.com/nom */
+var ADRESSE_COURTE_ACTIVE = false;
+function lienDuSite(slug) { return ADRESSE_COURTE_ACTIVE ? "https://sites.philomeneia.com/" + slug : LIEN_MOTEUR + "?client=" + encodeURIComponent(slug); }
 var ADMIN_TOKEN = "", CLE_SESSION_ADMIN = "philoAdminToken";
 
 function $(id){ return document.getElementById(id); }
@@ -613,7 +619,27 @@ function lireGalerie(id) { var o = []; document.querySelectorAll("#" + id + " .i
 
 /* ===================== 3. ADRESSE ===================== */
 function majSlugAuto(){ if (slugTouche || slugChargeActuel) return; $("cf-slug").value = slugifier($("cf-nom").value); majApercuLien(); }
-function majApercuLien(){ var s = $("cf-slug").value; $("apercu-lien").textContent = s ? "Votre lien : " + LIEN_MOTEUR.replace(/^https?:\/\//, "") + "?client=" + s : "Remplie automatiquement à partir du nom."; }
+function majApercuLien(){ var s = $("cf-slug").value; $("apercu-lien").textContent = s ? "Votre lien : " + lienDuSite(s).replace(/^https?:\/\//, "") : "Remplie automatiquement à partir du nom."; }
+
+
+/* Nom de domaine souhaité : libre ou déjà pris ? */
+var timerDomaine = null;
+function verifierDomaine() {
+  var champ = $("cf-domaine-souhaite"), info = $("domaine-info");
+  var nom = champ.value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
+  clearTimeout(timerDomaine);
+  if (!nom) { info.textContent = "Facultatif. On vérifie qu'il est libre et on s'en occupe."; info.style.color = ""; return; }
+  if (nom.indexOf(".") < 0) { info.textContent = "Ajoutez l'extension : .fr, .com, .be…"; info.style.color = ""; return; }
+  info.textContent = "Vérification…"; info.style.color = "";
+  timerDomaine = setTimeout(function(){
+    fetch(API + "/domaine/dispo?nom=" + encodeURIComponent(nom)).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.ok) { info.textContent = "Ce nom n'est pas valide. Exemple : mon-commerce.fr"; info.style.color = "#B42318"; }
+      else if (d.libre === true) { info.textContent = "✅ " + d.nom + " est libre, il vous est offert."; info.style.color = "#0B6B47"; }
+      else if (d.libre === false) { info.textContent = "❌ " + d.nom + " est déjà pris. Essayez une variante, par exemple avec un tiret ou votre ville."; info.style.color = "#B42318"; }
+      else { info.textContent = "Impossible de vérifier pour l'instant. On le vérifiera pour vous."; info.style.color = ""; }
+    }).catch(function(){ info.textContent = "Impossible de vérifier pour l'instant. On le vérifiera pour vous."; });
+  }, 700);
+}
 
 /* ===================== PARCOURS ===================== */
 var ORDRE_PAS = ["activite","formule","entreprise","style","accueil","pages","recap"];
@@ -674,6 +700,7 @@ function finaliserEnregistrement(slug, nom) {
   var pages = ["accueil"].concat(pagesActives()).concat(["contact"]);
   var cfg = {
     style: STYLE_ACTUEL, categorie: CATEGORIE, formule: FORMULE, periode: PERIODE,
+    domaineSouhaite: $("cf-domaine-souhaite").value.trim(),
     nom: nom, telephone: $("cf-tel").value.trim(), whatsapp: $("cf-whatsapp").value.replace(/[^0-9]/g, ""),
     zones: $("cf-zones").value.split(",").map(function(z){ return z.trim(); }).filter(Boolean),
     motDePasseClient: $("cf-pwd-client").value.trim(), pages: pages,
@@ -692,7 +719,7 @@ function finaliserEnregistrement(slug, nom) {
       if (!ADMIN_TOKEN && cfg.motDePasseClient) motDePasseCreation = cfg.motDePasseClient;
       if (!edition) CONFIG_CHARGEE = cfg;
       slugChargeActuel = slug;
-      var lien = LIEN_MOTEUR + "?client=" + encodeURIComponent(slug);
+      var lien = lienDuSite(slug);
       showStatus("✅ « " + nom + " » est enregistré.", "ok");
       $("lien-final").value = lien; $("lien-ouvrir").href = lien;
       $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
@@ -723,7 +750,7 @@ function gererRetourAbonnement() {
   if (p.get("paiement") === "annule") { showStatus("Paiement annulé. Votre site reste en démo, vous pouvez payer quand vous voulez.", "err"); return; }
   showStatus("Vérification du paiement...", "ok");
   fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
-    if (d && d.paye) showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est en ligne : " + LIEN_MOTEUR + "?client=" + projet, "ok");
+    if (d && d.paye) showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est en ligne : " + lienDuSite(projet), "ok");
     else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
     window.history.replaceState(null, "", window.location.pathname);
   }).catch(function(){ showStatus("Vérification impossible. Écrivez-nous sur WhatsApp si besoin.", "err"); });
@@ -764,6 +791,9 @@ function chargerConfigExistante() {
     $("cf-apropos-titre").value = cfg.aproposTitre || ""; $("cf-apropos-texte").value = cfg.aproposTexte || ""; montrerPhoto("apropos-preview", "ph-apropos", cfg.aproposImage);
     majRecap();
     montrer("bloc-validation", true); afficherStatut(cfg);
+    $("cf-domaine").value = cfg.domaine || "";
+    $("cf-domaine").placeholder = cfg.domaineSouhaite ? "Souhaité : " + cfg.domaineSouhaite : "fontaine-et-fils.fr";
+    $("cf-domaine-souhaite").value = cfg.domaineSouhaite || "";
     showStatusCharger("✅ « " + (cfg.nom || slug) + " » chargé.", "ok");
     afficherPas("entreprise");
   }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
@@ -782,6 +812,17 @@ function confirmerPaiement() {
   fetch(API + "/memory/site_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(d){
     if (!d || !d.ok) { showStatusCharger((d && d.error) || "Échec.", "err"); return; }
     CONFIG_CHARGEE = cfg; afficherStatut(cfg); showStatusCharger("✅ Actif jusqu'au " + fin.toLocaleDateString("fr-FR") + ".", "ok");
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
+}
+
+function enregistrerDomaine() {
+  if (!slugChargeActuel || !CONFIG_CHARGEE || !ADMIN_TOKEN) { showStatusCharger("Chargez d'abord un site.", "err"); return; }
+  var cfg = JSON.parse(JSON.stringify(CONFIG_CHARGEE));
+  cfg.domaine = $("cf-domaine").value.trim();
+  fetch(API + "/memory/site_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) { showStatusCharger((d && d.error) || "Échec.", "err"); return; }
+    CONFIG_CHARGEE = cfg;
+    showStatusCharger(cfg.domaine ? "✅ Domaine enregistré : https://" + cfg.domaine.replace(/^https?:\/\//, "").replace(/^www\./, "") : "Domaine retiré.", "ok");
   }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
 }
 
@@ -830,7 +871,7 @@ function enregistrerEspaceClient() {
 }
 
 /* ===================== AIDE ===================== */
-var AIDE_PROMPT = "Tu es l'assistante du créateur de site de Philomène IA. Réponds en français, simplement, sans markdown, en 2 à 4 phrases. Étapes : activité, formule, entreprise, style, page d'accueil, pages, enregistrement puis paiement. Formules des sites : Site Essentiel 1 page 19,90 € par mois ou 199 € par an ; Site Pro 3 pages 24,90 € par mois ou 249 € par an ; Site Complet 5 pages 29,90 € par mois ou 299 € par an ; Site Boutique et Site Boutique + IA arrivent bientôt. Au mois engagement 12 mois, à l'année 2 mois offerts. Tout se modifie ensuite dans Mon compte, en haut à droite. Pour une appli (menu, paiement, assistant), bouton Créer mon appli en haut. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
+var AIDE_PROMPT = "Tu es l'assistante du créateur de site de Philomène IA. Réponds en français, simplement, sans markdown, en 2 à 4 phrases. Étapes : activité, formule, entreprise, style, page d'accueil, pages, enregistrement puis paiement. Formules des sites : Site Essentiel 1 page 19,90 € par mois ou 199 € par an ; Site Pro 3 pages 24,90 € par mois ou 249 € par an ; Site Complet 5 pages 29,90 € par mois ou 299 € par an ; Site Boutique et Site Boutique + IA arrivent bientôt. Au mois engagement 12 mois, à l'année 2 mois offerts. Nom de domaine offert dans toutes les formules. Tout se modifie ensuite dans Mon compte, en haut à droite. Pour une appli (menu, paiement, assistant), bouton Créer mon appli en haut. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
 function ouvrirAideIA() {
   $("aide-panneau").classList.add("ouvert");
   var m = $("aide-msgs");
