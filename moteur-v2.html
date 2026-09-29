@@ -267,6 +267,7 @@ function el(tag, classe, texte){
 }
 
 function getSlugFromUrl() {
+  if (window.PHILO_CLIENT) return String(window.PHILO_CLIENT).replace(/[^a-zA-Z0-9_-]/g, "");
   var params = new URLSearchParams(window.location.search);
   return (params.get("client") || "demo").replace(/[^a-zA-Z0-9_-]/g, "");
 }
@@ -830,7 +831,7 @@ function gererRetourPaiement() {
   var p = new URLSearchParams(window.location.search);
   var etat = p.get("paiement");
   if (!etat) return;
-  var propre = window.location.pathname + "?client=" + encodeURIComponent(getSlugFromUrl());
+  var propre = window.PHILO_CLIENT ? window.location.pathname : window.location.pathname + "?client=" + encodeURIComponent(getSlugFromUrl());
   window.history.replaceState(null, "", propre);
   if (etat === "annule") { afficherBanniere("Paiement annulé", "Aucun montant n'a été débité. Votre panier est toujours disponible."); return; }
   var session = p.get("session") || "";
