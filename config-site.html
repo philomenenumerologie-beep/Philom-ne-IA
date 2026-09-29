@@ -370,6 +370,7 @@ details.avance[open] summary{margin-bottom:12px}
         <button class="btn btn-encre" type="button" onclick="copierLien()">Copier le lien</button>
         <a class="btn" id="lien-ouvrir" target="_blank" rel="noopener" style="background:#fff;color:var(--encre);box-shadow:inset 0 0 0 2px var(--encre)">Voir mon site</a>
       </div>
+      <button class="btn-lien" type="button" onclick="allerAuCompte(slugChargeActuel || new URLSearchParams(location.search).get('projet') || (function(){try{return localStorage.getItem(CLE_DERNIER)}catch(e){return ''}})())">Modifier mon site plus tard : Mon compte</button>
       <img id="qr-code" alt="QR code de votre site"/>
       <b id="montant-a-payer" style="font:800 28px 'Bricolage Grotesque',sans-serif"></b>
       <small style="color:var(--gris)">Paiement sécurisé par Stripe. Votre site s'active automatiquement.</small>
@@ -719,6 +720,7 @@ function finaliserEnregistrement(slug, nom) {
       if (!ADMIN_TOKEN && cfg.motDePasseClient) motDePasseCreation = cfg.motDePasseClient;
       if (!edition) CONFIG_CHARGEE = cfg;
       slugChargeActuel = slug;
+      if (!ADMIN_TOKEN) memoriserSlug(slug);
       var lien = lienDuSite(slug);
       showStatus("✅ « " + nom + " » est enregistré.", "ok");
       $("lien-final").value = lien; $("lien-ouvrir").href = lien;
@@ -750,10 +752,26 @@ function gererRetourAbonnement() {
   if (p.get("paiement") === "annule") { showStatus("Paiement annulé. Votre site reste en démo, vous pouvez payer quand vous voulez.", "err"); return; }
   showStatus("Vérification du paiement...", "ok");
   fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
-    if (d && d.paye) showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est en ligne : " + lienDuSite(projet), "ok");
+    if (d && d.paye) { showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est en ligne.", "ok"); afficherSiteEnLigne(projet); }
     else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
     window.history.replaceState(null, "", window.location.pathname);
   }).catch(function(){ showStatus("Vérification impossible. Écrivez-nous sur WhatsApp si besoin.", "err"); });
+}
+
+var CLE_DERNIER = 'philoDernierSite';
+/* Se souvenir du dernier site / appli créé sur ce téléphone, pour « Mon compte » */
+function memoriserSlug(slug) { try { localStorage.setItem(CLE_DERNIER, slug); } catch(e){} }
+function allerAuCompte(slug) { switchOnglet("admin"); if (slug) $("ad-slug").value = slug; var p = $("ad-pwd"); if (p) p.focus(); }
+/* Après paiement : bouton pour ouvrir le site, sans rien copier */
+function afficherSiteEnLigne(slug) {
+  memoriserSlug(slug); slugChargeActuel = slug;
+  var lien = lienDuSite(slug);
+  $("lien-final").value = lien; $("lien-ouvrir").href = lien;
+  $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
+  ["montant-a-payer", "lien-revolut-resultat"].forEach(function(id){ $(id).style.display = "none"; });
+  var sm = document.querySelector("#carte-resultat small"); if (sm) sm.style.display = "none";
+  montrer("carte-resultat", true);
+  var b = $("btn-suivant"); b.textContent = "Voir mon site"; b.dataset.paye = ""; b.onclick = function(){ window.open(lien, "_blank"); };
 }
 
 /* ===================== ESPACE PHILOMÈNE ===================== */
@@ -912,6 +930,7 @@ if (paramsUrl.get("philomene")) {
   var memo = null; try { memo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
   if (memo) deverrouillerAdminGeneral(memo);
 }
+try { var dernier = localStorage.getItem(CLE_DERNIER); if (dernier) $("ad-slug").value = dernier; } catch(e){}
 if (paramsUrl.has("admin")) { switchOnglet("admin"); var a = paramsUrl.get("admin"); if (a && a !== "1") $("ad-slug").value = a; }
 </script>
 </body>
