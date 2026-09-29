@@ -156,6 +156,11 @@ details.avance[open] summary{margin-bottom:12px}
 .ligne-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;margin-bottom:10px}
 .ligne-item .deux,.ligne-item .trois{margin:0}
 .item-bloc{border-radius:16px;background:var(--pale);padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.grille-tarif{display:grid;grid-template-columns:1fr 110px;gap:8px}
+.grille-tarif .plein{grid-column:1 / -1}
+.ligne-item:has(.grille-tarif){background:var(--pale);border-radius:16px;padding:12px;align-items:start}
+label.mini{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:var(--gris)}
+label.mini input,label.mini textarea{font-weight:500}
 .photo-zone{position:relative;border:2px dashed #C9CCE6;border-radius:14px;padding:12px;text-align:center;color:var(--gris);font-size:14px;background:#fff;overflow:hidden}
 .photo-zone img{max-height:110px;margin:0 auto;border-radius:10px;display:none}
 .photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
@@ -297,6 +302,10 @@ details.avance[open] summary{margin-bottom:12px}
         <span id="logo-txt">Touchez pour ajouter votre logo ou une photo</span>
       </button>
       <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
+    </div>
+    <div class="champ"><label for="cf-pays">Pays de votre commerce</label>
+      <select id="cf-pays"><option value="fr">France</option><option value="be">Belgique</option><option value="lu">Luxembourg</option></select>
+      <small>Sert au paiement en ligne : votre compte Stripe sera ouvert dans ce pays.</small>
     </div>
     <div class="deux">
       <div class="champ"><label for="cf-icone">Icône si pas de logo</label><input id="cf-icone" type="text" placeholder="🍕" oninput="majApercu()"/></div>
@@ -483,11 +492,11 @@ details.avance[open] summary{margin-bottom:12px}
       <h3>Ce que l'IA doit savoir</h3>
       <div id="ad-ia-champs"></div>
     </div>
-    <div class="carte"><h3>Tarifs</h3><div id="tarifs-list-admin"></div><button class="ajout" type="button" onclick="ajouterTarif('','','','tarifs-list-admin')">+ Ajouter un tarif</button></div>
-    <div class="carte"><h3>Menu / catalogue</h3><div id="catalogue-list-admin"></div><button class="ajout" type="button" onclick="ajouterCatalogueItem('','','','','catalogue-list-admin')">+ Ajouter un produit</button></div>
-    <div class="carte"><h3>Galerie avant / après</h3><div id="galerie-list-admin"></div><button class="ajout" type="button" onclick="ajouterGalerieItem('','','','galerie-list-admin')">+ Ajouter un avant / après</button></div>
-    <div class="carte"><h3>Planning</h3><div id="planning-jours-admin"></div></div>
-    <div class="carte">
+    <div class="carte" id="ad-carte-tarifs"><h3>Tarifs</h3><div id="tarifs-list-admin"></div><button class="ajout" type="button" onclick="ajouterTarif('','','','tarifs-list-admin')">+ Ajouter un tarif</button></div>
+    <div class="carte" id="ad-carte-catalogue"><h3>Menu / catalogue</h3><div id="catalogue-list-admin"></div><button class="ajout" type="button" onclick="ajouterCatalogueItem('','','','','catalogue-list-admin')">+ Ajouter un produit</button></div>
+    <div class="carte" id="ad-carte-galerie"><h3>Galerie avant / après</h3><div id="galerie-list-admin"></div><button class="ajout" type="button" onclick="ajouterGalerieItem('','','','galerie-list-admin')">+ Ajouter un avant / après</button></div>
+    <div class="carte" id="ad-carte-planning"><h3>Planning</h3><div id="planning-jours-admin"></div></div>
+    <div class="carte" id="ad-carte-reservation">
       <h3>Réservation</h3>
       <div class="champ"><label for="ad-reservation-lien">Lien Planity, Calendly… (sinon vide)</label><input id="ad-reservation-lien" type="url"/></div>
       <div id="reservation-list-admin"></div>
@@ -1129,16 +1138,16 @@ function ajouterQR(label, message) {
 }
 function ajouterTarif(nom, desc, prix, conteneurId) {
   var d = document.createElement("div"); d.className = "ligne-item";
-  d.innerHTML = '<div class="trois"><input type="text" placeholder="Nom" value="' + esc(nom) + '"/><input type="text" placeholder="Détail" value="' + esc(desc) + '"/><input type="text" placeholder="Prix" value="' + esc(prix) + '"/></div><button class="suppr" type="button" aria-label="Retirer" onclick="this.parentElement.remove()">×</button>';
+  d.innerHTML = '<div class="grille-tarif"><label class="mini plein">Nom<input type="text" placeholder="Ex : Pizza Margherita" value="' + esc(nom) + '"/></label><label class="mini">Détail<input type="text" placeholder="Ex : Base tomate" value="' + esc(desc) + '"/></label><label class="mini">Prix<input type="text" inputmode="decimal" placeholder="9 €" value="' + esc(prix) + '"/></label></div><button class="suppr" type="button" aria-label="Retirer" onclick="this.parentElement.remove()">×</button>';
   $(conteneurId || "tarifs-list").appendChild(d);
 }
 function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, description, tags) {
   var uid = "c" + Date.now() + Math.floor(Math.random()*100000);
   var d = document.createElement("div"); d.className = "item-bloc";
   d.innerHTML =
-    '<div class="deux"><input class="ci-nom" type="text" placeholder="Nom du produit" value="' + esc(nom) + '"/><input class="ci-prix" type="text" placeholder="Prix, ex : 11 €" value="' + esc(prix) + '"/></div>' +
-    '<div class="deux"><input class="ci-cat" type="text" placeholder="Catégorie (Pizzas, Boissons…)" value="' + esc(categorie) + '"/><input class="ci-tags" type="text" placeholder="Étiquettes : Nouveau, Épicé…" value="' + esc(tags) + '"/></div>' +
-    '<textarea class="ci-desc" placeholder="Description" style="min-height:60px">' + esc(description) + '</textarea>' +
+    '<div class="deux"><label class="mini">Nom du produit<input class="ci-nom" type="text" placeholder="Ex : Regina" value="' + esc(nom) + '"/></label><label class="mini">Prix<input class="ci-prix" type="text" inputmode="decimal" placeholder="Ex : 11 €" value="' + esc(prix) + '"/></label></div>' +
+    '<div class="deux"><label class="mini">Catégorie<input class="ci-cat" type="text" placeholder="Ex : Pizzas, Desserts" value="' + esc(categorie) + '"/></label><label class="mini">Étiquettes<input class="ci-tags" type="text" placeholder="Ex : Épicé, Maison" value="' + esc(tags) + '"/></label></div>' +
+    '<label class="mini">Description<textarea class="ci-desc" placeholder="Ex : Tomate, mozzarella, jambon, champignons" style="min-height:60px">' + esc(description) + '</textarea></label>' +
     '<div class="photo-zone"><span id="ph-' + uid + '"' + (image ? ' style="display:none"' : '') + '>Ajouter une photo</span><img id="prev-' + uid + '" alt="" src="' + esc(image) + '" data-img="' + esc(image) + '"' + (image ? ' style="display:block"' : '') + '/><input type="file" accept="image/*" aria-label="Photo du produit" onchange="handleItemPhoto(this,\'' + uid + '\')"/></div>' +
     '<button class="btn-lien" type="button" style="color:#B42318;align-self:flex-start" onclick="this.parentElement.remove()">Retirer ce produit</button>';
   $(conteneurId || "catalogue-list").appendChild(d);
@@ -1295,6 +1304,7 @@ function enregistrerInterne(slug) {
   var qr = lireLignes("qr-list", 2).map(function(v){ return { label: v[0], message: v[1] }; });
   var config = {
     secteur: SECTEUR, formule: FORMULE, periode: PERIODE,
+    pays: $("cf-pays").value,
     domaineSouhaite: $("cf-domaine-souhaite").value.trim(),
     nom: nom, sousTitre: $("cf-soustitre").value.trim(),
     icone: $("cf-icone").value.trim() || "✨", logoImage: logoBase64 || "",
@@ -1499,6 +1509,7 @@ function remplirDepuisConfig(cfg, slug) {
   $("cf-slug").value = slug; majApercuLien();
   $("cf-nom").value = cfg.nom || ""; $("cf-soustitre").value = cfg.sousTitre || ""; $("cf-icone").value = cfg.icone || "";
   $("cf-domaine-souhaite").value = cfg.domaineSouhaite || "";
+  $("cf-pays").value = ["fr","be","lu"].indexOf(cfg.pays) >= 0 ? cfg.pays : "fr";
   $("cf-whatsapp").value = cfg.telephoneWhatsApp || ""; $("cf-email").value = cfg.email || "";
   $("cf-admin-password").value = ""; $("cf-admin-password").placeholder = "Laisser vide pour garder le mot de passe actuel";
   logoBase64 = cfg.logoImage || "";
@@ -1565,6 +1576,8 @@ function entrerEspaceClient() {
       construirePlanningJours(cfg.planning || {}, "planning-jours-admin");
       $("ad-reservation-lien").value = cfg.lienReservationExterne || "";
       $("reservation-list-admin").innerHTML = ""; (cfg.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix, "reservation-list-admin"); });
+      var mods = cfg.modulesActifs || [];
+      ["tarifs","catalogue","galerie","planning","reservation"].forEach(function(m){ montrer("ad-carte-" + m, mods.indexOf(m) >= 0); });
       var avecIA = cfg.chatActif !== false || (cfg.modulesActifs || []).indexOf("devis") >= 0;
       montrer("ad-bloc-ia", avecIA);
       if (avecIA) { var inf = cfg.iaInfos || {}; if (!inf.taux && cfg.tauxHoraire) inf.taux = cfg.tauxHoraire; remplirIA("ad-ia-", inf); }
@@ -1575,12 +1588,12 @@ function entrerEspaceClient() {
 }
 function enregistrerEspaceClient() {
   var cfg = CONFIG_CLIENT_ACTUEL; if (!cfg) return;
-  cfg.tarifs = lireTarifs("tarifs-list-admin");
-  cfg.catalogue = lireCatalogue("catalogue-list-admin");
-  cfg.galerie = lireGalerie("galerie-list-admin");
-  cfg.planning = lirePlanning("planning-jours-admin");
-  cfg.reservationServices = lireReservation("reservation-list-admin");
-  cfg.lienReservationExterne = $("ad-reservation-lien").value.trim();
+  var visible = function(m){ return !$("ad-carte-" + m).classList.contains("cache"); };
+  if (visible("tarifs")) cfg.tarifs = lireTarifs("tarifs-list-admin");
+  if (visible("catalogue")) cfg.catalogue = lireCatalogue("catalogue-list-admin");
+  if (visible("galerie")) cfg.galerie = lireGalerie("galerie-list-admin");
+  if (visible("planning")) cfg.planning = lirePlanning("planning-jours-admin");
+  if (visible("reservation")) { cfg.reservationServices = lireReservation("reservation-list-admin"); cfg.lienReservationExterne = $("ad-reservation-lien").value.trim(); }
   if (!$("ad-bloc-ia").classList.contains("cache")) {
     var infos = lireIA("ad-ia-");
     var base = cfg.systemPromptBase || baseSansInfos(cfg.systemPrompt);
