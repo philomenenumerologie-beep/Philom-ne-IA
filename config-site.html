@@ -2,301 +2,437 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="color-scheme" content="light"/>
-<title>Créateur de site — Philomène IA</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="color-scheme" content="light only"/>
+<meta name="theme-color" content="#1D1B4C"/>
+<title>Créer mon site — Philomène IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif;-webkit-tap-highlight-color:transparent}
-html{background:#FAFAF7 !important;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
-body{background-color:#FAFAF7 !important;color:#111;padding:20px 16px 60px;max-width:540px;margin:0 auto}
-h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
-.sub{font-size:12px;color:rgba(17,17,17,.5);margin-bottom:20px}
-.card{background:rgba(17,17,17,.06);border:1px solid rgba(17,17,17,.12);border-radius:14px;padding:18px;margin-bottom:16px}
-.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(17,17,17,.6);margin-bottom:12px}
-.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(17,17,17,.4);margin-bottom:5px;display:block}
-.hint{font-size:11.5px;color:rgba(17,17,17,.5);margin:-6px 0 12px}
-input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(17,17,17,.15);background:#fff;color:#111;font-size:14px;margin-bottom:12px;outline:none;overflow-wrap:anywhere}
-textarea{resize:vertical;min-height:70px}
-.add-btn{background:none;border:1.5px dashed rgba(17,17,17,.25);color:rgba(17,17,17,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px}
-.tabbtn{flex:1;padding:11px;border-radius:10px;border:1.5px solid rgba(17,17,17,.15);background:rgba(17,17,17,.04);color:rgba(17,17,17,.6);font-size:12.5px;cursor:pointer}
-.tabbtn.active{background:#111;color:#FAFAF7;font-weight:600}
-.style-card{border:2px solid rgba(17,17,17,.15);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;background:#fff}
-.style-card.sel{border-color:#c9a84c}
-.style-swatch{display:flex;gap:6px;margin-bottom:8px}
-.style-swatch span{width:22px;height:22px;border-radius:5px;border:1px solid rgba(17,17,17,.08)}
-.style-card b{font-size:14px}
-.style-card p{font-size:12px;color:rgba(17,17,17,.5);margin-top:3px}
-.page-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid rgba(17,17,17,.08)}
-.page-toggle:last-child{border-bottom:none}
-.page-toggle .lock{font-size:11px;color:rgba(17,17,17,.35)}
-.switch{width:42px;height:24px;border-radius:14px;background:rgba(17,17,17,.15);position:relative;cursor:pointer;flex-shrink:0}
-.switch.on{background:#6BCB77}
-.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .18s}
-.switch.on::after{transform:translateX(18px)}
-.status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
-.status.ok{background:rgba(46,204,113,.15);color:#1e8449;display:block}
-.status.err{background:rgba(255,107,107,.12);color:#c0392b;display:block}
-.save-btn{background:#111;color:#FAFAF7;font-weight:700;padding:15px;border-radius:12px;border:none;width:100%;cursor:pointer;font-size:15px;margin-top:8px}
-.item-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
-.del-btn{background:rgba(255,107,107,.15);color:#c0392b;border:none;border-radius:8px;padding:0 12px;cursor:pointer;font-size:14px}
-.photo-zone{border:1.5px dashed rgba(17,17,17,.25);border-radius:10px;padding:14px;text-align:center;font-size:12px;color:rgba(17,17,17,.5);margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden}
-.photo-zone img{width:100%;border-radius:8px;margin-top:8px}
-.prix-box{background:rgba(201,168,76,.12);border:1.5px solid #c9a84c;border-radius:14px;padding:20px;text-align:center;margin-top:6px}
-.prix-val{font-family:'Playfair Display',serif;font-size:32px;color:#9A7A35;font-weight:700}
-.wa-link{display:block;text-align:center;font-size:11.5px;color:rgba(17,17,17,.4);margin:14px 0;text-decoration:underline}
+
+:root{
+  --encre:#1D1B4C; --gris:#5A5B78; --pale:#F2F4FF; --ligne:#E4E6F5;
+  --tomate:#E8452C; --rose:#D6336C; --bleu:#2F6FED; --soleil:#FFC53D; --menthe:#12A06B;
+  --accent:#E8452C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light only;background:#fff;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:Figtree,system-ui,sans-serif;color:var(--encre);background:#fff!important;font-size:16px;line-height:1.5;padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;line-height:1.08}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--bleu);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.cadre{max-width:680px;margin:0 auto;padding:0 18px}
+
+/* Barre */
+.barre{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--ligne);padding-top:env(safe-area-inset-top,0px)}
+.barre .cadre{height:60px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px}
+.logo i{width:34px;height:34px;border-radius:10px;background:var(--encre);display:grid;place-items:center}
+.btn-compte{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:0 14px;border-radius:999px;border:2px solid var(--encre);background:#fff;color:var(--encre);font:700 14px Figtree,sans-serif;cursor:pointer}
+.btn-compte[aria-pressed="true"]{background:var(--encre);color:#fff}
+.logo,.btn-compte{white-space:nowrap}
+@media(max-width:430px){.logo-ia{display:none}.btn-compte{padding:0 12px}.barre .cadre{gap:6px}}
+.btn-aide{width:42px;height:42px;border-radius:50%;border:2px solid var(--ligne);background:#fff;color:var(--encre);display:grid;place-items:center;cursor:pointer}
+.flottant{display:none!important}
+
+/* Héros */
+.heros{background:var(--accent);color:#fff;transition:background .4s ease;padding:34px 0 30px}
+.heros h1{font-size:clamp(38px,9vw,56px);font-weight:800}
+.heros p{font-size:18px;opacity:.95;margin-top:10px;max-width:40ch}
+.onglets{display:inline-flex;gap:4px;padding:5px;background:rgba(255,255,255,.2);border-radius:999px;margin-top:22px}
+.onglets button{min-height:44px;padding:0 18px;border-radius:999px;border:none;background:transparent;color:#fff;font:700 15px Figtree,sans-serif;cursor:pointer}
+.onglets button[aria-pressed="true"]{background:#fff;color:var(--encre)}
+
+/* Parcours pas à pas */
+.progression{position:sticky;top:calc(60px + env(safe-area-inset-top,0px));z-index:35;background:#fff;padding:12px 0 10px;border-bottom:1px solid var(--ligne)}
+.progression-texte{display:flex;justify-content:space-between;font-size:13.5px;font-weight:700;color:var(--gris);margin-bottom:8px}
+.progression-barre{height:8px;border-radius:999px;background:var(--pale);overflow:hidden}
+.progression-barre i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .35s ease,background .4s ease}
+.pas{display:none;border-bottom:none;padding-top:26px;animation:entree .3s ease}
+.pas.actif{display:block}
+@keyframes entree{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.barre-bas{position:fixed;left:0;right:0;bottom:0;z-index:45;background:#fff;border-top:1px solid var(--ligne);box-shadow:0 -8px 24px rgba(29,27,76,.08);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.barre-bas .cadre{display:flex;align-items:center;gap:10px}
+.barre-bas .prix-bas{flex:1;min-width:0;line-height:1.2}
+.barre-bas .prix-bas b{display:block;font:800 19px 'Bricolage Grotesque',sans-serif}
+.barre-bas .prix-bas span{font-size:12.5px;color:var(--gris)}
+.btn-retour{min-width:52px;min-height:52px;border-radius:50%;border:2px solid var(--ligne);background:#fff;color:var(--encre);cursor:pointer;display:grid;place-items:center}
+.barre-bas .btn{min-width:150px}
+
+/* Étapes */
+.etape{padding:34px 0;border-bottom:1px solid var(--ligne)}
+.etape-tete{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.etape-num{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:800 18px 'Bricolage Grotesque',sans-serif;flex-shrink:0;transition:background .4s ease}
+.etape h2{font-size:28px;font-weight:800}
+.etape-aide{color:var(--gris);margin:6px 0 20px 54px}
+@media(max-width:520px){.etape-aide{margin-left:0}}
+.cache{display:none!important}
+
+/* Champs */
+.champ{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.champ label,.champ .label{font-weight:700;font-size:15px}
+.champ small{color:var(--gris);font-size:13.5px}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],input[type=url],textarea,select{width:100%;min-height:50px;padding:12px 14px;border-radius:14px;border:2px solid var(--ligne);background:#fff;color:var(--encre);font:500 16px Figtree,sans-serif;outline:none;-webkit-appearance:none;appearance:none}
+textarea{min-height:90px;resize:vertical;line-height:1.45}
+input:focus,textarea:focus,select:focus{border-color:var(--bleu)}
+input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;width:22px;height:22px;accent-color:var(--menthe);flex-shrink:0;margin:0}
+input[type=color]{-webkit-appearance:none;appearance:none;width:100%;height:46px;border:2px solid var(--ligne);border-radius:12px;padding:3px;background:#fff}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trois{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+details.avance{margin-top:6px;border-radius:14px;background:var(--pale);padding:12px 14px}
+details.avance summary{cursor:pointer;font-weight:700;font-size:14.5px;color:var(--gris)}
+details.avance[open] summary{margin-bottom:12px}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 24px;border-radius:999px;border:none;font:700 16px Figtree,sans-serif;cursor:pointer;text-decoration:none;transition:transform .15s ease}
+.btn:active{transform:scale(.97)}
+.btn-encre{background:var(--encre);color:#fff}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-plein{width:100%}
+.btn-lien{background:none;border:none;color:var(--bleu);font:700 15px Figtree,sans-serif;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
+.ajout{width:100%;min-height:48px;border-radius:14px;border:2px dashed #C9CCE6;background:#fff;color:var(--gris);font:600 15px Figtree,sans-serif;cursor:pointer}
+.suppr{min-width:44px;min-height:44px;border-radius:12px;border:none;background:#FFE9E5;color:#B42318;font-size:18px;cursor:pointer}
+
+/* Métiers */
+.metiers{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metier{position:relative;min-height:86px;border-radius:18px;border:none;padding:14px;text-align:left;color:#fff;font:700 16px Figtree,sans-serif;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;box-shadow:inset 0 0 0 0 transparent;transition:transform .15s ease}
+.metier small{font-weight:500;font-size:12.5px;opacity:.9}
+.metier[aria-pressed="true"]{box-shadow:inset 0 0 0 4px #fff,0 0 0 3px var(--encre);transform:scale(1.02)}
+.metier[aria-pressed="true"]::after{content:"";position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D1B4C' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/14px no-repeat}
+@media(min-width:600px){.metiers{grid-template-columns:repeat(3,1fr)}}
+
+/* Format */
+.formats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.format{border-radius:18px;border:2px solid var(--ligne);background:#fff;padding:16px;text-align:left;cursor:pointer;font:inherit;color:var(--encre);display:flex;flex-direction:column;gap:4px}
+.format b{font:800 20px 'Bricolage Grotesque',sans-serif}
+.format span{color:var(--gris);font-size:14px}
+.format[aria-pressed="true"]{border-color:var(--encre);background:var(--pale)}
+
+/* Formules */
+.bascule{display:inline-flex;padding:5px;gap:4px;background:var(--pale);border-radius:999px;margin-bottom:16px}
+.bascule button{min-height:44px;padding:0 16px;border-radius:999px;border:none;background:transparent;color:var(--gris);font:700 14.5px Figtree,sans-serif;cursor:pointer}
+.bascule button[aria-pressed="true"]{background:var(--encre);color:#fff}
+.formules{display:flex;flex-direction:column;gap:12px}
+.formule{position:relative;text-align:left;border-radius:22px;border:2px solid var(--ligne);background:#fff;padding:20px;cursor:pointer;font:inherit;color:var(--encre);display:flex;flex-direction:column;gap:8px}
+.formule[aria-pressed="true"]{border-color:var(--encre);background:var(--encre);color:#fff}
+.formule-haut{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.formule h3{font-size:24px}
+.formule .prix{font:800 26px 'Bricolage Grotesque',sans-serif}
+.formule .prix small{font:500 14px Figtree,sans-serif;opacity:.75}
+.formule ul{list-style:none;display:flex;flex-direction:column;gap:5px;font-size:14.5px;opacity:.9}
+.formule li::before{content:"✓ ";font-weight:800;color:var(--menthe)}
+.formule[aria-pressed="true"] li::before{color:var(--soleil)}
+.conseil{position:absolute;top:-11px;right:16px;background:var(--soleil);color:#3B2A00;font-weight:700;font-size:12.5px;padding:4px 10px;border-radius:999px}
+
+/* Couleurs + aperçu */
+.palettes{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.palette{width:48px;height:48px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--ligne);cursor:pointer;padding:0}
+.palette[aria-pressed="true"]{box-shadow:0 0 0 3px var(--encre)}
+.apercu-zone{display:flex;justify-content:center;margin:6px 0 20px}
+.apercu{width:230px;border-radius:34px;background:#0E0D26;padding:9px;box-shadow:0 20px 40px rgba(14,13,38,.25)}
+.apercu-ecran{border-radius:26px;overflow:hidden;background:var(--ap-fond,#f2ead8);height:330px;display:flex;flex-direction:column}
+.apercu-haut{background:var(--ap-fonce,#1a2e20);padding:18px 14px 12px;display:flex;align-items:center;gap:10px}
+.apercu-icone{width:38px;height:38px;border-radius:50%;background:var(--ap-fond,#f2ead8);display:grid;place-items:center;font-size:18px;overflow:hidden;flex-shrink:0}
+.apercu-icone img{width:100%;height:100%;object-fit:cover}
+.apercu-nom{color:var(--ap-fond,#f2ead8);font:800 16px 'Bricolage Grotesque',sans-serif;line-height:1.1}
+.apercu-sous{color:var(--ap-fond,#f2ead8);opacity:.7;font-size:10.5px}
+.apercu-corps{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px}
+.apercu-carte{background:#fff;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;font-size:12.5px;color:#222}
+.apercu-carte b{color:var(--ap-accent,#2d5a3d)}
+.apercu-bulle{align-self:flex-start;background:#fff;border-radius:12px 12px 12px 3px;padding:8px 10px;font-size:11.5px;color:#222;max-width:85%}
+.apercu-bouton{margin:0 12px 14px;border-radius:12px;background:var(--ap-accent,#2d5a3d);color:#fff;text-align:center;font-weight:700;font-size:13px;padding:11px}
+.logo-zone{display:flex;align-items:center;gap:14px;border:2px dashed #C9CCE6;border-radius:16px;padding:12px;cursor:pointer;background:#fff;width:100%;font:inherit;color:var(--gris);text-align:left}
+.logo-zone img{width:52px;height:52px;border-radius:12px;object-fit:cover}
+
+/* Pages */
+.pages{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.page-ligne{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;background:var(--pale);cursor:pointer}
+.page-ligne b{display:block;font-size:15.5px}
+.page-ligne span{color:var(--gris);font-size:13.5px}
+.page-ligne .verrou{margin-left:auto;font-size:12px;font-weight:700;background:#fff;color:var(--gris);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.page-ligne.bloquee{opacity:.55;cursor:not-allowed}
+.sous-bloc{border:2px solid var(--ligne);border-radius:20px;padding:18px;margin-top:14px}
+.sous-bloc h3{font-size:20px;margin-bottom:12px}
+.ligne-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;margin-bottom:10px}
+.ligne-item .deux,.ligne-item .trois{margin:0}
+.item-bloc{border-radius:16px;background:var(--pale);padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.photo-zone{position:relative;border:2px dashed #C9CCE6;border-radius:14px;padding:12px;text-align:center;color:var(--gris);font-size:14px;background:#fff;overflow:hidden}
+.photo-zone img{max-height:110px;margin:0 auto;border-radius:10px;display:none}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.jour{border-radius:14px;background:var(--pale);padding:12px;margin-bottom:8px}
+.jour h4{font-size:14px;margin-bottom:8px}
+
+/* Récap + résultat */
+.recap{border-radius:22px;background:var(--encre);color:#fff;padding:22px;display:flex;flex-direction:column;gap:10px}
+.recap-ligne{display:flex;justify-content:space-between;gap:10px;font-size:15px;opacity:.9}
+.recap-total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(255,255,255,.2);padding-top:12px;margin-top:4px}
+.recap-total b{font:800 30px 'Bricolage Grotesque',sans-serif}
+.status{display:none;margin-top:12px;padding:12px 14px;border-radius:14px;font-weight:600;font-size:14.5px}
+.status.ok{display:block;background:#E3F6EE;color:#0B6B47}
+.status.err{display:block;background:#FFE9E5;color:#B42318}
+.resultat{border-radius:22px;background:var(--pale);padding:22px;margin-top:18px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.resultat input{text-align:center;font-size:13px}
+.resultat img{width:170px;height:170px;border-radius:14px;background:#fff;padding:8px}
+
+/* Espace Philomène + client */
+.carte-admin{border-radius:20px;background:#FFF7E0;padding:18px;margin-top:20px}
+.carte{border-radius:20px;border:2px solid var(--ligne);padding:18px;margin-bottom:14px}
+.carte h3{font-size:20px;margin-bottom:12px}
+
+/* Bulles fixes */
+.flottant{position:fixed;right:16px;z-index:60;width:56px;height:56px;border-radius:50%;border:none;display:grid;place-items:center;box-shadow:0 10px 26px rgba(29,27,76,.3);cursor:pointer;text-decoration:none}
+.aide-panneau{position:fixed;left:12px;right:12px;bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:61;max-width:420px;margin-left:auto;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(29,27,76,.3);display:none;flex-direction:column;max-height:65vh;overflow:hidden}
+.aide-panneau.ouvert{display:flex}
+.aide-tete{background:var(--encre);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.aide-msgs{flex:1;overflow-y:auto;padding:12px;background:var(--pale);display:flex;flex-direction:column;gap:8px}
+.aide-msgs div{max-width:85%;padding:9px 12px;border-radius:14px;font-size:14.5px;white-space:pre-wrap;background:#fff;align-self:flex-start}
+.aide-msgs div.moi{background:var(--encre);color:#fff;align-self:flex-end}
+.aide-saisie{display:flex;gap:8px;padding:10px;border-top:1px solid var(--ligne)}
+.aide-saisie button{width:50px;border-radius:14px;border:none;background:var(--encre);color:#fff;cursor:pointer}
+
+/* Spécifique aux sites */
+.styles-site{display:flex;flex-direction:column;gap:10px}
+.style-site{display:flex;gap:14px;align-items:center;text-align:left;border-radius:18px;border:2px solid var(--ligne);background:#fff;padding:14px;cursor:pointer;font:inherit;color:var(--encre)}
+.style-site[aria-pressed="true"]{border-color:var(--encre);background:var(--pale)}
+.style-site .nuancier{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:56px;height:56px;border-radius:14px;overflow:hidden;flex-shrink:0}
+.style-site b{display:block;font:800 19px 'Bricolage Grotesque',sans-serif}
+.style-site span{color:var(--gris);font-size:14px}
+.formule.bientot{opacity:.55;cursor:not-allowed}
+.formule .tag-bientot{position:absolute;top:-11px;right:16px;background:var(--encre);color:#fff;font-weight:700;font-size:12.5px;padding:4px 10px;border-radius:999px}
 </style>
 </head>
 <body>
 
-<h1>🖥️ Créateur de site</h1>
-<div class="sub">4 à 5 pages, un vrai style visuel, prêt en 15 minutes.</div>
+<header class="barre">
+  <div class="cadre">
+    <a class="logo" href="index.html" aria-label="Philomène IA, retour au site">
+      <i aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="#FFC53D"><path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z"/></svg></i>
+      <span>Philomène<span class="logo-ia"> IA</span></span>
+    </a>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn-aide" type="button" onclick="ouvrirAideIA()" aria-label="Aide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>
+      </button>
+      <button class="btn-compte" type="button" id="btn-compte" onclick="switchOnglet('admin')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        Mon compte
+      </button>
+    </div>
+  </div>
+</header>
 
-<div style="display:flex;gap:8px;margin-bottom:20px">
-  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer mon site</button>
-  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Modifier mon site</button>
+<section class="heros" id="heros-createur">
+  <div class="cadre">
+    <h1 id="heros-titre">Créez votre site.</h1>
+    <p id="heros-texte">Un vrai site internet, prêt en quelques minutes. Trouvé sur Google, beau sur téléphone comme sur ordinateur.</p>
+    <div class="onglets" role="group" aria-label="Que voulez-vous créer ?">
+      <button type="button" aria-pressed="false" onclick="window.location.href='config-tool-v2.html'">Créer mon appli</button>
+      <button type="button" id="ong-site" aria-pressed="true" onclick="switchOnglet('creation')">Créer mon site</button>
+    </div>
+  </div>
+</section>
+
+<div class="progression" id="progression">
+  <div class="cadre">
+    <div class="progression-texte"><span id="prog-etape">Étape 1 sur 7</span><span id="prog-nom">Votre activité</span></div>
+    <div class="progression-barre" aria-hidden="true"><i id="prog-barre"></i></div>
+  </div>
 </div>
 
-<a class="wa-link" href="https://wa.me/33617123910?text=Bonjour%20Philomene%20IA%20!%20J%27ai%20une%20question." target="_blank">Une question ? Contactez-nous sur WhatsApp</a>
+<main class="cadre">
 
-<!-- ============ CRÉATION ============ -->
 <div id="tab-creation">
 
-<div class="card" id="carte-modifier-existant" style="display:none">
-  <h2>Espace Philomène IA</h2>
-  <div id="verrou-admin-general">
-    <label class="lbl">Code admin</label>
-    <input id="pwd-admin-general" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')deverrouillerAdminGeneral()"/>
-    <button class="add-btn" onclick="deverrouillerAdminGeneral()">🔓 Déverrouiller</button>
-    <div class="status" id="status-verrou"></div>
-  </div>
-  <div id="contenu-admin-general" style="display:none">
-    <label class="lbl">Identifiant du site à charger</label>
-    <input id="cf-slug-charger" placeholder="Ex: fontaineetfils"/>
-    <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger ce site</button>
-    <button class="add-btn" style="margin-top:8px" onclick="if(confirm('Repartir d\'un formulaire vide ?')) window.location.href = window.location.pathname + '?philomene=1';">🔄 Nouveau site (formulaire vide)</button>
-    <div class="status" id="status-charger"></div>
-    <div id="bloc-validation" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(17,17,17,.1)">
-      <div class="lbl">Statut actuel : <span id="statut-actuel">—</span></div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0"><input type="checkbox" id="chk-paiement-recu" style="width:auto;margin:0"/> Paiement reçu</label>
-      <button class="add-btn" style="border-color:#6BCB77;color:#1e8449" onclick="confirmerPaiement()">🔄 Confirmer le paiement (active pour 1 an)</button>
+  <!-- Espace Philomène -->
+  <div class="carte-admin cache" id="carte-modifier-existant">
+    <h3 style="font-size:20px;margin-bottom:10px">Espace Philomène IA</h3>
+    <div id="verrou-admin-general">
+      <div class="champ"><label for="pwd-admin-general">Code admin</label><input id="pwd-admin-general" type="password" onkeydown="if(event.key==='Enter')deverrouillerAdminGeneral()"/></div>
+      <button class="btn btn-encre" type="button" onclick="deverrouillerAdminGeneral()">Déverrouiller</button>
+      <div class="status" id="status-verrou"></div>
+    </div>
+    <div id="contenu-admin-general" class="cache">
+      <div class="champ"><label for="cf-slug-charger">Identifiant du site</label><input id="cf-slug-charger" type="text" placeholder="Ex : fontaineetfils"/></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-encre" type="button" onclick="chargerConfigExistante()">Charger ce site</button>
+        <button class="btn-lien" type="button" onclick="if(confirm('Repartir d\'un formulaire vide ?')) window.location.href = window.location.pathname + '?philomene=1';">Nouveau site</button>
+      </div>
+      <div class="status" id="status-charger"></div>
+      <div id="bloc-validation" class="cache" style="margin-top:14px">
+        <div id="statut-actuel" style="font-weight:700;margin-bottom:8px"></div>
+        <label class="page-ligne" style="background:#fff"><input type="checkbox" id="chk-paiement-recu"/><div><b>Paiement reçu</b><span>Active le site pour 1 an</span></div></label>
+        <button class="btn-lien" type="button" onclick="confirmerPaiement()">Confirmer le paiement</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="card">
-  <h2>1. Votre activité</h2>
-  <label class="lbl">Catégorie</label>
-  <select id="cf-categorie" onchange="appliquerCategorie()">
-    <option value="">Sélectionnez...</option>
-    <option value="artisan">Artisan / Bâtiment</option>
-    <option value="beaute">Beauté / Bien-être</option>
-    <option value="commerce">Commerce / Boutique</option>
-    <option value="restauration">Restaurant / Food</option>
-    <option value="sport">Club sportif / Coach</option>
-    <option value="asso">Association</option>
-    <option value="evenement">Événement (mariage, fête...)</option>
-    <option value="perso">Site personnel / Portfolio</option>
-    <option value="autre">Autre</option>
-  </select>
-</div>
+  <!-- 1. Activité -->
+  <section class="etape pas" data-pas="activite" aria-labelledby="t1">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">1</div><h2 id="t1">Votre activité</h2></div>
+    <p class="etape-aide">Choisissez celle qui vous ressemble le plus : textes, style et pages se préparent tout seuls.</p>
+    <div class="metiers" id="categories" role="group" aria-label="Votre activité"></div>
+  </section>
 
-<div class="card">
-  <h2>2. Style visuel</h2>
-  <div class="style-card sel" data-style="atelier" onclick="choisirStyle(this,'atelier')">
-    <div class="style-swatch"><span style="background:#F6F1E7"></span><span style="background:#B5502E"></span><span style="background:#5B6B4F"></span><span style="background:#2B2621"></span></div>
-    <b>Atelier</b><p>Chaleureux, artisanal : artisans, bâtiment, métiers manuels</p>
-  </div>
-  <div class="style-card" data-style="terrain" onclick="choisirStyle(this,'terrain')">
-    <div class="style-swatch"><span style="background:#132A1E"></span><span style="background:#FF6B35"></span><span style="background:#F7F7F2"></span></div>
-    <b>Terrain</b><p>Dynamique, énergique : clubs sportifs, coachs, événements</p>
-  </div>
-  <div class="style-card" data-style="feuillage" onclick="choisirStyle(this,'feuillage')">
-    <div class="style-swatch"><span style="background:#F2EFE6"></span><span style="background:#C97B5E"></span><span style="background:#8A9A7E"></span></div>
-    <b>Feuillage</b><p>Calme, organique : bien-être, yoga, associations, nature</p>
-  </div>
-  <div class="style-card" data-style="maison" onclick="choisirStyle(this,'maison')">
-    <div class="style-swatch"><span style="background:#14110D"></span><span style="background:#B8935A"></span><span style="background:#EDE6D8"></span></div>
-    <b>Maison</b><p>Élégant, premium : beauté, boutiques haut de gamme</p>
-  </div>
-  <div class="style-card" data-style="marche" onclick="choisirStyle(this,'marche')">
-    <div class="style-swatch"><span style="background:#FAFAF5"></span><span style="background:#2954E6"></span><span style="background:#F5C400"></span></div>
-    <b>Marché</b><p>Moderne, franc : commerces, food, événementiel</p>
-  </div>
-</div>
-
-<div class="card">
-  <h2>3. Identité</h2>
-  <label class="lbl">Nom</label>
-  <input id="cf-nom" placeholder="Ex: Fontaine & Fils" oninput="majSlugAuto()"/>
-  <label class="lbl">Adresse de votre site</label>
-  <input id="cf-slug" placeholder="Ex: fontaineetfils" oninput="slugTouche=true;this.value=slugifier(this.value);majApercuLien()"/>
-  <div class="hint" id="apercu-lien">Remplie automatiquement à partir du nom.</div>
-  <label class="lbl">Sous-titre / activité</label>
-  <input id="cf-eyebrow" placeholder="Ex: Plomberie · Chauffage · Tourcoing"/>
-  <label class="lbl">Téléphone</label>
-  <input id="cf-tel" placeholder="03 00 00 00 00"/>
-  <label class="lbl">Numéro WhatsApp (avec indicatif, sans espaces)</label>
-  <input id="cf-whatsapp" placeholder="33600000000"/>
-  <label class="lbl">Villes desservies (séparées par des virgules)</label>
-  <input id="cf-zones" placeholder="Tourcoing, Roubaix, Lille"/>
-  <label class="lbl">Mot de passe de votre espace client</label>
-  <input id="cf-pwd-client" type="password" placeholder="Pour modifier vous-même vos textes et photos"/>
-</div>
-
-<div class="card">
-  <h2>4. Page d'accueil</h2>
-  <label class="lbl">Titre principal</label>
-  <textarea id="cf-h1" placeholder="Ex: Le bon geste, la première fois."></textarea>
-  <label class="lbl">Texte d'introduction</label>
-  <textarea id="cf-herotexte" placeholder="Une ou deux phrases qui présentent l'activité..."></textarea>
-  <label class="lbl">Texte du bouton principal</label>
-  <input id="cf-cta1" placeholder="Ex: Demander un devis"/>
-  <label class="lbl">Photo principale</label>
-  <div class="photo-zone" onclick="document.getElementById('inp-hero').click()">📷 Ajouter une photo<input type="file" id="inp-hero" accept="image/*" style="display:none" onchange="chargerPhoto(this,'hero-preview')"/><img id="hero-preview" style="display:none"/></div>
-</div>
-
-<div class="card">
-  <h2>5. Pages à inclure</h2>
-  <div class="page-toggle"><div>Accueil <span class="lock">toujours inclus</span></div><div class="switch on" style="opacity:.4;pointer-events:none"></div></div>
-  <div class="page-toggle"><div>Prestations / Services <span class="lock">+90€</span></div><div class="switch" id="tog-services" onclick="togglePage(this)"></div></div>
-  <div class="page-toggle"><div>Galerie <span class="lock">+90€</span></div><div class="switch" id="tog-galerie" onclick="togglePage(this)"></div></div>
-  <div class="page-toggle"><div>À propos <span class="lock">+90€</span></div><div class="switch" id="tog-apropos" onclick="togglePage(this)"></div></div>
-  <div class="page-toggle"><div>Contact <span class="lock">toujours inclus</span></div><div class="switch on" style="opacity:.4;pointer-events:none"></div></div>
-</div>
-
-<div class="card" id="bloc-services" style="display:none">
-  <h2>Contenu : Prestations</h2>
-  <label class="lbl">Titre de la page</label>
-  <input id="cf-svc-titre" placeholder="Nos prestations"/>
-  <div id="services-list"></div>
-  <button class="add-btn" onclick="ajouterService()">+ Ajouter une prestation</button>
-</div>
-
-<div class="card" id="bloc-galerie" style="display:none">
-  <h2>Contenu : Galerie</h2>
-  <label class="lbl">Titre de la page</label>
-  <input id="cf-gal-titre" placeholder="Réalisations"/>
-  <div id="galerie-list"></div>
-  <button class="add-btn" onclick="ajouterGalerieItem()">+ Ajouter une photo</button>
-</div>
-
-<div class="card" id="bloc-apropos" style="display:none">
-  <h2>Contenu : À propos</h2>
-  <label class="lbl">Titre</label>
-  <input id="cf-apropos-titre" placeholder="Qui sommes-nous"/>
-  <label class="lbl">Texte</label>
-  <textarea id="cf-apropos-texte" placeholder="Votre histoire, votre équipe, vos valeurs..."></textarea>
-  <label class="lbl">Photo</label>
-  <div class="photo-zone" onclick="document.getElementById('inp-apropos').click()">📷 Ajouter une photo<input type="file" id="inp-apropos" accept="image/*" style="display:none" onchange="chargerPhoto(this,'apropos-preview')"/><img id="apropos-preview" style="display:none"/></div>
-</div>
-
-<div class="card">
-  <h2>Prix</h2>
-  <div class="prix-box">
-    <div class="prix-val" id="prix-total">190€</div>
-    <div style="font-size:12px;color:rgba(17,17,17,.5);margin-top:4px">Création + 1 an d'hébergement</div>
-  </div>
-</div>
-
-<button class="save-btn" onclick="enregistrer()">💾 Enregistrer et créer le lien</button>
-<div class="status" id="status"></div>
-
-<div class="card" id="carte-resultat" style="display:none;text-align:center">
-  <h2>🔗 Lien de votre site</h2>
-  <input id="lien-final" readonly style="text-align:center;font-size:12px"/>
-  <button class="add-btn" onclick="copierLien()">📋 Copier</button>
-  <div id="qr-zone" style="margin-top:14px"></div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(17,17,17,.1)">
-    <div class="lbl">Montant à régler pour activer le site (1 an)</div>
-    <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px"></div>
-    <button id="btn-payer-abonnement" onclick="payerAbonnement()" style="display:inline-block;background:#111;color:#FAFAF7;padding:13px 26px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">💳 Payer par carte et activer</button>
-    <div style="font-size:11px;color:rgba(17,17,17,.5);margin-top:8px">Paiement sécurisé par Stripe. Votre site s'active automatiquement.</div>
-    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;font-size:11px;color:rgba(17,17,17,.45);margin-top:10px;text-decoration:underline">Autre moyen : payer via Revolut</a>
-  </div>
-</div>
-
-</div>
-
-<!-- ============ ESPACE CLIENT ============ -->
-<div id="tab-admin" style="display:none">
-  <div class="card">
-    <h2>👤 Connexion à votre espace</h2>
-    <div id="verrou-client">
-      <label class="lbl">Adresse de votre site</label>
-      <input id="ad-slug" placeholder="Ex: fontaineetfils"/>
-      <label class="lbl">Mot de passe</label>
-      <input id="ad-pwd" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')entrerEspaceClient()"/>
-      <button class="add-btn" onclick="entrerEspaceClient()">🔓 Me connecter</button>
-      <div class="status" id="ad-status-verrou"></div>
+  <!-- 2. Formule -->
+  <section class="etape pas" data-pas="formule" aria-labelledby="t2">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">2</div><h2 id="t2">Votre formule</h2></div>
+    <p class="etape-aide">Selon le nombre de pages. Création, hébergement, mises à jour et support WhatsApp compris.</p>
+    <div class="bascule" role="group" aria-label="Paiement">
+      <button type="button" data-periode="mois" aria-pressed="true">Au mois</button>
+      <button type="button" data-periode="an" aria-pressed="false">À l'année, 2 mois offerts</button>
     </div>
+    <div class="formules" id="formules" role="group" aria-label="Formule"></div>
+  </section>
+
+  <!-- 3. Entreprise -->
+  <section class="etape pas" data-pas="entreprise" aria-labelledby="t3">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">3</div><h2 id="t3">Votre entreprise</h2></div>
+    <p class="etape-aide">Ce que vos visiteurs verront en premier.</p>
+    <div class="champ"><label for="cf-nom">Nom de votre entreprise</label><input id="cf-nom" type="text" placeholder="Ex : Fontaine &amp; Fils" oninput="majSlugAuto()"/></div>
+    <div class="champ">
+      <label for="cf-slug">Adresse de votre site</label>
+      <input id="cf-slug" type="text" placeholder="fontaineetfils" oninput="slugTouche=true;this.value=slugifier(this.value);majApercuLien()"/>
+      <small id="apercu-lien">Remplie automatiquement à partir du nom.</small>
+    </div>
+    <div class="champ"><label for="cf-eyebrow">Votre activité en quelques mots</label><input id="cf-eyebrow" type="text" placeholder="Ex : Plomberie · Chauffage · Tourcoing"/></div>
+    <div class="deux">
+      <div class="champ"><label for="cf-tel">Téléphone</label><input id="cf-tel" type="tel" placeholder="03 20 00 00 00"/></div>
+      <div class="champ"><label for="cf-whatsapp">WhatsApp</label><input id="cf-whatsapp" type="tel" placeholder="33612345678"/></div>
+    </div>
+    <div class="champ"><label for="cf-zones">Villes où vous travaillez</label><input id="cf-zones" type="text" placeholder="Tourcoing, Roubaix, Lille"/><small>Séparées par des virgules.</small></div>
+    <div class="champ"><label for="cf-pwd-client">Mot de passe de votre compte</label><input id="cf-pwd-client" type="password" placeholder="Pour modifier votre site vous-même"/></div>
+  </section>
+
+  <!-- 4. Style -->
+  <section class="etape pas" data-pas="style" aria-labelledby="t4">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">4</div><h2 id="t4">Votre style</h2></div>
+    <p class="etape-aide">Cinq ambiances pensées pour chaque type d'activité.</p>
+    <div class="styles-site" id="styles" role="group" aria-label="Style du site"></div>
+  </section>
+
+  <!-- 5. Accueil -->
+  <section class="etape pas" data-pas="accueil" aria-labelledby="t5">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">5</div><h2 id="t5">Votre page d'accueil</h2></div>
+    <p class="etape-aide">Le haut de votre site : une phrase forte, une photo, un bouton.</p>
+    <div class="champ"><label for="cf-h1">Titre principal</label><textarea id="cf-h1" style="min-height:70px" placeholder="Le bon geste, la première fois."></textarea></div>
+    <div class="champ"><label for="cf-herotexte">Texte d'introduction</label><textarea id="cf-herotexte" placeholder="Une ou deux phrases sur votre activité."></textarea></div>
+    <div class="champ"><label for="cf-cta1">Texte du bouton principal</label><input id="cf-cta1" type="text" placeholder="Demander un devis"/><small>Le bouton ouvre WhatsApp avec ce message.</small></div>
+    <div class="champ">
+      <span class="label">Photo principale</span>
+      <div class="photo-zone"><span id="ph-hero">Ajouter une photo</span><img id="hero-preview" alt=""/><input type="file" accept="image/*" aria-label="Photo principale" onchange="chargerPhoto(this,'hero-preview','ph-hero')"/></div>
+    </div>
+  </section>
+
+  <!-- 6. Pages -->
+  <section class="etape pas" data-pas="pages" aria-labelledby="t6">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">6</div><h2 id="t6">Vos pages</h2></div>
+    <p class="etape-aide" id="aide-pages">Accueil et Contact sont toujours inclus.</p>
+    <div class="pages" id="pages"></div>
+
+    <div class="sous-bloc cache" id="bloc-services">
+      <h3>Prestations</h3>
+      <div class="champ"><label for="cf-svc-titre">Titre de la page</label><input id="cf-svc-titre" type="text" placeholder="Nos prestations"/></div>
+      <div id="services-list"></div>
+      <button class="ajout" type="button" onclick="ajouterService()">+ Ajouter une prestation</button>
+    </div>
+    <div class="sous-bloc cache" id="bloc-galerie">
+      <h3>Galerie</h3>
+      <div class="champ"><label for="cf-gal-titre">Titre de la page</label><input id="cf-gal-titre" type="text" placeholder="Réalisations"/></div>
+      <div id="galerie-list"></div>
+      <button class="ajout" type="button" onclick="ajouterGalerieItem()">+ Ajouter une photo</button>
+    </div>
+    <div class="sous-bloc cache" id="bloc-apropos">
+      <h3>À propos</h3>
+      <div class="champ"><label for="cf-apropos-titre">Titre</label><input id="cf-apropos-titre" type="text" placeholder="Qui sommes-nous"/></div>
+      <div class="champ"><label for="cf-apropos-texte">Votre histoire</label><textarea id="cf-apropos-texte" placeholder="Votre parcours, votre équipe, vos valeurs…"></textarea></div>
+      <div class="photo-zone"><span id="ph-apropos">Ajouter une photo</span><img id="apropos-preview" alt=""/><input type="file" accept="image/*" aria-label="Photo À propos" onchange="chargerPhoto(this,'apropos-preview','ph-apropos')"/></div>
+    </div>
+  </section>
+
+  <!-- 7. Récap -->
+  <section class="etape pas" data-pas="recap" style="border-bottom:none" aria-labelledby="t7">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">7</div><h2 id="t7">C'est prêt</h2></div>
+    <p class="etape-aide">Enregistrez : votre site est visible tout de suite, avec un bandeau « démo » jusqu'au paiement.</p>
+    <div class="recap">
+      <div class="recap-ligne"><span>Formule</span><b id="recap-formule">Site Pro</b></div>
+      <div class="recap-ligne"><span>Paiement</span><b id="recap-periode">Au mois, engagement 12 mois</b></div>
+      <div class="recap-total"><span>Total</span><b id="recap-prix">24,90 € / mois</b></div>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="resultat cache" id="carte-resultat">
+      <h3 style="font-size:24px">Votre site est en ligne</h3>
+      <input id="lien-final" type="text" readonly/>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-encre" type="button" onclick="copierLien()">Copier le lien</button>
+        <a class="btn" id="lien-ouvrir" target="_blank" rel="noopener" style="background:#fff;color:var(--encre);box-shadow:inset 0 0 0 2px var(--encre)">Voir mon site</a>
+      </div>
+      <img id="qr-code" alt="QR code de votre site"/>
+      <b id="montant-a-payer" style="font:800 28px 'Bricolage Grotesque',sans-serif"></b>
+      <small style="color:var(--gris)">Paiement sécurisé par Stripe. Votre site s'active automatiquement.</small>
+      <a id="lien-revolut-resultat" target="_blank" rel="noopener" style="font-size:13px;color:var(--gris)">Autre moyen : payer via Revolut</a>
+    </div>
+  </section>
+</div>
+
+<!-- ================= MON COMPTE ================= -->
+<div id="tab-admin" class="cache" style="padding-top:28px">
+  <div class="carte" id="verrou-client">
+    <h3>Connexion à votre compte</h3>
+    <div class="champ"><label for="ad-slug">Adresse de votre site</label><input id="ad-slug" type="text" placeholder="Ex : fontaineetfils"/></div>
+    <div class="champ"><label for="ad-pwd">Mot de passe</label><input id="ad-pwd" type="password" onkeydown="if(event.key==='Enter')entrerEspaceClient()"/></div>
+    <button class="btn btn-encre btn-plein" type="button" onclick="entrerEspaceClient()">Me connecter</button>
+    <div class="status" id="ad-status-verrou"></div>
   </div>
-  <div id="ad-content" style="display:none">
-    <div class="card">
-      <h2>Page d'accueil</h2>
-      <label class="lbl">Titre principal</label>
-      <textarea id="ad-h1"></textarea>
-      <label class="lbl">Texte d'introduction</label>
-      <textarea id="ad-herotexte"></textarea>
+  <div id="ad-content" class="cache">
+    <div class="carte">
+      <h3>Page d'accueil</h3>
+      <div class="champ"><label for="ad-h1">Titre principal</label><textarea id="ad-h1" style="min-height:70px"></textarea></div>
+      <div class="champ"><label for="ad-herotexte">Texte d'introduction</label><textarea id="ad-herotexte"></textarea></div>
     </div>
-    <div class="card" id="ad-bloc-services" style="display:none">
-      <h2>Prestations</h2>
-      <div id="ad-services-list"></div>
-      <button class="add-btn" onclick="ajouterService('ad-services-list')">+ Ajouter une prestation</button>
-    </div>
-    <div class="card" id="ad-bloc-galerie" style="display:none">
-      <h2>Galerie</h2>
-      <div id="ad-galerie-list"></div>
-      <button class="add-btn" onclick="ajouterGalerieItem('ad-galerie-list')">+ Ajouter une photo</button>
-    </div>
-    <button class="save-btn" onclick="enregistrerEspaceClient()">💾 Enregistrer mes modifications</button>
+    <div class="carte cache" id="ad-bloc-services"><h3>Prestations</h3><div id="ad-services-list"></div><button class="ajout" type="button" onclick="ajouterService('ad-services-list')">+ Ajouter une prestation</button></div>
+    <div class="carte cache" id="ad-bloc-galerie"><h3>Galerie</h3><div id="ad-galerie-list"></div><button class="ajout" type="button" onclick="ajouterGalerieItem('ad-galerie-list')">+ Ajouter une photo</button></div>
+    <button class="btn btn-accent btn-plein" type="button" onclick="enregistrerEspaceClient()">Enregistrer mes modifications</button>
     <div class="status" id="ad-status-save"></div>
   </div>
+</div>
+</main>
+
+<nav class="barre-bas" id="barre-bas" aria-label="Navigation entre les étapes">
+  <div class="cadre">
+    <button class="btn-retour" type="button" id="btn-retour" onclick="allerPas(-1)" aria-label="Étape précédente">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="prix-bas"><b id="bas-prix">24,90 € / mois</b><span id="bas-formule">Site Pro</span></div>
+    <button class="btn btn-accent" type="button" id="btn-suivant" onclick="allerPas(1)">Continuer</button>
+  </div>
+</nav>
+
+<div class="aide-panneau" id="aide-panneau" role="dialog" aria-label="Aide au créateur de site">
+  <div class="aide-tete"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px">Une question ?</b><button type="button" onclick="fermerAideIA()" aria-label="Fermer" style="background:none;border:none;color:#fff;font-size:22px;width:44px;height:44px;cursor:pointer">×</button></div>
+  <div class="aide-msgs" id="aide-msgs" aria-live="polite"></div>
+  <form class="aide-saisie" onsubmit="event.preventDefault();envoyerAideIA()">
+    <label for="aide-input" style="position:absolute;left:-9999px">Votre question</label>
+    <input id="aide-input" type="text" placeholder="Ex : combien de pages me faut-il ?"/>
+    <button type="submit" aria-label="Envoyer">➤</button>
+  </form>
 </div>
 
 <script>
 var API = "https://philo-backend-by2c.onrender.com";
+var WA = "33617123910";
 var LIEN_REVOLUT = "https://checkout.revolut.com/pay/3e15f5b0-a69e-4322-a00a-12ea7d8b359f";
 var LIEN_MOTEUR = "https://www.philomeneia.com/site-v1.html";
+var ADMIN_TOKEN = "", CLE_SESSION_ADMIN = "philoAdminToken";
 
-/* 🔐 Aucun secret dans ce fichier : le code admin est tapé au déverrouillage et vérifié par le serveur. */
-var ADMIN_TOKEN = "";
-var CLE_SESSION_ADMIN = "philoAdminToken";
+function $(id){ return document.getElementById(id); }
+function montrer(id, oui){ $(id).classList.toggle("cache", !oui); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function slugifier(s){ return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 30); }
+function entetes(extra){ var h = { "Content-Type": "application/json" }; if (ADMIN_TOKEN) h["x-admin-token"] = ADMIN_TOKEN; if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; }); return h; }
+function lienWa(m){ return "https://wa.me/" + WA + "?text=" + encodeURIComponent(m); }
 
-var STYLE_ACTUEL = "atelier";
-var CONFIG_CHARGEE = null;     // site chargé par l'admin
-var CONFIG_CLIENT_ACTUEL = null; // site ouvert dans l'espace client
-var SLUG_CLIENT_ACTUEL = null;
-var CLIENT_PWD = "";
-var slugChargeActuel = null;
-var motDePasseCreation = "";
-var slugTouche = false;
-
-/* ---------- Outils ---------- */
-function esc(s){
-  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
-    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
-  });
-}
-function slugifier(s){
-  return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 30);
-}
-function entetes(extra){
-  var h = { "Content-Type": "application/json" };
-  if (ADMIN_TOKEN) h["x-admin-token"] = ADMIN_TOKEN;
-  if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
-  return h;
-}
-function majSlugAuto(){
-  if (slugTouche || slugChargeActuel) return;
-  document.getElementById("cf-slug").value = slugifier(document.getElementById("cf-nom").value);
-  majApercuLien();
-}
-function majApercuLien(){
-  var s = document.getElementById("cf-slug").value;
-  document.getElementById("apercu-lien").textContent = s ? "Votre lien : " + LIEN_MOTEUR.replace(/^https?:\/\//, "") + "?client=" + s : "Remplie automatiquement à partir du nom.";
-}
-
+/* ===================== DONNÉES ===================== */
 var CATEGORIES = {
   artisan: { style:"atelier", eyebrow:"Artisan · Bâtiment", h1:"Le savoir-faire\nau bon prix.", herotexte:"Un travail soigné, un devis clair, sans mauvaise surprise.", cta1:"Demander un devis", pages:["services","galerie"] },
   beaute: { style:"maison", eyebrow:"Beauté · Bien-être", h1:"Prenez soin\nde vous.", herotexte:"Un moment rien qu'à vous, dans un cadre soigné.", cta1:"Prendre rendez-vous", pages:["services","galerie"] },
@@ -308,437 +444,429 @@ var CATEGORIES = {
   perso: { style:"maison", eyebrow:"", h1:"Bienvenue.", herotexte:"Un espace pour partager ce qui me passionne.", cta1:"Me contacter", pages:["apropos","galerie"] },
   autre: { style:"atelier", eyebrow:"", h1:"Bienvenue.", herotexte:"", cta1:"Nous contacter", pages:["services"] }
 };
+var NOMS_CAT = { artisan:"Artisan / Bâtiment", beaute:"Beauté / Bien-être", commerce:"Commerce / Boutique", restauration:"Restaurant / Food", sport:"Club sportif / Coach", asso:"Association", evenement:"Événement", perso:"Site personnel", autre:"Autre activité" };
+var SOUS_CAT = { artisan:"Plombier, peintre, électricien…", beaute:"Coiffure, esthétique, tatouage…", commerce:"Boutique, fleuriste, épicerie…", restauration:"Restaurant, snack, traiteur…", sport:"Club, coach, salle…", asso:"Association, collectif…", evenement:"Mariage, fête, salon…", perso:"Portfolio, CV, passion…", autre:"Tout le reste" };
+var COULEUR_CAT = { artisan:"#2F6FED", beaute:"#D6336C", commerce:"#8E5A9E", restauration:"#E8452C", sport:"#12A06B", asso:"#0F8B8D", evenement:"#C98A00", perso:"#1D1B4C", autre:"#5A5B78" };
+var STYLES = [
+  { cle:"atelier", nom:"Atelier", texte:"Chaleureux, artisanal. Artisans, bâtiment, métiers manuels.", c:["#F6F1E7","#B5502E","#5B6B4F","#2B2621"] },
+  { cle:"terrain", nom:"Terrain", texte:"Dynamique, énergique. Clubs, coachs, événements.", c:["#132A1E","#FF6B35","#F7F7F2","#0D1F16"] },
+  { cle:"feuillage", nom:"Feuillage", texte:"Calme, organique. Bien-être, yoga, associations.", c:["#F2EFE6","#C97B5E","#8A9A7E","#2F3E2E"] },
+  { cle:"maison", nom:"Maison", texte:"Élégant, premium. Beauté, boutiques haut de gamme.", c:["#14110D","#B8935A","#EDE6D8","#1C1712"] },
+  { cle:"marche", nom:"Marché", texte:"Moderne, franc. Commerces, food, événementiel.", c:["#FAFAF5","#2954E6","#F5C400","#171717"] }
+];
+/* ⚠️ Mêmes prix que server.js (FORMULES_SITE) et index.html */
+var FORMULES = {
+  site_essentiel: { nom:"Site Essentiel", sous:"1 page", mois:"19,90 €", an:"199 €", pages:0, pour:"Être trouvé sur Google, simplement", points:["Une belle page d'accueil","Vos coordonnées et un bouton WhatsApp","Zone d'intervention, carte de visite en ligne"] },
+  site_pro: { nom:"Site Pro", sous:"3 pages", mois:"24,90 €", an:"249 €", pages:2, pour:"Artisans, indépendants, commerces", points:["Accueil et contact","2 pages au choix : Prestations, Galerie ou À propos","Modifiable depuis votre compte"] },
+  site_complet: { nom:"Site Complet", sous:"5 pages", mois:"29,90 €", an:"299 €", pages:3, pour:"Pour tout présenter", points:["Accueil, Prestations, Galerie, À propos, Contact","Photos, textes, tout est modifiable","Le plus complet des sites vitrines"] },
+  site_boutique: { nom:"Site Boutique", sous:"vente en ligne", mois:"34,90 €", an:"349 €", pages:3, bientot:true, pour:"Vendre vos produits en ligne", points:["Tout Site Complet","Boutique : panier et paiement par carte","Commandes et livraison"] },
+  site_boutique_ia: { nom:"Site Boutique + IA", sous:"vente + assistant", mois:"49,90 €", an:"499 €", pages:3, bientot:true, pour:"Le maximum", points:["Tout Site Boutique","Assistant IA 24 h/24 sur le site","Devis automatiques"] }
+};
+var CONSEIL = { artisan:"site_pro", beaute:"site_pro", commerce:"site_complet", restauration:"site_complet", sport:"site_pro", asso:"site_pro", evenement:"site_essentiel", perso:"site_essentiel", autre:"site_pro" };
+var PAGES_OPT = [ { cle:"services", nom:"Prestations", desc:"Ce que vous proposez" }, { cle:"galerie", nom:"Galerie", desc:"Vos réalisations en photos" }, { cle:"apropos", nom:"À propos", desc:"Votre histoire, votre équipe" } ];
 
-function afficherPages(pages){
-  ["services","galerie","apropos"].forEach(function(p){
-    var on = pages.indexOf(p) >= 0;
-    document.getElementById("tog-"+p).classList.toggle("on", on);
-    document.getElementById("bloc-"+p).style.display = on ? "block" : "none";
+var CATEGORIE = "", FORMULE = "site_pro", PERIODE = "mois", STYLE_ACTUEL = "atelier";
+var slugTouche = false, slugChargeActuel = null, motDePasseCreation = "", CONFIG_CHARGEE = null;
+
+/* ===================== 1. ACTIVITÉ ===================== */
+Object.keys(CATEGORIES).forEach(function(cle){
+  var b = document.createElement("button"); b.type = "button"; b.className = "metier"; b.dataset.cle = cle; b.setAttribute("aria-pressed", "false");
+  b.style.background = COULEUR_CAT[cle] || "#5A5B78";
+  var n = document.createElement("span"); n.textContent = NOMS_CAT[cle] || cle;
+  var sm = document.createElement("small"); sm.textContent = SOUS_CAT[cle] || "";
+  b.appendChild(n); b.appendChild(sm);
+  b.onclick = function(){ choisirCategorie(cle); setTimeout(function(){ if (PAS_ACTUEL === "activite") afficherPas("formule"); }, 380); };
+  $("categories").appendChild(b);
+});
+function choisirCategorie(cle, sansRemplir) {
+  var cat = CATEGORIES[cle]; if (!cat) return;
+  CATEGORIE = cle;
+  document.querySelectorAll("#categories .metier").forEach(function(m){ m.setAttribute("aria-pressed", m.dataset.cle === cle ? "true" : "false"); });
+  document.documentElement.style.setProperty("--accent", COULEUR_CAT[cle] || "#E8452C");
+  if (sansRemplir) return;
+  $("cf-eyebrow").value = cat.eyebrow; $("cf-h1").value = cat.h1; $("cf-herotexte").value = cat.herotexte; $("cf-cta1").value = cat.cta1;
+  choisirStyle(cat.style);
+  if (!FORMULE_IMPOSEE) choisirFormule(CONSEIL[cle] || "site_pro"); else dessinerFormules();
+  dessinerPages(cat.pages || []);
+}
+
+/* ===================== 2. FORMULES ===================== */
+function dessinerFormules() {
+  var z = $("formules"); z.innerHTML = "";
+  Object.keys(FORMULES).forEach(function(cle){
+    var f = FORMULES[cle];
+    var b = document.createElement("button"); b.type = "button";
+    b.className = "formule" + (f.bientot ? " bientot" : ""); b.setAttribute("aria-pressed", cle === FORMULE ? "true" : "false");
+    if (f.bientot) { b.disabled = true; var t = document.createElement("span"); t.className = "tag-bientot"; t.textContent = "Bientôt disponible"; b.appendChild(t); }
+    else if (CATEGORIE && CONSEIL[CATEGORIE] === cle) { var c = document.createElement("span"); c.className = "conseil"; c.textContent = "Conseillée pour vous"; b.appendChild(c); }
+    var haut = document.createElement("div"); haut.className = "formule-haut";
+    var h = document.createElement("h3"); h.textContent = f.nom;
+    var prix = document.createElement("div"); prix.className = "prix"; prix.innerHTML = esc(PERIODE === "an" ? f.an : f.mois) + " <small>" + (PERIODE === "an" ? "/ an" : "/ mois") + "</small>";
+    haut.appendChild(h); haut.appendChild(prix); b.appendChild(haut);
+    var pour = document.createElement("div"); pour.style.cssText = "font-size:14px;opacity:.75"; pour.textContent = f.sous + " · " + f.pour; b.appendChild(pour);
+    var ul = document.createElement("ul"); f.points.forEach(function(p){ var li = document.createElement("li"); li.textContent = p; ul.appendChild(li); }); b.appendChild(ul);
+    if (!f.bientot) b.onclick = function(){ choisirFormule(cle); };
+    z.appendChild(b);
   });
-  calculerPrix();
 }
-function selectionnerStyle(style){
-  STYLE_ACTUEL = style;
-  document.querySelectorAll(".style-card").forEach(function(c){ c.classList.toggle("sel", c.dataset.style === style); });
+function choisirFormule(cle) {
+  if (!FORMULES[cle] || FORMULES[cle].bientot) return;
+  FORMULE = cle; dessinerFormules();
+  dessinerPages(pagesActives());
+  majRecap();
 }
+document.querySelectorAll(".bascule button").forEach(function(btn){
+  btn.onclick = function(){
+    PERIODE = btn.dataset.periode;
+    document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+    dessinerFormules(); majRecap();
+  };
+});
 
-function appliquerCategorie(){
-  var cat = CATEGORIES[document.getElementById("cf-categorie").value];
-  if (!cat) return;
-  document.getElementById("cf-eyebrow").value = cat.eyebrow;
-  document.getElementById("cf-h1").value = cat.h1;
-  document.getElementById("cf-herotexte").value = cat.herotexte;
-  document.getElementById("cf-cta1").value = cat.cta1;
-  selectionnerStyle(cat.style);
-  afficherPages(cat.pages);
-}
-
-function choisirStyle(el, style){ selectionnerStyle(style); }
-
-function togglePage(el){
-  el.classList.toggle("on");
-  var id = el.id.replace("tog-","");
-  document.getElementById("bloc-"+id).style.display = el.classList.contains("on") ? "block" : "none";
-  calculerPrix();
-}
-
-function calculerPrix(){
-  var extra = ["services","galerie","apropos"].filter(function(p){ return document.getElementById("tog-"+p).classList.contains("on"); }).length;
-  var total = 190 + extra * 90; /* ⚠️ mêmes prix que dans server.js */
-  document.getElementById("prix-total").textContent = total + "€";
-  return total;
+/* ===================== 4. STYLES ===================== */
+STYLES.forEach(function(st){
+  var b = document.createElement("button"); b.type = "button"; b.className = "style-site"; b.dataset.style = st.cle; b.setAttribute("aria-pressed", "false");
+  var n = document.createElement("div"); n.className = "nuancier";
+  st.c.forEach(function(col){ var i = document.createElement("i"); i.style.background = col; n.appendChild(i); });
+  var t = document.createElement("div"); var bb = document.createElement("b"); bb.textContent = st.nom; var sp = document.createElement("span"); sp.textContent = st.texte;
+  t.appendChild(bb); t.appendChild(sp); b.appendChild(n); b.appendChild(t);
+  b.onclick = function(){ choisirStyle(st.cle); };
+  $("styles").appendChild(b);
+});
+function choisirStyle(cle) {
+  STYLE_ACTUEL = cle;
+  document.querySelectorAll(".style-site").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.style === cle ? "true" : "false"); });
 }
 
-function chargerPhoto(input, previewId){
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e){
+/* ===================== 6. PAGES ===================== */
+function pagesActives() { var l = []; document.querySelectorAll("#pages input:checked").forEach(function(cb){ l.push(cb.value); }); return l; }
+function dessinerPages(voulues) {
+  var max = FORMULES[FORMULE].pages;
+  var gardees = voulues.filter(function(p){ return ["services","galerie","apropos"].indexOf(p) >= 0; }).slice(0, max);
+  var z = $("pages"); z.innerHTML = "";
+  PAGES_OPT.forEach(function(p){
+    var lab = document.createElement("label"); lab.className = "page-ligne";
+    var cb = document.createElement("input"); cb.type = "checkbox"; cb.value = p.cle; cb.checked = gardees.indexOf(p.cle) >= 0;
+    cb.onchange = function(){ limiterPages(cb); };
+    var t = document.createElement("div"); var b = document.createElement("b"); b.textContent = p.nom; var sp = document.createElement("span"); sp.textContent = p.desc;
+    t.appendChild(b); t.appendChild(sp); lab.appendChild(cb); lab.appendChild(t);
+    z.appendChild(lab);
+  });
+  limiterPages();
+}
+function limiterPages(dernier) {
+  var max = FORMULES[FORMULE].pages;
+  var coches = document.querySelectorAll("#pages input:checked");
+  if (dernier && dernier.checked && coches.length > max) {
+    dernier.checked = false;
+    $("aide-pages").textContent = max === 0 ? "La formule Site Essentiel a une seule page. Passez en Site Pro pour ajouter des pages." : "Votre formule permet " + max + " page" + (max > 1 ? "s" : "") + " en plus. Retirez-en une, ou passez à la formule supérieure.";
+    $("aide-pages").style.color = "#B42318";
+  } else {
+    $("aide-pages").textContent = "Accueil et Contact sont toujours inclus." + (max ? " Votre formule permet " + max + " page" + (max > 1 ? "s" : "") + " en plus." : " Votre formule ne comprend pas de page en plus.");
+    $("aide-pages").style.color = "";
+  }
+  var nb = document.querySelectorAll("#pages input:checked").length;
+  document.querySelectorAll("#pages .page-ligne").forEach(function(l){
+    var cb = l.querySelector("input"); var bloque = !cb.checked && nb >= max;
+    l.classList.toggle("bloquee", bloque);
+  });
+  var a = pagesActives();
+  montrer("bloc-services", a.indexOf("services") >= 0); montrer("bloc-galerie", a.indexOf("galerie") >= 0); montrer("bloc-apropos", a.indexOf("apropos") >= 0);
+}
+
+/* ===================== CONTENU ===================== */
+function ajouterService(conteneurId, titre, texte) {
+  var d = document.createElement("div"); d.className = "item-bloc";
+  d.innerHTML = '<input type="text" class="svc-titre" placeholder="Nom de la prestation" value="' + esc(titre) + '"/><textarea class="svc-texte" placeholder="Description" style="min-height:60px">' + esc(texte) + '</textarea><button class="btn-lien" type="button" style="color:#B42318;align-self:flex-start" onclick="this.parentElement.remove()">Retirer</button>';
+  $(conteneurId || "services-list").appendChild(d);
+}
+function ajouterGalerieItem(conteneurId, image, legende) {
+  var uid = "g" + Date.now() + Math.floor(Math.random()*100000);
+  var d = document.createElement("div"); d.className = "item-bloc";
+  d.innerHTML = '<div class="photo-zone"><span id="ph-' + uid + '"' + (image ? ' style="display:none"' : '') + '>Ajouter une photo</span><img id="' + uid + '" alt="" src="' + esc(image) + '" data-img="' + esc(image) + '"' + (image ? ' style="display:block"' : '') + '/><input type="file" accept="image/*" aria-label="Photo" onchange="chargerPhoto(this,\'' + uid + '\',\'ph-' + uid + '\')"/></div><input type="text" class="gal-legende" placeholder="Légende (facultatif)" value="' + esc(legende) + '"/><button class="btn-lien" type="button" style="color:#B42318;align-self:flex-start" onclick="this.parentElement.remove()">Retirer</button>';
+  $(conteneurId || "galerie-list").appendChild(d);
+}
+function chargerPhoto(input, previewId, phId) {
+  var f = input.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(e){
     var img = new Image();
     img.onload = function(){
-      var canvas = document.createElement("canvas");
-      var max = 900;
-      var w = img.width, h = img.height;
-      if (w > h && w > max) { h = h * max / w; w = max; }
-      else if (h > max) { w = w * max / h; h = max; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      var dataUrl = canvas.toDataURL("image/jpeg", 0.75);
-      var prev = document.getElementById(previewId);
-      prev.src = dataUrl; prev.style.display = "block";
-      prev.setAttribute("data-img", dataUrl);
+      var c = document.createElement("canvas"), w = img.width, h = img.height, max = 900;
+      if (w > h && w > max) { h = h * max / w; w = max; } else if (h > max) { w = w * max / h; h = max; }
+      c.width = w; c.height = h; c.getContext("2d").drawImage(img, 0, 0, w, h);
+      var url = c.toDataURL("image/jpeg", 0.75);
+      var p = $(previewId); p.src = url; p.style.display = "block"; p.setAttribute("data-img", url);
+      if (phId && $(phId)) $(phId).style.display = "none";
     };
     img.src = e.target.result;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 }
-function montrerPhoto(previewId, dataUrl){
-  var prev = document.getElementById(previewId);
-  if (dataUrl) { prev.src = dataUrl; prev.style.display = "block"; prev.setAttribute("data-img", dataUrl); }
-  else { prev.removeAttribute("src"); prev.style.display = "none"; prev.removeAttribute("data-img"); }
+function montrerPhoto(previewId, phId, url) {
+  var p = $(previewId);
+  if (url) { p.src = url; p.style.display = "block"; p.setAttribute("data-img", url); if ($(phId)) $(phId).style.display = "none"; }
+  else { p.removeAttribute("src"); p.style.display = "none"; p.removeAttribute("data-img"); if ($(phId)) $(phId).style.display = ""; }
+}
+function lireServices(id) { var o = []; document.querySelectorAll("#" + id + " .item-bloc").forEach(function(r){ var t = r.querySelector(".svc-titre"); if (t && t.value.trim()) o.push({ titre: t.value.trim(), texte: r.querySelector(".svc-texte").value.trim() }); }); return o; }
+function lireGalerie(id) { var o = []; document.querySelectorAll("#" + id + " .item-bloc").forEach(function(r){ var img = r.querySelector("img"); var l = r.querySelector(".gal-legende"); if (img && img.getAttribute("data-img")) o.push({ image: img.getAttribute("data-img"), legende: l ? l.value.trim() : "" }); }); return o; }
+
+/* ===================== 3. ADRESSE ===================== */
+function majSlugAuto(){ if (slugTouche || slugChargeActuel) return; $("cf-slug").value = slugifier($("cf-nom").value); majApercuLien(); }
+function majApercuLien(){ var s = $("cf-slug").value; $("apercu-lien").textContent = s ? "Votre lien : " + LIEN_MOTEUR.replace(/^https?:\/\//, "") + "?client=" + s : "Remplie automatiquement à partir du nom."; }
+
+/* ===================== PARCOURS ===================== */
+var ORDRE_PAS = ["activite","formule","entreprise","style","accueil","pages","recap"];
+var NOMS_PAS = { activite:"Votre activité", formule:"Votre formule", entreprise:"Votre entreprise", style:"Votre style", accueil:"Page d'accueil", pages:"Vos pages", recap:"C'est prêt" };
+var PAS_ACTUEL = "activite";
+function afficherPas(nom) {
+  PAS_ACTUEL = nom; var i = ORDRE_PAS.indexOf(nom);
+  document.querySelectorAll(".pas").forEach(function(s){ s.classList.toggle("actif", s.dataset.pas === nom); });
+  $("prog-etape").textContent = "Étape " + (i + 1) + " sur " + ORDRE_PAS.length;
+  $("prog-nom").textContent = NOMS_PAS[nom];
+  $("prog-barre").style.width = Math.round((i + 1) / ORDRE_PAS.length * 100) + "%";
+  $("btn-retour").style.visibility = i === 0 ? "hidden" : "visible";
+  if (!$("btn-suivant").dataset.paye) $("btn-suivant").textContent = i === ORDRE_PAS.length - 1 ? "Enregistrer" : "Continuer";
+  montrer("heros-createur", i === 0);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function validerPas(nom) {
+  if (nom === "activite" && !CATEGORIE) return "Choisissez votre activité pour continuer.";
+  if (nom === "entreprise") {
+    if (!$("cf-nom").value.trim()) return "Indiquez le nom de votre entreprise.";
+    if (!slugifier($("cf-slug").value)) return "Indiquez l'adresse de votre site.";
+    if (!slugChargeActuel && !$("cf-pwd-client").value.trim()) return "Choisissez un mot de passe pour votre compte.";
+  }
+  return "";
+}
+function allerPas(sens) {
+  var i = ORDRE_PAS.indexOf(PAS_ACTUEL);
+  if (sens > 0) {
+    var err = validerPas(PAS_ACTUEL);
+    if (err) { var z = document.querySelector(".pas.actif .etape-aide"); if (z) { z.textContent = err; z.style.color = "#B42318"; z.style.fontWeight = "700"; } return; }
+    if (i === ORDRE_PAS.length - 1) { if ($("btn-suivant").dataset.paye) payerAbonnement(); else enregistrer(); return; }
+  }
+  afficherPas(ORDRE_PAS[Math.max(0, Math.min(ORDRE_PAS.length - 1, i + sens))]);
+}
+function majRecap() {
+  var f = FORMULES[FORMULE], prix = PERIODE === "an" ? f.an + " / an" : f.mois + " / mois";
+  $("recap-formule").textContent = f.nom + " (" + f.sous + ")";
+  $("recap-periode").textContent = PERIODE === "an" ? "À l'année, 2 mois offerts" : "Au mois, engagement 12 mois";
+  $("recap-prix").textContent = prix;
+  $("bas-prix").textContent = prix;
+  $("bas-formule").textContent = f.nom + (PERIODE === "an" ? ", 2 mois offerts" : ", engagement 12 mois");
 }
 
-function ajouterService(conteneurId, titre, texte){
-  var row = document.createElement("div");
-  row.className = "item-row";
-  row.innerHTML =
-    '<div><input placeholder="Titre" value="' + esc(titre) + '" class="svc-titre" style="margin-bottom:6px"/><textarea placeholder="Description" class="svc-texte" style="min-height:50px">' + esc(texte) + '</textarea></div>' +
-    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById(conteneurId || "services-list").appendChild(row);
-}
-
-function ajouterGalerieItem(conteneurId, image, legende){
-  conteneurId = conteneurId || "galerie-list";
-  var uid = "gph_" + Math.random().toString(36).slice(2,8);
-  var row = document.createElement("div");
-  row.className = "item-row";
-  row.innerHTML =
-    '<div><div class="photo-zone" onclick="document.getElementById(\'' + uid + '\').click()" style="margin-bottom:6px">📷 Photo<input type="file" id="' + uid + '" accept="image/*" style="display:none" onchange="chargerPhoto(this,\'' + uid + '_prev\')"/><img id="' + uid + '_prev" style="display:' + (image ? 'block' : 'none') + '" ' + (image ? 'src="' + esc(image) + '" data-img="' + esc(image) + '"' : '') + '/></div><input placeholder="Légende (optionnel)" value="' + esc(legende) + '" class="gal-legende"/></div>' +
-    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById(conteneurId).appendChild(row);
-}
-
-function lireServices(id){
-  var out = [];
-  document.querySelectorAll("#" + id + " .item-row").forEach(function(r){
-    var t = r.querySelector(".svc-titre").value.trim();
-    var x = r.querySelector(".svc-texte").value.trim();
-    if (t) out.push({ titre: t, texte: x });
-  });
-  return out;
-}
-function lireGalerie(id){
-  var out = [];
-  document.querySelectorAll("#" + id + " .item-row").forEach(function(r){
-    var img = r.querySelector("img");
-    var leg = r.querySelector(".gal-legende").value.trim();
-    if (img && img.getAttribute("data-img")) out.push({ image: img.getAttribute("data-img"), legende: leg });
-  });
-  return out;
-}
-
-/* =====================================================================
-   ENREGISTREMENT
-   ===================================================================== */
-function enregistrer(){
-  var slug = slugifier(document.getElementById("cf-slug").value);
-  document.getElementById("cf-slug").value = slug;
-  var nom = document.getElementById("cf-nom").value.trim();
-  if (!nom) { showStatus("Indiquez le nom de votre activité.", "err"); return; }
-  if (!slug) { showStatus("Indiquez une adresse pour votre site.", "err"); return; }
-
+/* ===================== ENREGISTREMENT ===================== */
+function showStatus(m, t){ var s = $("status"); s.textContent = m; s.className = "status " + t; }
+function enregistrer() {
+  var slug = slugifier($("cf-slug").value); $("cf-slug").value = slug;
+  var nom = $("cf-nom").value.trim();
+  if (!nom || !slug) { afficherPas("entreprise"); return; }
   if (slug === slugChargeActuel) { finaliserEnregistrement(slug, nom); return; }
-  fetch(API + "/memory/site_" + slug)
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d && d.value) showStatus('L\'adresse « ' + slug + ' » est déjà prise. Choisissez-en une autre.', "err");
-      else finaliserEnregistrement(slug, nom);
-    })
-    .catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
+  fetch(API + "/memory/site_" + slug).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.value) { showStatus("L'adresse « " + slug + " » est déjà prise. Choisissez-en une autre (étape 3).", "err"); }
+    else finaliserEnregistrement(slug, nom);
+  }).catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
 }
-
-function finaliserEnregistrement(slug, nom){
+function finaliserEnregistrement(slug, nom) {
   var edition = !!(CONFIG_CHARGEE && slugChargeActuel === slug);
-  var pages = ["accueil"];
-  ["services","galerie","apropos"].forEach(function(p){ if (document.getElementById("tog-"+p).classList.contains("on")) pages.push(p); });
-  pages.push("contact");
-
+  var pages = ["accueil"].concat(pagesActives()).concat(["contact"]);
   var cfg = {
-    style: STYLE_ACTUEL,
-    categorie: document.getElementById("cf-categorie").value,
-    nom: nom,
-    telephone: document.getElementById("cf-tel").value.trim(),
-    whatsapp: document.getElementById("cf-whatsapp").value.replace(/[^0-9]/g, ""),
-    zones: document.getElementById("cf-zones").value.split(",").map(function(z){ return z.trim(); }).filter(Boolean),
-    motDePasseClient: document.getElementById("cf-pwd-client").value.trim(),
-    pages: pages,
-    hero: {
-      eyebrow: document.getElementById("cf-eyebrow").value.trim(),
-      titre: document.getElementById("cf-h1").value.trim(),
-      texte: document.getElementById("cf-herotexte").value.trim(),
-      cta1: document.getElementById("cf-cta1").value.trim(),
-      image: document.getElementById("hero-preview").getAttribute("data-img") || ""
-    },
-    servicesTitre: document.getElementById("cf-svc-titre").value.trim() || "Nos prestations",
-    services: lireServices("services-list"),
-    galerieTitre: document.getElementById("cf-gal-titre").value.trim() || "Réalisations",
-    galerie: lireGalerie("galerie-list"),
-    aproposTitre: document.getElementById("cf-apropos-titre").value.trim(),
-    aproposTexte: document.getElementById("cf-apropos-texte").value.trim(),
-    aproposImage: document.getElementById("apropos-preview").getAttribute("data-img") || "",
-    // Le serveur ignore ces champs sans code admin
+    style: STYLE_ACTUEL, categorie: CATEGORIE, formule: FORMULE, periode: PERIODE,
+    nom: nom, telephone: $("cf-tel").value.trim(), whatsapp: $("cf-whatsapp").value.replace(/[^0-9]/g, ""),
+    zones: $("cf-zones").value.split(",").map(function(z){ return z.trim(); }).filter(Boolean),
+    motDePasseClient: $("cf-pwd-client").value.trim(), pages: pages,
+    hero: { eyebrow: $("cf-eyebrow").value.trim(), titre: $("cf-h1").value.trim(), texte: $("cf-herotexte").value.trim(), cta1: $("cf-cta1").value.trim(), image: $("hero-preview").getAttribute("data-img") || "" },
+    servicesTitre: $("cf-svc-titre").value.trim() || "Nos prestations", services: lireServices("services-list"),
+    galerieTitre: $("cf-gal-titre").value.trim() || "Réalisations", galerie: lireGalerie("galerie-list"),
+    aproposTitre: $("cf-apropos-titre").value.trim(), aproposTexte: $("cf-apropos-texte").value.trim(), aproposImage: $("apropos-preview").getAttribute("data-img") || "",
     valide: edition ? CONFIG_CHARGEE.valide : false,
     dateExpiration: edition ? CONFIG_CHARGEE.dateExpiration : undefined,
     dateCreation: edition && CONFIG_CHARGEE.dateCreation ? CONFIG_CHARGEE.dateCreation : new Date().toISOString()
   };
-
-  if (!slugChargeActuel && !cfg.motDePasseClient) {
-    showStatus("Choisissez un mot de passe pour votre espace client.", "err"); return;
-  }
-
   showStatus("Enregistrement...", "ok");
-  fetch(API + "/memory/site_" + slug, {
-    method: "POST",
-    headers: entetes(motDePasseCreation ? { "x-client-password": motDePasseCreation } : null),
-    body: JSON.stringify({ value: cfg })
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if (!d || !d.ok) { showStatus((d && d.error) || "L'enregistrement a échoué.", "err"); return; }
-    if (!ADMIN_TOKEN && cfg.motDePasseClient) motDePasseCreation = cfg.motDePasseClient;
-    if (!edition) { CONFIG_CHARGEE = cfg; }
-    slugChargeActuel = slug;
-    showStatus("✅ Site enregistré pour « " + nom + " ».", "ok");
-    var lien = LIEN_MOTEUR + "?client=" + encodeURIComponent(slug);
-    document.getElementById("lien-final").value = lien;
-    document.getElementById("carte-resultat").style.display = "block";
-    document.getElementById("qr-zone").innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(lien) + '" style="border-radius:10px" alt="QR code"/>';
-    document.getElementById("montant-a-payer").textContent = calculerPrix() + "€";
-    document.getElementById("lien-revolut-resultat").href = LIEN_REVOLUT;
-    document.getElementById("carte-resultat").scrollIntoView({ behavior: "smooth" });
-  }).catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
-}
-
-function copierLien(){
-  var el = document.getElementById("lien-final");
-  el.select();
-  (navigator.clipboard ? navigator.clipboard.writeText(el.value) : Promise.reject())
-    .then(function(){ showStatus("Lien copié.", "ok"); })
-    .catch(function(){ document.execCommand("copy"); });
-}
-
-function showStatus(msg, type){
-  var s = document.getElementById("status");
-  s.textContent = msg; s.className = "status " + type;
-}
-
-/* =====================================================================
-   ESPACE PHILOMÈNE (admin)
-   ===================================================================== */
-function deverrouillerAdminGeneral(tokenAuto){
-  var t = tokenAuto || document.getElementById("pwd-admin-general").value.trim();
-  if (!t) return;
-  fetch(API + "/admin-check", { method: "POST", headers: { "x-admin-token": t } })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || !d.ok) {
-        try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){}
-        if (!tokenAuto) { var s = document.getElementById("status-verrou"); s.textContent = "Code incorrect."; s.className = "status err"; }
-        return;
-      }
-      ADMIN_TOKEN = t;
-      try { sessionStorage.setItem(CLE_SESSION_ADMIN, t); } catch(e){}
-      document.getElementById("verrou-admin-general").style.display = "none";
-      document.getElementById("contenu-admin-general").style.display = "block";
-      if (document.getElementById("cf-slug-charger").value.trim()) chargerConfigExistante();
-    })
-    .catch(function(){
-      var s = document.getElementById("status-verrou"); s.textContent = "Serveur injoignable, réessayez."; s.className = "status err";
-    });
-}
-
-function showStatusCharger(msg, type){
-  var s = document.getElementById("status-charger");
-  s.textContent = msg; s.className = "status " + type;
-}
-
-function chargerConfigExistante(){
-  var slug = slugifier(document.getElementById("cf-slug-charger").value);
-  if (!slug) { showStatusCharger("Indiquez l'identifiant du site.", "err"); return; }
-  showStatusCharger("Chargement...", "ok");
-  fetch(API + "/memory/site_" + slug, { headers: entetes() })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || !d.value) { showStatusCharger("Aucun site « " + slug + " ».", "err"); return; }
-      var cfg = d.value;
-      CONFIG_CHARGEE = cfg;
+  fetch(API + "/memory/site_" + slug, { method: "POST", headers: entetes(motDePasseCreation ? { "x-client-password": motDePasseCreation } : null), body: JSON.stringify({ value: cfg }) })
+    .then(function(r){ return r.json(); }).then(function(d){
+      if (!d || !d.ok) { showStatus((d && d.error) || "L'enregistrement a échoué.", "err"); return; }
+      if (!ADMIN_TOKEN && cfg.motDePasseClient) motDePasseCreation = cfg.motDePasseClient;
+      if (!edition) CONFIG_CHARGEE = cfg;
       slugChargeActuel = slug;
-      document.getElementById("cf-slug").value = slug;
-      majApercuLien();
-      document.getElementById("cf-categorie").value = cfg.categorie || "";
-      document.getElementById("cf-nom").value = cfg.nom || "";
-      document.getElementById("cf-eyebrow").value = (cfg.hero && cfg.hero.eyebrow) || "";
-      document.getElementById("cf-h1").value = (cfg.hero && cfg.hero.titre) || "";
-      document.getElementById("cf-herotexte").value = (cfg.hero && cfg.hero.texte) || "";
-      document.getElementById("cf-cta1").value = (cfg.hero && cfg.hero.cta1) || "";
-      montrerPhoto("hero-preview", cfg.hero && cfg.hero.image);
-      document.getElementById("cf-tel").value = cfg.telephone || "";
-      document.getElementById("cf-whatsapp").value = cfg.whatsapp || "";
-      document.getElementById("cf-zones").value = (cfg.zones || []).join(", ");
-      document.getElementById("cf-pwd-client").value = "";
-      document.getElementById("cf-pwd-client").placeholder = "Laisser vide pour garder le mot de passe actuel";
-      selectionnerStyle(cfg.style || "atelier");
-      afficherPages(cfg.pages || []);
-      document.getElementById("cf-svc-titre").value = cfg.servicesTitre || "";
-      document.getElementById("services-list").innerHTML = "";
-      (cfg.services || []).forEach(function(s){ ajouterService("services-list", s.titre, s.texte); });
-      document.getElementById("cf-gal-titre").value = cfg.galerieTitre || "";
-      document.getElementById("galerie-list").innerHTML = "";
-      (cfg.galerie || []).forEach(function(g){ ajouterGalerieItem("galerie-list", g.image, g.legende); });
-      document.getElementById("cf-apropos-titre").value = cfg.aproposTitre || "";
-      document.getElementById("cf-apropos-texte").value = cfg.aproposTexte || "";
-      montrerPhoto("apropos-preview", cfg.aproposImage);
-
-      document.getElementById("bloc-validation").style.display = "block";
-      afficherStatut(cfg);
-      document.getElementById("carte-resultat").style.display = "none";
-      showStatusCharger("✅ « " + (cfg.nom || slug) + " » chargé. Modifiez puis ré-enregistrez.", "ok");
-    }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
+      var lien = LIEN_MOTEUR + "?client=" + encodeURIComponent(slug);
+      showStatus("✅ « " + nom + " » est enregistré.", "ok");
+      $("lien-final").value = lien; $("lien-ouvrir").href = lien;
+      $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
+      var f = FORMULES[FORMULE]; $("montant-a-payer").textContent = PERIODE === "an" ? f.an + " / an" : f.mois + " / mois";
+      $("lien-revolut-resultat").href = LIEN_REVOLUT;
+      montrer("carte-resultat", true);
+      $("btn-suivant").textContent = "Payer et activer"; $("btn-suivant").dataset.paye = "1";
+      $("carte-resultat").scrollIntoView({ behavior: "smooth" });
+    }).catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
 }
+function copierLien(){ var i = $("lien-final"); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function(){ showStatus("Lien copié.", "ok"); }).catch(function(){ document.execCommand("copy"); }); }
 
-function afficherStatut(cfg){
-  var statutEl = document.getElementById("statut-actuel");
-  if (cfg.valide === true) {
-    var expire = cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration);
-    statutEl.textContent = expire ? "⚠️ Expiré (" + String(cfg.dateExpiration).slice(0,10) + ")" : "✅ Actif jusqu'au " + String(cfg.dateExpiration || "").slice(0,10);
-  } else {
-    statutEl.textContent = "⏳ En attente de paiement";
-  }
-}
-
-function confirmerPaiement(){
-  if (!document.getElementById("chk-paiement-recu").checked) { showStatusCharger("Cochez d'abord « Paiement reçu ».", "err"); return; }
-  if (!slugChargeActuel || !CONFIG_CHARGEE || !ADMIN_TOKEN) { showStatusCharger("Chargez d'abord un site.", "err"); return; }
-  var dans1an = new Date(); dans1an.setFullYear(dans1an.getFullYear() + 1);
-  var cfg = JSON.parse(JSON.stringify(CONFIG_CHARGEE));
-  cfg.valide = true;
-  cfg.dateExpiration = dans1an.toISOString();
-  fetch(API + "/memory/site_" + slugChargeActuel, {
-    method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg })
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if (!d || !d.ok) { showStatusCharger((d && d.error) || "La confirmation a échoué.", "err"); return; }
-    CONFIG_CHARGEE = cfg;
-    afficherStatut(cfg);
-    showStatusCharger("✅ Paiement confirmé, site actif jusqu'au " + dans1an.toLocaleDateString("fr-FR") + ".", "ok");
-  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
-}
-
-/* =====================================================================
-   ESPACE CLIENT
-   ===================================================================== */
-function entrerEspaceClient(){
-  var slug = slugifier(document.getElementById("ad-slug").value);
-  var pwd = document.getElementById("ad-pwd").value.trim();
-  if (!slug || !pwd) { showAdStatus("Indiquez l'adresse de votre site et votre mot de passe.", "err"); return; }
-  showAdStatus("Connexion...", "ok");
-  fetch(API + "/verify-client/site_" + slug, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password: pwd })
-  })
-    .then(function(r){ return r.json(); })
-    .then(function(v){
-      if (!v || !v.ok) { showAdStatus((v && v.error) || "Adresse ou mot de passe incorrect.", "err"); return null; }
-      return fetch(API + "/memory/site_" + slug).then(function(r){ return r.json(); });
-    })
-    .then(function(d){
-      if (!d) return;
-      if (!d.value) { showAdStatus("Aucun site à cette adresse.", "err"); return; }
-      CONFIG_CLIENT_ACTUEL = d.value;
-      CONFIG_CLIENT_ACTUEL.hero = CONFIG_CLIENT_ACTUEL.hero || {};
-      SLUG_CLIENT_ACTUEL = slug;
-      CLIENT_PWD = pwd;
-      document.getElementById("ad-h1").value = CONFIG_CLIENT_ACTUEL.hero.titre || "";
-      document.getElementById("ad-herotexte").value = CONFIG_CLIENT_ACTUEL.hero.texte || "";
-      var pages = d.value.pages || [];
-      if (pages.indexOf("services") >= 0) {
-        document.getElementById("ad-bloc-services").style.display = "block";
-        document.getElementById("ad-services-list").innerHTML = "";
-        (d.value.services || []).forEach(function(s){ ajouterService("ad-services-list", s.titre, s.texte); });
-      }
-      if (pages.indexOf("galerie") >= 0) {
-        document.getElementById("ad-bloc-galerie").style.display = "block";
-        document.getElementById("ad-galerie-list").innerHTML = "";
-        (d.value.galerie || []).forEach(function(g){ ajouterGalerieItem("ad-galerie-list", g.image, g.legende); });
-      }
-      document.getElementById("verrou-client").style.display = "none";
-      document.getElementById("ad-content").style.display = "block";
-    }).catch(function(){ showAdStatus("Connexion impossible.", "err"); });
-}
-
-function showAdStatus(msg, type){
-  var s = document.getElementById("ad-status-verrou");
-  s.textContent = msg; s.className = "status " + type;
-}
-
-function enregistrerEspaceClient(){
-  if (!CONFIG_CLIENT_ACTUEL || !SLUG_CLIENT_ACTUEL) return;
-  CONFIG_CLIENT_ACTUEL.hero.titre = document.getElementById("ad-h1").value.trim();
-  CONFIG_CLIENT_ACTUEL.hero.texte = document.getElementById("ad-herotexte").value.trim();
-  if (document.getElementById("ad-bloc-services").style.display !== "none") CONFIG_CLIENT_ACTUEL.services = lireServices("ad-services-list");
-  if (document.getElementById("ad-bloc-galerie").style.display !== "none") CONFIG_CLIENT_ACTUEL.galerie = lireGalerie("ad-galerie-list");
-
-  var s = document.getElementById("ad-status-save");
-  fetch(API + "/memory/site_" + SLUG_CLIENT_ACTUEL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD },
-    body: JSON.stringify({ value: CONFIG_CLIENT_ACTUEL })
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if (d && d.ok) { s.textContent = "✅ Modifications enregistrées."; s.className = "status ok"; }
-    else { s.textContent = (d && d.error) || "L'enregistrement a échoué."; s.className = "status err"; }
-  }).catch(function(){
-    s.textContent = "Connexion impossible."; s.className = "status err";
-  });
-}
-
-/* ===== Paiement de l'abonnement (vers Philomène IA) ===== */
-function payerAbonnement(){
-  if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre site.", "err"); return; }
-  var btn = document.getElementById("btn-payer-abonnement");
-  btn.disabled = true; btn.textContent = "Ouverture du paiement...";
-  fetch(API + "/abonnement/checkout/site/" + encodeURIComponent(slugChargeActuel), { method: "POST" })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
+/* ===================== PAIEMENT ===================== */
+function payerAbonnement() {
+  if (!slugChargeActuel) return;
+  var b = $("btn-suivant"); b.disabled = true; b.textContent = "Ouverture...";
+  fetch(API + "/abonnement/checkout/site/" + encodeURIComponent(slugChargeActuel), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ periode: PERIODE }) })
+    .then(function(r){ return r.json(); }).then(function(d){
       if (d && d.ok && d.url) { window.location.href = d.url; return; }
-      showStatus((d && d.error) || "Paiement indisponible.", "err");
-      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
-    })
-    .catch(function(){
-      showStatus("Connexion impossible. Réessayez.", "err");
-      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
-    });
+      showStatus((d && d.error) || "Paiement indisponible.", "err"); b.disabled = false; b.textContent = "Payer et activer";
+    }).catch(function(){ showStatus("Connexion impossible. Réessayez.", "err"); b.disabled = false; b.textContent = "Payer et activer"; });
 }
-
-function gererRetourAbonnement(){
+function gererRetourAbonnement() {
   var p = new URLSearchParams(window.location.search);
   if (p.get("abonnement") !== "site") return;
   var projet = p.get("projet") || "";
-  if (p.get("paiement") === "annule") {
-    showStatus("Paiement annulé. Votre site reste en démo, vous pouvez payer quand vous voulez.", "err");
-    return;
-  }
+  afficherPas("recap");
+  if (p.get("paiement") === "annule") { showStatus("Paiement annulé. Votre site reste en démo, vous pouvez payer quand vous voulez.", "err"); return; }
   showStatus("Vérification du paiement...", "ok");
-  fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || ""))
+  fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.paye) showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est en ligne : " + LIEN_MOTEUR + "?client=" + projet, "ok");
+    else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
+    window.history.replaceState(null, "", window.location.pathname);
+  }).catch(function(){ showStatus("Vérification impossible. Écrivez-nous sur WhatsApp si besoin.", "err"); });
+}
+
+/* ===================== ESPACE PHILOMÈNE ===================== */
+function showStatusCharger(m, t){ var s = $("status-charger"); s.textContent = m; s.className = "status " + t; }
+function deverrouillerAdminGeneral(tokenAuto) {
+  var t = tokenAuto || $("pwd-admin-general").value.trim(); if (!t) return;
+  fetch(API + "/admin-check", { method: "POST", headers: { "x-admin-token": t } }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) { try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){} if (!tokenAuto) { var s = $("status-verrou"); s.textContent = "Code incorrect."; s.className = "status err"; } return; }
+    ADMIN_TOKEN = t; try { sessionStorage.setItem(CLE_SESSION_ADMIN, t); } catch(e){}
+    montrer("verrou-admin-general", false); montrer("contenu-admin-general", true);
+    if ($("cf-slug-charger").value.trim()) chargerConfigExistante();
+  }).catch(function(){ var s = $("status-verrou"); s.textContent = "Serveur injoignable."; s.className = "status err"; });
+}
+function chargerConfigExistante() {
+  var slug = slugifier($("cf-slug-charger").value); if (!slug) return;
+  showStatusCharger("Chargement...", "ok");
+  fetch(API + "/memory/site_" + slug, { headers: entetes() }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.value) { showStatusCharger("Aucun site « " + slug + " ».", "err"); return; }
+    var cfg = CONFIG_CHARGEE = d.value; slugChargeActuel = slug;
+    choisirCategorie(cfg.categorie || "autre", true);
+    FORMULE = FORMULES[cfg.formule] ? cfg.formule : "site_complet";
+    PERIODE = cfg.periode === "an" ? "an" : "mois";
+    document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.periode === PERIODE ? "true" : "false"); });
+    dessinerFormules();
+    $("cf-slug").value = slug; majApercuLien();
+    $("cf-nom").value = cfg.nom || ""; $("cf-eyebrow").value = (cfg.hero && cfg.hero.eyebrow) || "";
+    $("cf-h1").value = (cfg.hero && cfg.hero.titre) || ""; $("cf-herotexte").value = (cfg.hero && cfg.hero.texte) || ""; $("cf-cta1").value = (cfg.hero && cfg.hero.cta1) || "";
+    montrerPhoto("hero-preview", "ph-hero", cfg.hero && cfg.hero.image);
+    $("cf-tel").value = cfg.telephone || ""; $("cf-whatsapp").value = cfg.whatsapp || ""; $("cf-zones").value = (cfg.zones || []).join(", ");
+    $("cf-pwd-client").value = ""; $("cf-pwd-client").placeholder = "Laisser vide pour garder le mot de passe actuel";
+    choisirStyle(cfg.style || "atelier");
+    dessinerPages(cfg.pages || []);
+    $("cf-svc-titre").value = cfg.servicesTitre || ""; $("services-list").innerHTML = ""; (cfg.services || []).forEach(function(s){ ajouterService("services-list", s.titre, s.texte); });
+    $("cf-gal-titre").value = cfg.galerieTitre || ""; $("galerie-list").innerHTML = ""; (cfg.galerie || []).forEach(function(g){ ajouterGalerieItem("galerie-list", g.image, g.legende); });
+    $("cf-apropos-titre").value = cfg.aproposTitre || ""; $("cf-apropos-texte").value = cfg.aproposTexte || ""; montrerPhoto("apropos-preview", "ph-apropos", cfg.aproposImage);
+    majRecap();
+    montrer("bloc-validation", true); afficherStatut(cfg);
+    showStatusCharger("✅ « " + (cfg.nom || slug) + " » chargé.", "ok");
+    afficherPas("entreprise");
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
+}
+function afficherStatut(cfg) {
+  var e = $("statut-actuel");
+  if (cfg.valide === true) { var exp = cfg.dateExpiration && new Date() > new Date(cfg.dateExpiration); e.textContent = exp ? "⚠️ Expiré le " + new Date(cfg.dateExpiration).toLocaleDateString("fr-FR") : "✅ Actif jusqu'au " + new Date(cfg.dateExpiration).toLocaleDateString("fr-FR"); }
+  else e.textContent = "⏳ En attente de paiement";
+}
+function confirmerPaiement() {
+  if (!$("chk-paiement-recu").checked) { showStatusCharger("Cochez d'abord « Paiement reçu ».", "err"); return; }
+  if (!slugChargeActuel || !CONFIG_CHARGEE || !ADMIN_TOKEN) return;
+  var cfg = JSON.parse(JSON.stringify(CONFIG_CHARGEE)), m = new Date(), a = cfg.dateExpiration ? new Date(cfg.dateExpiration) : null;
+  var fin = new Date(a && a > m ? a : m); fin.setFullYear(fin.getFullYear() + 1);
+  cfg.valide = true; cfg.dateExpiration = fin.toISOString();
+  fetch(API + "/memory/site_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) { showStatusCharger((d && d.error) || "Échec.", "err"); return; }
+    CONFIG_CHARGEE = cfg; afficherStatut(cfg); showStatusCharger("✅ Actif jusqu'au " + fin.toLocaleDateString("fr-FR") + ".", "ok");
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
+}
+
+/* ===================== MON COMPTE ===================== */
+var CONFIG_CLIENT_ACTUEL = null, SLUG_CLIENT_ACTUEL = null, CLIENT_PWD = "";
+function showAdStatus(m, t){ var s = $("ad-status-verrou"); s.textContent = m; s.className = "status " + t; }
+function switchOnglet(nom) {
+  var compte = nom === "admin";
+  montrer("tab-creation", !compte); montrer("tab-admin", compte);
+  montrer("progression", !compte); montrer("barre-bas", !compte);
+  $("ong-site").setAttribute("aria-pressed", compte ? "false" : "true");
+  $("btn-compte").setAttribute("aria-pressed", compte ? "true" : "false");
+  $("heros-titre").textContent = compte ? "Mon compte." : "Créez votre site.";
+  $("heros-texte").textContent = compte ? "Vos textes, vos prestations, vos photos : tout se modifie ici." : "Un vrai site internet, prêt en quelques minutes. Trouvé sur Google, beau sur téléphone comme sur ordinateur.";
+  if (compte) montrer("heros-createur", true); else afficherPas(PAS_ACTUEL);
+}
+function entrerEspaceClient() {
+  var slug = slugifier($("ad-slug").value), pwd = $("ad-pwd").value.trim();
+  if (!slug || !pwd) { showAdStatus("Indiquez l'adresse de votre site et votre mot de passe.", "err"); return; }
+  showAdStatus("Connexion...", "ok");
+  fetch(API + "/verify-client/site_" + slug, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: pwd }) })
     .then(function(r){ return r.json(); })
+    .then(function(v){ if (!v || !v.ok) { showAdStatus((v && v.error) || "Adresse ou mot de passe incorrect.", "err"); return null; } return fetch(API + "/memory/site_" + slug).then(function(r){ return r.json(); }); })
     .then(function(d){
-      if (d && d.paye) {
-        showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est actif jusqu'au " + new Date(d.dateExpiration).toLocaleDateString("fr-FR") + ". Lien : " + LIEN_MOTEUR + "?client=" + projet, "ok");
-      } else {
-        showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, contactez-nous sur WhatsApp.", "err");
-      }
-      window.history.replaceState(null, "", window.location.pathname);
-    })
-    .catch(function(){ showStatus("Vérification impossible. Contactez-nous sur WhatsApp si besoin.", "err"); });
+      if (!d) return; if (!d.value) { showAdStatus("Aucun site à cette adresse.", "err"); return; }
+      var cfg = CONFIG_CLIENT_ACTUEL = d.value; cfg.hero = cfg.hero || {};
+      SLUG_CLIENT_ACTUEL = slug; CLIENT_PWD = pwd;
+      if (COULEUR_CAT[cfg.categorie]) document.documentElement.style.setProperty("--accent", COULEUR_CAT[cfg.categorie]);
+      $("ad-h1").value = cfg.hero.titre || ""; $("ad-herotexte").value = cfg.hero.texte || "";
+      var pages = cfg.pages || [];
+      montrer("ad-bloc-services", pages.indexOf("services") >= 0); $("ad-services-list").innerHTML = ""; (cfg.services || []).forEach(function(s){ ajouterService("ad-services-list", s.titre, s.texte); });
+      montrer("ad-bloc-galerie", pages.indexOf("galerie") >= 0); $("ad-galerie-list").innerHTML = ""; (cfg.galerie || []).forEach(function(g){ ajouterGalerieItem("ad-galerie-list", g.image, g.legende); });
+      montrer("verrou-client", false); montrer("ad-content", true);
+    }).catch(function(){ showAdStatus("Connexion impossible.", "err"); });
+}
+function enregistrerEspaceClient() {
+  var cfg = CONFIG_CLIENT_ACTUEL; if (!cfg) return;
+  cfg.hero.titre = $("ad-h1").value.trim(); cfg.hero.texte = $("ad-herotexte").value.trim();
+  if (!$("ad-bloc-services").classList.contains("cache")) cfg.services = lireServices("ad-services-list");
+  if (!$("ad-bloc-galerie").classList.contains("cache")) cfg.galerie = lireGalerie("ad-galerie-list");
+  var s = $("ad-status-save");
+  fetch(API + "/memory/site_" + SLUG_CLIENT_ACTUEL, { method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD }, body: JSON.stringify({ value: cfg }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if (d && d.ok) { s.textContent = "✅ Modifications enregistrées."; s.className = "status ok"; } else { s.textContent = (d && d.error) || "L'enregistrement a échoué."; s.className = "status err"; } })
+    .catch(function(){ s.textContent = "Connexion impossible."; s.className = "status err"; });
 }
 
-function switchOnglet(nom){
-  document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
-  document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
-  document.getElementById("tabbtn-creation").classList.toggle("active", nom === "creation");
-  document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
+/* ===================== AIDE ===================== */
+var AIDE_PROMPT = "Tu es l'assistante du créateur de site de Philomène IA. Réponds en français, simplement, sans markdown, en 2 à 4 phrases. Étapes : activité, formule, entreprise, style, page d'accueil, pages, enregistrement puis paiement. Formules des sites : Site Essentiel 1 page 19,90 € par mois ou 199 € par an ; Site Pro 3 pages 24,90 € par mois ou 249 € par an ; Site Complet 5 pages 29,90 € par mois ou 299 € par an ; Site Boutique et Site Boutique + IA arrivent bientôt. Au mois engagement 12 mois, à l'année 2 mois offerts. Tout se modifie ensuite dans Mon compte, en haut à droite. Pour une appli (menu, paiement, assistant), bouton Créer mon appli en haut. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
+function ouvrirAideIA() {
+  $("aide-panneau").classList.add("ouvert");
+  var m = $("aide-msgs");
+  if (!m.children.length) {
+    msgAide("Bonjour ! Une question sur les formules, les pages ou le paiement ?");
+    var a = document.createElement("a"); a.href = lienWa("Bonjour Philomène ! J'ai une question sur la création de mon site."); a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "Ou écrivez-nous sur WhatsApp"; a.style.cssText = "align-self:flex-start;font-weight:700;color:#0B6B47;font-size:14px;padding:4px 2px"; m.appendChild(a);
+  }
+  $("aide-input").focus();
 }
+function fermerAideIA(){ $("aide-panneau").classList.remove("ouvert"); }
+function msgAide(t, moi){ var d = document.createElement("div"); if (moi) d.className = "moi"; d.textContent = t; $("aide-msgs").appendChild(d); $("aide-msgs").scrollTop = 1e9; return d; }
+function envoyerAideIA() {
+  var i = $("aide-input"), t = i.value.trim(); if (!t) return; i.value = ""; msgAide(t, true); var att = msgAide("…");
+  fetch(API + "/vitrine", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: t, userId: "aidesite_" + Date.now(), systemPrompt: AIDE_PROMPT }) })
+    .then(function(r){ return r.json(); }).then(function(d){ att.textContent = (d && d.answer) ? d.answer.replace(/\*\*(.*?)\*\*/g, "$1") : "Écrivez-nous sur WhatsApp."; })
+    .catch(function(){ att.textContent = "Connexion impossible. Écrivez-nous sur WhatsApp."; });
+}
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") fermerAideIA(); });
 
-/* ?philomene=1 révèle l'espace admin ; ?modifier=slug pré-remplit ; ?admin=slug ouvre l'espace client */
+/* ===================== DÉMARRAGE ===================== */
 var paramsUrl = new URLSearchParams(window.location.search);
+var FORMULE_IMPOSEE = (FORMULES[paramsUrl.get("formule")] && !FORMULES[paramsUrl.get("formule")].bientot) ? paramsUrl.get("formule") : null;
+if (FORMULE_IMPOSEE) FORMULE = FORMULE_IMPOSEE;
+if (paramsUrl.get("periode") === "an") { PERIODE = "an"; document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.periode === "an" ? "true" : "false"); }); }
+dessinerFormules(); choisirStyle("atelier"); dessinerPages([]); majRecap();
+afficherPas("activite");
+if (paramsUrl.get("categorie") && CATEGORIES[paramsUrl.get("categorie")]) { choisirCategorie(paramsUrl.get("categorie")); afficherPas("formule"); }
 gererRetourAbonnement();
 if (paramsUrl.get("philomene")) {
-  document.getElementById("carte-modifier-existant").style.display = "block";
-  if (paramsUrl.get("modifier")) document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
-  var tokenMemo = null;
-  try { tokenMemo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
-  if (tokenMemo) deverrouillerAdminGeneral(tokenMemo);
+  montrer("carte-modifier-existant", true);
+  if (paramsUrl.get("modifier")) $("cf-slug-charger").value = paramsUrl.get("modifier");
+  var memo = null; try { memo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
+  if (memo) deverrouillerAdminGeneral(memo);
 }
-if (paramsUrl.get("admin")) {
-  switchOnglet("admin");
-  document.getElementById("ad-slug").value = paramsUrl.get("admin");
-}
+if (paramsUrl.has("admin")) { switchOnglet("admin"); var a = paramsUrl.get("admin"); if (a && a !== "1") $("ad-slug").value = a; }
 </script>
 </body>
 </html>
