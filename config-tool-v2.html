@@ -2,412 +2,548 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="color-scheme" content="light"/>
-<title>Créateur d'appli — Philomène IA</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="color-scheme" content="light only"/>
+<meta name="theme-color" content="#1D1B4C"/>
+<title>Créer mon appli — Philomène IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Jost,sans-serif}
-html{background:#FAFAF7 !important;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
-body{background:#FAFAF7 !important;color:#111;padding:20px 16px 60px;max-width:540px;margin:0 auto}
-h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
-.sub{font-size:12px;color:rgba(17,17,17,.5);margin-bottom:20px}
-.card{background:rgba(17,17,17,.06);border:1px solid rgba(17,17,17,.12);border-radius:14px;padding:18px;margin-bottom:16px}
-.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:rgba(17,17,17,.6);margin-bottom:12px}
-.lbl{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(17,17,17,.4);margin-bottom:5px;display:block}
-.hint{font-size:11.5px;color:rgba(17,17,17,.5);margin:-6px 0 12px}
-input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(17,17,17,.15);background:#fff;color:#111;font-size:14px;margin-bottom:12px;outline:none;-webkit-appearance:none}
-select option{background:#fff;color:#111}
-textarea{resize:vertical;min-height:56px;word-break:break-all;overflow-wrap:anywhere}
-.palette-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.palette-bulle{width:42px;height:42px;border-radius:50%;cursor:pointer;border:2px solid rgba(17,17,17,.2);position:relative;flex-shrink:0}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-input[type=color]{padding:2px;height:38px}
-.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
-.mod-check{display:flex;align-items:center;gap:8px;background:rgba(17,17,17,.05);border:1.5px solid rgba(17,17,17,.12);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px}
-.mod-check input{width:16px;height:16px;margin:0;flex-shrink:0}
-/* iPhone : on rend aux cases à cocher leur apparence normale (coche visible) */
-input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;width:20px;height:20px;padding:0;margin:0;flex-shrink:0;accent-color:#1e8449;background:none;border:none}
-.mod-check.active{border-color:#6BCB77;background:rgba(107,203,119,.08)}
-.item-row{display:grid;grid-template-columns:1fr 1fr 0.7fr auto;gap:6px;margin-bottom:8px;align-items:center}
-.del-btn{background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);color:#c0392b;border-radius:8px;font-size:14px;cursor:pointer;padding:8px}
-.add-btn{background:none;border:1.5px dashed rgba(17,17,17,.25);color:rgba(17,17,17,.6);border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12px;margin-top:2px}
-.save-btn{width:100%;padding:15px;border-radius:12px;border:none;background:#111;color:#FAFAF7;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
-.status{font-size:12px;padding:10px;border-radius:8px;margin-top:10px;display:none}
-.status.ok{background:rgba(46,204,113,.15);color:#1e8449;display:block}
-.status.err{background:rgba(255,107,107,.12);color:#c0392b;display:block}
-.tabbtn{flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(17,17,17,.15);background:rgba(17,17,17,.05);color:rgba(17,17,17,.6);font-size:13px;font-weight:600;cursor:pointer}
-.tabbtn.active{background:#111;color:#FAFAF7;border-color:#111}
-.logo-zone{border:2px dashed rgba(17,17,17,.25);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px}
-.logo-zone p{font-size:12px;color:rgba(17,17,17,.4)}
-.logo-zone img{max-width:90px;max-height:60px;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
-.photo-zone{border:2px dashed rgba(17,17,17,.25);border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:rgba(17,17,17,.04);position:relative;overflow:hidden;margin-top:6px}
-.photo-zone .ph{color:rgba(17,17,17,.4);font-size:12px}
-.photo-zone .ph span{display:block;font-size:24px;margin-bottom:6px}
-.photo-zone img{max-width:100%;max-height:120px;border-radius:8px;display:none;margin:0 auto}
-.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.subsection{display:none;border-top:1px solid rgba(17,17,17,.1);padding-top:12px;margin-top:12px}
-.subsection.show{display:block}
-.day-block{background:rgba(17,17,17,.04);border-radius:10px;padding:10px;margin-bottom:8px}
-.day-block h3{font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)}
+:root{
+  --encre:#1D1B4C; --gris:#5A5B78; --pale:#F2F4FF; --ligne:#E4E6F5;
+  --tomate:#E8452C; --rose:#D6336C; --bleu:#2F6FED; --soleil:#FFC53D; --menthe:#12A06B;
+  --accent:#E8452C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light only;background:#fff;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:Figtree,system-ui,sans-serif;color:var(--encre);background:#fff!important;font-size:16px;line-height:1.5;padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;line-height:1.08}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--bleu);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.cadre{max-width:680px;margin:0 auto;padding:0 18px}
+
+/* Barre */
+.barre{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--ligne);padding-top:env(safe-area-inset-top,0px)}
+.barre .cadre{height:60px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px}
+.logo i{width:34px;height:34px;border-radius:10px;background:var(--encre);display:grid;place-items:center}
+.btn-compte{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:0 14px;border-radius:999px;border:2px solid var(--encre);background:#fff;color:var(--encre);font:700 14px Figtree,sans-serif;cursor:pointer}
+.btn-compte[aria-pressed="true"]{background:var(--encre);color:#fff}
+.logo,.btn-compte{white-space:nowrap}
+@media(max-width:430px){.logo-ia{display:none}.btn-compte{padding:0 12px}.barre .cadre{gap:6px}}
+.btn-aide{width:42px;height:42px;border-radius:50%;border:2px solid var(--ligne);background:#fff;color:var(--encre);display:grid;place-items:center;cursor:pointer}
+.flottant{display:none!important}
+
+/* Héros */
+.heros{background:var(--accent);color:#fff;transition:background .4s ease;padding:34px 0 30px}
+.heros h1{font-size:clamp(38px,9vw,56px);font-weight:800}
+.heros p{font-size:18px;opacity:.95;margin-top:10px;max-width:40ch}
+.onglets{display:inline-flex;gap:4px;padding:5px;background:rgba(255,255,255,.2);border-radius:999px;margin-top:22px}
+.onglets button{min-height:44px;padding:0 18px;border-radius:999px;border:none;background:transparent;color:#fff;font:700 15px Figtree,sans-serif;cursor:pointer}
+.onglets button[aria-pressed="true"]{background:#fff;color:var(--encre)}
+
+/* Parcours pas à pas */
+.progression{position:sticky;top:calc(60px + env(safe-area-inset-top,0px));z-index:35;background:#fff;padding:12px 0 10px;border-bottom:1px solid var(--ligne)}
+.progression-texte{display:flex;justify-content:space-between;font-size:13.5px;font-weight:700;color:var(--gris);margin-bottom:8px}
+.progression-barre{height:8px;border-radius:999px;background:var(--pale);overflow:hidden}
+.progression-barre i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .35s ease,background .4s ease}
+.pas{display:none;border-bottom:none;padding-top:26px;animation:entree .3s ease}
+.pas.actif{display:block}
+@keyframes entree{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.barre-bas{position:fixed;left:0;right:0;bottom:0;z-index:45;background:#fff;border-top:1px solid var(--ligne);box-shadow:0 -8px 24px rgba(29,27,76,.08);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.barre-bas .cadre{display:flex;align-items:center;gap:10px}
+.barre-bas .prix-bas{flex:1;min-width:0;line-height:1.2}
+.barre-bas .prix-bas b{display:block;font:800 19px 'Bricolage Grotesque',sans-serif}
+.barre-bas .prix-bas span{font-size:12.5px;color:var(--gris)}
+.btn-retour{min-width:52px;min-height:52px;border-radius:50%;border:2px solid var(--ligne);background:#fff;color:var(--encre);cursor:pointer;display:grid;place-items:center}
+.barre-bas .btn{min-width:150px}
+
+/* Étapes */
+.etape{padding:34px 0;border-bottom:1px solid var(--ligne)}
+.etape-tete{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.etape-num{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:800 18px 'Bricolage Grotesque',sans-serif;flex-shrink:0;transition:background .4s ease}
+.etape h2{font-size:28px;font-weight:800}
+.etape-aide{color:var(--gris);margin:6px 0 20px 54px}
+@media(max-width:520px){.etape-aide{margin-left:0}}
+.cache{display:none!important}
+
+/* Champs */
+.champ{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.champ label,.champ .label{font-weight:700;font-size:15px}
+.champ small{color:var(--gris);font-size:13.5px}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],input[type=url],textarea,select{width:100%;min-height:50px;padding:12px 14px;border-radius:14px;border:2px solid var(--ligne);background:#fff;color:var(--encre);font:500 16px Figtree,sans-serif;outline:none;-webkit-appearance:none;appearance:none}
+textarea{min-height:90px;resize:vertical;line-height:1.45}
+input:focus,textarea:focus,select:focus{border-color:var(--bleu)}
+input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;width:22px;height:22px;accent-color:var(--menthe);flex-shrink:0;margin:0}
+input[type=color]{-webkit-appearance:none;appearance:none;width:100%;height:46px;border:2px solid var(--ligne);border-radius:12px;padding:3px;background:#fff}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trois{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+details.avance{margin-top:6px;border-radius:14px;background:var(--pale);padding:12px 14px}
+details.avance summary{cursor:pointer;font-weight:700;font-size:14.5px;color:var(--gris)}
+details.avance[open] summary{margin-bottom:12px}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 24px;border-radius:999px;border:none;font:700 16px Figtree,sans-serif;cursor:pointer;text-decoration:none;transition:transform .15s ease}
+.btn:active{transform:scale(.97)}
+.btn-encre{background:var(--encre);color:#fff}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-plein{width:100%}
+.btn-lien{background:none;border:none;color:var(--bleu);font:700 15px Figtree,sans-serif;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
+.ajout{width:100%;min-height:48px;border-radius:14px;border:2px dashed #C9CCE6;background:#fff;color:var(--gris);font:600 15px Figtree,sans-serif;cursor:pointer}
+.suppr{min-width:44px;min-height:44px;border-radius:12px;border:none;background:#FFE9E5;color:#B42318;font-size:18px;cursor:pointer}
+
+/* Métiers */
+.metiers{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metier{position:relative;min-height:86px;border-radius:18px;border:none;padding:14px;text-align:left;color:#fff;font:700 16px Figtree,sans-serif;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;box-shadow:inset 0 0 0 0 transparent;transition:transform .15s ease}
+.metier small{font-weight:500;font-size:12.5px;opacity:.9}
+.metier[aria-pressed="true"]{box-shadow:inset 0 0 0 4px #fff,0 0 0 3px var(--encre);transform:scale(1.02)}
+.metier[aria-pressed="true"]::after{content:"";position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D1B4C' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/14px no-repeat}
+@media(min-width:600px){.metiers{grid-template-columns:repeat(3,1fr)}}
+
+/* Format */
+.formats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.format{border-radius:18px;border:2px solid var(--ligne);background:#fff;padding:16px;text-align:left;cursor:pointer;font:inherit;color:var(--encre);display:flex;flex-direction:column;gap:4px}
+.format b{font:800 20px 'Bricolage Grotesque',sans-serif}
+.format span{color:var(--gris);font-size:14px}
+.format[aria-pressed="true"]{border-color:var(--encre);background:var(--pale)}
+
+/* Formules */
+.bascule{display:inline-flex;padding:5px;gap:4px;background:var(--pale);border-radius:999px;margin-bottom:16px}
+.bascule button{min-height:44px;padding:0 16px;border-radius:999px;border:none;background:transparent;color:var(--gris);font:700 14.5px Figtree,sans-serif;cursor:pointer}
+.bascule button[aria-pressed="true"]{background:var(--encre);color:#fff}
+.formules{display:flex;flex-direction:column;gap:12px}
+.formule{position:relative;text-align:left;border-radius:22px;border:2px solid var(--ligne);background:#fff;padding:20px;cursor:pointer;font:inherit;color:var(--encre);display:flex;flex-direction:column;gap:8px}
+.formule[aria-pressed="true"]{border-color:var(--encre);background:var(--encre);color:#fff}
+.formule-haut{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.formule h3{font-size:24px}
+.formule .prix{font:800 26px 'Bricolage Grotesque',sans-serif}
+.formule .prix small{font:500 14px Figtree,sans-serif;opacity:.75}
+.formule ul{list-style:none;display:flex;flex-direction:column;gap:5px;font-size:14.5px;opacity:.9}
+.formule li::before{content:"✓ ";font-weight:800;color:var(--menthe)}
+.formule[aria-pressed="true"] li::before{color:var(--soleil)}
+.conseil{position:absolute;top:-11px;right:16px;background:var(--soleil);color:#3B2A00;font-weight:700;font-size:12.5px;padding:4px 10px;border-radius:999px}
+
+/* Couleurs + aperçu */
+.palettes{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.palette{width:48px;height:48px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--ligne);cursor:pointer;padding:0}
+.palette[aria-pressed="true"]{box-shadow:0 0 0 3px var(--encre)}
+.apercu-zone{display:flex;justify-content:center;margin:6px 0 20px}
+.apercu{width:230px;border-radius:34px;background:#0E0D26;padding:9px;box-shadow:0 20px 40px rgba(14,13,38,.25)}
+.apercu-ecran{border-radius:26px;overflow:hidden;background:var(--ap-fond,#f2ead8);height:330px;display:flex;flex-direction:column}
+.apercu-haut{background:var(--ap-fonce,#1a2e20);padding:18px 14px 12px;display:flex;align-items:center;gap:10px}
+.apercu-icone{width:38px;height:38px;border-radius:50%;background:var(--ap-fond,#f2ead8);display:grid;place-items:center;font-size:18px;overflow:hidden;flex-shrink:0}
+.apercu-icone img{width:100%;height:100%;object-fit:cover}
+.apercu-nom{color:var(--ap-fond,#f2ead8);font:800 16px 'Bricolage Grotesque',sans-serif;line-height:1.1}
+.apercu-sous{color:var(--ap-fond,#f2ead8);opacity:.7;font-size:10.5px}
+.apercu-corps{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px}
+.apercu-carte{background:#fff;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;font-size:12.5px;color:#222}
+.apercu-carte b{color:var(--ap-accent,#2d5a3d)}
+.apercu-bulle{align-self:flex-start;background:#fff;border-radius:12px 12px 12px 3px;padding:8px 10px;font-size:11.5px;color:#222;max-width:85%}
+.apercu-bouton{margin:0 12px 14px;border-radius:12px;background:var(--ap-accent,#2d5a3d);color:#fff;text-align:center;font-weight:700;font-size:13px;padding:11px}
+.logo-zone{display:flex;align-items:center;gap:14px;border:2px dashed #C9CCE6;border-radius:16px;padding:12px;cursor:pointer;background:#fff;width:100%;font:inherit;color:var(--gris);text-align:left}
+.logo-zone img{width:52px;height:52px;border-radius:12px;object-fit:cover}
+
+/* Pages */
+.pages{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.page-ligne{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;background:var(--pale);cursor:pointer}
+.page-ligne b{display:block;font-size:15.5px}
+.page-ligne span{color:var(--gris);font-size:13.5px}
+.page-ligne .verrou{margin-left:auto;font-size:12px;font-weight:700;background:#fff;color:var(--gris);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.page-ligne.bloquee{opacity:.55;cursor:not-allowed}
+.sous-bloc{border:2px solid var(--ligne);border-radius:20px;padding:18px;margin-top:14px}
+.sous-bloc h3{font-size:20px;margin-bottom:12px}
+.ligne-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;margin-bottom:10px}
+.ligne-item .deux,.ligne-item .trois{margin:0}
+.item-bloc{border-radius:16px;background:var(--pale);padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.photo-zone{position:relative;border:2px dashed #C9CCE6;border-radius:14px;padding:12px;text-align:center;color:var(--gris);font-size:14px;background:#fff;overflow:hidden}
+.photo-zone img{max-height:110px;margin:0 auto;border-radius:10px;display:none}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.jour{border-radius:14px;background:var(--pale);padding:12px;margin-bottom:8px}
+.jour h4{font-size:14px;margin-bottom:8px}
+
+/* Récap + résultat */
+.recap{border-radius:22px;background:var(--encre);color:#fff;padding:22px;display:flex;flex-direction:column;gap:10px}
+.recap-ligne{display:flex;justify-content:space-between;gap:10px;font-size:15px;opacity:.9}
+.recap-total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(255,255,255,.2);padding-top:12px;margin-top:4px}
+.recap-total b{font:800 30px 'Bricolage Grotesque',sans-serif}
+.status{display:none;margin-top:12px;padding:12px 14px;border-radius:14px;font-weight:600;font-size:14.5px}
+.status.ok{display:block;background:#E3F6EE;color:#0B6B47}
+.status.err{display:block;background:#FFE9E5;color:#B42318}
+.resultat{border-radius:22px;background:var(--pale);padding:22px;margin-top:18px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.resultat input{text-align:center;font-size:13px}
+.resultat img{width:170px;height:170px;border-radius:14px;background:#fff;padding:8px}
+
+/* Espace Philomène + client */
+.carte-admin{border-radius:20px;background:#FFF7E0;padding:18px;margin-top:20px}
+.carte{border-radius:20px;border:2px solid var(--ligne);padding:18px;margin-bottom:14px}
+.carte h3{font-size:20px;margin-bottom:12px}
+
+/* Bulles fixes */
+.flottant{position:fixed;right:16px;z-index:60;width:56px;height:56px;border-radius:50%;border:none;display:grid;place-items:center;box-shadow:0 10px 26px rgba(29,27,76,.3);cursor:pointer;text-decoration:none}
+.aide-panneau{position:fixed;left:12px;right:12px;bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:61;max-width:420px;margin-left:auto;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(29,27,76,.3);display:none;flex-direction:column;max-height:65vh;overflow:hidden}
+.aide-panneau.ouvert{display:flex}
+.aide-tete{background:var(--encre);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.aide-msgs{flex:1;overflow-y:auto;padding:12px;background:var(--pale);display:flex;flex-direction:column;gap:8px}
+.aide-msgs div{max-width:85%;padding:9px 12px;border-radius:14px;font-size:14.5px;white-space:pre-wrap;background:#fff;align-self:flex-start}
+.aide-msgs div.moi{background:var(--encre);color:#fff;align-self:flex-end}
+.aide-saisie{display:flex;gap:8px;padding:10px;border-top:1px solid var(--ligne)}
+.aide-saisie button{width:50px;border-radius:14px;border:none;background:var(--encre);color:#fff;cursor:pointer}
 </style>
 </head>
 <body>
 
-<h1>🛠️ Créateur d'appli</h1>
-<div class="sub">Choisissez votre métier, tout se pré-remplit. Ajustez, complétez, enregistrez.</div>
-
-<div id="ecran-accueil">
-  <div class="card" style="text-align:center;padding:28px 22px">
-    <div style="font-size:44px;margin-bottom:14px">📱✨</div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:10px;text-transform:none;letter-spacing:0;color:#111">Créez votre appli professionnelle</h2>
-    <p style="font-size:13px;color:rgba(17,17,17,.6);line-height:1.6;margin-bottom:18px">
-      Une appli avec assistant IA, devis automatique, catalogue ou prise de rendez-vous, adaptée à votre métier et prête en quelques minutes.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Comment ça marche</h2>
-    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
-      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
-      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Choisissez votre métier : couleurs, questions et tarifs se pré-remplissent.</div>
-    </div>
-    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
-      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
-      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Ajustez ce qui vous concerne : nom, logo, tarifs, articles avec photos si besoin.</div>
-    </div>
-    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start">
-      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
-      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Enregistrez : votre appli est visible tout de suite, avec un lien et un QR code à partager.</div>
-    </div>
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="background:#111;color:#FAFAF7;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
-      <div style="font-size:13px;color:rgba(17,17,17,.75);line-height:1.5">Réglez le montant indiqué à la fin et envoyez-nous la preuve de paiement : le bandeau « démo » disparaît sous 24h.</div>
+<header class="barre">
+  <div class="cadre">
+    <a class="logo" href="index.html" aria-label="Philomène IA, retour au site">
+      <i aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="#FFC53D"><path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z"/></svg></i>
+      <span>Philomène<span class="logo-ia"> IA</span></span>
+    </a>
+    <div style="display:flex;gap:8px;align-items:center">
+    <button class="btn-aide" type="button" onclick="ouvrirAideIA()" aria-label="Aide">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>
+    </button>
+    <button class="btn-compte" type="button" id="btn-compte" onclick="switchOnglet('admin')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      Mon compte
+    </button>
     </div>
   </div>
+</header>
 
-  <button class="save-btn" onclick="ouvrirOutil()">Commencer</button>
-
-  <div class="card" style="text-align:center;margin-top:16px">
-    <div style="font-size:12px;color:rgba(17,17,17,.5);margin-bottom:10px">Une question ? Écrivez-nous sur WhatsApp.</div>
-    <a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question%20sur%20la%20cr%C3%A9ation%20de%20mon%20appli." target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:10px 20px;border-radius:20px;font-weight:700;font-size:13px;text-decoration:none">📱 Nous contacter</a>
-  </div>
-
-  <div style="text-align:center;margin-top:20px">
-    <button onclick="var m=document.getElementById('mentions-legales');m.style.display=m.style.display==='block'?'none':'block';" style="background:none;border:none;color:rgba(17,17,17,.35);font-size:11px;text-decoration:underline;cursor:pointer">Mentions légales</button>
-    <div id="mentions-legales" style="display:none;text-align:left;font-size:11px;color:rgba(17,17,17,.5);line-height:1.7;margin-top:14px;padding:14px;background:rgba(17,17,17,.05);border-radius:10px">
-      <strong style="color:rgba(17,17,17,.7)">Éditeur du site</strong><br/>
-      Philomène IA — Entreprise Individuelle (micro-entreprise)<br/>
-      SIRET : 511 089 260 00026<br/>
-      Adresse : 18 Cour Delcroix, 239 Rue des Cinq Voies, 59200 Tourcoing, France<br/>
-      Contact : WhatsApp +33 6 17 12 39 10 — philomene.numerologie@gmail.com<br/><br/>
-      <strong style="color:rgba(17,17,17,.7)">Hébergement</strong><br/>
-      Site hébergé par Render (render.com) — Nom de domaine déposé auprès de Namecheap, Inc.<br/><br/>
-      <strong style="color:rgba(17,17,17,.7)">Données personnelles</strong><br/>
-      Les informations saisies dans ce formulaire (nom d'entreprise, coordonnées, contenu de l'appli) sont utilisées uniquement pour la création et le fonctionnement de votre appli. Pour toute demande de suppression ou de modification, contactez-nous via WhatsApp ou email ci-dessus.
+<section class="heros" id="heros-createur">
+  <div class="cadre">
+    <h1 id="heros-titre">Créez votre appli.</h1>
+    <p id="heros-texte">Un quart d'heure. Tout se pré-remplit selon votre métier, vous ajustez le reste.</p>
+    <div class="onglets" id="onglets-creer" role="group" aria-label="Que voulez-vous créer ?">
+      <button type="button" id="ong-creer" aria-pressed="true" onclick="switchOnglet('creation')">Créer mon appli</button>
+      <button type="button" id="ong-site" aria-pressed="false" onclick="allerVersSite()">Créer mon site</button>
     </div>
+  </div>
+</section>
+
+<div class="progression" id="progression">
+  <div class="cadre">
+    <div class="progression-texte"><span id="prog-etape">Étape 1 sur 7</span><span id="prog-nom">Votre métier</span></div>
+    <div class="progression-barre" aria-hidden="true"><i id="prog-barre"></i></div>
   </div>
 </div>
 
-<div id="ecran-outil" style="display:none">
+<main class="cadre">
 
-<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-  <button id="tabbtn-creation" class="tabbtn active" onclick="switchOnglet('creation')">🛠️ Créer mon appli</button>
-  <button id="tabbtn-admin" class="tabbtn" onclick="switchOnglet('admin')">👤 Modifier mon appli</button>
-</div>
-
-<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" style="display:block;text-align:center;font-size:11.5px;color:rgba(17,17,17,.4);margin-bottom:16px;text-decoration:underline">Une question ? Contactez-nous sur WhatsApp</a>
-
+<!-- ================= CRÉATION ================= -->
 <div id="tab-creation">
 
-<div class="card" id="carte-modifier-existant" style="display:none">
-  <h2>Espace Philomène IA</h2>
-  <div id="verrou-admin-general">
-    <label class="lbl">Code admin</label>
-    <input id="pwd-admin-general" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')deverrouillerAdminGeneral()"/>
-    <button class="add-btn" onclick="deverrouillerAdminGeneral()">🔓 Déverrouiller</button>
-    <div class="status" id="status-verrou"></div>
-  </div>
-  <div id="contenu-admin-general" style="display:none">
-    <label class="lbl">Identifiant du client à recharger</label>
-    <input id="cf-slug-charger" placeholder="Ex: renovnord"/>
-    <button class="add-btn" onclick="chargerConfigExistante()">📂 Charger ce client</button>
-    <button class="add-btn" style="margin-top:8px" onclick="if(confirm('Repartir d\'un formulaire vide ?')) nouveauClient();">🔄 Nouveau client (formulaire vide)</button>
-    <div class="status" id="status-charger"></div>
-
-    <div id="bloc-validation" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(107,203,119,.1);border:1.5px solid rgba(107,203,119,.3);border-radius:10px">
-      <label class="mod-check active" style="background:transparent;border:none;padding:0">
-        <input type="checkbox" id="cf-valide"/>
-        ✅ Paiement reçu (retire le bandeau « démo »)
-      </label>
-      <div id="info-expiration" style="font-size:11.5px;color:rgba(17,17,17,.5);margin-top:8px"></div>
-      <button class="add-btn" style="margin-top:10px" onclick="confirmerRenouvellement()">🔄 Confirmer un nouveau paiement (renouvelle pour 1 an)</button>
+  <!-- Espace Philomène (avec ?philomene=1) -->
+  <div class="carte-admin cache" id="carte-modifier-existant">
+    <h3 style="font-size:20px;margin-bottom:10px">Espace Philomène IA</h3>
+    <div id="verrou-admin-general">
+      <div class="champ"><label for="pwd-admin-general">Code admin</label><input id="pwd-admin-general" type="password" onkeydown="if(event.key==='Enter')deverrouillerAdminGeneral()"/></div>
+      <button class="btn btn-encre" type="button" onclick="deverrouillerAdminGeneral()">Déverrouiller</button>
+      <div class="status" id="status-verrou"></div>
+    </div>
+    <div id="contenu-admin-general" class="cache">
+      <div class="champ"><label for="cf-slug-charger">Identifiant du client</label><input id="cf-slug-charger" type="text" placeholder="Ex : pizzaflo"/></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-encre" type="button" onclick="chargerConfigExistante()">Charger ce client</button>
+        <button class="btn-lien" type="button" onclick="if(confirm('Repartir d\'un formulaire vide ?')) window.location.href = window.location.pathname + '?philomene=1';">Nouveau client</button>
+      </div>
+      <div class="status" id="status-charger"></div>
+      <div id="bloc-validation" class="cache" style="margin-top:14px">
+        <label class="page-ligne" style="background:#fff"><input type="checkbox" id="cf-valide"/><div><b>Paiement reçu</b><span>Retire le bandeau « démo »</span></div></label>
+        <div id="info-expiration" style="font-size:14px;color:var(--gris);margin:8px 0"></div>
+        <button class="btn-lien" type="button" onclick="confirmerRenouvellement()">Confirmer un paiement (1 an de plus)</button>
+      </div>
     </div>
   </div>
+
+  <!-- 1. Métier -->
+  <section class="etape pas" data-pas="metier" aria-labelledby="t1">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">1</div><h2 id="t1">Votre métier</h2></div>
+    <p class="etape-aide">Choisissez celui qui vous ressemble le plus : couleurs, textes et questions se remplissent tout seuls.</p>
+    <div class="metiers" id="metiers" role="group" aria-label="Votre métier"></div>
+  </section>
+
+  <!-- 2. Format + formule -->
+  <section class="etape pas" data-pas="formule" aria-labelledby="t2">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">2</div><h2 id="t2">Votre formule</h2></div>
+    <p class="etape-aide">Création, hébergement, mises à jour et support WhatsApp compris. 0 % de commission sur vos ventes.</p>
+    <div class="bascule" role="group" aria-label="Paiement">
+      <button type="button" data-periode="mois" aria-pressed="true">Au mois</button>
+      <button type="button" data-periode="an" aria-pressed="false">À l'année, 2 mois offerts</button>
+    </div>
+    <div class="formules" id="formules" role="group" aria-label="Formule"></div>
+  </section>
+
+  <div id="suite-appli">
+
+  <!-- 3. Votre commerce -->
+  <section class="etape pas" data-pas="commerce" aria-labelledby="t3">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">3</div><h2 id="t3">Votre commerce</h2></div>
+    <p class="etape-aide">Ce que vos clients verront en premier.</p>
+    <div class="champ"><label for="cf-nom">Nom de votre commerce</label><input id="cf-nom" type="text" placeholder="Ex : Pizza Flo" oninput="majSlugAuto();majApercu()"/></div>
+    <div class="champ"><label for="cf-soustitre">Une phrase qui vous résume</label><input id="cf-soustitre" type="text" placeholder="Ex : Pizzeria au feu de bois, Tourcoing" oninput="majApercu()"/></div>
+    <div class="champ">
+      <label for="cf-slug">Adresse de votre appli</label>
+      <input id="cf-slug" type="text" placeholder="pizzaflo" oninput="slugTouche=true;this.value=slugifier(this.value);majApercuLien()"/>
+      <small id="apercu-lien">Remplie automatiquement à partir du nom.</small>
+    </div>
+    <div class="champ">
+      <span class="label">Votre logo (facultatif)</span>
+      <button type="button" class="logo-zone" onclick="document.getElementById('logo-input').click()">
+        <img id="logo-preview" alt="" style="display:none"/>
+        <span id="logo-txt">Touchez pour ajouter votre logo ou une photo</span>
+      </button>
+      <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
+    </div>
+    <div class="deux">
+      <div class="champ"><label for="cf-icone">Icône si pas de logo</label><input id="cf-icone" type="text" placeholder="🍕" oninput="majApercu()"/></div>
+      <div class="champ"><label for="cf-whatsapp">Votre WhatsApp</label><input id="cf-whatsapp" type="tel" placeholder="33612345678"/></div>
+    </div>
+    <div class="champ"><label for="cf-email">Votre email</label><input id="cf-email" type="email" placeholder="contact@exemple.fr"/><small>Pour vous envoyer les infos importantes.</small></div>
+    <div class="champ"><label for="cf-admin-password">Mot de passe de votre espace</label><input id="cf-admin-password" type="password" placeholder="Pour modifier votre appli vous-même"/></div>
+  </section>
+
+  <!-- 4. Couleurs -->
+  <section class="etape pas" data-pas="couleurs" aria-labelledby="t4">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">4</div><h2 id="t4">Vos couleurs</h2></div>
+    <p class="etape-aide">Touchez une palette, l'aperçu change en direct.</p>
+    <div class="apercu-zone" aria-hidden="true">
+      <div class="apercu" id="apercu">
+        <div class="apercu-ecran">
+          <div class="apercu-haut"><div class="apercu-icone" id="ap-icone">🍕</div><div><div class="apercu-nom" id="ap-nom">Votre commerce</div><div class="apercu-sous" id="ap-sous">Votre phrase ici</div></div></div>
+          <div class="apercu-corps">
+            <div class="apercu-carte"><span>Votre produit</span><b>12 €</b></div>
+            <div class="apercu-carte"><span>Autre produit</span><b>9 €</b></div>
+            <div class="apercu-bulle">Bonjour ! Comment puis-je vous aider ?</div>
+          </div>
+          <div class="apercu-bouton">Commander</div>
+        </div>
+      </div>
+    </div>
+    <div class="palettes" id="palettes" role="group" aria-label="Palettes"></div>
+    <details class="avance">
+      <summary>Ajuster chaque couleur</summary>
+      <div class="trois">
+        <div class="champ"><label for="cf-fonce">Bandeau</label><input type="color" id="cf-fonce" oninput="majApercu()"/></div>
+        <div class="champ"><label for="cf-fond">Fond</label><input type="color" id="cf-fond" oninput="majApercu()"/></div>
+        <div class="champ"><label for="cf-accent">Boutons</label><input type="color" id="cf-accent" oninput="majApercu()"/></div>
+        <div class="champ"><label for="cf-texte">Texte</label><input type="color" id="cf-texte"/></div>
+        <div class="champ"><label for="cf-clair">Cartes</label><input type="color" id="cf-clair"/></div>
+        <div class="champ"><label for="cf-alerte">Détails</label><input type="color" id="cf-alerte"/></div>
+      </div>
+    </details>
+  </section>
+
+  <!-- 5. Contenu -->
+  <section class="etape pas" data-pas="contenu" aria-labelledby="t5">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">5</div><h2 id="t5">Votre contenu</h2></div>
+    <p class="etape-aide">Choisissez les pages à afficher, puis remplissez-les. Vous pourrez tout changer plus tard.</p>
+    <div class="pages" id="pages"></div>
+
+    <div class="sous-bloc cache" id="sub-tarifs">
+      <h3>Tarifs</h3>
+      <div class="champ"><label for="cf-tarifs-soustitre">Petite phrase sous le titre</label><input id="cf-tarifs-soustitre" type="text" placeholder="Ex : Prix indicatifs"/></div>
+      <div id="tarifs-list"></div>
+      <button class="ajout" type="button" onclick="ajouterTarif()">+ Ajouter un tarif</button>
+    </div>
+
+    <div class="sous-bloc cache" id="sub-catalogue">
+      <h3>Menu / catalogue</h3>
+      <div class="deux">
+        <div class="champ"><label for="cf-catalogue-onglet">Nom de l'onglet</label><input id="cf-catalogue-onglet" type="text" placeholder="Menu"/></div>
+        <div class="champ"><label for="cf-catalogue-titre">Titre de la page</label><input id="cf-catalogue-titre" type="text" placeholder="Nos pizzas"/></div>
+      </div>
+      <div class="champ"><label for="cf-catalogue-soustitre">Petite phrase</label><input id="cf-catalogue-soustitre" type="text" placeholder="Commandez et payez en ligne"/></div>
+      <div class="champ">
+        <span class="label">Comment vos clients récupèrent leur commande</span>
+        <div style="display:flex;flex-wrap:wrap;gap:14px" id="modes-liste">
+          <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" value="Sur place"/>Sur place</label>
+          <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" value="À emporter"/>À emporter</label>
+          <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" value="Livraison"/>Livraison</label>
+        </div>
+      </div>
+      <div id="catalogue-list"></div>
+      <button class="ajout" type="button" onclick="ajouterCatalogueItem()">+ Ajouter un produit</button>
+    </div>
+
+    <div class="sous-bloc cache" id="sub-paiement">
+      <h3>Paiement en ligne</h3>
+      <p style="color:var(--gris)">Vos clients paient leur panier par carte, Apple Pay ou Google Pay. L'argent arrive directement sur votre compte, sans commission. En livraison, leur adresse est demandée au paiement.</p>
+      <p style="margin-top:10px;font-weight:600">Après l'enregistrement : « Mon compte » en haut à droite, puis « Connecter mon compte Stripe » (10 minutes, avec votre pièce d'identité et votre RIB).</p>
+    </div>
+
+    <div class="sous-bloc cache" id="sub-galerie">
+      <h3>Galerie avant / après</h3>
+      <div class="champ"><label for="cf-galerie-titre">Titre de la page</label><input id="cf-galerie-titre" type="text" placeholder="Nos réalisations"/></div>
+      <div id="galerie-list"></div>
+      <button class="ajout" type="button" onclick="ajouterGalerieItem()">+ Ajouter un avant / après</button>
+    </div>
+
+    <div class="sous-bloc cache" id="sub-reservation">
+      <h3>Réservation</h3>
+      <div class="champ"><label for="cf-reservation-lien">Vous utilisez déjà Planity, Calendly… ?</label><input id="cf-reservation-lien" type="url" placeholder="Collez le lien ici, sinon laissez vide"/></div>
+      <div id="reservation-list"></div>
+      <button class="ajout" type="button" onclick="ajouterReservationService()">+ Ajouter un service</button>
+    </div>
+
+    <div class="sous-bloc cache" id="sub-planning">
+      <h3>Planning</h3>
+      <div id="planning-jours"></div>
+    </div>
+
+    <div class="sous-bloc cache" id="sub-devis">
+      <h3>Devis automatiques</h3>
+      <div class="champ"><label for="cf-devis-types">Vos prestations (une par ligne)</label><textarea id="cf-devis-types" placeholder="Peinture intérieure&#10;Revêtement de sol"></textarea></div>
+      <div class="deux">
+        <div class="champ"><label for="cf-devis-surface-label">Question au client</label><input id="cf-devis-surface-label" type="text" placeholder="Surface / quantité"/></div>
+        <div class="champ"><label for="cf-devis-surface-placeholder">Exemple de réponse</label><input id="cf-devis-surface-placeholder" type="text" placeholder="25 m², 3 pièces"/></div>
+      </div>
+      <p style="color:var(--gris);font-size:14px">Votre taux horaire et vos frais se règlent juste en dessous, dans « Ce que l'IA doit savoir ».</p>
+      <details class="avance"><summary>Règles de calcul avancées</summary>
+        <div class="champ"><label for="cf-devis-prompt">Consigne pour les devis</label><textarea id="cf-devis-prompt" style="min-height:120px"></textarea></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- 6. Assistant / IA -->
+  <section class="etape pas" data-pas="ia" id="etape-ia" aria-labelledby="t6">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true">6</div><h2 id="t6">Ce que l'IA doit savoir</h2></div>
+    <p class="etape-aide">Répondez comme si vous briefiez un nouvel employé. Laissez vide ce qui ne vous concerne pas.</p>
+    <div id="cf-ia-champs"></div>
+    <div id="bloc-chat-seul">
+      <div class="champ"><label for="cf-accueil">Premier message de l'assistant</label><textarea id="cf-accueil"></textarea></div>
+      <div class="champ"><span class="label">Boutons de questions rapides</span><small>Le texte du bouton, puis la question envoyée à l'assistant.</small></div>
+      <div id="qr-list"></div>
+      <button class="ajout" type="button" onclick="ajouterQR()">+ Ajouter une question rapide</button>
+    </div>
+    <details class="avance" style="margin-top:14px"><summary>Consigne complète de l'assistant (avancé)</summary>
+      <div class="champ"><label for="cf-prompt">Consigne de base</label><textarea id="cf-prompt" style="min-height:140px"></textarea><small>Vos réponses ci-dessus sont ajoutées automatiquement à la suite.</small></div>
+    </details>
+  </section>
+
+  <!-- 7. Récap -->
+  <section class="etape pas" data-pas="recap" style="border-bottom:none" aria-labelledby="t7">
+    <div class="etape-tete"><div class="etape-num" aria-hidden="true" id="num-final">7</div><h2 id="t7">C'est prêt</h2></div>
+    <p class="etape-aide">Enregistrez : votre appli est visible tout de suite, avec un bandeau « démo » jusqu'au paiement.</p>
+    <div class="recap">
+      <div class="recap-ligne"><span>Formule</span><b id="recap-formule">Commerce</b></div>
+      <div class="recap-ligne"><span>Paiement</span><b id="recap-periode">Au mois, engagement 12 mois</b></div>
+      <div class="recap-total"><span>Total</span><b id="recap-prix">34,90 € / mois</b></div>
+    </div>
+    <button class="btn btn-accent btn-plein" type="button" style="margin-top:16px" onclick="enregistrer()">Enregistrer mon appli</button>
+    <div class="status" id="status"></div>
+
+    <div class="resultat cache" id="resultat-lien">
+      <h3 style="font-size:24px">Votre appli est en ligne</h3>
+      <input id="lien-final" type="text" readonly/>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-encre" type="button" onclick="copierLien()">Copier le lien</button>
+        <a class="btn btn-encre" id="lien-ouvrir" target="_blank" rel="noopener" style="background:#fff;color:var(--encre);box-shadow:inset 0 0 0 2px var(--encre)">Voir mon appli</a>
+      </div>
+      <img id="qr-code" alt="QR code de votre appli"/>
+      <div style="width:100%;border-top:1px solid var(--ligne);padding-top:14px;display:flex;flex-direction:column;gap:10px;align-items:center">
+        <b id="montant-a-payer" style="font:800 28px 'Bricolage Grotesque',sans-serif"></b>
+        <button class="btn btn-accent btn-plein" id="btn-payer-abonnement" type="button" onclick="payerAbonnement()">Payer par carte et activer</button>
+        <small style="color:var(--gris)">Paiement sécurisé par Stripe. Votre appli s'active automatiquement.</small>
+        <a id="lien-revolut-resultat" target="_blank" rel="noopener" style="font-size:13px;color:var(--gris)">Autre moyen : payer via Revolut</a>
+      </div>
+    </div>
+  </section>
+  </div><!-- /suite-appli -->
 </div>
 
-<div class="card">
-  <h2>1. Métier</h2>
-  <label class="lbl">Secteur d'activité</label>
-  <select id="cf-secteur"></select>
-</div>
-
-<div class="card">
-  <h2>2. Identité</h2>
-  <label class="lbl">Nom de l'entreprise</label>
-  <input id="cf-nom" placeholder="Ex: Rénov Nord" oninput="majSlugAuto()"/>
-  <label class="lbl">Adresse de votre appli</label>
-  <input id="cf-slug" placeholder="Ex: renovnord" oninput="slugTouche=true;this.value=slugifier(this.value);majApercuLien()"/>
-  <div class="hint" id="apercu-lien">Remplie automatiquement à partir du nom.</div>
-  <label class="lbl">Sous-titre</label>
-  <input id="cf-soustitre" placeholder="Ex: Rénovation intérieure"/>
-  <label class="lbl">Logo ou photo (remplace l'icône si ajouté)</label>
-  <div class="logo-zone" id="logo-zone" onclick="document.getElementById('logo-input').click()">
-    <img id="logo-preview" style="display:none"/>
-    <p id="logo-txt">Touchez pour ajouter un logo (facultatif)</p>
-  </div>
-  <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
-  <label class="lbl">Icône de secours (emoji)</label>
-  <input id="cf-icone" placeholder="🏠"/>
-  <label class="lbl">Numéro WhatsApp (international, sans +)</label>
-  <input id="cf-whatsapp" placeholder="33612345678"/>
-  <label class="lbl">Votre email (pour vous recontacter)</label>
-  <input id="cf-email" type="email" placeholder="contact@exemple.fr"/>
-  <label class="lbl">Mot de passe de votre espace client</label>
-  <input id="cf-admin-password" type="password" placeholder="Pour modifier vous-même votre contenu"/>
-</div>
-
-<div class="card">
-  <h2>3. Couleurs</h2>
-  <label class="lbl">Palettes suggérées (touchez pour appliquer)</label>
-  <div class="palette-grid" id="palette-grid"></div>
-  <label class="lbl" style="margin-top:6px">Ajustement fin</label>
-  <div class="row3">
-    <div><label class="lbl">Fond</label><input type="color" id="cf-fond"/></div>
-    <div><label class="lbl">Texte</label><input type="color" id="cf-texte"/></div>
-    <div><label class="lbl">Foncé</label><input type="color" id="cf-fonce"/></div>
-  </div>
-  <div class="row3">
-    <div><label class="lbl">Accent</label><input type="color" id="cf-accent"/></div>
-    <div><label class="lbl">Clair</label><input type="color" id="cf-clair"/></div>
-    <div><label class="lbl">Alerte</label><input type="color" id="cf-alerte"/></div>
-  </div>
-</div>
-
-<div class="card">
-  <h2>4. Assistant IA</h2>
-  <label class="lbl">Message d'accueil</label>
-  <textarea id="cf-accueil"></textarea>
-  <label class="lbl">Consigne pour l'IA (ce qu'elle sait, comment elle répond)</label>
-  <textarea id="cf-prompt" style="min-height:100px"></textarea>
-  <label class="lbl">Questions rapides (boutons sous le 1er message)</label>
-  <div id="qr-list"></div>
-  <button class="add-btn" onclick="ajouterQR()">+ Ajouter une question rapide</button>
-</div>
-
-<div class="card">
-  <h2>5. Modules à activer</h2>
-
-  <label class="mod-check active" id="mod-check-chat" style="margin-bottom:8px">
-    <input type="checkbox" id="cf-chat-actif" checked onchange="this.parentElement.classList.toggle('active', this.checked); recalculerPrix();"/>
-    💬 Assistant IA (chat conversationnel)
-  </label>
-
-  <div class="modules-grid" id="modules-grid"></div>
-
-  <div id="prix-total" style="margin-top:14px;padding:12px 14px;background:rgba(17,17,17,.08);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600">
-    <span>Prix pour un an</span>
-    <span id="prix-total-val">0€</span>
-  </div>
-
-  <div class="subsection" id="sub-tarifs">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">💰 Tarifs</h3>
-    <label class="lbl">Sous-titre</label>
-    <input id="cf-tarifs-soustitre" placeholder="Ex: Prix indicatifs"/>
-    <div id="tarifs-list"></div>
-    <button class="add-btn" onclick="ajouterTarif()">+ Ajouter un tarif</button>
-  </div>
-
-  <div class="subsection" id="sub-devis">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">📋 Devis</h3>
-    <label class="lbl">Taux horaire (optionnel, pour calculer la main d'œuvre)</label>
-    <input id="cf-taux-horaire" type="number" placeholder="Ex: 45"/>
-    <label class="lbl">Types de prestations (une par ligne)</label>
-    <textarea id="cf-devis-types" placeholder="Peinture intérieure&#10;Revêtement de sol&#10;..." style="min-height:80px"></textarea>
-    <label class="lbl">Libellé du champ « détails »</label>
-    <input id="cf-devis-surface-label" placeholder="Ex: Surface / quantité, ou Taille / emplacement"/>
-    <label class="lbl">Exemple affiché dans ce champ</label>
-    <input id="cf-devis-surface-placeholder" placeholder="Ex: 25m², 3 pièces... ou avant-bras, 15cm..."/>
-    <label class="lbl">Consigne IA pour le devis (prix, règles de calcul)</label>
-    <textarea id="cf-devis-prompt" style="min-height:80px"></textarea>
-  </div>
-
-  <div class="subsection" id="sub-catalogue">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🛍️ Catalogue</h3>
-    <label class="lbl">Nom de l'onglet</label>
-    <input id="cf-catalogue-onglet" placeholder="Ex: Menu, Carte, Boutique, Catalogue"/>
-    <label class="lbl">Titre de la page</label>
-    <input id="cf-catalogue-titre" placeholder="Ex: Notre carte"/>
-    <label class="lbl">Sous-titre</label>
-    <input id="cf-catalogue-soustitre" placeholder="Ex: Fait maison"/>
-    <div id="catalogue-list"></div>
-    <button class="add-btn" onclick="ajouterCatalogueItem()">+ Ajouter un article</button>
-  </div>
-
-  <div class="subsection" id="sub-galerie">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🖼️ Galerie</h3>
-    <label class="lbl">Titre de la page</label>
-    <input id="cf-galerie-titre" placeholder="Ex: Nos réalisations"/>
-    <div id="galerie-list"></div>
-    <button class="add-btn" onclick="ajouterGalerieItem()">+ Ajouter un avant/après</button>
-  </div>
-
-  <div class="subsection" id="sub-planning">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">🗓️ Planning</h3>
-    <div id="planning-jours"></div>
-  </div>
-
-  <div class="subsection" id="sub-paiement">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">💳 Paiement en ligne</h3>
-    <div class="hint" style="margin:0">Vos clients paient leur panier par carte, Apple Pay ou Google Pay. L'argent arrive directement sur votre compte. Si le client choisit « Livraison », son adresse est demandée au paiement.<br/><br/>👉 Après l'enregistrement : onglet « Modifier mon appli » → « Connecter mon compte Stripe » (10 minutes, avec votre pièce d'identité et votre RIB).</div>
-  </div>
-
-  <div class="subsection" id="sub-reservation">
-    <h3 style="font-size:12px;margin-bottom:8px;color:rgba(17,17,17,.7)">📅 Réservation</h3>
-    <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...), sinon laisser vide</label>
-    <input id="cf-reservation-lien" placeholder="Ex: https://www.planity.com/nom-du-salon"/>
-    <label class="lbl">Services proposés (si pas de lien externe)</label>
-    <div id="reservation-list"></div>
-    <button class="add-btn" onclick="ajouterReservationService()">+ Ajouter un service</button>
-  </div>
-</div>
-
-<button class="save-btn" onclick="enregistrer()">💾 Enregistrer et créer le lien</button>
-<div class="status" id="status"></div>
-
-<div class="card" id="resultat-lien" style="display:none;text-align:center">
-  <h2 style="text-align:left">🔗 Lien de votre appli</h2>
-  <div style="display:flex;gap:8px;margin-bottom:14px">
-    <input id="lien-final" readonly style="flex:1;margin-bottom:0;font-size:12px"/>
-    <button onclick="copierLien()" style="background:#111;color:#FAFAF7;border:none;border-radius:8px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">📋 Copier</button>
-  </div>
-  <img id="qr-code" style="width:180px;height:180px;border-radius:10px;background:#fff;padding:8px"/>
-  <div style="font-size:11px;color:rgba(17,17,17,.4);margin:8px 0 16px">Ce QR code ouvre directement votre appli</div>
-
-  <div style="background:rgba(37,211,102,.1);border:1.5px solid rgba(37,211,102,.3);border-radius:12px;padding:16px">
-    <div style="font-size:13px;color:rgba(17,17,17,.7);margin-bottom:4px">Montant à régler pour activer l'appli (1 an)</div>
-    <div id="montant-a-payer" style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:12px">0€</div>
-    <button id="btn-payer-abonnement" onclick="payerAbonnement()" style="display:inline-block;background:#111;color:#FAFAF7;padding:13px 26px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">💳 Payer par carte et activer</button>
-    <div style="font-size:11px;color:rgba(17,17,17,.5);margin-top:8px">Paiement sécurisé par Stripe. Votre appli s'active automatiquement.</div>
-    <a href="#" id="lien-revolut-resultat" target="_blank" style="display:inline-block;font-size:11px;color:rgba(17,17,17,.45);margin-top:10px;text-decoration:underline">Autre moyen : payer via Revolut</a>
-  </div>
-</div>
-
-</div><!-- /tab-creation -->
-
-<div id="tab-admin" style="display:none">
-  <div class="card">
-    <h2>Connexion à votre espace</h2>
-    <label class="lbl">Adresse de votre appli</label>
-    <input id="ad-slug" placeholder="Ex: renovnord"/>
-    <label class="lbl">Mot de passe</label>
-    <input id="ad-password" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')entrerEspaceClient()"/>
-    <button class="add-btn" onclick="entrerEspaceClient()">🔓 Me connecter</button>
+<!-- ================= ESPACE CLIENT ================= -->
+<div id="tab-admin" class="cache" style="padding-top:28px">
+  <div class="carte">
+    <h3>Connexion à votre espace</h3>
+    <div class="champ"><label for="ad-slug">Adresse de votre appli</label><input id="ad-slug" type="text" placeholder="Ex : pizzaflo"/></div>
+    <div class="champ"><label for="ad-password">Mot de passe</label><input id="ad-password" type="password" onkeydown="if(event.key==='Enter')entrerEspaceClient()"/></div>
+    <button class="btn btn-encre btn-plein" type="button" onclick="entrerEspaceClient()">Me connecter</button>
     <div class="status" id="ad-status"></div>
   </div>
 
-  <div id="ad-content" style="display:none">
-    <div class="card" id="ad-bloc-commandes" style="display:none">
-      <h2>🧾 Commandes payées</h2>
-      <div class="hint" style="margin:0 0 10px">Mise à jour automatique toutes les 20 secondes, avec un bip à chaque nouvelle commande.</div>
+  <div id="ad-content" class="cache">
+    <div class="carte cache" id="ad-bloc-commandes">
+      <h3>Commandes payées</h3>
+      <p style="color:var(--gris);font-size:14px;margin-bottom:12px">Mise à jour toutes les 20 secondes, avec un bip à chaque nouvelle commande.</p>
       <div id="ad-commandes-liste"></div>
     </div>
-    <div class="card" id="ad-bloc-paiement" style="display:none">
-      <h2>💳 Paiement en ligne</h2>
-      <div id="ad-stripe-statut" style="font-size:13px;margin-bottom:10px">Vérification...</div>
-      <button class="save-btn" id="ad-stripe-btn" style="display:none;margin-top:0" onclick="connecterStripe()">Connecter mon compte Stripe</button>
-      <div class="hint" style="margin:10px 0 0">L'argent de vos ventes va directement sur votre compte bancaire. Stripe vous demandera votre pièce d'identité et votre RIB.</div>
+    <div class="carte cache" id="ad-bloc-paiement">
+      <h3>Paiement en ligne</h3>
+      <div id="ad-stripe-statut" style="margin-bottom:12px">Vérification...</div>
+      <button class="btn btn-encre btn-plein cache" id="ad-stripe-btn" type="button" onclick="connecterStripe()">Connecter mon compte Stripe</button>
+      <p style="color:var(--gris);font-size:14px;margin-top:10px">L'argent de vos ventes arrive directement sur votre compte bancaire.</p>
     </div>
-    <div class="card">
-      <h2>💰 Tarifs</h2>
-      <div id="tarifs-list-admin"></div>
-      <button class="add-btn" onclick="ajouterTarif('','','','tarifs-list-admin')">+ Ajouter un tarif</button>
+    <div class="carte cache" id="ad-bloc-ia">
+      <h3>Ce que l'IA doit savoir</h3>
+      <div id="ad-ia-champs"></div>
     </div>
-    <div class="card">
-      <h2>🛍️ Catalogue / Menu / Click &amp; Collect</h2>
-      <div id="catalogue-list-admin"></div>
-      <button class="add-btn" onclick="ajouterCatalogueItem('','','','','catalogue-list-admin')">+ Ajouter un article</button>
-    </div>
-    <div class="card">
-      <h2>🖼️ Galerie avant/après</h2>
-      <div id="galerie-list-admin"></div>
-      <button class="add-btn" onclick="ajouterGalerieItem('','','','galerie-list-admin')">+ Ajouter un avant/après</button>
-    </div>
-    <div class="card">
-      <h2>🗓️ Planning</h2>
-      <div id="planning-jours-admin"></div>
-    </div>
-    <div class="card">
-      <h2>📅 Services de réservation</h2>
-      <label class="lbl">Lien externe existant (Planity, Doctolib, Calendly...), sinon laisser vide</label>
-      <input id="ad-reservation-lien" placeholder="Ex: https://www.planity.com/nom-du-salon"/>
-      <label class="lbl" style="margin-top:10px">Services proposés (si pas de lien externe)</label>
+    <div class="carte"><h3>Tarifs</h3><div id="tarifs-list-admin"></div><button class="ajout" type="button" onclick="ajouterTarif('','','','tarifs-list-admin')">+ Ajouter un tarif</button></div>
+    <div class="carte"><h3>Menu / catalogue</h3><div id="catalogue-list-admin"></div><button class="ajout" type="button" onclick="ajouterCatalogueItem('','','','','catalogue-list-admin')">+ Ajouter un produit</button></div>
+    <div class="carte"><h3>Galerie avant / après</h3><div id="galerie-list-admin"></div><button class="ajout" type="button" onclick="ajouterGalerieItem('','','','galerie-list-admin')">+ Ajouter un avant / après</button></div>
+    <div class="carte"><h3>Planning</h3><div id="planning-jours-admin"></div></div>
+    <div class="carte">
+      <h3>Réservation</h3>
+      <div class="champ"><label for="ad-reservation-lien">Lien Planity, Calendly… (sinon vide)</label><input id="ad-reservation-lien" type="url"/></div>
       <div id="reservation-list-admin"></div>
-      <button class="add-btn" onclick="ajouterReservationService('','','reservation-list-admin')">+ Ajouter un service</button>
+      <button class="ajout" type="button" onclick="ajouterReservationService('','','reservation-list-admin')">+ Ajouter un service</button>
     </div>
-    <button class="save-btn" onclick="enregistrerEspaceClient()">💾 Enregistrer mes modifications</button>
+    <button class="btn btn-accent btn-plein" type="button" onclick="enregistrerEspaceClient()">Enregistrer mes modifications</button>
     <div class="status" id="ad-status-save"></div>
   </div>
 </div>
+</main>
 
-</div><!-- /ecran-outil -->
+<nav class="barre-bas" id="barre-bas" aria-label="Navigation entre les étapes">
+  <div class="cadre">
+    <button class="btn-retour" type="button" id="btn-retour" onclick="allerPas(-1)" aria-label="Étape précédente">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="prix-bas"><b id="bas-prix">34,90 € / mois</b><span id="bas-formule">Formule Commerce</span></div>
+    <button class="btn btn-accent" type="button" id="btn-suivant" onclick="allerPas(1)">Continuer</button>
+  </div>
+</nav>
+
+<!-- Aide + WhatsApp -->
+<button class="flottant" type="button" style="bottom:calc(160px + env(safe-area-inset-bottom,0px));background:var(--encre)" aria-label="Poser une question sur le créateur" onclick="ouvrirAideIA()">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17.2" r=".6" fill="#FFC53D"/></svg>
+</button>
+<a class="flottant" id="wa-flottant" target="_blank" rel="noopener" style="bottom:calc(94px + env(safe-area-inset-bottom,0px));background:#1FAF55" aria-label="Écrire sur WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+</a>
+<div class="aide-panneau" id="aide-panneau" role="dialog" aria-label="Aide au créateur">
+  <div class="aide-tete"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px">Une question ?</b><button type="button" onclick="fermerAideIA()" aria-label="Fermer" style="background:none;border:none;color:#fff;font-size:22px;width:44px;height:44px;cursor:pointer">×</button></div>
+  <div class="aide-msgs" id="aide-msgs" aria-live="polite"></div>
+  <form class="aide-saisie" onsubmit="event.preventDefault();envoyerAideIA()">
+    <label for="aide-input" style="position:absolute;left:-9999px">Votre question</label>
+    <input id="aide-input" type="text" placeholder="Ex : comment ajouter mes prix ?"/>
+    <button type="submit" aria-label="Envoyer">➤</button>
+  </form>
+</div>
 
 <script>
 var API = "https://philo-backend-by2c.onrender.com";
+var WA = "33617123910";
 var LIEN_REVOLUT = "https://checkout.revolut.com/pay/3e15f5b0-a69e-4322-a00a-12ea7d8b359f";
-
-/* 🔐 Aucun secret dans ce fichier : le code admin est tapé au déverrouillage
-   et vérifié par le serveur. Il reste en mémoire le temps de l'onglet. */
 var ADMIN_TOKEN = "";
 var CLE_SESSION_ADMIN = "philoAdminToken";
 
-/* ---------- Outils ---------- */
-function esc(s){
-  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
-    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
-  });
-}
-function slugifier(s){
-  return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 30);
-}
+/* ===================== OUTILS ===================== */
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function slugifier(s){ return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 30); }
+function $(id){ return document.getElementById(id); }
+function montrer(id, oui){ $(id).classList.toggle("cache", !oui); }
 function entetes(extra){
   var h = { "Content-Type": "application/json" };
   if (ADMIN_TOKEN) h["x-admin-token"] = ADMIN_TOKEN;
   if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
   return h;
 }
-function ouvrirOutil(){
-  document.getElementById("ecran-accueil").style.display = "none";
-  document.getElementById("ecran-outil").style.display = "block";
-}
+function lienWa(msg){ return "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg); }
+$("wa-flottant").href = lienWa("Bonjour Philomène ! J'ai une question.");
 
-var slugTouche = false;
-function majSlugAuto(){
-  if (slugTouche || slugChargeActuel) return;
-  document.getElementById("cf-slug").value = slugifier(document.getElementById("cf-nom").value);
-  majApercuLien();
-}
-function majApercuLien(){
-  var s = document.getElementById("cf-slug").value;
-  document.getElementById("apercu-lien").textContent = s
-    ? "Votre lien : " + window.location.host + "/moteur-v2.html?client=" + s
-    : "Remplie automatiquement à partir du nom.";
-}
-
-/* =====================================================================
-   PALETTES DE COULEURS
-   ===================================================================== */
+/* ===================== PRÉRÉGLAGES MÉTIERS ===================== */
 var PALETTES = [
   {nom:"Sauge",     fond:"#F3EEE5", texte:"#2E2A24", fonce:"#5C6A54", accent:"#7C8B72", clair:"#E8DFCF", alerte:"#C17A5A"},
   {nom:"Terracotta",fond:"#F5EEE2", texte:"#2B1B12", fonce:"#3B2415", accent:"#6B4226", clair:"#E9DCC7", alerte:"#C1793A"},
@@ -687,676 +823,675 @@ var SECTEURS = {
   }
 };
 
-/* =====================================================================
-   INITIALISATION UI
-   ===================================================================== */
-var secteurSelect = document.getElementById("cf-secteur");
-(function(){
-  var opt0 = document.createElement("option");
-  opt0.value = ""; opt0.textContent = "Sélectionnez votre métier...";
-  secteurSelect.appendChild(opt0);
-})();
-Object.keys(SECTEURS).forEach(function(key){
-  var opt = document.createElement("option");
-  opt.value = key;
-  opt.textContent = SECTEURS[key].label;
-  secteurSelect.appendChild(opt);
-});
-
-var paletteGrid = document.getElementById("palette-grid");
-PALETTES.forEach(function(p){
-  var b = document.createElement("div");
-  b.className = "palette-bulle";
-  b.style.background = "linear-gradient(135deg, " + p.fonce + " 50%, " + p.accent + " 50%)";
-  b.title = p.nom;
-  b.onclick = function(){ appliquerPalette(p); };
-  paletteGrid.appendChild(b);
-});
-
-function appliquerPalette(p) {
-  document.getElementById("cf-fond").value = p.fond;
-  document.getElementById("cf-texte").value = p.texte;
-  document.getElementById("cf-fonce").value = p.fonce;
-  document.getElementById("cf-accent").value = p.accent;
-  document.getElementById("cf-clair").value = p.clair;
-  document.getElementById("cf-alerte").value = p.alerte;
-}
-appliquerPalette(PALETTES[3]);
-
-var MODULES_DISPO = {
-  tarifs: "💰 Tarifs", devis: "📋 Devis IA", catalogue: "🛍️ Catalogue",
-  galerie: "🖼️ Galerie avant/après", planning: "🗓️ Planning", reservation: "📅 Réservation",
-  paiement: "💳 Paiement en ligne"
+/* ===================== FORMULES ===================== */
+/* ⚠️ Mêmes prix et contenus que dans server.js (FORMULES) et index.html */
+var FORMULES = {
+  essentiel: { nom: "Essentiel", mois: "24,90 €", an: "249 €", pour: "Coiffeurs, artisans, coachs",
+    points: ["Tarifs et galerie photos", "Réservation ou planning", "Contact WhatsApp en un geste"],
+    modules: ["tarifs","galerie","reservation","planning"] },
+  commerce: { nom: "Commerce", mois: "34,90 €", an: "349 €", pour: "Pizzerias, snacks, boutiques, food trucks",
+    points: ["Tout Essentiel", "Menu ou catalogue avec panier", "Paiement en ligne, écran Commandes, livraison"],
+    modules: ["tarifs","galerie","reservation","planning","catalogue","paiement"] },
+  premium: { nom: "Premium IA", mois: "49,90 €", an: "499 €", pour: "Pour avoir le maximum",
+    points: ["Tout Commerce", "Assistant IA 24 h/24, à vos consignes", "Devis automatiques calculés sur vos prix"],
+    modules: ["tarifs","galerie","reservation","planning","catalogue","paiement","devis","chat"] }
 };
-/* ⚠️ Si tu changes un prix ici, change-le aussi dans server.js (PRIX_APPLI) */
-var PRIX_MODULES = { chat: 150, tarifs: 0, devis: 120, catalogue: 150, galerie: 80, planning: 100, reservation: 90, paiement: 0 };
-var PRIX_BASE = 190; // socle : appli + hébergement + nom de domaine + 1 an
+var FORMULE_CONSEILLEE = { tatoueur:"premium", coiffure:"essentiel", renovation:"premium", plomberie:"premium", electricite:"premium", taxi:"essentiel", restauration:"commerce", pizzeria:"commerce", coach_sportif:"essentiel", coach_foot:"essentiel", boutique_vetements:"commerce", torrefacteur:"commerce", garage_auto:"essentiel", esthetique:"essentiel", autre:"essentiel" };
+var COULEUR_METIER = { tatoueur:"#1D1B4C", coiffure:"#D6336C", renovation:"#2F6FED", plomberie:"#1E88C7", electricite:"#C98A00", taxi:"#3B3B3B", restauration:"#B5502E", pizzeria:"#E8452C", coach_sportif:"#12A06B", coach_foot:"#0F7A4F", boutique_vetements:"#8E5A9E", torrefacteur:"#6B4226", garage_auto:"#4A5568", esthetique:"#C2185B", autre:"#5A5B78" };
+var CATEGORIE_SITE = { tatoueur:"beaute", coiffure:"beaute", esthetique:"beaute", renovation:"artisan", plomberie:"artisan", electricite:"artisan", garage_auto:"artisan", restauration:"restauration", pizzeria:"restauration", coach_sportif:"sport", coach_foot:"sport", boutique_vetements:"commerce", torrefacteur:"commerce", taxi:"autre", autre:"autre" };
+var PAGES = [
+  { cle:"tarifs", nom:"Tarifs", desc:"Vos prix principaux", min:"essentiel" },
+  { cle:"galerie", nom:"Galerie avant / après", desc:"Vos réalisations en photos", min:"essentiel" },
+  { cle:"reservation", nom:"Réservation", desc:"Vos clients demandent un rendez-vous", min:"essentiel" },
+  { cle:"planning", nom:"Planning", desc:"Vos créneaux et horaires par jour", min:"essentiel" },
+  { cle:"catalogue", nom:"Menu / catalogue avec panier", desc:"Vos produits avec photos et prix", min:"commerce" },
+  { cle:"paiement", nom:"Paiement en ligne", desc:"Carte, Apple Pay, Google Pay", min:"commerce" },
+  { cle:"devis", nom:"Devis automatiques", desc:"L'IA chiffre les demandes de vos clients", min:"premium" },
+  { cle:"chat", nom:"Assistant IA 24 h/24", desc:"Répond à vos clients à votre place", min:"premium" }
+];
 
-var modulesGrid = document.getElementById("modules-grid");
-Object.keys(MODULES_DISPO).forEach(function(key){
-  var label = document.createElement("label");
-  label.className = "mod-check";
-  label.innerHTML = '<input type="checkbox" value="' + key + '" onchange="toggleSubsection(\'' + key + '\', this.checked); this.parentElement.classList.toggle(\'active\', this.checked); recalculerPrix();"/>' + MODULES_DISPO[key];
-  modulesGrid.appendChild(label);
+var SECTEUR = "";
+var FORMULE = "commerce";
+var PERIODE = "mois";
+var FORMAT = "appli";
+var slugTouche = false;
+var slugChargeActuel = null;
+var motDePasseCreation = "";
+var derniereDateExpiration = undefined;
+var logoBase64 = "";
+
+/* ===================== ÉTAPE 1 : MÉTIERS ===================== */
+Object.keys(SECTEURS).forEach(function(cle){
+  var s = SECTEURS[cle];
+  var b = document.createElement("button");
+  b.type = "button"; b.className = "metier"; b.dataset.cle = cle;
+  b.setAttribute("aria-pressed", "false");
+  b.style.background = COULEUR_METIER[cle] || "#5A5B78";
+  var nom = document.createElement("span"); nom.textContent = s.label;
+  var sous = document.createElement("small"); sous.textContent = s.sousTitre;
+  b.appendChild(nom); b.appendChild(sous);
+  b.onclick = function(){ choisirMetier(cle); setTimeout(function(){ if (PAS_ACTUEL === "metier") afficherPas("formule"); }, 380); };
+  $("metiers").appendChild(b);
 });
 
-/* Le paiement en ligne passe par le panier : il a besoin du Catalogue */
-document.getElementById("modules-grid").addEventListener("change", function(e){
-  var cb = e.target;
-  if (cb.value === "paiement" && cb.checked) {
-    var cat = document.querySelector('#modules-grid input[value="catalogue"]');
-    if (cat && !cat.checked) { cat.checked = true; cat.parentElement.classList.add("active"); toggleSubsection("catalogue", true); recalculerPrix(); }
-  }
-  if (cb.value === "catalogue" && !cb.checked) {
-    var pay = document.querySelector('#modules-grid input[value="paiement"]');
-    if (pay && pay.checked) { pay.checked = false; pay.parentElement.classList.remove("active"); toggleSubsection("paiement", false); recalculerPrix(); }
-  }
-});
-
-function toggleSubsection(mod, show) {
-  var el = document.getElementById("sub-" + mod);
-  if (el) el.classList.toggle("show", show);
+function couleurAccent(c){
+  document.documentElement.style.setProperty("--accent", c);
 }
 
-var prixTotalActuel = 0;
-function recalculerPrix() {
-  var total = PRIX_BASE;
-  if (document.getElementById("cf-chat-actif").checked) total += PRIX_MODULES.chat;
-  document.querySelectorAll("#modules-grid input[type=checkbox]").forEach(function(cb){
-    if (cb.checked && PRIX_MODULES[cb.value] !== undefined) total += PRIX_MODULES[cb.value];
-  });
-  prixTotalActuel = total;
-  document.getElementById("prix-total-val").textContent = total + "€ / an";
-}
-recalculerPrix();
+function choisirMetier(cle, depuisChargement) {
+  var s = SECTEURS[cle]; if (!s) return;
+  SECTEUR = cle;
+  document.querySelectorAll(".metier").forEach(function(m){ m.setAttribute("aria-pressed", m.dataset.cle === cle ? "true" : "false"); });
+  couleurAccent(COULEUR_METIER[cle] || "#E8452C");
+  if (depuisChargement) return;
 
-var catalogueModesActuel = [];
-
-secteurSelect.addEventListener("change", function(){
-  var s = SECTEURS[secteurSelect.value];
-  if (!s) return;
-  catalogueModesActuel = s.catalogueModes || [];
-  document.getElementById("cf-icone").value = s.icone;
-  document.getElementById("cf-soustitre").value = s.sousTitre;
-  document.getElementById("cf-accueil").value = s.accueil;
-  document.getElementById("cf-prompt").value = s.prompt;
-
+  $("cf-icone").value = s.icone;
+  $("cf-soustitre").value = s.sousTitre;
+  $("cf-accueil").value = s.accueil;
+  $("cf-prompt").value = s.prompt;
   var palette = PALETTES.filter(function(p){ return p.nom === s.palette; })[0];
   if (palette) appliquerPalette(palette);
 
-  document.getElementById("qr-list").innerHTML = "";
+  $("qr-list").innerHTML = "";
   (s.questions || []).forEach(function(q){ ajouterQR(q.label, q.message); });
-
-  document.querySelectorAll("#modules-grid .mod-check input").forEach(function(cb){
-    var actif = (s.modules || []).indexOf(cb.value) >= 0;
-    cb.checked = actif;
-    cb.parentElement.classList.toggle("active", actif);
-    toggleSubsection(cb.value, actif);
-  });
-  var chatPrevu = s.chat !== false;
-  document.getElementById("cf-chat-actif").checked = chatPrevu;
-  document.getElementById("mod-check-chat").classList.toggle("active", chatPrevu);
-  recalculerPrix();
-
-  document.getElementById("cf-tarifs-soustitre").value = "Prix indicatifs";
-  document.getElementById("tarifs-list").innerHTML = "";
+  $("cf-tarifs-soustitre").value = "Prix indicatifs";
+  $("tarifs-list").innerHTML = "";
   (s.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix); });
-
-  document.getElementById("cf-devis-types").value = (s.devisTypes || []).join("\n");
-  document.getElementById("cf-devis-surface-label").value = s.devisSurfaceLabel || "";
-  document.getElementById("cf-devis-surface-placeholder").value = s.devisSurfacePlaceholder || "";
-  document.getElementById("cf-devis-prompt").value = s.devisPrompt || "";
-
-  document.getElementById("cf-catalogue-onglet").value = s.catalogueOnglet || "Catalogue";
-  document.getElementById("cf-catalogue-titre").value = s.catalogueTitre || "";
-  document.getElementById("cf-catalogue-soustitre").value = s.catalogueSousTitre || "";
-  document.getElementById("catalogue-list").innerHTML = "";
-  ajouterCatalogueItem();
-
-  document.getElementById("cf-galerie-titre").value = s.galerieTitre || "Nos réalisations";
-  document.getElementById("galerie-list").innerHTML = "";
-  ajouterGalerieItem();
-
-  document.getElementById("reservation-list").innerHTML = "";
+  $("cf-devis-types").value = (s.devisTypes || []).join("\n");
+  $("cf-devis-surface-label").value = s.devisSurfaceLabel || "";
+  $("cf-devis-surface-placeholder").value = s.devisSurfacePlaceholder || "";
+  $("cf-devis-prompt").value = s.devisPrompt || "";
+  $("cf-catalogue-onglet").value = s.catalogueOnglet || "Catalogue";
+  $("cf-catalogue-titre").value = s.catalogueTitre || "";
+  $("cf-catalogue-soustitre").value = s.catalogueSousTitre || "";
+  cocherModes(s.catalogueModes || []);
+  $("catalogue-list").innerHTML = ""; ajouterCatalogueItem();
+  $("cf-galerie-titre").value = s.galerieTitre || "Nos réalisations";
+  $("galerie-list").innerHTML = ""; ajouterGalerieItem();
+  $("reservation-list").innerHTML = "";
   (s.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix); });
-
   construirePlanningJours(s.planning || {});
+
+  choisirFormule((typeof FORMULE_IMPOSEE !== "undefined" && FORMULE_IMPOSEE) || FORMULE_CONSEILLEE[cle] || "essentiel", true);
+  majApercu();
+}
+
+/* ===================== ÉTAPE 2 : FORMAT + FORMULES ===================== */
+function allerVersSite() {
+  var url = "config-site.html" + (SECTEUR ? "?categorie=" + encodeURIComponent(CATEGORIE_SITE[SECTEUR] || "") + "&periode=" + PERIODE : "");
+  window.location.href = url;
+}
+
+function dessinerFormules() {
+  var zone = $("formules"); zone.innerHTML = "";
+  Object.keys(FORMULES).forEach(function(cle){
+    var f = FORMULES[cle];
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "formule"; b.setAttribute("aria-pressed", cle === FORMULE ? "true" : "false");
+    if (SECTEUR && FORMULE_CONSEILLEE[SECTEUR] === cle) {
+      var c = document.createElement("span"); c.className = "conseil"; c.textContent = "Conseillée pour votre métier"; b.appendChild(c);
+    }
+    var haut = document.createElement("div"); haut.className = "formule-haut";
+    var h = document.createElement("h3"); h.textContent = f.nom;
+    var prix = document.createElement("div"); prix.className = "prix";
+    prix.innerHTML = esc(PERIODE === "an" ? f.an : f.mois) + " <small>" + (PERIODE === "an" ? "/ an" : "/ mois") + "</small>";
+    haut.appendChild(h); haut.appendChild(prix); b.appendChild(haut);
+    var pour = document.createElement("div"); pour.style.cssText = "font-size:14px;opacity:.75"; pour.textContent = f.pour; b.appendChild(pour);
+    var ul = document.createElement("ul");
+    f.points.forEach(function(p){ var li = document.createElement("li"); li.textContent = p; ul.appendChild(li); });
+    b.appendChild(ul);
+    b.onclick = function(){ choisirFormule(cle); };
+    zone.appendChild(b);
+  });
+}
+
+document.querySelectorAll(".bascule button").forEach(function(btn){
+  btn.onclick = function(){
+    PERIODE = btn.dataset.periode;
+    document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+    dessinerFormules(); majRecap();
+  };
 });
 
-/* ---------- QUESTIONS RAPIDES ---------- */
+function choisirFormule(cle, depuisMetier) {
+  FORMULE = cle;
+  dessinerFormules();
+  // Pages par défaut : celles du métier, limitées à la formule
+  var s = SECTEURS[SECTEUR] || {};
+  var defaut = (s.modules || ["tarifs"]).slice();
+  if (s.chat !== false) defaut.push("chat");
+  if (cle === "premium" && defaut.indexOf("chat") < 0) defaut.push("chat");
+  var permis = FORMULES[cle].modules;
+  dessinerPages(defaut.filter(function(m){ return permis.indexOf(m) >= 0; }));
+  majRecap();
+}
+
+/* ===================== ÉTAPE 5 : PAGES ===================== */
+var ORDRE = ["essentiel","commerce","premium"];
+function dessinerPages(actives) {
+  var zone = $("pages"); zone.innerHTML = "";
+  var permis = FORMULES[FORMULE].modules;
+  PAGES.forEach(function(p){
+    var ok = permis.indexOf(p.cle) >= 0;
+    var lab = document.createElement("label");
+    lab.className = "page-ligne" + (ok ? "" : " bloquee");
+    var cb = document.createElement("input"); cb.type = "checkbox"; cb.value = p.cle;
+    cb.checked = ok && actives.indexOf(p.cle) >= 0; cb.disabled = !ok;
+    cb.onchange = function(){ pageChangee(p.cle, cb.checked); };
+    var txt = document.createElement("div");
+    var b = document.createElement("b"); b.textContent = p.nom;
+    var sp = document.createElement("span"); sp.textContent = p.desc;
+    txt.appendChild(b); txt.appendChild(sp);
+    lab.appendChild(cb); lab.appendChild(txt);
+    if (!ok) { var v = document.createElement("span"); v.className = "verrou"; v.textContent = "Avec " + FORMULES[p.min].nom; lab.appendChild(v); }
+    zone.appendChild(lab);
+  });
+  majSousBlocs();
+}
+function pagesActives() {
+  var l = [];
+  document.querySelectorAll("#pages input:checked").forEach(function(cb){ l.push(cb.value); });
+  return l;
+}
+function pageChangee(cle, coche) {
+  var cat = document.querySelector('#pages input[value="catalogue"]');
+  var pay = document.querySelector('#pages input[value="paiement"]');
+  if (cle === "paiement" && coche && cat && !cat.checked) cat.checked = true;
+  if (cle === "catalogue" && !coche && pay && pay.checked) pay.checked = false;
+  majSousBlocs();
+}
+function majSousBlocs() {
+  var a = pagesActives();
+  ["tarifs","catalogue","paiement","galerie","reservation","planning","devis"].forEach(function(m){ montrer("sub-" + m, a.indexOf(m) >= 0); });
+  var chat = a.indexOf("chat") >= 0, devis = a.indexOf("devis") >= 0;
+  montrer("etape-ia", chat || devis);
+  montrer("bloc-chat-seul", chat);
+  if (typeof afficherPas === "function" && PAS_ACTUEL) {
+    var liste = pasVisibles(); $("prog-etape").textContent = "Étape " + (liste.indexOf(PAS_ACTUEL) + 1) + " sur " + liste.length;
+  }
+}
+
+/* ===================== ÉTAPE 6 : CE QUE L'IA DOIT SAVOIR ===================== */
+var CHAMPS_IA = [
+  { cle:"horaires", label:"Vos horaires", aide:"Ex : Du mardi au samedi, 11 h 30 – 14 h et 18 h – 22 h. Fermé le lundi.", type:"textarea" },
+  { cle:"zone", label:"Où intervenez-vous / livrez-vous ?", aide:"Ex : Tourcoing, Roubaix, Mouscron. Livraison jusqu'à 22 h.", type:"text" },
+  { cle:"specialites", label:"Vos spécialités, produits ou services phares", aide:"Ex : Pizzas au feu de bois, pâte maison 48 h. Pizza du mois : la Savoyarde.", type:"textarea" },
+  { cle:"taux", label:"Votre taux horaire (€ / heure)", aide:"L'IA s'en sert pour estimer : heures × taux.", type:"number" },
+  { cle:"deplacement", label:"Frais de déplacement", aide:"Ex : Gratuit à Tourcoing, 30 € au-delà de 15 km.", type:"text" },
+  { cle:"minimum", label:"Minimum d'intervention ou de commande", aide:"Ex : 1 h minimum facturée, ou 15 € minimum en livraison.", type:"text" },
+  { cle:"interdits", label:"Ce qu'elle ne doit jamais dire ou promettre", aide:"Ex : Ne jamais donner de date d'intervention sans mon accord.", type:"textarea" },
+  { cle:"autres", label:"Autres infos utiles", aide:"Garantie, moyens de paiement acceptés, parking…", type:"textarea" }
+];
+function construireChampsIA(zoneId, prefixe) {
+  var zone = $(zoneId); zone.innerHTML = "";
+  CHAMPS_IA.forEach(function(c){
+    var d = document.createElement("div"); d.className = "champ";
+    var lab = document.createElement("label"); lab.htmlFor = prefixe + c.cle; lab.textContent = c.label;
+    var inp = document.createElement(c.type === "textarea" ? "textarea" : "input");
+    if (c.type !== "textarea") inp.type = c.type === "number" ? "number" : "text";
+    if (c.type === "number") { inp.min = "0"; inp.step = "1"; inp.inputMode = "decimal"; }
+    if (c.type === "textarea") inp.style.minHeight = "70px";
+    inp.id = prefixe + c.cle; inp.placeholder = c.aide;
+    d.appendChild(lab); d.appendChild(inp);
+    zone.appendChild(d);
+  });
+  var d = document.createElement("div"); d.className = "champ";
+  d.innerHTML = '<label for="' + prefixe + 'ton">Elle parle aux clients en…</label><select id="' + prefixe + 'ton"><option value="vous">Vouvoyant</option><option value="tu">Tutoyant</option></select>';
+  zone.appendChild(d);
+}
+function lireIA(prefixe) {
+  var o = {};
+  CHAMPS_IA.forEach(function(c){ o[c.cle] = ($(prefixe + c.cle).value || "").trim(); });
+  o.ton = $(prefixe + "ton").value;
+  return o;
+}
+function remplirIA(prefixe, infos) {
+  infos = infos || {};
+  CHAMPS_IA.forEach(function(c){ $(prefixe + c.cle).value = infos[c.cle] || ""; });
+  $(prefixe + "ton").value = infos.ton === "tu" ? "tu" : "vous";
+}
+/* Transforme les réponses en consigne claire pour l'IA */
+function blocInfos(nom, i) {
+  var l = [];
+  if (i.horaires) l.push("- Horaires : " + i.horaires);
+  if (i.zone) l.push("- Zone d'intervention / de livraison : " + i.zone);
+  if (i.specialites) l.push("- Spécialités et produits phares : " + i.specialites);
+  if (i.taux) l.push("- Taux horaire de main d'œuvre : " + i.taux + " € de l'heure. Pour estimer un prix : nombre d'heures estimé × " + i.taux + " €, plus les fournitures éventuelles.");
+  if (i.deplacement) l.push("- Frais de déplacement : " + i.deplacement);
+  if (i.minimum) l.push("- Minimum : " + i.minimum);
+  if (i.autres) l.push("- Autres informations : " + i.autres);
+  var t = "";
+  if (l.length) t += "\n\nINFORMATIONS DE " + (nom || "l'entreprise").toUpperCase() + " (utilise-les dans tes réponses, n'invente rien d'autre) :\n" + l.join("\n");
+  if (i.interdits) t += "\n\nÀ NE JAMAIS FAIRE NI PROMETTRE : " + i.interdits;
+  t += "\n\nTu " + (i.ton === "tu" ? "tutoies" : "vouvoies") + " les clients.";
+  if (i.taux) t += " Quand on te demande un prix, donne une estimation claire en montrant le calcul, et précise qu'elle est à confirmer.";
+  return t;
+}
+function baseSansInfos(p) {
+  p = String(p || "");
+  var i = p.indexOf("\n\nINFORMATIONS DE ");
+  var j = p.indexOf("\n\nÀ NE JAMAIS FAIRE");
+  var k = p.indexOf("\n\nTu vouvoies"); var k2 = p.indexOf("\n\nTu tutoies");
+  var coupes = [i, j, k, k2].filter(function(x){ return x >= 0; });
+  return coupes.length ? p.slice(0, Math.min.apply(null, coupes)) : p;
+}
+construireChampsIA("cf-ia-champs", "cf-ia-");
+construireChampsIA("ad-ia-champs", "ad-ia-");
+
+/* ===================== ÉTAPE 4 : COULEURS + APERÇU ===================== */
+PALETTES.forEach(function(p){
+  var b = document.createElement("button");
+  b.type = "button"; b.className = "palette"; b.title = p.nom; b.setAttribute("aria-label", "Palette " + p.nom);
+  b.setAttribute("aria-pressed", "false");
+  b.style.background = "linear-gradient(135deg," + p.fonce + " 50%," + p.accent + " 50%)";
+  b.onclick = function(){ appliquerPalette(p); };
+  $("palettes").appendChild(b);
+});
+function appliquerPalette(p) {
+  $("cf-fond").value = p.fond; $("cf-texte").value = p.texte; $("cf-fonce").value = p.fonce;
+  $("cf-accent").value = p.accent; $("cf-clair").value = p.clair; $("cf-alerte").value = p.alerte;
+  document.querySelectorAll(".palette").forEach(function(b){ b.setAttribute("aria-pressed", b.title === p.nom ? "true" : "false"); });
+  majApercu();
+}
+function majApercu() {
+  var ap = $("apercu").style;
+  ap.setProperty("--ap-fond", $("cf-fond").value);
+  ap.setProperty("--ap-fonce", $("cf-fonce").value);
+  ap.setProperty("--ap-accent", $("cf-accent").value);
+  $("ap-nom").textContent = $("cf-nom").value.trim() || "Votre commerce";
+  $("ap-sous").textContent = $("cf-soustitre").value.trim() || "Votre phrase ici";
+  var ic = $("ap-icone"); ic.innerHTML = "";
+  if (logoBase64) { var im = document.createElement("img"); im.src = logoBase64; im.alt = ""; ic.appendChild(im); }
+  else ic.textContent = $("cf-icone").value.trim() || "✨";
+}
+appliquerPalette(PALETTES[3]);
+
+/* ===================== ÉTAPE 3 : ADRESSE ===================== */
+function majSlugAuto(){
+  if (slugTouche || slugChargeActuel) return;
+  $("cf-slug").value = slugifier($("cf-nom").value);
+  majApercuLien();
+}
+function majApercuLien(){
+  var s = $("cf-slug").value;
+  $("apercu-lien").textContent = s ? "Votre lien : " + window.location.host + "/moteur-v2.html?client=" + s : "Remplie automatiquement à partir du nom.";
+}
+
+/* ===================== LISTES DE CONTENU ===================== */
 function ajouterQR(label, message) {
-  var row = document.createElement("div");
-  row.className = "item-row";
-  row.style.gridTemplateColumns = "1fr 2fr auto";
-  row.innerHTML =
-    '<input placeholder="Texte du bouton" value="' + esc(label) + '"/>' +
-    '<input placeholder="Question envoyée à l\'IA" value="' + esc(message) + '"/>' +
-    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById("qr-list").appendChild(row);
+  var d = document.createElement("div"); d.className = "ligne-item";
+  d.innerHTML = '<div class="deux"><input type="text" placeholder="Bouton" value="' + esc(label) + '"/><input type="text" placeholder="Question envoyée" value="' + esc(message) + '"/></div><button class="suppr" type="button" aria-label="Retirer" onclick="this.parentElement.remove()">×</button>';
+  $("qr-list").appendChild(d);
 }
-
-/* ---------- TARIFS ---------- */
 function ajouterTarif(nom, desc, prix, conteneurId) {
-  var row = document.createElement("div");
-  row.className = "item-row";
-  row.innerHTML =
-    '<input placeholder="Nom" value="' + esc(nom) + '"/>' +
-    '<input placeholder="Description" value="' + esc(desc) + '"/>' +
-    '<input placeholder="Prix" value="' + esc(prix) + '"/>' +
-    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById(conteneurId || "tarifs-list").appendChild(row);
+  var d = document.createElement("div"); d.className = "ligne-item";
+  d.innerHTML = '<div class="trois"><input type="text" placeholder="Nom" value="' + esc(nom) + '"/><input type="text" placeholder="Détail" value="' + esc(desc) + '"/><input type="text" placeholder="Prix" value="' + esc(prix) + '"/></div><button class="suppr" type="button" aria-label="Retirer" onclick="this.parentElement.remove()">×</button>';
+  $(conteneurId || "tarifs-list").appendChild(d);
 }
-
-/* ---------- CATALOGUE ---------- */
 function ajouterCatalogueItem(nom, categorie, prix, image, conteneurId, description, tags) {
-  var row = document.createElement("div");
-  row.className = "day-block";
-  var uid = "cat" + Date.now() + Math.floor(Math.random()*100000);
-  row.innerHTML =
-    '<div class="row2"><input class="ci-nom" placeholder="Nom" value="' + esc(nom) + '"/><input class="ci-cat" placeholder="Catégorie (ex: Pizzas, Boissons)" value="' + esc(categorie) + '"/></div>' +
-    '<textarea class="ci-desc" placeholder="Description" style="min-height:44px;margin-top:8px">' + esc(description) + '</textarea>' +
-    '<div class="row2" style="margin-top:8px"><input class="ci-prix" placeholder="Prix" value="' + esc(prix) + '"/><input class="ci-tags" placeholder="Tags : Best-seller, Végétarien..." value="' + esc(tags) + '"/></div>' +
-    '<label class="lbl" style="margin-top:10px">Photo (facultatif)</label>' +
-    '<div class="photo-zone">' +
-      '<div class="ph" id="ph-' + uid + '" style="' + (image ? 'display:none' : '') + '"><span>📷</span>Prendre une photo ou choisir</div>' +
-      '<img id="prev-' + uid + '" style="' + (image ? 'display:block' : '') + '" src="' + esc(image) + '" data-img="' + esc(image) + '"/>' +
-      '<input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uid + '\')"/>' +
-    '</div>' +
-    '<button class="del-btn" style="margin-top:10px" onclick="this.parentElement.remove()">✕ Retirer cet article</button>';
-  document.getElementById(conteneurId || "catalogue-list").appendChild(row);
+  var uid = "c" + Date.now() + Math.floor(Math.random()*100000);
+  var d = document.createElement("div"); d.className = "item-bloc";
+  d.innerHTML =
+    '<div class="deux"><input class="ci-nom" type="text" placeholder="Nom du produit" value="' + esc(nom) + '"/><input class="ci-prix" type="text" placeholder="Prix, ex : 11 €" value="' + esc(prix) + '"/></div>' +
+    '<div class="deux"><input class="ci-cat" type="text" placeholder="Catégorie (Pizzas, Boissons…)" value="' + esc(categorie) + '"/><input class="ci-tags" type="text" placeholder="Étiquettes : Nouveau, Épicé…" value="' + esc(tags) + '"/></div>' +
+    '<textarea class="ci-desc" placeholder="Description" style="min-height:60px">' + esc(description) + '</textarea>' +
+    '<div class="photo-zone"><span id="ph-' + uid + '"' + (image ? ' style="display:none"' : '') + '>Ajouter une photo</span><img id="prev-' + uid + '" alt="" src="' + esc(image) + '" data-img="' + esc(image) + '"' + (image ? ' style="display:block"' : '') + '/><input type="file" accept="image/*" aria-label="Photo du produit" onchange="handleItemPhoto(this,\'' + uid + '\')"/></div>' +
+    '<button class="btn-lien" type="button" style="color:#B42318;align-self:flex-start" onclick="this.parentElement.remove()">Retirer ce produit</button>';
+  $(conteneurId || "catalogue-list").appendChild(d);
 }
-
-/* ---------- GALERIE ---------- */
 function ajouterGalerieItem(titre, avant, apres, conteneurId) {
-  var row = document.createElement("div");
-  row.className = "day-block";
-  var uidA = "gA" + Date.now() + Math.floor(Math.random()*100000);
-  var uidP = "gP" + Date.now() + Math.floor(Math.random()*100000);
-  row.innerHTML =
-    '<input class="gi-titre" placeholder="Titre" value="' + esc(titre) + '" style="margin-bottom:8px"/>' +
-    '<div class="row2">' +
-    '<div><label class="lbl">Avant</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidA + '\')"/><img id="prev-' + uidA + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (avant ? '' : 'display:none') + '" src="' + esc(avant) + '" data-img="' + esc(avant) + '"/></div>' +
-    '<div><label class="lbl">Après</label><input type="file" accept="image/*" onchange="handleItemPhoto(this,\'' + uidP + '\')"/><img id="prev-' + uidP + '" style="max-width:60px;max-height:60px;border-radius:6px;margin-top:4px;' + (apres ? '' : 'display:none') + '" src="' + esc(apres) + '" data-img="' + esc(apres) + '"/></div>' +
+  var a = "a" + Date.now() + Math.floor(Math.random()*100000), p = "p" + Date.now() + Math.floor(Math.random()*100000);
+  var d = document.createElement("div"); d.className = "item-bloc";
+  d.innerHTML =
+    '<input class="gi-titre" type="text" placeholder="Titre, ex : Salle de bain à Roubaix" value="' + esc(titre) + '"/>' +
+    '<div class="deux">' +
+      '<div class="photo-zone"><span id="ph-' + a + '"' + (avant ? ' style="display:none"' : '') + '>Photo avant</span><img id="prev-' + a + '" alt="" src="' + esc(avant) + '" data-img="' + esc(avant) + '"' + (avant ? ' style="display:block"' : '') + '/><input type="file" accept="image/*" aria-label="Photo avant" onchange="handleItemPhoto(this,\'' + a + '\')"/></div>' +
+      '<div class="photo-zone"><span id="ph-' + p + '"' + (apres ? ' style="display:none"' : '') + '>Photo après</span><img id="prev-' + p + '" alt="" src="' + esc(apres) + '" data-img="' + esc(apres) + '"' + (apres ? ' style="display:block"' : '') + '/><input type="file" accept="image/*" aria-label="Photo après" onchange="handleItemPhoto(this,\'' + p + '\')"/></div>' +
     '</div>' +
-    '<button class="del-btn" style="margin-top:6px" onclick="this.parentElement.remove()">✕ Retirer</button>';
-  document.getElementById(conteneurId || "galerie-list").appendChild(row);
+    '<button class="btn-lien" type="button" style="color:#B42318;align-self:flex-start" onclick="this.parentElement.remove()">Retirer</button>';
+  $(conteneurId || "galerie-list").appendChild(d);
 }
-
-/* ---------- RÉSERVATION ---------- */
 function ajouterReservationService(nom, prix, conteneurId) {
-  var row = document.createElement("div");
-  row.className = "item-row";
-  row.style.gridTemplateColumns = "2fr 1fr auto";
-  row.innerHTML =
-    '<input placeholder="Nom du service" value="' + esc(nom) + '"/>' +
-    '<input placeholder="Prix (optionnel)" value="' + esc(prix) + '"/>' +
-    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  document.getElementById(conteneurId || "reservation-list").appendChild(row);
+  var d = document.createElement("div"); d.className = "ligne-item";
+  d.innerHTML = '<div class="deux"><input type="text" placeholder="Service" value="' + esc(nom) + '"/><input type="text" placeholder="Prix (facultatif)" value="' + esc(prix) + '"/></div><button class="suppr" type="button" aria-label="Retirer" onclick="this.parentElement.remove()">×</button>';
+  $(conteneurId || "reservation-list").appendChild(d);
 }
-
-/* ---------- PLANNING ---------- */
 var JOURS_SEMAINE = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-function construirePlanningJours(planningExistant, wrapId) {
+function construirePlanningJours(planning, wrapId) {
   wrapId = wrapId || "planning-jours";
-  var wrap = document.getElementById(wrapId);
-  wrap.innerHTML = "";
-  JOURS_SEMAINE.forEach(function(jour){
-    var block = document.createElement("div");
-    block.className = "day-block";
-    block.innerHTML = '<h3>' + jour + '</h3><div class="pj-cours" data-jour="' + jour + '"></div><button class="add-btn" onclick="ajouterCoursJour(\'' + jour + '\',null,null,null,\'' + wrapId + '\')">+ Ajouter un créneau ce jour</button>';
-    wrap.appendChild(block);
-    (planningExistant[jour] || []).forEach(function(c){ ajouterCoursJour(jour, c.heure, c.nom, c.meta, wrapId); });
+  var w = $(wrapId); w.innerHTML = "";
+  JOURS_SEMAINE.forEach(function(j){
+    var b = document.createElement("div"); b.className = "jour";
+    b.innerHTML = '<h4>' + j + '</h4><div class="pj-cours" data-jour="' + j + '"></div><button class="btn-lien" type="button" onclick="ajouterCoursJour(\'' + j + '\',null,null,null,\'' + wrapId + '\')">+ Ajouter un créneau</button>';
+    w.appendChild(b);
+    ((planning || {})[j] || []).forEach(function(c){ ajouterCoursJour(j, c.heure, c.nom, c.meta, wrapId); });
   });
 }
 function ajouterCoursJour(jour, heure, nom, meta, wrapId) {
-  wrapId = wrapId || "planning-jours";
-  var container = document.querySelector('#' + wrapId + ' .pj-cours[data-jour="' + jour + '"]');
-  var row = document.createElement("div");
-  row.className = "item-row";
-  row.style.marginTop = "6px";
-  row.innerHTML =
-    '<input placeholder="Horaire" value="' + esc(heure) + '" style="max-width:90px"/>' +
-    '<input placeholder="Nom du cours" value="' + esc(nom) + '"/>' +
-    '<input placeholder="Infos (niveau, prof...)" value="' + esc(meta) + '"/>' +
-    '<button class="del-btn" onclick="this.parentElement.remove()">✕</button>';
-  container.appendChild(row);
+  var c = document.querySelector('#' + (wrapId || "planning-jours") + ' .pj-cours[data-jour="' + jour + '"]');
+  var d = document.createElement("div"); d.className = "ligne-item";
+  d.innerHTML = '<div class="trois"><input type="text" placeholder="Horaire" value="' + esc(heure) + '"/><input type="text" placeholder="Nom" value="' + esc(nom) + '"/><input type="text" placeholder="Infos" value="' + esc(meta) + '"/></div><button class="suppr" type="button" aria-label="Retirer" onclick="this.parentElement.remove()">×</button>';
+  c.appendChild(d);
 }
 construirePlanningJours({});
+function cocherModes(modes) {
+  document.querySelectorAll("#modes-liste input").forEach(function(cb){ cb.checked = modes.indexOf(cb.value) >= 0; });
+}
+function modesCoches() {
+  var l = []; document.querySelectorAll("#modes-liste input:checked").forEach(function(cb){ l.push(cb.value); }); return l;
+}
 
-/* ---------- PHOTOS ---------- */
-function compressPhoto(file, maxSize, callback) {
-  var reader = new FileReader();
-  reader.onload = function(e) {
+/* ---------- Photos ---------- */
+function compressPhoto(file, max, cb) {
+  var r = new FileReader();
+  r.onload = function(e){
     var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var w = img.width, h = img.height;
-      if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
-      else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      callback(canvas.toDataURL('image/jpeg', 0.75));
+    img.onload = function(){
+      var c = document.createElement("canvas"), w = img.width, h = img.height;
+      if (w > h) { if (w > max) { h = h * max / w; w = max; } } else { if (h > max) { w = w * max / h; h = max; } }
+      c.width = w; c.height = h; c.getContext("2d").drawImage(img, 0, 0, w, h);
+      cb(c.toDataURL("image/jpeg", 0.75));
     };
     img.src = e.target.result;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
-var logoBase64 = "";
 function handleLogo(input) {
-  var f = input.files[0];
-  if (!f) return;
+  var f = input.files[0]; if (!f) return;
   compressPhoto(f, 400, function(b64){
     logoBase64 = b64;
-    var prev = document.getElementById('logo-preview');
-    prev.src = b64; prev.style.display = 'block';
-    document.getElementById('logo-txt').textContent = 'Touchez pour changer';
+    var p = $("logo-preview"); p.src = b64; p.style.display = "block";
+    $("logo-txt").textContent = "Touchez pour changer";
+    majApercu();
   });
 }
 function handleItemPhoto(input, uid) {
-  var f = input.files[0];
-  if (!f) return;
+  var f = input.files[0]; if (!f) return;
   compressPhoto(f, 700, function(b64){
-    var prev = document.getElementById('prev-' + uid);
-    prev.src = b64; prev.style.display = 'block';
-    prev.setAttribute('data-img', b64);
-    var ph = document.getElementById('ph-' + uid);
-    if (ph) ph.style.display = 'none';
+    var p = $("prev-" + uid); p.src = b64; p.style.display = "block"; p.setAttribute("data-img", b64);
+    var ph = $("ph-" + uid); if (ph) ph.style.display = "none";
   });
 }
 
 /* ---------- Lecture des listes ---------- */
-function lireTarifs(id){
+function lireLignes(id, n) {
   var out = [];
-  document.querySelectorAll("#" + id + " .item-row").forEach(function(row){
-    var i = row.querySelectorAll("input");
-    if (i[0].value.trim()) out.push({ nom: i[0].value.trim(), description: i[1].value.trim(), prix: i[2].value.trim() });
+  document.querySelectorAll("#" + id + " .ligne-item").forEach(function(r){
+    var i = r.querySelectorAll("input"); var v = [];
+    for (var k = 0; k < n; k++) v.push(i[k] ? i[k].value.trim() : "");
+    if (v[0]) out.push(v);
   });
   return out;
 }
-function lireCatalogue(id){
+function lireTarifs(id){ return lireLignes(id, 3).map(function(v){ return { nom: v[0], description: v[1], prix: v[2] }; }); }
+function lireReservation(id){ return lireLignes(id, 2).map(function(v){ return { nom: v[0], prix: v[1] }; }); }
+function lireCatalogue(id) {
   var out = [];
-  document.querySelectorAll("#" + id + " .day-block").forEach(function(row){
-    var nom = row.querySelector(".ci-nom").value.trim();
-    if (!nom) return;
-    var img = row.querySelector("img");
-    out.push({
-      nom: nom,
-      categorie: row.querySelector(".ci-cat").value.trim(),
-      description: row.querySelector(".ci-desc").value.trim(),
-      tags: row.querySelector(".ci-tags").value.trim(),
-      prix: row.querySelector(".ci-prix").value.trim(),
-      image: img ? (img.getAttribute("data-img") || "") : ""
-    });
+  document.querySelectorAll("#" + id + " .item-bloc").forEach(function(r){
+    var nom = r.querySelector(".ci-nom"); if (!nom || !nom.value.trim()) return;
+    var img = r.querySelector("img");
+    out.push({ nom: nom.value.trim(), prix: r.querySelector(".ci-prix").value.trim(), categorie: r.querySelector(".ci-cat").value.trim(), tags: r.querySelector(".ci-tags").value.trim(), description: r.querySelector(".ci-desc").value.trim(), image: img ? (img.getAttribute("data-img") || "") : "" });
   });
   return out;
 }
-function lireGalerie(id){
+function lireGalerie(id) {
   var out = [];
-  document.querySelectorAll("#" + id + " .day-block").forEach(function(row){
-    var titre = row.querySelector(".gi-titre").value.trim();
-    var imgs = row.querySelectorAll("img");
+  document.querySelectorAll("#" + id + " .item-bloc").forEach(function(r){
+    var t = r.querySelector(".gi-titre"); if (!t) return;
+    var imgs = r.querySelectorAll("img");
     var a = imgs[0].getAttribute("data-img") || "", p = imgs[1].getAttribute("data-img") || "";
-    if (!titre && !a && !p) return;
-    out.push({ titre: titre, avant: a, apres: p });
+    if (!t.value.trim() && !a && !p) return;
+    out.push({ titre: t.value.trim(), avant: a, apres: p });
   });
   return out;
 }
-function lireReservation(id){
-  var out = [];
-  document.querySelectorAll("#" + id + " .item-row").forEach(function(row){
-    var i = row.querySelectorAll("input");
-    if (i[0].value.trim()) out.push({ nom: i[0].value.trim(), prix: i[1].value.trim() });
-  });
-  return out;
-}
-function lirePlanning(wrapId){
+function lirePlanning(wrapId) {
   var planning = {};
-  JOURS_SEMAINE.forEach(function(jour){
-    var container = document.querySelector('#' + wrapId + ' .pj-cours[data-jour="' + jour + '"]');
-    var cours = [];
-    if (container) container.querySelectorAll(".item-row").forEach(function(row){
-      var i = row.querySelectorAll("input");
-      if (i[1].value.trim()) cours.push({ heure: i[0].value.trim(), nom: i[1].value.trim(), meta: i[2].value.trim() });
+  JOURS_SEMAINE.forEach(function(j){
+    var c = document.querySelector('#' + wrapId + ' .pj-cours[data-jour="' + j + '"]'); var l = [];
+    if (c) c.querySelectorAll(".ligne-item").forEach(function(r){
+      var i = r.querySelectorAll("input"); if (i[1].value.trim()) l.push({ heure: i[0].value.trim(), nom: i[1].value.trim(), meta: i[2].value.trim() });
     });
-    if (cours.length) planning[jour] = cours;
+    if (l.length) planning[j] = l;
   });
   return planning;
 }
 
-/* =====================================================================
-   ENREGISTREMENT
-   ===================================================================== */
+/* ===================== RÉCAP ===================== */
+function majRecap() {
+  if ($("bas-prix")) majBarreBas();
+  var f = FORMULES[FORMULE];
+  $("recap-formule").textContent = f.nom;
+  $("recap-periode").textContent = PERIODE === "an" ? "À l'année, 2 mois offerts" : "Au mois, engagement 12 mois";
+  $("recap-prix").textContent = (PERIODE === "an" ? f.an + " / an" : f.mois + " / mois");
+}
+
+/* ===================== ENREGISTREMENT ===================== */
+function showStatus(msg, type){ var s = $("status"); s.textContent = msg; s.className = "status " + type; }
+
 function enregistrer() {
-  var slug = slugifier(document.getElementById("cf-slug").value);
-  document.getElementById("cf-slug").value = slug;
-  if (!document.getElementById("cf-nom").value.trim()) { showStatus("Indiquez le nom de votre entreprise.", "err"); return; }
-  if (!slug) { showStatus("Indiquez une adresse pour votre appli.", "err"); return; }
+  if (!SECTEUR) { showStatus("Choisissez d'abord votre métier (étape 1).", "err"); $("t1").scrollIntoView({behavior:"smooth"}); return; }
+  var slug = slugifier($("cf-slug").value); $("cf-slug").value = slug;
+  if (!$("cf-nom").value.trim()) { showStatus("Indiquez le nom de votre commerce (étape 3).", "err"); return; }
+  if (!slug) { showStatus("Indiquez une adresse pour votre appli (étape 3).", "err"); return; }
   if (slug === slugChargeActuel) { enregistrerInterne(slug); return; }
-  fetch(API + "/memory/config_" + slug)
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d && d.value) showStatus('L\'adresse « ' + slug + ' » est déjà prise. Choisissez-en une autre.', "err");
-      else enregistrerInterne(slug);
-    })
-    .catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
+  fetch(API + "/memory/config_" + slug).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.value) showStatus("L'adresse « " + slug + " » est déjà prise. Choisissez-en une autre.", "err");
+    else enregistrerInterne(slug);
+  }).catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
 }
 
 function enregistrerInterne(slug) {
-  var modulesActifs = [];
-  document.querySelectorAll("#modules-grid .mod-check input:checked").forEach(function(cb){ modulesActifs.push(cb.value); });
-
-  var qr = [];
-  document.querySelectorAll("#qr-list .item-row").forEach(function(row){
-    var i = row.querySelectorAll("input");
-    if (i[0].value.trim()) qr.push({ label: i[0].value.trim(), message: i[1].value.trim() });
-  });
-
+  var pages = pagesActives();
+  var chat = pages.indexOf("chat") >= 0;
+  var infos = lireIA("cf-ia-");
+  var nom = $("cf-nom").value.trim();
+  var base = $("cf-prompt").value.trim();
+  var devisBase = $("cf-devis-prompt").value.trim();
+  var qr = lireLignes("qr-list", 2).map(function(v){ return { label: v[0], message: v[1] }; });
   var config = {
-    secteur: document.getElementById("cf-secteur").value,
-    nom: document.getElementById("cf-nom").value.trim(),
-    sousTitre: document.getElementById("cf-soustitre").value.trim(),
-    icone: document.getElementById("cf-icone").value.trim() || "🔧",
-    logoImage: logoBase64 || "",
-    telephoneWhatsApp: document.getElementById("cf-whatsapp").value.replace(/[^0-9]/g, ""),
-    email: document.getElementById("cf-email").value.trim(),
-    adminPassword: document.getElementById("cf-admin-password").value.trim(),
-    couleurs: {
-      fond: document.getElementById("cf-fond").value,
-      texte: document.getElementById("cf-texte").value,
-      fonce: document.getElementById("cf-fonce").value,
-      accent: document.getElementById("cf-accent").value,
-      clair: document.getElementById("cf-clair").value,
-      alerte: document.getElementById("cf-alerte").value
-    },
-    messageAccueil: document.getElementById("cf-accueil").value.trim(),
-    systemPrompt: document.getElementById("cf-prompt").value.trim(),
+    secteur: SECTEUR, formule: FORMULE, periode: PERIODE,
+    nom: nom, sousTitre: $("cf-soustitre").value.trim(),
+    icone: $("cf-icone").value.trim() || "✨", logoImage: logoBase64 || "",
+    telephoneWhatsApp: $("cf-whatsapp").value.replace(/[^0-9]/g, ""),
+    email: $("cf-email").value.trim(),
+    adminPassword: $("cf-admin-password").value.trim(),
+    couleurs: { fond: $("cf-fond").value, texte: $("cf-texte").value, fonce: $("cf-fonce").value, accent: $("cf-accent").value, clair: $("cf-clair").value, alerte: $("cf-alerte").value },
+    messageAccueil: $("cf-accueil").value.trim(),
+    iaInfos: infos,
+    systemPromptBase: base,
+    systemPrompt: base + blocInfos(nom, infos),
     questionsRapides: qr,
-    modulesActifs: modulesActifs,
-    chatActif: document.getElementById("cf-chat-actif").checked,
-    // Le serveur ignore ces deux champs si le code admin n'est pas fourni
-    valide: slugChargeActuel ? document.getElementById("cf-valide").checked : false,
+    modulesActifs: pages.filter(function(p){ return p !== "chat"; }),
+    chatActif: chat,
+    valide: slugChargeActuel ? $("cf-valide").checked : false,
     dateExpiration: slugChargeActuel ? derniereDateExpiration : undefined,
-    tarifsSousTitre: document.getElementById("cf-tarifs-soustitre").value.trim(),
+    tarifsSousTitre: $("cf-tarifs-soustitre").value.trim(),
     tarifs: lireTarifs("tarifs-list"),
-    devisTypes: document.getElementById("cf-devis-types").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean),
-    tauxHoraire: document.getElementById("cf-taux-horaire").value.trim(),
-    devisSurfaceLabel: document.getElementById("cf-devis-surface-label").value.trim(),
-    devisSurfacePlaceholder: document.getElementById("cf-devis-surface-placeholder").value.trim(),
-    devisPrompt: document.getElementById("cf-devis-prompt").value.trim(),
-    catalogueOnglet: document.getElementById("cf-catalogue-onglet").value.trim(),
-    catalogueTitre: document.getElementById("cf-catalogue-titre").value.trim(),
-    catalogueSousTitre: document.getElementById("cf-catalogue-soustitre").value.trim(),
-    catalogueModes: catalogueModesActuel,
+    devisTypes: $("cf-devis-types").value.split("\n").map(function(x){ return x.trim(); }).filter(Boolean),
+    tauxHoraire: infos.taux,
+    devisSurfaceLabel: $("cf-devis-surface-label").value.trim(),
+    devisSurfacePlaceholder: $("cf-devis-surface-placeholder").value.trim(),
+    devisPromptBase: devisBase,
+    devisPrompt: devisBase + (infos.deplacement ? " Frais de déplacement : " + infos.deplacement + "." : "") + (infos.minimum ? " Minimum : " + infos.minimum + "." : "") + (infos.interdits ? " Ne jamais : " + infos.interdits + "." : ""),
+    catalogueOnglet: $("cf-catalogue-onglet").value.trim(),
+    catalogueTitre: $("cf-catalogue-titre").value.trim(),
+    catalogueSousTitre: $("cf-catalogue-soustitre").value.trim(),
+    catalogueModes: modesCoches(),
     catalogue: lireCatalogue("catalogue-list"),
-    galerieTitre: document.getElementById("cf-galerie-titre").value.trim(),
+    galerieTitre: $("cf-galerie-titre").value.trim(),
     galerie: lireGalerie("galerie-list"),
     reservationServices: lireReservation("reservation-list"),
-    lienReservationExterne: document.getElementById("cf-reservation-lien").value.trim(),
+    lienReservationExterne: $("cf-reservation-lien").value.trim(),
     planning: lirePlanning("planning-jours")
   };
-
-  if (!slugChargeActuel && !config.adminPassword) {
-    showStatus("Choisissez un mot de passe pour votre espace client.", "err"); return;
-  }
+  if (!slugChargeActuel && !config.adminPassword) { showStatus("Choisissez un mot de passe pour votre espace (étape 3).", "err"); return; }
 
   showStatus("Enregistrement...", "ok");
   fetch(API + "/memory/config_" + slug, {
     method: "POST",
     headers: entetes(motDePasseCreation ? { "x-client-password": motDePasseCreation } : null),
     body: JSON.stringify({ value: config })
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
+  }).then(function(r){ return r.json(); }).then(function(d){
     if (!d || !d.ok) { showStatus((d && d.error) || "L'enregistrement a échoué.", "err"); return; }
-    var lien = window.location.origin + "/moteur-v2.html?client=" + slug;
-    // Permet de ré-enregistrer après une correction sans repasser par l'espace client
     if (!ADMIN_TOKEN && config.adminPassword) motDePasseCreation = config.adminPassword;
     slugChargeActuel = slug;
-    showStatus("✅ Appli enregistrée pour « " + (config.nom || slug) + " ».", "ok");
-    document.getElementById("lien-final").value = lien;
-    document.getElementById("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
-    document.getElementById("resultat-lien").style.display = "block";
-    document.getElementById("resultat-lien").scrollIntoView({ behavior: "smooth" });
-    document.getElementById("montant-a-payer").textContent = prixTotalActuel + "€";
-    document.getElementById("lien-revolut-resultat").href = LIEN_REVOLUT;
-  }).catch(function(){
-    showStatus("Connexion impossible. Réessayez dans un instant.", "err");
-  });
+    var lien = window.location.origin + "/moteur-v2.html?client=" + slug;
+    showStatus("✅ « " + nom + " » est enregistrée.", "ok");
+    $("lien-final").value = lien;
+    $("lien-ouvrir").href = lien;
+    $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
+    var f = FORMULES[FORMULE];
+    $("montant-a-payer").textContent = PERIODE === "an" ? f.an + " / an" : f.mois + " / mois";
+    $("lien-revolut-resultat").href = LIEN_REVOLUT;
+    montrer("resultat-lien", true);
+    $("resultat-lien").scrollIntoView({ behavior: "smooth" });
+    $("btn-suivant").textContent = "Payer et activer";
+    $("btn-suivant").onclick = payerAbonnement;
+  }).catch(function(){ showStatus("Connexion impossible. Réessayez dans un instant.", "err"); });
 }
 
 function copierLien() {
-  var input = document.getElementById("lien-final");
-  input.select();
-  input.setSelectionRange(0, 99999);
-  (navigator.clipboard ? navigator.clipboard.writeText(input.value) : Promise.reject())
-    .then(function(){ showStatus("Lien copié.", "ok"); })
-    .catch(function(){ document.execCommand("copy"); });
+  var i = $("lien-final"); i.select();
+  (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject())
+    .then(function(){ showStatus("Lien copié.", "ok"); }).catch(function(){ document.execCommand("copy"); });
 }
 
-function showStatus(msg, type) {
-  var s = document.getElementById("status");
-  s.textContent = msg;
-  s.className = "status " + type;
+/* ===================== PAIEMENT DE L'ABONNEMENT ===================== */
+function payerAbonnement() {
+  if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre appli.", "err"); return; }
+  var btn = $("btn-payer-abonnement"); btn.disabled = true; btn.textContent = "Ouverture du paiement...";
+  fetch(API + "/abonnement/checkout/appli/" + encodeURIComponent(slugChargeActuel), {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ periode: PERIODE })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.ok && d.url) { window.location.href = d.url; return; }
+    showStatus((d && d.error) || "Paiement indisponible.", "err");
+    btn.disabled = false; btn.textContent = "Payer par carte et activer";
+  }).catch(function(){ showStatus("Connexion impossible. Réessayez.", "err"); btn.disabled = false; btn.textContent = "Payer par carte et activer"; });
+}
+function gererRetourAbonnement() {
+  var p = new URLSearchParams(window.location.search);
+  if (p.get("abonnement") !== "appli") return;
+  var projet = p.get("projet") || "";
+  if (p.get("paiement") === "annule") { showStatus("Paiement annulé. Votre appli reste en démo, vous pouvez payer quand vous voulez.", "err"); $("status").scrollIntoView(); return; }
+  showStatus("Vérification du paiement...", "ok");
+  fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.paye) {
+      var lien = window.location.origin + "/moteur-v2.html?client=" + encodeURIComponent(projet);
+      showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est active. Votre lien : " + lien, "ok");
+    } else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
+    $("status").scrollIntoView();
+    window.history.replaceState(null, "", window.location.pathname);
+  }).catch(function(){ showStatus("Vérification impossible. Écrivez-nous sur WhatsApp si besoin.", "err"); });
 }
 
-/* =====================================================================
-   ESPACE PHILOMÈNE (admin)
-   ===================================================================== */
-var derniereDateExpiration = undefined;
-var slugChargeActuel = null;
-var motDePasseCreation = "";
-
+/* ===================== ESPACE PHILOMÈNE (ADMIN) ===================== */
+function showStatusCharger(msg, type){ var s = $("status-charger"); s.textContent = msg; s.className = "status " + type; }
 function deverrouillerAdminGeneral(tokenAuto) {
-  var t = tokenAuto || document.getElementById("pwd-admin-general").value.trim();
-  if (!t) return;
-  fetch(API + "/admin-check", { method: "POST", headers: { "x-admin-token": t } })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || !d.ok) {
-        try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){}
-        if (!tokenAuto) { var s = document.getElementById("status-verrou"); s.textContent = "Code incorrect."; s.className = "status err"; }
-        return;
-      }
-      ADMIN_TOKEN = t;
-      try { sessionStorage.setItem(CLE_SESSION_ADMIN, t); } catch(e){}
-      document.getElementById("verrou-admin-general").style.display = "none";
-      document.getElementById("contenu-admin-general").style.display = "block";
-      if (document.getElementById("cf-slug-charger").value.trim()) chargerConfigExistante();
-    })
-    .catch(function(){
-      var s = document.getElementById("status-verrou"); s.textContent = "Serveur injoignable, réessayez."; s.className = "status err";
-    });
+  var t = tokenAuto || $("pwd-admin-general").value.trim(); if (!t) return;
+  fetch(API + "/admin-check", { method: "POST", headers: { "x-admin-token": t } }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) {
+      try { sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch(e){}
+      if (!tokenAuto) { var s = $("status-verrou"); s.textContent = "Code incorrect."; s.className = "status err"; }
+      return;
+    }
+    ADMIN_TOKEN = t; try { sessionStorage.setItem(CLE_SESSION_ADMIN, t); } catch(e){}
+    montrer("verrou-admin-general", false); montrer("contenu-admin-general", true);
+    if ($("cf-slug-charger").value.trim()) chargerConfigExistante();
+  }).catch(function(){ var s = $("status-verrou"); s.textContent = "Serveur injoignable, réessayez."; s.className = "status err"; });
 }
-
-function nouveauClient(){
-  var garde = window.location.pathname + "?philomene=1";
-  window.location.href = garde;
-}
-
 function chargerConfigExistante() {
-  var slug = slugifier(document.getElementById("cf-slug-charger").value);
+  var slug = slugifier($("cf-slug-charger").value);
   if (!slug) { showStatusCharger("Indiquez l'identifiant du client.", "err"); return; }
   showStatusCharger("Chargement...", "ok");
-  fetch(API + "/memory/config_" + slug, { headers: entetes() })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || !d.value) { showStatusCharger("Aucun client « " + slug + " ».", "err"); return; }
-      remplirFormulaireDepuisConfig(d.value, slug);
-      derniereDateExpiration = d.value.dateExpiration;
-      slugChargeActuel = slug;
-      document.getElementById("cf-valide").checked = d.value.valide === true;
-      document.getElementById("bloc-validation").style.display = "block";
-
-      var infoEl = document.getElementById("info-expiration");
-      if (d.value.dateExpiration) {
-        var dExp = new Date(d.value.dateExpiration);
-        var expire = new Date() > dExp;
-        infoEl.textContent = (expire ? "⚠️ Abonnement expiré depuis le " : "Abonnement valide jusqu'au ") + dExp.toLocaleDateString("fr-FR");
-        infoEl.style.color = expire ? "#c0392b" : "rgba(17,17,17,.5)";
-      } else {
-        infoEl.textContent = "Aucun paiement confirmé pour l'instant.";
-        infoEl.style.color = "rgba(17,17,17,.5)";
-      }
-      showStatusCharger("✅ « " + (d.value.nom || slug) + " » chargé. Modifiez puis ré-enregistrez.", "ok");
-    }).catch(function(){
-      showStatusCharger("Connexion impossible.", "err");
-    });
+  fetch(API + "/memory/config_" + slug, { headers: entetes() }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.value) { showStatusCharger("Aucun client « " + slug + " ».", "err"); return; }
+    remplirDepuisConfig(d.value, slug);
+    derniereDateExpiration = d.value.dateExpiration;
+    slugChargeActuel = slug;
+    $("cf-valide").checked = d.value.valide === true;
+    montrer("bloc-validation", true);
+    var info = $("info-expiration");
+    if (d.value.dateExpiration) {
+      var dExp = new Date(d.value.dateExpiration), exp = new Date() > dExp;
+      info.textContent = (exp ? "⚠️ Expiré depuis le " : "Actif jusqu'au ") + dExp.toLocaleDateString("fr-FR") + (d.value.periode === "mois" ? " (abonnement mensuel)" : "");
+    } else info.textContent = "Aucun paiement pour l'instant.";
+    showStatusCharger("✅ « " + (d.value.nom || slug) + " » chargé. Modifiez puis enregistrez.", "ok");
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
 }
-
 function confirmerRenouvellement() {
   if (!slugChargeActuel) { showStatusCharger("Chargez d'abord un client.", "err"); return; }
-  fetch(API + "/memory/config_" + slugChargeActuel, { headers: entetes() })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || !d.value) { showStatusCharger("Client introuvable.", "err"); return; }
-      var cfg = d.value;
-      cfg.valide = true;
-      var dansUnAn = new Date();
-      dansUnAn.setFullYear(dansUnAn.getFullYear() + 1);
-      cfg.dateExpiration = dansUnAn.toISOString();
-      return fetch(API + "/memory/config_" + slugChargeActuel, {
-        method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg })
-      }).then(function(r){ return r.json(); }).then(function(res){
-        if (res && res.ok) {
-          derniereDateExpiration = cfg.dateExpiration;
-          document.getElementById("cf-valide").checked = true;
-          document.getElementById("info-expiration").textContent = "Abonnement valide jusqu'au " + dansUnAn.toLocaleDateString("fr-FR");
-          document.getElementById("info-expiration").style.color = "rgba(17,17,17,.5)";
-          showStatusCharger("✅ Renouvelé jusqu'au " + dansUnAn.toLocaleDateString("fr-FR") + ".", "ok");
-        } else {
-          showStatusCharger((res && res.error) || "Le renouvellement a échoué.", "err");
-        }
-      });
-    }).catch(function(){
-      showStatusCharger("Connexion impossible.", "err");
+  fetch(API + "/memory/config_" + slugChargeActuel, { headers: entetes() }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.value) return;
+    var cfg = d.value, maintenant = new Date(), actuelle = cfg.dateExpiration ? new Date(cfg.dateExpiration) : null;
+    var fin = new Date(actuelle && actuelle > maintenant ? actuelle : maintenant); fin.setFullYear(fin.getFullYear() + 1);
+    cfg.valide = true; cfg.dateExpiration = fin.toISOString();
+    return fetch(API + "/memory/config_" + slugChargeActuel, { method: "POST", headers: entetes(), body: JSON.stringify({ value: cfg }) }).then(function(r){ return r.json(); }).then(function(res){
+      if (res && res.ok) { derniereDateExpiration = cfg.dateExpiration; $("cf-valide").checked = true; showStatusCharger("✅ Actif jusqu'au " + fin.toLocaleDateString("fr-FR") + ".", "ok"); }
+      else showStatusCharger((res && res.error) || "Échec.", "err");
     });
+  }).catch(function(){ showStatusCharger("Connexion impossible.", "err"); });
 }
-
-function showStatusCharger(msg, type) {
-  var s = document.getElementById("status-charger");
-  s.textContent = msg;
-  s.className = "status " + type;
-}
-
-function remplirFormulaireDepuisConfig(cfg, slug) {
-  document.getElementById("cf-slug").value = slug;
-  majApercuLien();
-  document.getElementById("cf-secteur").value = cfg.secteur || "";
-  document.getElementById("cf-nom").value = cfg.nom || "";
-  document.getElementById("cf-soustitre").value = cfg.sousTitre || "";
-  document.getElementById("cf-icone").value = cfg.icone || "";
-  document.getElementById("cf-whatsapp").value = cfg.telephoneWhatsApp || "";
-  document.getElementById("cf-email").value = cfg.email || "";
-  document.getElementById("cf-admin-password").value = "";
-  document.getElementById("cf-admin-password").placeholder = "Laisser vide pour garder le mot de passe actuel";
-
+function remplirDepuisConfig(cfg, slug) {
+  choisirMetier(cfg.secteur || "autre", true);
+  FORMULE = FORMULES[cfg.formule] ? cfg.formule : (cfg.chatActif !== false ? "premium" : ((cfg.modulesActifs || []).indexOf("catalogue") >= 0 ? "commerce" : "essentiel"));
+  PERIODE = cfg.periode === "an" ? "an" : "mois";
+  document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.periode === PERIODE ? "true" : "false"); });
+  dessinerFormules();
+  var actives = (cfg.modulesActifs || []).slice(); if (cfg.chatActif !== false) actives.push("chat");
+  dessinerPages(actives);
+  $("cf-slug").value = slug; majApercuLien();
+  $("cf-nom").value = cfg.nom || ""; $("cf-soustitre").value = cfg.sousTitre || ""; $("cf-icone").value = cfg.icone || "";
+  $("cf-whatsapp").value = cfg.telephoneWhatsApp || ""; $("cf-email").value = cfg.email || "";
+  $("cf-admin-password").value = ""; $("cf-admin-password").placeholder = "Laisser vide pour garder le mot de passe actuel";
   logoBase64 = cfg.logoImage || "";
-  var prev = document.getElementById('logo-preview');
-  if (logoBase64) { prev.src = logoBase64; prev.style.display = 'block'; document.getElementById('logo-txt').textContent = 'Touchez pour changer'; }
-  else { prev.style.display = 'none'; }
-
+  if (logoBase64) { $("logo-preview").src = logoBase64; $("logo-preview").style.display = "block"; $("logo-txt").textContent = "Touchez pour changer"; }
   var c = cfg.couleurs || {};
-  document.getElementById("cf-fond").value = c.fond || "#f2ead8";
-  document.getElementById("cf-texte").value = c.texte || "#1a1a1a";
-  document.getElementById("cf-fonce").value = c.fonce || "#1a2e20";
-  document.getElementById("cf-accent").value = c.accent || "#2d5a3d";
-  document.getElementById("cf-clair").value = c.clair || "#e8dfcf";
-  document.getElementById("cf-alerte").value = c.alerte || "#c9a84c";
-
-  document.getElementById("cf-accueil").value = cfg.messageAccueil || "";
-  document.getElementById("cf-prompt").value = cfg.systemPrompt || "";
-
-  document.getElementById("qr-list").innerHTML = "";
-  (cfg.questionsRapides || []).forEach(function(q){ ajouterQR(q.label, q.message); });
-
-  document.querySelectorAll("#modules-grid .mod-check input").forEach(function(cb){
-    var actif = (cfg.modulesActifs || []).indexOf(cb.value) >= 0;
-    cb.checked = actif;
-    cb.parentElement.classList.toggle("active", actif);
-    toggleSubsection(cb.value, actif);
-  });
-  var chatActif = cfg.chatActif !== false;
-  document.getElementById("cf-chat-actif").checked = chatActif;
-  document.getElementById("mod-check-chat").classList.toggle("active", chatActif);
-  recalculerPrix();
-
-  document.getElementById("cf-tarifs-soustitre").value = cfg.tarifsSousTitre || "";
-  document.getElementById("tarifs-list").innerHTML = "";
-  (cfg.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix); });
-
-  document.getElementById("cf-devis-types").value = (cfg.devisTypes || []).join("\n");
-  document.getElementById("cf-taux-horaire").value = cfg.tauxHoraire || "";
-  document.getElementById("cf-devis-surface-label").value = cfg.devisSurfaceLabel || "";
-  document.getElementById("cf-devis-surface-placeholder").value = cfg.devisSurfacePlaceholder || "";
-  document.getElementById("cf-devis-prompt").value = cfg.devisPrompt || "";
-
-  document.getElementById("cf-catalogue-onglet").value = cfg.catalogueOnglet || "Catalogue";
-  document.getElementById("cf-catalogue-titre").value = cfg.catalogueTitre || "";
-  document.getElementById("cf-catalogue-soustitre").value = cfg.catalogueSousTitre || "";
-  catalogueModesActuel = cfg.catalogueModes || [];
-  document.getElementById("catalogue-list").innerHTML = "";
-  (cfg.catalogue && cfg.catalogue.length ? cfg.catalogue : [{}]).forEach(function(it){
-    ajouterCatalogueItem(it.nom, it.categorie, it.prix, it.image, "catalogue-list", it.description, it.tags);
-  });
-
-  document.getElementById("cf-galerie-titre").value = cfg.galerieTitre || "";
-  document.getElementById("galerie-list").innerHTML = "";
-  (cfg.galerie && cfg.galerie.length ? cfg.galerie : [{}]).forEach(function(it){
-    ajouterGalerieItem(it.titre, it.avant, it.apres);
-  });
-
-  document.getElementById("reservation-list").innerHTML = "";
-  document.getElementById("cf-reservation-lien").value = cfg.lienReservationExterne || "";
+  $("cf-fond").value = c.fond || "#f2ead8"; $("cf-texte").value = c.texte || "#1a1a1a"; $("cf-fonce").value = c.fonce || "#1a2e20";
+  $("cf-accent").value = c.accent || "#2d5a3d"; $("cf-clair").value = c.clair || "#e8dfcf"; $("cf-alerte").value = c.alerte || "#c9a84c";
+  $("cf-accueil").value = cfg.messageAccueil || "";
+  $("cf-prompt").value = cfg.systemPromptBase || baseSansInfos(cfg.systemPrompt);
+  var infos = cfg.iaInfos || {}; if (!infos.taux && cfg.tauxHoraire) infos.taux = cfg.tauxHoraire;
+  remplirIA("cf-ia-", infos);
+  $("qr-list").innerHTML = ""; (cfg.questionsRapides || []).forEach(function(q){ ajouterQR(q.label, q.message); });
+  $("cf-tarifs-soustitre").value = cfg.tarifsSousTitre || "";
+  $("tarifs-list").innerHTML = ""; (cfg.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix); });
+  $("cf-devis-types").value = (cfg.devisTypes || []).join("\n");
+  $("cf-devis-surface-label").value = cfg.devisSurfaceLabel || ""; $("cf-devis-surface-placeholder").value = cfg.devisSurfacePlaceholder || "";
+  $("cf-devis-prompt").value = cfg.devisPromptBase || cfg.devisPrompt || "";
+  $("cf-catalogue-onglet").value = cfg.catalogueOnglet || "Catalogue"; $("cf-catalogue-titre").value = cfg.catalogueTitre || ""; $("cf-catalogue-soustitre").value = cfg.catalogueSousTitre || "";
+  cocherModes(cfg.catalogueModes || []);
+  $("catalogue-list").innerHTML = ""; (cfg.catalogue && cfg.catalogue.length ? cfg.catalogue : [{}]).forEach(function(it){ ajouterCatalogueItem(it.nom, it.categorie, it.prix, it.image, "catalogue-list", it.description, it.tags); });
+  $("cf-galerie-titre").value = cfg.galerieTitre || "";
+  $("galerie-list").innerHTML = ""; (cfg.galerie && cfg.galerie.length ? cfg.galerie : [{}]).forEach(function(it){ ajouterGalerieItem(it.titre, it.avant, it.apres); });
+  $("reservation-list").innerHTML = ""; $("cf-reservation-lien").value = cfg.lienReservationExterne || "";
   (cfg.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix); });
-
   construirePlanningJours(cfg.planning || {});
-
-  document.getElementById("resultat-lien").style.display = "none";
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  majApercu(); majRecap();
+  montrer("resultat-lien", false);
+  afficherPas("commerce");
 }
 
 function switchOnglet(nom) {
-  document.getElementById("tab-creation").style.display = nom === "creation" ? "block" : "none";
-  document.getElementById("tab-admin").style.display = nom === "admin" ? "block" : "none";
-  document.getElementById("tabbtn-creation").classList.toggle("active", nom === "creation");
-  document.getElementById("tabbtn-admin").classList.toggle("active", nom === "admin");
+  var compte = nom === "admin";
+  montrer("tab-creation", !compte); montrer("tab-admin", compte);
+  $("ong-creer").setAttribute("aria-pressed", compte ? "false" : "true");
+  $("btn-compte").setAttribute("aria-pressed", compte ? "true" : "false");
+  montrer("progression", !compte); montrer("barre-bas", !compte);
+  if (compte) montrer("heros-createur", true); else afficherPas(PAS_ACTUEL);
+  $("heros-titre").textContent = compte ? "Mon compte." : "Créez votre appli.";
+  $("heros-texte").textContent = compte ? "Vos prix, votre menu, vos photos, ce que sait votre assistant, vos commandes : tout se gère ici." : "Un quart d'heure. Tout se pré-remplit selon votre métier, vous ajustez le reste.";
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* ?philomene=1 révèle l'espace admin ; ?modifier=slug pré-remplit ; ?admin=slug ouvre l'espace client */
-var paramsUrl = new URLSearchParams(window.location.search);
-if (paramsUrl.get("philomene")) {
-  ouvrirOutil();
-  document.getElementById("carte-modifier-existant").style.display = "block";
-  if (paramsUrl.get("modifier")) document.getElementById("cf-slug-charger").value = paramsUrl.get("modifier");
-  var tokenMemo = null;
-  try { tokenMemo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
-  if (tokenMemo) deverrouillerAdminGeneral(tokenMemo);
-}
-gererRetourAbonnement();
-if (paramsUrl.get("admin")) {
-  ouvrirOutil();
-  switchOnglet("admin");
-  document.getElementById("ad-slug").value = paramsUrl.get("admin");
-  if (paramsUrl.get("stripe") === "retour") {
-    showStatusAd("De retour de Stripe. Connectez-vous pour voir si le paiement en ligne est actif.", "ok");
-  }
-}
-
-/* =====================================================================
-   ESPACE CLIENT — contenu uniquement
-   ===================================================================== */
-var CONFIG_CLIENT_ACTUEL = null;
-var SLUG_CLIENT_ACTUEL = null;
-var CLIENT_PWD = "";
-
+/* ===================== ESPACE CLIENT ===================== */
+var CONFIG_CLIENT_ACTUEL = null, SLUG_CLIENT_ACTUEL = null, CLIENT_PWD = "";
+function showStatusAd(msg, type){ var s = $("ad-status"); s.textContent = msg; s.className = "status " + type; }
 function entrerEspaceClient() {
-  var slug = slugifier(document.getElementById("ad-slug").value);
-  var mdp = document.getElementById("ad-password").value;
+  var slug = slugifier($("ad-slug").value), mdp = $("ad-password").value;
   if (!slug || !mdp) { showStatusAd("Indiquez l'adresse de votre appli et votre mot de passe.", "err"); return; }
   showStatusAd("Connexion...", "ok");
-  fetch(API + "/verify-client/config_" + slug, {
-    method: "POST", headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ password: mdp })
-  })
+  fetch(API + "/verify-client/config_" + slug, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: mdp }) })
     .then(function(r){ return r.json(); })
     .then(function(v){
       if (!v || !v.ok) { showStatusAd((v && v.error) || "Adresse ou mot de passe incorrect.", "err"); return null; }
@@ -1365,309 +1500,213 @@ function entrerEspaceClient() {
     .then(function(d){
       if (!d) return;
       if (!d.value) { showStatusAd("Aucune appli à cette adresse.", "err"); return; }
-      CONFIG_CLIENT_ACTUEL = d.value;
-      SLUG_CLIENT_ACTUEL = slug;
-      CLIENT_PWD = mdp;
-
-      document.getElementById("tarifs-list-admin").innerHTML = "";
-      (d.value.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix, "tarifs-list-admin"); });
-
-      document.getElementById("catalogue-list-admin").innerHTML = "";
-      (d.value.catalogue || []).forEach(function(it){ ajouterCatalogueItem(it.nom, it.categorie, it.prix, it.image, "catalogue-list-admin", it.description, it.tags); });
-
-      document.getElementById("galerie-list-admin").innerHTML = "";
-      (d.value.galerie || []).forEach(function(it){ ajouterGalerieItem(it.titre, it.avant, it.apres, "galerie-list-admin"); });
-
-      construirePlanningJours(d.value.planning || {}, "planning-jours-admin");
-
-      document.getElementById("ad-reservation-lien").value = d.value.lienReservationExterne || "";
-      document.getElementById("reservation-list-admin").innerHTML = "";
-      (d.value.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix, "reservation-list-admin"); });
-
-      document.getElementById("ad-content").style.display = "block";
-      initPaiementEnLigne(d.value);
-      showStatusAd("Bienvenue " + (d.value.nom || slug) + " !", "ok");
-    }).catch(function(){
-      showStatusAd("Connexion impossible.", "err");
-    });
+      var cfg = CONFIG_CLIENT_ACTUEL = d.value; SLUG_CLIENT_ACTUEL = slug; CLIENT_PWD = mdp;
+      if (cfg.secteur && COULEUR_METIER[cfg.secteur]) couleurAccent(COULEUR_METIER[cfg.secteur]);
+      $("tarifs-list-admin").innerHTML = ""; (cfg.tarifs || []).forEach(function(t){ ajouterTarif(t.nom, t.description, t.prix, "tarifs-list-admin"); });
+      $("catalogue-list-admin").innerHTML = ""; (cfg.catalogue || []).forEach(function(it){ ajouterCatalogueItem(it.nom, it.categorie, it.prix, it.image, "catalogue-list-admin", it.description, it.tags); });
+      $("galerie-list-admin").innerHTML = ""; (cfg.galerie || []).forEach(function(it){ ajouterGalerieItem(it.titre, it.avant, it.apres, "galerie-list-admin"); });
+      construirePlanningJours(cfg.planning || {}, "planning-jours-admin");
+      $("ad-reservation-lien").value = cfg.lienReservationExterne || "";
+      $("reservation-list-admin").innerHTML = ""; (cfg.reservationServices || []).forEach(function(rs){ ajouterReservationService(rs.nom, rs.prix, "reservation-list-admin"); });
+      var avecIA = cfg.chatActif !== false || (cfg.modulesActifs || []).indexOf("devis") >= 0;
+      montrer("ad-bloc-ia", avecIA);
+      if (avecIA) { var inf = cfg.iaInfos || {}; if (!inf.taux && cfg.tauxHoraire) inf.taux = cfg.tauxHoraire; remplirIA("ad-ia-", inf); }
+      montrer("ad-content", true);
+      showStatusAd("Bienvenue " + (cfg.nom || slug) + " !", "ok");
+      initPaiementEnLigne(cfg);
+    }).catch(function(){ showStatusAd("Connexion impossible.", "err"); });
 }
-
-/* =====================================================================
-   PAIEMENT DE L'ABONNEMENT (vers Philomène IA)
-   ===================================================================== */
-function payerAbonnement() {
-  if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre appli.", "err"); return; }
-  var btn = document.getElementById("btn-payer-abonnement");
-  btn.disabled = true; btn.textContent = "Ouverture du paiement...";
-  fetch(API + "/abonnement/checkout/appli/" + encodeURIComponent(slugChargeActuel), { method: "POST" })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d && d.ok && d.url) { window.location.href = d.url; return; }
-      showStatus((d && d.error) || "Paiement indisponible.", "err");
-      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
-    })
-    .catch(function(){
-      showStatus("Connexion impossible. Réessayez.", "err");
-      btn.disabled = false; btn.textContent = "💳 Payer par carte et activer";
-    });
-}
-
-function gererRetourAbonnement() {
-  var p = new URLSearchParams(window.location.search);
-  if (p.get("abonnement") !== "appli") return;
-  ouvrirOutil();
-  var projet = p.get("projet") || "";
-  if (p.get("paiement") === "annule") {
-    showStatus("Paiement annulé. Votre appli reste en démo, vous pouvez payer quand vous voulez.", "err");
-    return;
+function enregistrerEspaceClient() {
+  var cfg = CONFIG_CLIENT_ACTUEL; if (!cfg) return;
+  cfg.tarifs = lireTarifs("tarifs-list-admin");
+  cfg.catalogue = lireCatalogue("catalogue-list-admin");
+  cfg.galerie = lireGalerie("galerie-list-admin");
+  cfg.planning = lirePlanning("planning-jours-admin");
+  cfg.reservationServices = lireReservation("reservation-list-admin");
+  cfg.lienReservationExterne = $("ad-reservation-lien").value.trim();
+  if (!$("ad-bloc-ia").classList.contains("cache")) {
+    var infos = lireIA("ad-ia-");
+    var base = cfg.systemPromptBase || baseSansInfos(cfg.systemPrompt);
+    cfg.systemPromptBase = base;
+    cfg.iaInfos = infos;
+    cfg.systemPrompt = base + blocInfos(cfg.nom, infos);
+    cfg.tauxHoraire = infos.taux;
+    var db = cfg.devisPromptBase || cfg.devisPrompt || "";
+    cfg.devisPromptBase = db;
+    cfg.devisPrompt = db + (infos.deplacement ? " Frais de déplacement : " + infos.deplacement + "." : "") + (infos.minimum ? " Minimum : " + infos.minimum + "." : "") + (infos.interdits ? " Ne jamais : " + infos.interdits + "." : "");
   }
-  var session = p.get("session") || "";
-  showStatus("Vérification du paiement...", "ok");
-  fetch(API + "/abonnement/verif/" + encodeURIComponent(session))
+  var s = $("ad-status-save");
+  fetch(API + "/memory/config_" + SLUG_CLIENT_ACTUEL, { method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD }, body: JSON.stringify({ value: cfg }) })
     .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d && d.paye) {
-        var lien = window.location.origin + "/moteur-v2.html?client=" + encodeURIComponent(projet);
-        showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est activée jusqu'au " + new Date(d.dateExpiration).toLocaleDateString("fr-FR") + ". Lien : " + lien, "ok");
-      } else {
-        showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, contactez-nous sur WhatsApp.", "err");
-      }
-      window.history.replaceState(null, "", window.location.pathname);
-    })
-    .catch(function(){ showStatus("Vérification impossible. Contactez-nous sur WhatsApp si besoin.", "err"); });
+    .then(function(d){ if (d && d.ok) { s.textContent = "✅ Modifications enregistrées."; s.className = "status ok"; } else { s.textContent = (d && d.error) || "L'enregistrement a échoué."; s.className = "status err"; } })
+    .catch(function(){ s.textContent = "Connexion impossible."; s.className = "status err"; });
 }
 
-/* =====================================================================
-   PAIEMENT EN LIGNE DU COMMERÇANT (Stripe Connect) + COMMANDES
-   ===================================================================== */
-var timerCommandes = null;
-var idsCommandesConnus = null;
-
+/* ---------- Paiement en ligne du commerçant + commandes ---------- */
+var timerCommandes = null, idsCommandesConnus = null;
 function initPaiementEnLigne(cfg) {
-  var avecPaiement = (cfg.modulesActifs || []).indexOf("paiement") >= 0;
-  document.getElementById("ad-bloc-paiement").style.display = avecPaiement ? "block" : "none";
-  if (avecPaiement) majStatutStripe();
+  var ok = (cfg.modulesActifs || []).indexOf("paiement") >= 0;
+  montrer("ad-bloc-paiement", ok);
+  if (ok) majStatutStripe();
 }
-
 function majStatutStripe() {
-  var st = document.getElementById("ad-stripe-statut");
-  var btn = document.getElementById("ad-stripe-btn");
-  fetch(API + "/stripe/status/" + encodeURIComponent(SLUG_CLIENT_ACTUEL))
-    .then(function(r){ return r.json(); })
-    .then(function(s){
-      if (s.actif) {
-        st.textContent = "✅ Paiement par carte actif : vos clients peuvent payer en ligne.";
-        btn.style.display = "none";
-        demarrerCommandes();
-      } else if (s.connecte) {
-        st.textContent = "⏳ Votre inscription Stripe n'est pas encore terminée.";
-        btn.textContent = "Terminer mon inscription Stripe";
-        btn.style.display = "block";
-      } else {
-        st.textContent = "Pas encore activé. Vos clients commandent via WhatsApp et paient sur place.";
-        btn.textContent = "Connecter mon compte Stripe";
-        btn.style.display = "block";
-      }
-    })
-    .catch(function(){ st.textContent = "Statut indisponible pour le moment."; });
+  var st = $("ad-stripe-statut"), btn = $("ad-stripe-btn");
+  fetch(API + "/stripe/status/" + encodeURIComponent(SLUG_CLIENT_ACTUEL)).then(function(r){ return r.json(); }).then(function(s){
+    if (s.actif) { st.textContent = "✅ Paiement par carte actif."; montrer("ad-stripe-btn", false); demarrerCommandes(); }
+    else if (s.connecte) { st.textContent = "⏳ Votre inscription Stripe n'est pas terminée."; btn.textContent = "Terminer mon inscription Stripe"; montrer("ad-stripe-btn", true); }
+    else { st.textContent = "Pas encore activé : vos clients commandent sur WhatsApp et paient sur place."; btn.textContent = "Connecter mon compte Stripe"; montrer("ad-stripe-btn", true); }
+  }).catch(function(){ st.textContent = "Statut indisponible pour le moment."; });
 }
-
 function connecterStripe() {
-  var btn = document.getElementById("ad-stripe-btn");
-  btn.disabled = true; btn.textContent = "Ouverture de Stripe...";
-  fetch(API + "/stripe/connect/" + encodeURIComponent(SLUG_CLIENT_ACTUEL), {
-    method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD }
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
-    if (d && d.ok && d.url) { window.location.href = d.url; return; }
-    document.getElementById("ad-stripe-statut").textContent = (d && d.error) || "Connexion Stripe impossible.";
-    btn.disabled = false; btn.textContent = "Réessayer";
-  }).catch(function(){
-    document.getElementById("ad-stripe-statut").textContent = "Connexion impossible.";
-    btn.disabled = false; btn.textContent = "Réessayer";
-  });
+  var btn = $("ad-stripe-btn"); btn.disabled = true; btn.textContent = "Ouverture de Stripe...";
+  fetch(API + "/stripe/connect/" + encodeURIComponent(SLUG_CLIENT_ACTUEL), { method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if (d && d.ok && d.url) { window.location.href = d.url; return; } $("ad-stripe-statut").textContent = (d && d.error) || "Connexion Stripe impossible."; btn.disabled = false; btn.textContent = "Réessayer"; })
+    .catch(function(){ $("ad-stripe-statut").textContent = "Connexion impossible."; btn.disabled = false; btn.textContent = "Réessayer"; });
 }
-
-function demarrerCommandes() {
-  document.getElementById("ad-bloc-commandes").style.display = "block";
-  chargerCommandes();
-  clearInterval(timerCommandes);
-  timerCommandes = setInterval(chargerCommandes, 20000);
-}
-
+function demarrerCommandes() { montrer("ad-bloc-commandes", true); chargerCommandes(); clearInterval(timerCommandes); timerCommandes = setInterval(chargerCommandes, 20000); }
 function bip() {
-  try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.25].forEach(function(t){
-      var o = ctx.createOscillator(), g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 880; g.gain.value = 0.25;
-      o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.18);
-    });
+  try { var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, .25].forEach(function(t){ var o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value = 880; g.gain.value = .25; o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + .18); });
     setTimeout(function(){ ctx.close(); }, 800);
   } catch(e){}
 }
-
-function el2(tag, texte, style) {
-  var e = document.createElement(tag);
-  if (texte != null) e.textContent = texte;
-  if (style) e.style.cssText = style;
-  return e;
-}
-
+function el2(tag, txt, st){ var e = document.createElement(tag); if (txt != null) e.textContent = txt; if (st) e.style.cssText = st; return e; }
 function chargerCommandes() {
-  fetch(API + "/commandes/" + encodeURIComponent(SLUG_CLIENT_ACTUEL), { headers: { "x-client-password": CLIENT_PWD } })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || !d.ok) return;
-      var liste = d.commandes || [];
-      var ids = liste.map(function(c){ return c.id; });
-      if (idsCommandesConnus && ids.some(function(id){ return idsCommandesConnus.indexOf(id) < 0; })) bip();
-      idsCommandesConnus = ids;
-
-      var zone = document.getElementById("ad-commandes-liste");
-      zone.innerHTML = "";
-      var actives = liste.filter(function(c){ return c.statut !== "terminee"; });
-      if (!actives.length) { zone.appendChild(el2("div", "Aucune commande en cours.", "font-size:13px;color:rgba(17,17,17,.5);text-align:center;padding:10px")); return; }
-      actives.forEach(function(c){
-        var neuve = c.statut === "nouvelle";
-        var carte = el2("div", null, "background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;border-left:5px solid " + (neuve ? "#2ecc71" : "#c9a84c"));
-        var heure = new Date(c.date).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-        carte.appendChild(el2("div", "N° " + c.numero + " · " + heure + " · " + String(c.total).replace(".", ",") + " €" + (c.mode ? " · " + c.mode : ""), "font-weight:700;font-size:14px;margin-bottom:6px"));
-        (c.articles || []).forEach(function(a){ carte.appendChild(el2("div", a.qty + " × " + a.nom, "font-size:13px")); });
-        var cl = c.client || {};
-        var infos = [cl.nom, cl.tel].filter(Boolean).join(" · ");
-        if (infos) carte.appendChild(el2("div", "👤 " + infos, "font-size:12px;color:rgba(17,17,17,.6);margin-top:6px"));
-        if (c.livraison) {
-          var l = c.livraison;
-          carte.appendChild(el2("div", "📦 " + [l.nom, l.adresse, (l.codePostal + " " + l.ville).trim(), l.pays].filter(Boolean).join(", "), "font-size:12px;color:rgba(17,17,17,.75);margin-top:4px"));
-        }
-        var actions = el2("div", null, "display:flex;gap:8px;margin-top:10px");
-        if (neuve) {
-          var b1 = el2("button", "✅ Prête", "flex:1;padding:9px;border-radius:9px;border:none;background:#111;color:#fff;font-weight:600;cursor:pointer");
-          b1.onclick = function(){ changerStatutCommande(c.id, "prete"); };
-          actions.appendChild(b1);
-        }
-        var b2 = el2("button", "✔ Terminée", "flex:1;padding:9px;border-radius:9px;border:1px solid rgba(17,17,17,.2);background:none;cursor:pointer");
-        b2.onclick = function(){ changerStatutCommande(c.id, "terminee"); };
-        actions.appendChild(b2);
-        carte.appendChild(actions);
-        zone.appendChild(carte);
-      });
-    }).catch(function(){});
+  fetch(API + "/commandes/" + encodeURIComponent(SLUG_CLIENT_ACTUEL), { headers: { "x-client-password": CLIENT_PWD } }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) return;
+    var liste = d.commandes || [], ids = liste.map(function(c){ return c.id; });
+    if (idsCommandesConnus && ids.some(function(id){ return idsCommandesConnus.indexOf(id) < 0; })) bip();
+    idsCommandesConnus = ids;
+    var z = $("ad-commandes-liste"); z.innerHTML = "";
+    var act = liste.filter(function(c){ return c.statut !== "terminee"; });
+    if (!act.length) { z.appendChild(el2("div", "Aucune commande en cours.", "color:var(--gris);text-align:center;padding:10px")); return; }
+    act.forEach(function(c){
+      var neuve = c.statut === "nouvelle";
+      var k = el2("div", null, "border-radius:16px;padding:14px;margin-bottom:10px;background:" + (neuve ? "#E3F6EE" : "#FFF7E0"));
+      k.appendChild(el2("div", "N° " + c.numero + " · " + new Date(c.date).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) + " · " + String(c.total).replace(".", ",") + " €" + (c.mode ? " · " + c.mode : ""), "font-weight:800;margin-bottom:6px"));
+      (c.articles || []).forEach(function(a){ k.appendChild(el2("div", a.qty + " × " + a.nom)); });
+      var cl = c.client || {}, inf = [cl.nom, cl.tel].filter(Boolean).join(" · ");
+      if (inf) k.appendChild(el2("div", "Client : " + inf, "font-size:14px;color:var(--gris);margin-top:6px"));
+      if (c.livraison) { var l = c.livraison; k.appendChild(el2("div", "Livraison : " + [l.nom, l.adresse, (l.codePostal + " " + l.ville).trim(), l.pays].filter(Boolean).join(", "), "font-size:14px;margin-top:4px")); }
+      var a = el2("div", null, "display:flex;gap:8px;margin-top:10px");
+      if (neuve) { var b1 = el2("button", "Prête", "flex:1;min-height:44px;border-radius:12px;border:none;background:var(--encre);color:#fff;font-weight:700;cursor:pointer"); b1.onclick = function(){ changerStatutCommande(c.id, "prete"); }; a.appendChild(b1); }
+      var b2 = el2("button", "Terminée", "flex:1;min-height:44px;border-radius:12px;border:2px solid var(--encre);background:#fff;font-weight:700;cursor:pointer"); b2.onclick = function(){ changerStatutCommande(c.id, "terminee"); }; a.appendChild(b2);
+      k.appendChild(a); z.appendChild(k);
+    });
+  }).catch(function(){});
 }
-
 function changerStatutCommande(id, statut) {
-  fetch(API + "/commandes/" + encodeURIComponent(SLUG_CLIENT_ACTUEL) + "/" + encodeURIComponent(id) + "/statut", {
-    method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD },
-    body: JSON.stringify({ statut: statut })
-  }).then(function(){ chargerCommandes(); }).catch(function(){});
+  fetch(API + "/commandes/" + encodeURIComponent(SLUG_CLIENT_ACTUEL) + "/" + encodeURIComponent(id) + "/statut", { method: "POST", headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD }, body: JSON.stringify({ statut: statut }) })
+    .then(function(){ chargerCommandes(); }).catch(function(){});
 }
 
-function showStatusAd(msg, type) {
-  var s = document.getElementById("ad-status");
-  s.textContent = msg;
-  s.className = "status " + type;
+/* ===================== PARCOURS PAS À PAS ===================== */
+var NOMS_PAS = { metier:"Votre métier", formule:"Votre formule", commerce:"Votre commerce", couleurs:"Vos couleurs", contenu:"Votre contenu", ia:"Ce que l'IA doit savoir", recap:"C'est prêt" };
+var PAS_ACTUEL = "metier";
+function pasVisibles() {
+  var a = pagesActives(), avecIA = a.indexOf("chat") >= 0 || a.indexOf("devis") >= 0;
+  return ["metier","formule","commerce","couleurs","contenu","ia","recap"].filter(function(p){ return p !== "ia" || avecIA; });
 }
-
-function enregistrerEspaceClient() {
-  if (!CONFIG_CLIENT_ACTUEL || !SLUG_CLIENT_ACTUEL) return;
-
-  // On ne touche qu'au contenu : couleurs, prompts, secteur... restent inchangés
-  CONFIG_CLIENT_ACTUEL.tarifs = lireTarifs("tarifs-list-admin");
-  CONFIG_CLIENT_ACTUEL.catalogue = lireCatalogue("catalogue-list-admin");
-  CONFIG_CLIENT_ACTUEL.galerie = lireGalerie("galerie-list-admin");
-  CONFIG_CLIENT_ACTUEL.planning = lirePlanning("planning-jours-admin");
-  CONFIG_CLIENT_ACTUEL.reservationServices = lireReservation("reservation-list-admin");
-  CONFIG_CLIENT_ACTUEL.lienReservationExterne = document.getElementById("ad-reservation-lien").value.trim();
-
-  var s = document.getElementById("ad-status-save");
-  fetch(API + "/memory/config_" + SLUG_CLIENT_ACTUEL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-client-password": CLIENT_PWD },
-    body: JSON.stringify({ value: CONFIG_CLIENT_ACTUEL })
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
-    if (d && d.ok) { s.textContent = "✅ Modifications enregistrées."; s.className = "status ok"; }
-    else { s.textContent = (d && d.error) || "L'enregistrement a échoué."; s.className = "status err"; }
-  }).catch(function(){
-    s.textContent = "Connexion impossible."; s.className = "status err";
+function afficherPas(nom) {
+  var liste = pasVisibles();
+  if (liste.indexOf(nom) < 0) nom = liste[0];
+  PAS_ACTUEL = nom;
+  var i = liste.indexOf(nom);
+  document.querySelectorAll(".pas").forEach(function(sec){ sec.classList.toggle("actif", sec.dataset.pas === nom); });
+  // Numéros cohérents même quand l'étape IA est masquée
+  document.querySelectorAll(".pas").forEach(function(sec){
+    var n = liste.indexOf(sec.dataset.pas); var num = sec.querySelector(".etape-num"); if (num && n >= 0) num.textContent = n + 1;
   });
+  $("prog-etape").textContent = "Étape " + (i + 1) + " sur " + liste.length;
+  $("prog-nom").textContent = NOMS_PAS[nom];
+  $("prog-barre").style.width = Math.round((i + 1) / liste.length * 100) + "%";
+  $("btn-retour").style.visibility = i === 0 ? "hidden" : "visible";
+  var dernier = i === liste.length - 1;
+  $("btn-suivant").textContent = dernier ? "Enregistrer" : "Continuer";
+  montrer("heros-createur", i === 0);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
+function validerPas(nom) {
+  if (nom === "metier" && !SECTEUR) return "Choisissez votre métier pour continuer.";
+  if (nom === "commerce") {
+    if (!$("cf-nom").value.trim()) return "Indiquez le nom de votre commerce.";
+    if (!slugifier($("cf-slug").value)) return "Indiquez l'adresse de votre appli.";
+    if (!slugChargeActuel && !$("cf-admin-password").value.trim()) return "Choisissez un mot de passe pour votre espace.";
+  }
+  return "";
+}
+function allerPas(sens) {
+  var liste = pasVisibles(), i = liste.indexOf(PAS_ACTUEL);
+  if (sens > 0) {
+    var err = validerPas(PAS_ACTUEL);
+    if (err) { alerteBas(err); return; }
+    if (i === liste.length - 1) { enregistrer(); return; }
+  }
+  afficherPas(liste[Math.max(0, Math.min(liste.length - 1, i + sens))]);
+}
+function alerteBas(msg) {
+  var b = $("btn-suivant"), ancien = b.textContent;
+  b.textContent = msg.length > 26 ? "À compléter" : msg;
+  var zone = document.querySelector(".pas.actif .etape-aide");
+  if (zone) { zone.textContent = msg; zone.style.color = "#B42318"; zone.style.fontWeight = "700"; }
+  setTimeout(function(){ b.textContent = ancien; }, 1800);
+}
+function majBarreBas() {
+  var f = FORMULES[FORMULE];
+  $("bas-prix").textContent = PERIODE === "an" ? f.an + " / an" : f.mois + " / mois";
+  $("bas-formule").textContent = "Formule " + f.nom + (PERIODE === "an" ? ", 2 mois offerts" : ", engagement 12 mois");
+}
+
+/* ===================== DÉMARRAGE ===================== */
+dessinerFormules();
+dessinerPages([]);
+majRecap();
+var paramsUrl = new URLSearchParams(window.location.search);
+gererRetourAbonnement();
+if (paramsUrl.get("philomene")) {
+  montrer("carte-modifier-existant", true);
+  if (paramsUrl.get("modifier")) $("cf-slug-charger").value = paramsUrl.get("modifier");
+  var memo = null; try { memo = sessionStorage.getItem(CLE_SESSION_ADMIN); } catch(e){}
+  if (memo) deverrouillerAdminGeneral(memo);
+}
+if (paramsUrl.has("admin")) {
+  switchOnglet("admin");
+  var a = paramsUrl.get("admin"); if (a && a !== "1") $("ad-slug").value = a;
+  if (paramsUrl.get("stripe") === "retour") showStatusAd("De retour de Stripe : connectez-vous pour voir si le paiement en ligne est actif.", "ok");
+}
+if (paramsUrl.get("formule") && FORMULES[paramsUrl.get("formule")]) { FORMULE = paramsUrl.get("formule"); dessinerFormules(); majRecap(); }
+if (paramsUrl.get("periode") === "an") document.querySelector('.bascule button[data-periode="an"]').click();
+if (!paramsUrl.has("admin")) afficherPas("metier");
+/* Venu du site avec une formule : elle reste choisie même après le choix du métier */
+var FORMULE_IMPOSEE = FORMULES[paramsUrl.get("formule")] ? paramsUrl.get("formule") : null;
 </script>
 
-<button onclick="ouvrirAideIA()" aria-label="Aide" style="position:fixed;bottom:82px;right:20px;width:52px;height:52px;background:#111;border:2px solid #c9a84c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;cursor:pointer">🤖</button>
-
-<div id="aide-ia-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center" onclick="if(event.target===this)fermerAideIA()">
-  <div style="background:#FAFAF7;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column">
-    <div style="padding:16px 18px;border-bottom:1px solid rgba(17,17,17,.12);display:flex;align-items:center;gap:10px">
-      <div style="width:36px;height:36px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>
-      <div style="flex:1">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#111">Aide à la création</div>
-        <div style="font-size:10px;color:rgba(17,17,17,.4)">Posez votre question, réponse immédiate</div>
-      </div>
-      <button onclick="fermerAideIA()" style="background:none;border:none;color:rgba(17,17,17,.5);font-size:22px;cursor:pointer;padding:4px 8px">✕</button>
-    </div>
-    <div id="aide-ia-messages" style="flex:1;min-width:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px"></div>
-    <div style="padding:12px 14px 18px;border-top:1px solid rgba(17,17,17,.1);display:flex;gap:8px">
-      <input id="aide-ia-input" type="text" placeholder="Ex : comment ajouter mes tarifs ?" style="flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid rgba(17,17,17,.15);background:#fff;color:#111;font-size:14px;outline:none;margin:0"/>
-      <button onclick="envoyerAideIA()" style="width:42px;height:42px;border-radius:50%;border:none;background:#111;color:#FAFAF7;font-size:16px;cursor:pointer;flex-shrink:0">➤</button>
-    </div>
-  </div>
-</div>
-
-<a href="https://wa.me/33617123910?text=Bonjour%20Philom%C3%A8ne%20IA%20!%20J%27ai%20une%20question." target="_blank" aria-label="WhatsApp" style="position:fixed;bottom:20px;right:20px;width:52px;height:52px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:999;text-decoration:none">💬</a>
-
 <script>
-var AIDE_IA_PROMPT = "Tu es l'assistant du créateur d'appli de Philomène IA. Tu aides une personne (un artisan, un commerçant) qui remplit un formulaire pour créer sa propre appli professionnelle. Réponds en français, simplement, sans markdown, en 2-4 phrases maximum. Fonctionnement : 1) La personne choisit son métier dans une liste, ce qui pré-remplit couleurs, questions et modules. 2) L'adresse de l'appli se remplit toute seule à partir du nom de l'entreprise ; c'est un identifiant court sans espace ni accent qui sert dans le lien final. 3) Elle peut ajouter son logo, ses tarifs, des articles avec photos, des créneaux. 4) Le prix annuel se calcule selon les modules cochés (un socle de base plus un supplément par module). 5) Une fois enregistrée, elle obtient un lien et un QR code, avec un bandeau 'démo' tant que le paiement n'est pas confirmé sur Revolut. 6) Elle peut ensuite modifier son contenu (tarifs, catalogue, galerie) via l'onglet 'Modifier mon appli', avec son mot de passe. Si la question sort de ce cadre ou si tu ne sais pas, dis-le et invite à contacter Philomène IA sur WhatsApp.";
-
-function ajouterMsgAide(txt, role) {
-  var msgs = document.getElementById("aide-ia-messages");
-  var bub = document.createElement("div");
-  bub.style.cssText = "max-width:82%;box-sizing:border-box;word-break:break-word;overflow-wrap:break-word;padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.5;white-space:pre-wrap";
-  if (role === "user") {
-    bub.style.background = "#111"; bub.style.color = "#FAFAF7";
-    bub.style.alignSelf = "flex-end"; bub.style.borderBottomRightRadius = "4px";
-  } else {
-    bub.style.background = "rgba(17,17,17,.06)"; bub.style.color = "#111";
-    bub.style.alignSelf = "flex-start"; bub.style.borderBottomLeftRadius = "4px";
-  }
-  bub.textContent = txt;
-  msgs.appendChild(bub);
-  msgs.scrollTop = msgs.scrollHeight;
-  return bub;
-}
-
+/* ===================== AIDE (assistant du créateur) ===================== */
+var AIDE_PROMPT = "Tu es l'assistante du créateur d'appli de Philomène IA. Tu aides un commerçant ou un artisan à remplir le formulaire. Réponds en français, simplement, sans markdown, en 2 à 4 phrases. Étapes : 1) choisir son métier, tout se pré-remplit ; 2) choisir la formule (pour un site internet, bouton Créer mon site en haut) : Essentiel 24,90 € par mois ou 249 € par an, Commerce 34,90 € par mois ou 349 € par an (menu avec panier et paiement en ligne), Premium IA 49,90 € par mois ou 499 € par an (assistant IA et devis automatiques) ; au mois engagement 12 mois, à l'année 2 mois offerts ; 3) nom, logo, WhatsApp, mot de passe, l'adresse de l'appli se remplit toute seule ; 4) couleurs avec aperçu ; 5) pages à afficher et leur contenu ; 6) ce que l'IA doit savoir : horaires, zone, spécialités, taux horaire, frais de déplacement, minimum, ce qu'elle ne doit jamais promettre ; 7) enregistrer puis payer par carte, l'appli s'active toute seule. Tout se modifie ensuite dans Mon compte, en haut à droite. Si tu ne sais pas, propose d'écrire sur WhatsApp.";
 function ouvrirAideIA() {
-  document.getElementById("aide-ia-overlay").style.display = "flex";
-  var msgs = document.getElementById("aide-ia-messages");
-  if (!msgs.children.length) {
-    ajouterMsgAide("Bonjour ! Je peux vous expliquer le choix du métier, les modules, le prix ou le paiement. Qu'est-ce qui n'est pas clair ?", "bot");
+  $("aide-panneau").classList.add("ouvert");
+  var m = $("aide-msgs");
+  if (!m.children.length) {
+    msgAide("Bonjour ! Une question sur une étape, les formules ou le paiement ? Je vous réponds.");
+    var a = document.createElement("a"); a.href = lienWa("Bonjour Philomène ! J'ai une question sur la création de mon appli."); a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "Ou écrivez-nous sur WhatsApp"; a.style.cssText = "align-self:flex-start;font-weight:700;color:#0B6B47;font-size:14px;padding:4px 2px";
+    m.appendChild(a);
   }
+  $("aide-input").focus();
 }
-function fermerAideIA() {
-  document.getElementById("aide-ia-overlay").style.display = "none";
-}
-
+function fermerAideIA(){ $("aide-panneau").classList.remove("ouvert"); }
+function msgAide(t, moi){ var d = document.createElement("div"); if (moi) d.className = "moi"; d.textContent = t; $("aide-msgs").appendChild(d); $("aide-msgs").scrollTop = 1e9; return d; }
 function envoyerAideIA() {
-  var input = document.getElementById("aide-ia-input");
-  var txt = input.value.trim();
-  if (!txt) return;
-  input.value = "";
-  ajouterMsgAide(txt, "user");
-  var typingBub = ajouterMsgAide("...", "bot");
-  fetch(API + "/vitrine", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: txt, userId: "configtool_aide_" + Date.now(), systemPrompt: AIDE_IA_PROMPT })
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
-    typingBub.textContent = (d && d.answer) ? d.answer.replace(/\*\*(.*?)\*\*/g,'$1') : "Je n'ai pas compris. Réessayez ou contactez-nous sur WhatsApp.";
-  }).catch(function(){
-    typingBub.textContent = "Connexion impossible. Contactez-nous sur WhatsApp si besoin.";
-  });
+  var i = $("aide-input"), t = i.value.trim(); if (!t) return; i.value = "";
+  msgAide(t, true); var att = msgAide("…");
+  fetch(API + "/vitrine", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: t, userId: "aide_" + Date.now(), systemPrompt: AIDE_PROMPT }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ att.textContent = (d && d.answer) ? d.answer.replace(/\*\*(.*?)\*\*/g, "$1") : "Je n'ai pas compris. Écrivez-nous sur WhatsApp."; })
+    .catch(function(){ att.textContent = "Connexion impossible. Écrivez-nous sur WhatsApp."; });
 }
-document.getElementById("aide-ia-input").addEventListener("keydown", function(e){ if (e.key === "Enter") envoyerAideIA(); });
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") fermerAideIA(); });
 </script>
 </body>
 </html>
