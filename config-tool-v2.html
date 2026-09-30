@@ -1377,8 +1377,31 @@ var CLE_DERNIER = 'philoDerniereAppli';
 /* Se souvenir du dernier site / appli créé sur ce téléphone, pour « Mon compte » */
 function memoriserSlug(slug) { try { localStorage.setItem(CLE_DERNIER, slug); } catch(e){} }
 function allerAuCompte(slug) { switchOnglet("admin"); if (slug) $("ad-slug").value = slug; var p = $("ad-password"); if (p) p.focus(); }
+/* =====================================================================
+   INTERRUPTEUR DU PAIEMENT EN LIGNE
+   false = Stripe encore en mode test : les visiteurs voient « bientôt disponible ».
+   Toi, tu peux tester : ouvre une fois la page avec ?test=1 à la fin de l'adresse
+   (ou déverrouille ton Espace Philomène). Passe à true quand Stripe est en mode réel.
+   ===================================================================== */
+var PAIEMENT_OUVERT = false;
+function paiementPermis() {
+  if (PAIEMENT_OUVERT) return true;
+  try {
+    var p = new URLSearchParams(window.location.search);
+    if (p.get("test") === "1") localStorage.setItem("philoTest", "1");
+    if (p.get("test") === "0") localStorage.removeItem("philoTest");
+    if (localStorage.getItem("philoTest") === "1") return true;
+    if (sessionStorage.getItem("philoAdminToken")) return true;
+  } catch(e){}
+  return false;
+}
 /* ===================== PAIEMENT DE L'ABONNEMENT ===================== */
 function payerAbonnement() {
+  if (!paiementPermis()) {
+    showStatus("Le paiement en ligne ouvre très bientôt. Écrivez-nous sur WhatsApp : on active votre appli tout de suite.", "err");
+    window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je voudrais activer mon appli « " + (slugChargeActuel || "") + " »."), "_blank");
+    return;
+  }
   if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre appli.", "err"); return; }
   var btn = $("btn-payer-abonnement"); btn.disabled = true; btn.textContent = "Ouverture du paiement...";
   fetch(API + "/abonnement/checkout/appli/" + encodeURIComponent(slugChargeActuel), {
@@ -1617,6 +1640,11 @@ var timerCommandes = null, idsCommandesConnus = null;
 function initPaiementEnLigne(cfg) {
   var ok = (cfg.modulesActifs || []).indexOf("paiement") >= 0;
   montrer("ad-bloc-paiement", ok);
+  if (ok && !paiementPermis()) {
+    $("ad-stripe-statut").textContent = "Le paiement par carte ouvre très bientôt. En attendant, vos clients commandent sur WhatsApp et paient sur place. On vous prévient dès que c'est prêt.";
+    montrer("ad-stripe-btn", false);
+    return;
+  }
   if (ok) majStatutStripe();
 }
 function majStatutStripe() {
