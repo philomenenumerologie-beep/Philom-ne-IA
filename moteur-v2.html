@@ -22,7 +22,9 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
-#splash{position:fixed;inset:0;z-index:500;background:var(--couleur-fonce);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s}
+#splash{position:fixed;inset:0;z-index:500;background:var(--couleur-fonce);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
+.sp-roue{width:46px;height:46px;border-radius:50%;border:4px solid rgba(0,0,0,.1);border-top-color:var(--couleur-fonce);animation:tourne .8s linear infinite}
+@keyframes tourne{to{transform:rotate(360deg)}}
 #splash.gone{opacity:0;pointer-events:none}
 .sp-logo{width:110px;height:110px;border-radius:50%;background:var(--couleur-fond);display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) .3s both;font-size:48px;overflow:hidden}
 .sp-logo img{width:100%;height:100%;object-fit:cover}
@@ -190,8 +192,8 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 <body>
 
 <div id="splash">
-  <div class="sp-logo" id="sp-logo">⏳</div>
-  <div class="sp-name" id="sp-name">Chargement...</div>
+  <div class="sp-logo" id="sp-logo"><div class="sp-roue" aria-label="Chargement"></div></div>
+  <div class="sp-name" id="sp-name"></div>
   <div class="sp-sub" id="sp-sub"></div>
 </div>
 
@@ -299,11 +301,29 @@ function remplirIcone(conteneur, cfg) {
 }
 
 /* ===================== CHARGEMENT CONFIG ===================== */
+/* L'appli garde une copie sur le téléphone : au 2e passage, elle s'affiche tout de suite,
+   puis se met à jour en arrière-plan. */
+var CLE_CACHE = "philoAppli_" + getSlugFromUrl();
+var A_INTERAGI = /[?&]paiement=/.test(window.location.search); // retour de paiement : ne jamais recharger
+["click", "keydown", "touchstart"].forEach(function(ev){ document.addEventListener(ev, function(){ A_INTERAGI = true; }, { once: true, passive: true }); });
+
 function chargerConfig() {
-  fetch(API + "/memory/config_" + getSlugFromUrl())
+  var copie = null;
+  try { copie = JSON.parse(localStorage.getItem(CLE_CACHE) || "null"); } catch(e){}
+  if (copie && copie.nom) appliquerConfig(copie, true);
+
+  fetch(API + "/memory/config_" + getSlugFromUrl() + "?leger=1")
     .then(function(r){ return r.json(); })
-    .then(function(d){ appliquerConfig((d && d.value) ? d.value : CONFIG_PAR_DEFAUT); })
-    .catch(function(){ appliquerConfig(CONFIG_PAR_DEFAUT); });
+    .then(function(d){
+      var cfg = (d && d.value) ? d.value : null;
+      if (!cfg) { if (!copie) appliquerConfig(CONFIG_PAR_DEFAUT); return; }
+      var neuf = JSON.stringify(cfg);
+      try { localStorage.setItem(CLE_CACHE, neuf); } catch(e){}
+      if (!copie) { appliquerConfig(cfg); return; }
+      // La copie était différente (prix, menu, photos…) : on recharge si le client n'a encore rien touché
+      if (neuf !== JSON.stringify(copie) && !A_INTERAGI) window.location.reload();
+    })
+    .catch(function(){ if (!copie) appliquerConfig(CONFIG_PAR_DEFAUT); });
 }
 
 function definirIconePWA(cfg) {
@@ -342,7 +362,7 @@ function couleurSure(c, secours){
   return /^#[0-9a-f]{3,8}$/i.test(String(c || "")) ? c : secours;
 }
 
-function appliquerConfig(cfg) {
+function appliquerConfig(cfg, depuisCopie) {
   cfg.nom = cfg.nom || "Mon appli";
   cfg.couleurs = cfg.couleurs || {};
   CONFIG = cfg;
@@ -391,8 +411,8 @@ function appliquerConfig(cfg) {
     setTimeout(function(){
       document.getElementById("splash").style.display = "none";
       if (cfg.chatActif !== false) addBot(cfg.messageAccueil, true);
-    }, 900);
-  }, 1600);
+    }, depuisCopie ? 150 : 400);
+  }, depuisCopie ? 0 : 450);
 }
 
 var MODULE_LABELS = {
