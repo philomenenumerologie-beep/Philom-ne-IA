@@ -734,8 +734,31 @@ function finaliserEnregistrement(slug, nom) {
 }
 function copierLien(){ var i = $("lien-final"); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function(){ showStatus("Lien copié.", "ok"); }).catch(function(){ document.execCommand("copy"); }); }
 
+/* =====================================================================
+   INTERRUPTEUR DU PAIEMENT EN LIGNE
+   false = Stripe encore en mode test : les visiteurs voient « bientôt disponible ».
+   Toi, tu peux tester : ouvre une fois la page avec ?test=1 à la fin de l'adresse
+   (ou déverrouille ton Espace Philomène). Passe à true quand Stripe est en mode réel.
+   ===================================================================== */
+var PAIEMENT_OUVERT = false;
+function paiementPermis() {
+  if (PAIEMENT_OUVERT) return true;
+  try {
+    var p = new URLSearchParams(window.location.search);
+    if (p.get("test") === "1") localStorage.setItem("philoTest", "1");
+    if (p.get("test") === "0") localStorage.removeItem("philoTest");
+    if (localStorage.getItem("philoTest") === "1") return true;
+    if (sessionStorage.getItem("philoAdminToken")) return true;
+  } catch(e){}
+  return false;
+}
 /* ===================== PAIEMENT ===================== */
 function payerAbonnement() {
+  if (!paiementPermis()) {
+    showStatus("Le paiement en ligne ouvre très bientôt. Écrivez-nous sur WhatsApp : on active votre site tout de suite.", "err");
+    window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour ! Je voudrais activer mon site « " + (slugChargeActuel || "") + " »."), "_blank");
+    return;
+  }
   if (!slugChargeActuel) return;
   var b = $("btn-suivant"); b.disabled = true; b.textContent = "Ouverture...";
   fetch(API + "/abonnement/checkout/site/" + encodeURIComponent(slugChargeActuel), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ periode: PERIODE }) })
