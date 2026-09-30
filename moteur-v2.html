@@ -42,7 +42,9 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 .tab span{font-size:14px}
 .tab.active{color:var(--couleur-fond);border-bottom-color:var(--couleur-alerte)}
 
-.page{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.page{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;flex-direction:column}
+.page > *{flex-shrink:0}
+#pages-dynamiques{display:contents}
 .page.active{display:flex}
 .page::-webkit-scrollbar{width:0}
 
@@ -98,7 +100,23 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 .devis-total-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--couleur-accent)}
 .devis-note{font-size:11px;font-style:italic;color:#888;margin-top:10px}
 
-.cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cat-tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;position:sticky;top:0;z-index:6;background:var(--couleur-fond);margin:0 -15px 6px;padding:10px 15px;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{flex-shrink:0;min-height:38px;padding:0 16px!important;font-size:14px!important}
+.cat-section{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:18px 0 4px}
+.menu-liste{display:flex;flex-direction:column}
+.menu-ligne{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(0,0,0,.08);cursor:pointer}
+.menu-texte{flex:1;min-width:0}
+.menu-nom{font-size:16px;font-weight:600;line-height:1.3}
+.menu-desc{font-size:13.5px;color:#777;margin-top:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.menu-prix{font-size:15px;font-weight:600;margin-top:6px}
+.menu-photo{position:relative;width:104px;height:104px;flex-shrink:0;border-radius:14px;background:var(--couleur-clair);overflow:visible;display:flex;align-items:center;justify-content:center;font-size:34px}
+.menu-photo img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.menu-plus{position:absolute;right:-6px;bottom:-6px;min-width:38px;height:38px;border-radius:999px;border:none;background:#fff;color:var(--couleur-fonce);font-size:22px;font-weight:600;box-shadow:0 3px 10px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0 4px}
+.menu-plus.qte{background:var(--couleur-fonce);color:var(--couleur-fond);font-size:15px;gap:2px}
+.menu-plus.qte button{width:30px;height:30px;border:none;background:none;color:inherit;font-size:18px;font-weight:700;cursor:pointer}
+.menu-sans-photo .menu-photo{width:auto;height:auto;background:none}
+.menu-sans-photo .menu-plus{position:static}
 .cat-tab{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(0,0,0,.12);background:#fff;font-size:12px;font-family:Jost,sans-serif;font-weight:500;cursor:pointer;color:#777}
 .cat-tab.active{background:var(--couleur-fonce);color:var(--couleur-fond);border-color:var(--couleur-fonce)}
 .item-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -114,7 +132,8 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
 .qty-btn{width:26px;height:26px;border-radius:8px;border:none;background:#fff;color:var(--couleur-fonce);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .qty-val{font-size:13px;font-weight:600;min-width:18px;text-align:center}
 
-.panier-bar{position:sticky;bottom:0;background:var(--couleur-fonce);color:var(--couleur-fond);padding:13px 16px;border-radius:14px;display:none;justify-content:space-between;align-items:center;margin-top:14px;cursor:pointer;box-shadow:0 -4px 16px rgba(0,0,0,.15);font-size:14px;font-weight:600}
+.panier-bar{position:sticky;bottom:12px;background:var(--couleur-fonce);color:var(--couleur-fond);padding:0 18px;min-height:56px;border-radius:999px;display:none;justify-content:space-between;align-items:center;margin-top:18px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:15.5px;font-weight:600;z-index:7}
+.panier-bar .nb{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:999px;background:var(--couleur-fond);color:var(--couleur-fonce);font-size:13px;font-weight:700;margin-right:10px;padding:0 6px}
 .panier-bar.show{display:flex}
 
 #panier-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
@@ -181,7 +200,7 @@ html,body{height:100%;overflow:hidden;background:var(--couleur-fond);font-family
     <div class="tb-av" id="tb-av">🔧</div>
     <div>
       <div class="tb-name" id="tb-name">...</div>
-      <div class="tb-sub">Assistant IA · 24h/24</div>
+      <div class="tb-sub" id="tb-sub">Assistant IA · 24h/24</div>
     </div>
     <div class="tb-dot"></div>
   </div>
@@ -342,6 +361,7 @@ function appliquerConfig(cfg) {
   document.getElementById("sp-sub").textContent = cfg.sousTitre || "";
   remplirIcone(document.getElementById("tb-av"), cfg);
   document.getElementById("tb-name").textContent = cfg.nom;
+  document.getElementById("tb-sub").textContent = cfg.chatActif !== false ? "Assistant IA · 24h/24" : (cfg.sousTitre || "");
   definirIconePWA(cfg);
 
   construireTabs(cfg);
@@ -611,7 +631,7 @@ function construireCatalogue(div, cfg) {
   var bar = el("div", "panier-bar");
   bar.id = "panier-bar";
   bar.onclick = ouvrirPanier;
-  var txt = el("span", null, "🛒 0 article"); txt.id = "panier-bar-txt";
+  var txt = el("span", null, "Voir le panier"); txt.id = "panier-bar-txt"; txt.style.display = "flex"; txt.style.alignItems = "center";
   var tot = el("span", null, "0€"); tot.id = "panier-bar-total";
   bar.appendChild(txt); bar.appendChild(tot);
   pg.appendChild(bar);
@@ -634,35 +654,64 @@ function creerStepper(nom, qte, apres){
 
 function renderCatalogueGrid(items, filtre) {
   var grid = document.getElementById("catalogue-grid");
+  grid.className = "menu-liste";
   var liste = filtre === "tous" ? items : items.filter(function(it){ return it.categorie === filtre; });
   grid.innerHTML = "";
   if (!liste.length) { grid.appendChild(el("div", "pg-empty", "Rien à afficher pour le moment.")); return; }
+  // En « Tout », on regroupe par catégorie, comme sur les applis de livraison
+  var groupes = [];
   liste.forEach(function(it){
-    var qte = PANIER[it.nom] ? PANIER[it.nom].qty : 0;
-    var card = el("div", "item-card");
-
-    var thumb = el("div", "item-thumb");
-    var src = imageSure(it.image);
-    if (src) { var img = document.createElement("img"); img.src = src; img.alt = it.nom || ""; img.loading = "lazy"; thumb.appendChild(img); }
-    else thumb.textContent = CONFIG.icone || "📦";
-    thumb.onclick = function(){ ouvrirItem(it); };
-
-    var info = el("div", "item-info");
-    var nom = el("div", "item-name", it.nom);
-    nom.onclick = function(){ ouvrirItem(it); };
-    info.appendChild(nom);
-    info.appendChild(el("div", "item-price", it.prix));
-    if (it.tags) {
-      var tags = el("div", "item-tags");
-      String(it.tags).split(",").map(function(t){ return t.trim(); }).filter(Boolean).forEach(function(t){ tags.appendChild(el("span", "item-tag", t)); });
-      info.appendChild(tags);
-    }
-    info.appendChild(creerStepper(it.nom, qte));
-
-    card.appendChild(thumb);
-    card.appendChild(info);
-    grid.appendChild(card);
+    var c = it.categorie || "";
+    var g = groupes.filter(function(x){ return x.cat === c; })[0];
+    if (!g) { g = { cat: c, items: [] }; groupes.push(g); }
+    g.items.push(it);
   });
+  groupes.forEach(function(g){
+    if (filtre === "tous" && g.cat && groupes.length > 1) grid.appendChild(el("div", "cat-section", g.cat));
+    g.items.forEach(function(it){ grid.appendChild(ligneMenu(it)); });
+  });
+}
+
+function ligneMenu(it) {
+  var src = imageSure(it.image);
+  var ligne = el("div", "menu-ligne" + (src ? "" : " menu-sans-photo"));
+  ligne.onclick = function(){ ouvrirItem(it); };
+  var txt = el("div", "menu-texte");
+  txt.appendChild(el("div", "menu-nom", it.nom));
+  if (it.description) txt.appendChild(el("div", "menu-desc", it.description));
+  txt.appendChild(el("div", "menu-prix", it.prix));
+  if (it.tags) {
+    var tags = el("div", "item-tags");
+    String(it.tags).split(",").map(function(t){ return t.trim(); }).filter(Boolean).forEach(function(t){ tags.appendChild(el("span", "item-tag", t)); });
+    txt.appendChild(tags);
+  }
+  var photo = el("div", "menu-photo");
+  if (src) { var img = document.createElement("img"); img.src = src; img.alt = it.nom || ""; img.loading = "lazy"; photo.appendChild(img); }
+  photo.appendChild(boutonQuantite(it));
+  ligne.appendChild(txt); ligne.appendChild(photo);
+  return ligne;
+}
+
+/* Bouton « + » qui devient « − 2 + » une fois ajouté */
+function boutonQuantite(it) {
+  var qte = PANIER[it.nom] ? PANIER[it.nom].qty : 0;
+  var zone = el("div", "menu-plus" + (qte ? " qte" : ""));
+  var redessiner = function(){ var n = boutonQuantite(it); zone.replaceWith(n); };
+  if (!qte) {
+    zone.textContent = "+";
+    zone.setAttribute("role", "button");
+    zone.setAttribute("aria-label", "Ajouter " + (it.nom || ""));
+    zone.onclick = function(e){ e.stopPropagation(); changerQuantite(it.nom, 1); redessiner(); };
+  } else {
+    var m = el("button", null, "−"); m.setAttribute("aria-label", "Retirer un");
+    var v = el("span", null, String(qte));
+    var p = el("button", null, "+"); p.setAttribute("aria-label", "Ajouter un");
+    m.onclick = function(e){ e.stopPropagation(); changerQuantite(it.nom, -1); redessiner(); };
+    p.onclick = function(e){ e.stopPropagation(); changerQuantite(it.nom, 1); redessiner(); };
+    zone.onclick = function(e){ e.stopPropagation(); };
+    zone.appendChild(m); zone.appendChild(v); zone.appendChild(p);
+  }
+  return zone;
 }
 
 function trouverItem(nom) {
@@ -685,7 +734,8 @@ function mettreAJourBarrePanier() {
   Object.keys(PANIER).forEach(function(k){ count += PANIER[k].qty; total += PANIER[k].qty * parsePrix(PANIER[k].item.prix); });
   if (count === 0) { bar.classList.remove("show"); return; }
   bar.classList.add("show");
-  document.getElementById("panier-bar-txt").textContent = "🛒 " + count + " article" + (count > 1 ? "s" : "") + " — voir le panier";
+  var t = document.getElementById("panier-bar-txt"); t.innerHTML = "";
+  var nb = el("span", "nb", String(count)); t.appendChild(nb); t.appendChild(document.createTextNode("Voir le panier"));
   document.getElementById("panier-bar-total").textContent = formatPrix(total);
 }
 
@@ -776,12 +826,31 @@ function envoyerCommandePanier() {
   window.open(lienWa(msg), "_blank");
 }
 
+/* =====================================================================
+   INTERRUPTEUR DU PAIEMENT EN LIGNE
+   false = Stripe encore en mode test : les visiteurs voient « bientôt disponible ».
+   Toi, tu peux tester : ouvre une fois la page avec ?test=1 à la fin de l'adresse
+   (ou déverrouille ton Espace Philomène). Passe à true quand Stripe est en mode réel.
+   ===================================================================== */
+var PAIEMENT_OUVERT = false;
+function paiementPermis() {
+  if (PAIEMENT_OUVERT) return true;
+  try {
+    var p = new URLSearchParams(window.location.search);
+    if (p.get("test") === "1") localStorage.setItem("philoTest", "1");
+    if (p.get("test") === "0") localStorage.removeItem("philoTest");
+    if (localStorage.getItem("philoTest") === "1") return true;
+    if (sessionStorage.getItem("philoAdminToken")) return true;
+  } catch(e){}
+  return false;
+}
 /* ---------- PAIEMENT PAR CARTE (Stripe) ---------- */
 var PAIEMENT_CARTE = false;
 
 function verifierPaiementCarte(cfg) {
   var mods = cfg.modulesActifs || [];
   if (cfg.valide !== true || mods.indexOf("catalogue") < 0 || mods.indexOf("paiement") < 0) return;
+  if (!paiementPermis()) return; // les clients commandent sur WhatsApp en attendant
   fetch(API + "/stripe/status/" + getSlugFromUrl())
     .then(function(r){ return r.json(); })
     .then(function(s){
