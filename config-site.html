@@ -428,7 +428,7 @@ var WA = "33617123910";
 var LIEN_REVOLUT = "https://checkout.revolut.com/pay/3e15f5b0-a69e-4322-a00a-12ea7d8b359f";
 var LIEN_MOTEUR = "https://www.philomeneia.com/site-v1.html";
 /* Passe à true quand sites.philomeneia.com est relié à Render : les liens deviennent sites.philomeneia.com/nom */
-var ADRESSE_COURTE_ACTIVE = false;
+var ADRESSE_COURTE_ACTIVE = true;
 function lienDuSite(slug) { return ADRESSE_COURTE_ACTIVE ? "https://sites.philomeneia.com/" + slug : LIEN_MOTEUR + "?client=" + encodeURIComponent(slug); }
 var ADMIN_TOKEN = "", CLE_SESSION_ADMIN = "philoAdminToken";
 
