@@ -40,6 +40,7 @@ button{font-family:inherit;cursor:pointer}
 /* En service */
 .barre{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .barre h1{font-size:24px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:700px){.barre h1{flex-basis:100%}}
 .pastille{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;background:var(--carte);padding:8px 12px;border-radius:999px}
 .pastille i{width:10px;height:10px;border-radius:50%;background:var(--menthe)}
 .pastille.ko i{background:var(--tomate)}
