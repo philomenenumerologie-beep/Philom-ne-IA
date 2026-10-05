@@ -174,6 +174,9 @@ details.avance[open] summary{margin-bottom:12px}
 .resultat{border-radius:22px;background:var(--pale);padding:22px;margin-top:18px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
 .resultat input{text-align:center;font-size:13px}
 .resultat img{width:170px;height:170px;border-radius:14px;background:#fff;padding:8px}
+.cgv{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;background:#fff;border:2px solid var(--ligne);border-radius:16px;padding:14px;cursor:pointer;font-size:14.5px;line-height:1.4}
+.cgv a{color:var(--bleu);font-weight:700}
+.cgv.erreur{border-color:#B42318}
 
 /* Espace Philomène + client */
 .carte-admin{border-radius:20px;background:#FFF7E0;padding:18px;margin-top:20px}
@@ -373,6 +376,7 @@ details.avance[open] summary{margin-bottom:12px}
       <button class="btn-lien" type="button" onclick="allerAuCompte(slugChargeActuel || new URLSearchParams(location.search).get('projet') || (function(){try{return localStorage.getItem(CLE_DERNIER)}catch(e){return ''}})())">Modifier mon site plus tard : Mon compte</button>
       <img id="qr-code" alt="QR code de votre site"/>
       <b id="montant-a-payer" style="font:800 28px 'Bricolage Grotesque',sans-serif"></b>
+      <label class="cgv" id="bloc-cgv"><input type="checkbox" id="cgv-ok" onchange="$('bloc-cgv').classList.remove('erreur')"/><span>J'ai lu et j'accepte les <a href="legal.html#cgv" target="_blank" rel="noopener">conditions générales de vente</a>, dont l'engagement de 12 mois en paiement mensuel.</span></label>
       <small style="color:var(--gris)">Paiement sécurisé par Stripe. Votre site s'active automatiquement.</small>
       <a id="lien-revolut-resultat" target="_blank" rel="noopener" style="font-size:13px;color:var(--gris)">Autre moyen : payer via Revolut</a>
     </div>
@@ -736,11 +740,10 @@ function copierLien(){ var i = $("lien-final"); i.select(); (navigator.clipboard
 
 /* =====================================================================
    INTERRUPTEUR DU PAIEMENT EN LIGNE
-   false = Stripe encore en mode test : les visiteurs voient « bientôt disponible ».
-   Toi, tu peux tester : ouvre une fois la page avec ?test=1 à la fin de l'adresse
-   (ou déverrouille ton Espace Philomène). Passe à true quand Stripe est en mode réel.
+   true = Stripe est en mode réel : le paiement par carte est ouvert à tous.
+   (false = caché aux visiteurs ; ?test=1 à la fin de l'adresse le montre quand même.)
    ===================================================================== */
-var PAIEMENT_OUVERT = false;
+var PAIEMENT_OUVERT = true;
 function paiementPermis() {
   if (PAIEMENT_OUVERT) return true;
   try {
@@ -760,6 +763,12 @@ function payerAbonnement() {
     return;
   }
   if (!slugChargeActuel) return;
+  if (!$("cgv-ok").checked) {
+    $("bloc-cgv").classList.add("erreur");
+    showStatus("Cochez « J'accepte les conditions générales de vente » pour continuer.", "err");
+    $("bloc-cgv").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
   var b = $("btn-suivant"); b.disabled = true; b.textContent = "Ouverture...";
   fetch(API + "/abonnement/checkout/site/" + encodeURIComponent(slugChargeActuel), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ periode: PERIODE }) })
     .then(function(r){ return r.json(); }).then(function(d){
@@ -775,6 +784,11 @@ function gererRetourAbonnement() {
   if (p.get("paiement") === "annule") { showStatus("Paiement annulé. Votre site reste en démo, vous pouvez payer quand vous voulez.", "err"); return; }
   showStatus("Vérification du paiement...", "ok");
   fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
+    // Affiche la formule réellement payée (et non celle par défaut)
+    if (d && d.formule && FORMULES[d.formule]) FORMULE = d.formule;
+    if (d && (d.periode === "an" || d.periode === "mois")) PERIODE = d.periode;
+    document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.periode === PERIODE ? "true" : "false"); });
+    dessinerFormules(); majRecap();
     if (d && d.paye) { showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est en ligne.", "ok"); afficherSiteEnLigne(projet); }
     else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
     window.history.replaceState(null, "", window.location.pathname);
@@ -791,7 +805,7 @@ function afficherSiteEnLigne(slug) {
   var lien = lienDuSite(slug);
   $("lien-final").value = lien; $("lien-ouvrir").href = lien;
   $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
-  ["montant-a-payer", "lien-revolut-resultat"].forEach(function(id){ $(id).style.display = "none"; });
+  ["montant-a-payer", "lien-revolut-resultat", "bloc-cgv"].forEach(function(id){ $(id).style.display = "none"; });
   var sm = document.querySelector("#carte-resultat small"); if (sm) sm.style.display = "none";
   montrer("carte-resultat", true);
   var b = $("btn-suivant"); b.textContent = "Voir mon site"; b.dataset.paye = ""; b.onclick = function(){ window.open(lien, "_blank"); };
