@@ -178,6 +178,9 @@ label.mini input,label.mini textarea{font-weight:500}
 .resultat{border-radius:22px;background:var(--pale);padding:22px;margin-top:18px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
 .resultat input{text-align:center;font-size:13px}
 .resultat img{width:170px;height:170px;border-radius:14px;background:#fff;padding:8px}
+.cgv{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;background:#fff;border:2px solid var(--ligne);border-radius:16px;padding:14px;cursor:pointer;font-size:14.5px;line-height:1.4}
+.cgv a{color:var(--bleu);font-weight:700}
+.cgv.erreur{border-color:#B42318}
 
 /* Espace Philomène + client */
 .carte-admin{border-radius:20px;background:#FFF7E0;padding:18px;margin-top:20px}
@@ -457,6 +460,7 @@ label.mini input,label.mini textarea{font-weight:500}
       <img id="qr-code" alt="QR code de votre appli"/>
       <div style="width:100%;border-top:1px solid var(--ligne);padding-top:14px;display:flex;flex-direction:column;gap:10px;align-items:center">
         <b id="montant-a-payer" style="font:800 28px 'Bricolage Grotesque',sans-serif"></b>
+        <label class="cgv" id="bloc-cgv"><input type="checkbox" id="cgv-ok" onchange="$('bloc-cgv').classList.remove('erreur')"/><span>J'ai lu et j'accepte les <a href="legal.html#cgv" target="_blank" rel="noopener">conditions générales de vente</a>, dont l'engagement de 12 mois en paiement mensuel.</span></label>
         <button class="btn btn-accent btn-plein" id="btn-payer-abonnement" type="button" onclick="payerAbonnement()">Payer par carte et activer</button>
         <small style="color:var(--gris)">Paiement sécurisé par Stripe. Votre appli s'active automatiquement.</small>
         <a id="lien-revolut-resultat" target="_blank" rel="noopener" style="font-size:13px;color:var(--gris)">Autre moyen : payer via Revolut</a>
@@ -1379,11 +1383,10 @@ function memoriserSlug(slug) { try { localStorage.setItem(CLE_DERNIER, slug); } 
 function allerAuCompte(slug) { switchOnglet("admin"); if (slug) $("ad-slug").value = slug; var p = $("ad-password"); if (p) p.focus(); }
 /* =====================================================================
    INTERRUPTEUR DU PAIEMENT EN LIGNE
-   false = Stripe encore en mode test : les visiteurs voient « bientôt disponible ».
-   Toi, tu peux tester : ouvre une fois la page avec ?test=1 à la fin de l'adresse
-   (ou déverrouille ton Espace Philomène). Passe à true quand Stripe est en mode réel.
+   true = Stripe est en mode réel : le paiement par carte est ouvert à tous.
+   (false = caché aux visiteurs ; ?test=1 à la fin de l'adresse le montre quand même.)
    ===================================================================== */
-var PAIEMENT_OUVERT = false;
+var PAIEMENT_OUVERT = true;
 function paiementPermis() {
   if (PAIEMENT_OUVERT) return true;
   try {
@@ -1403,6 +1406,12 @@ function payerAbonnement() {
     return;
   }
   if (!slugChargeActuel) { showStatus("Enregistrez d'abord votre appli.", "err"); return; }
+  if (!$("cgv-ok").checked) {
+    $("bloc-cgv").classList.add("erreur");
+    showStatus("Cochez « J'accepte les conditions générales de vente » pour continuer.", "err");
+    $("bloc-cgv").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
   var btn = $("btn-payer-abonnement"); btn.disabled = true; btn.textContent = "Ouverture du paiement...";
   fetch(API + "/abonnement/checkout/appli/" + encodeURIComponent(slugChargeActuel), {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ periode: PERIODE })
@@ -1419,6 +1428,11 @@ function gererRetourAbonnement() {
   if (p.get("paiement") === "annule") { showStatus("Paiement annulé. Votre appli reste en démo, vous pouvez payer quand vous voulez.", "err"); $("status").scrollIntoView(); return; }
   showStatus("Vérification du paiement...", "ok");
   fetch(API + "/abonnement/verif/" + encodeURIComponent(p.get("session") || "")).then(function(r){ return r.json(); }).then(function(d){
+    // Affiche la formule réellement payée (et non celle par défaut)
+    if (d && d.formule && FORMULES[d.formule]) FORMULE = d.formule;
+    if (d && (d.periode === "an" || d.periode === "mois")) PERIODE = d.periode;
+    document.querySelectorAll(".bascule button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.periode === PERIODE ? "true" : "false"); });
+    dessinerFormules(); majRecap();
     if (d && d.paye) {
       var lien = window.location.origin + "/moteur-v2.html?client=" + encodeURIComponent(projet);
       showStatus("✅ Paiement reçu, merci ! « " + (d.nom || projet) + " » est active.", "ok");
@@ -1426,7 +1440,7 @@ function gererRetourAbonnement() {
       afficherPas("recap");
       $("lien-final").value = lien; $("lien-ouvrir").href = lien;
       $("qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(lien);
-      ["montant-a-payer", "btn-payer-abonnement", "lien-revolut-resultat"].forEach(function(id){ $(id).style.display = "none"; });
+      ["montant-a-payer", "btn-payer-abonnement", "lien-revolut-resultat", "bloc-cgv"].forEach(function(id){ $(id).style.display = "none"; });
       montrer("resultat-lien", true);
       $("btn-suivant").textContent = "Voir mon appli"; $("btn-suivant").onclick = function(){ window.open(lien, "_blank"); };
     } else showStatus("Le paiement n'est pas encore confirmé. Si vous avez été débité, écrivez-nous sur WhatsApp.", "err");
