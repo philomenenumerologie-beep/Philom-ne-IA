@@ -405,6 +405,7 @@ function appliquerConfig(cfg, depuisCopie) {
 
   verifierPaiementCarte(cfg);
   gererRetourPaiement();
+  if (!/[?&]paiement=/.test(window.location.search)) suivreCommande();
 
   setTimeout(function(){
     document.getElementById("splash").classList.add("gone");
@@ -928,13 +929,42 @@ function gererRetourPaiement() {
     .then(function(r){ return r.json(); })
     .then(function(d){
       if (d && d.paye) {
-        afficherBanniere("✅ Commande n° " + d.numero + " payée", "Total : " + String(d.total).replace(".", ",") + " €. Merci ! " + (CONFIG.nom || "") + " a bien reçu votre commande. Gardez ce numéro.");
+        afficherBanniere("✅ Commande n° " + d.numero + " payée", "Total : " + String(d.total).replace(".", ",") + " €. Merci ! " + (CONFIG.nom || "") + " a bien reçu votre commande. L'heure de retrait va s'afficher ici dans un instant.");
+        try { localStorage.setItem(CLE_SUIVI, JSON.stringify({ id: d.id || session, date: Date.now() })); } catch(e){}
+        suivreCommande();
       } else {
         afficherBanniere("Paiement non confirmé", "Si vous avez été débité, contactez directement le commerçant.");
       }
     }).catch(function(){
       afficherBanniere("Vérification impossible", "Si vous avez été débité, contactez directement le commerçant.");
     });
+}
+
+/* ---------- SUIVI DE COMMANDE : le client voit l'heure donnée par le commerçant ---------- */
+var CLE_SUIVI = "philoSuivi_" + getSlugFromUrl();
+var timerSuivi = null, dernierEtatSuivi = "";
+function suivreCommande() {
+  var memo = null;
+  try { memo = JSON.parse(localStorage.getItem(CLE_SUIVI) || "null"); } catch(e){}
+  if (!memo || !memo.id || Date.now() - memo.date > 4 * 3600000) { try { localStorage.removeItem(CLE_SUIVI); } catch(e){} return; }
+  fetch(API + "/commande/suivi/" + getSlugFromUrl() + "/" + encodeURIComponent(memo.id))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.ok) return;
+      var livraison = /livraison/i.test(d.mode || "");
+      var etat = d.statut + "|" + (d.pretVers || "");
+      if (d.statut === "terminee") { try { localStorage.removeItem(CLE_SUIVI); } catch(e){} clearInterval(timerSuivi); return; }
+      if (etat !== dernierEtatSuivi && d.statut !== "nouvelle") {
+        if (d.statut === "en_cours" && d.pretVers) {
+          var h = new Date(d.pretVers).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }).replace(":", " h ");
+          afficherBanniere("⏱️ Commande n° " + d.numero + (livraison ? " : livrée vers " : " : prête vers ") + h, (CONFIG.nom || "") + " prépare votre commande.");
+        } else if (d.statut === "prete") {
+          afficherBanniere(livraison ? "🛵 Commande n° " + d.numero + " en route !" : "🎉 Commande n° " + d.numero + " prête !", livraison ? "Elle arrive bientôt chez vous." : "Vous pouvez venir la chercher.");
+        }
+      }
+      dernierEtatSuivi = etat;
+    }).catch(function(){});
+  if (!timerSuivi) timerSuivi = setInterval(suivreCommande, 20000);
 }
 
 /* ---------- GALERIE ---------- */
