@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="color-scheme" content="dark only"/>
+<meta name="theme-color" content="#14123A"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Cuisine"/>
+<meta name="robots" content="noindex"/>
+<title>Écran cuisine — Philomène IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--fond:#14123A;--carte:#22205A;--ligne:#35337A;--texte:#fff;--gris:#B9B8E0;--soleil:#FFC53D;--menthe:#12A06B;--tomate:#E8452C;--bleu:#2F6FED}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--fond);color:var(--texte);font-family:Figtree,system-ui,sans-serif;min-height:100%}
+body{padding:calc(12px + env(safe-area-inset-top,0px)) 14px calc(24px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer}
+.cache{display:none!important}
+
+/* Connexion */
+.connexion{max-width:420px;margin:8vh auto 0;display:flex;flex-direction:column;gap:14px}
+.connexion h1{font-size:34px}
+.connexion p{color:var(--gris)}
+.connexion label{font-weight:700;font-size:15px;display:flex;flex-direction:column;gap:6px}
+.connexion input{min-height:54px;border-radius:14px;border:2px solid var(--ligne);background:var(--carte);color:#fff;font:600 18px Figtree,sans-serif;padding:0 14px;outline:none}
+.connexion input:focus{border-color:var(--soleil)}
+.gros{min-height:62px;border-radius:16px;border:none;background:var(--soleil);color:#2B1E00;font-weight:800;font-size:19px}
+.erreur{color:#FF9C8C;font-weight:700;min-height:20px}
+
+/* Démarrage */
+.demarrage{max-width:480px;margin:10vh auto 0;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:stretch}
+.demarrage h1{font-size:38px}
+.demarrage p{color:var(--gris);font-size:17px}
+
+/* En service */
+.barre{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.barre h1{font-size:24px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pastille{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;background:var(--carte);padding:8px 12px;border-radius:999px}
+.pastille i{width:10px;height:10px;border-radius:50%;background:var(--menthe)}
+.pastille.ko i{background:var(--tomate)}
+.petit-btn{min-height:42px;padding:0 14px;border-radius:999px;border:2px solid var(--ligne);background:transparent;color:#fff;font-weight:700;font-size:14px}
+.alerte-veille{background:#3A2A00;color:var(--soleil);border-radius:14px;padding:12px 14px;font-weight:600;margin-bottom:12px;font-size:15px}
+.alerte-son{background:var(--tomate);color:#fff;border:none;border-radius:14px;padding:16px;font-weight:800;font-size:18px;width:100%;margin-bottom:12px}
+
+.colonnes{display:grid;gap:18px}
+@media(min-width:900px){.colonnes{grid-template-columns:repeat(3,1fr);align-items:start}}
+.colonne h2{font-size:20px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.compte{background:var(--carte);border-radius:999px;font-size:15px;padding:2px 10px;font-family:Figtree,sans-serif}
+.vide{color:var(--gris);background:var(--carte);border-radius:16px;padding:18px;text-align:center}
+
+.commande{background:var(--carte);border-radius:20px;padding:16px;margin-bottom:12px;border:3px solid transparent}
+.commande.nouvelle{border-color:var(--soleil);animation:clignote 1s ease-in-out infinite}
+@keyframes clignote{50%{border-color:transparent}}
+.c-haut{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.c-num{font-family:'Bricolage Grotesque',sans-serif;font-size:34px;font-weight:800;line-height:1}
+.c-total{font-size:22px;font-weight:800}
+.c-infos{color:var(--gris);font-weight:600;margin-top:4px}
+.mode{display:inline-block;background:var(--bleu);color:#fff;border-radius:999px;padding:3px 10px;font-weight:800;font-size:14px;margin-right:6px}
+.mode.livraison{background:var(--tomate)}
+.articles{list-style:none;margin:12px 0;display:flex;flex-direction:column;gap:6px}
+.articles li{font-size:22px;font-weight:700}
+.articles b{color:var(--soleil);margin-right:6px}
+.client{font-size:15px;color:var(--gris);margin-top:6px}
+.client a{color:#fff;font-weight:700}
+.adresse{background:#3A1A1A;border-radius:12px;padding:10px 12px;margin-top:8px;font-weight:700}
+.pret-vers{font-size:20px;font-weight:800;color:var(--soleil);margin-top:8px}
+.delais{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.delais button{min-height:64px;border-radius:14px;border:none;background:var(--soleil);color:#2B1E00;font-weight:800;font-size:20px}
+.delais button small{display:block;font-size:12px;font-weight:700}
+.actions{display:flex;gap:8px;margin-top:12px}
+.actions button{flex:1;min-height:60px;border-radius:14px;border:none;font-weight:800;font-size:18px}
+.b-prete{background:var(--menthe);color:#fff}
+.b-fin{background:transparent;color:#fff;border:2px solid var(--ligne)!important}
+.b-autre{background:transparent;color:var(--gris);border:2px solid var(--ligne)!important;font-size:15px!important;min-height:48px!important}
+</style>
+</head>
+<body>
+
+<!-- 1. Connexion -->
+<section class="connexion" id="ecran-connexion">
+  <h1>Écran cuisine</h1>
+  <p>Les commandes payées s'affichent ici avec une alarme. Laissez ce téléphone ou cette tablette sur le comptoir, branché.</p>
+  <label>Adresse de votre appli<input id="in-slug" autocapitalize="off" autocomplete="off" placeholder="Ex : pizzaflo"/></label>
+  <label>Mot de passe<input id="in-pwd" type="password" onkeydown="if(event.key==='Enter')seConnecter()"/></label>
+  <button class="gros" type="button" onclick="seConnecter()">Me connecter</button>
+  <div class="erreur" id="err-connexion" role="alert"></div>
+</section>
+
+<!-- 2. Démarrage (débloque le son et garde l'écran allumé) -->
+<section class="demarrage cache" id="ecran-demarrage">
+  <h1 id="nom-commerce">Prêt ?</h1>
+  <p>Touchez le bouton pour lancer le service : le son s'active et l'écran reste allumé.</p>
+  <button class="gros" type="button" onclick="demarrerService()">▶ Démarrer le service</button>
+  <button class="petit-btn" type="button" onclick="seDeconnecter()">Changer de compte</button>
+</section>
+
+<!-- 3. En service -->
+<section class="cache" id="ecran-service">
+  <div class="barre">
+    <h1 id="titre-service">Commandes</h1>
+    <span class="pastille" id="etat"><i></i><span id="etat-txt">En service</span></span>
+    <button class="petit-btn" type="button" onclick="bipAlarme()">🔊 Tester le son</button>
+    <button class="petit-btn" type="button" onclick="seDeconnecter()">Quitter</button>
+  </div>
+  <div class="alerte-veille cache" id="alerte-veille">⚠️ Cet appareil ne peut pas rester allumé tout seul. Réglez la mise en veille sur « Jamais » (iPhone : Réglages → Luminosité et affichage → Verrouillage automatique → Jamais) et laissez-le branché.</div>
+  <button class="alerte-son cache" id="alerte-son" type="button" onclick="reactiverSon()">🔇 Son coupé : touchez ici pour le réactiver</button>
+  <div class="colonnes">
+    <div class="colonne"><h2>🔔 Nouvelles <span class="compte" id="n-nouvelles">0</span></h2><div id="col-nouvelles"></div></div>
+    <div class="colonne"><h2>👨‍🍳 En préparation <span class="compte" id="n-cours">0</span></h2><div id="col-cours"></div></div>
+    <div class="colonne"><h2>✅ Prêtes <span class="compte" id="n-pretes">0</span></h2><div id="col-pretes"></div></div>
+  </div>
+</section>
+
+<script>
+var API = "https://philo-backend-by2c.onrender.com";
+var CLE = "philoCuisine";
+var SLUG = "", PWD = "", NOM = "";
+var timerPoll = null, timerAlarme = null, verrouEcran = null, ctxAudio = null;
+var dernierSucces = Date.now(), nbNouvelles = 0;
+
+function $(id){ return document.getElementById(id); }
+function montrer(id, oui){ $(id).classList.toggle("cache", !oui); }
+function el(tag, classe, texte){ var e = document.createElement(tag); if (classe) e.className = classe; if (texte != null) e.textContent = texte; return e; }
+function slugifier(s){ return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9_-]+/g, "").slice(0, 40); }
+function heure(iso){ return new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }).replace(":", " h "); }
+function prix(n){ return String(Number(n || 0).toFixed(2)).replace(".", ",").replace(",00", "") + " €"; }
+function ecran(nom){ ["ecran-connexion", "ecran-demarrage", "ecran-service"].forEach(function(id){ montrer(id, id === nom); }); }
+
+/* ===================== CONNEXION ===================== */
+function seConnecter() {
+  var slug = slugifier($("in-slug").value), pwd = $("in-pwd").value;
+  var err = $("err-connexion");
+  if (!slug || !pwd) { err.textContent = "Indiquez l'adresse de votre appli et votre mot de passe."; return; }
+  err.textContent = "Connexion...";
+  fetch(API + "/verify-client/config_" + slug, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: pwd }) })
+    .then(function(r){ return r.json(); })
+    .then(function(v){
+      if (!v || !v.ok) { err.textContent = (v && v.error) || "Adresse ou mot de passe incorrect."; return; }
+      SLUG = slug; PWD = pwd;
+      try { localStorage.setItem(CLE, JSON.stringify({ slug: slug, pwd: pwd })); } catch(e){}
+      err.textContent = "";
+      preparerDemarrage();
+    }).catch(function(){ err.textContent = "Connexion impossible. Vérifiez internet."; });
+}
+function seDeconnecter() {
+  arreterService();
+  try { localStorage.removeItem(CLE); } catch(e){}
+  SLUG = ""; PWD = ""; $("in-pwd").value = "";
+  ecran("ecran-connexion");
+}
+function preparerDemarrage() {
+  ecran("ecran-demarrage");
+  $("nom-commerce").textContent = "Prêt ?";
+  fetch(API + "/memory/config_" + SLUG + "?leger=1").then(function(r){ return r.json(); }).then(function(d){
+    NOM = (d && d.value && d.value.nom) || SLUG;
+    $("nom-commerce").textContent = NOM;
+    $("titre-service").textContent = NOM;
+    document.title = "Cuisine · " + NOM;
+  }).catch(function(){});
+}
+
+/* ===================== SON ===================== */
+function audio() {
+  if (!ctxAudio) { try { ctxAudio = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } }
+  if (ctxAudio.state === "suspended") ctxAudio.resume().catch(function(){});
+  return ctxAudio;
+}
+function bipAlarme() {
+  var ctx = audio(); if (!ctx) return;
+  var t0 = ctx.currentTime + 0.02;
+  [0, 0.22, 0.44].forEach(function(dt, i){
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "square"; o.frequency.value = i === 2 ? 1320 : 990;
+    g.gain.setValueAtTime(0.0001, t0 + dt);
+    g.gain.exponentialRampToValueAtTime(0.5, t0 + dt + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + 0.18);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0 + dt); o.stop(t0 + dt + 0.2);
+  });
+  if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+}
+function reactiverSon() { audio(); bipAlarme(); verifierSon(); }
+function verifierSon() { montrer("alerte-son", !!ctxAudio && ctxAudio.state !== "running"); }
+/* L'alarme sonne tant qu'une commande n'a pas reçu d'heure */
+function majAlarme() {
+  if (nbNouvelles > 0 && !timerAlarme) { bipAlarme(); timerAlarme = setInterval(bipAlarme, 2500); }
+  if (nbNouvelles === 0 && timerAlarme) { clearInterval(timerAlarme); timerAlarme = null; }
+}
+
+/* ===================== ÉCRAN TOUJOURS ALLUMÉ ===================== */
+function garderEcranAllume() {
+  if (!("wakeLock" in navigator)) { montrer("alerte-veille", true); return; }
+  navigator.wakeLock.request("screen").then(function(v){
+    verrouEcran = v; montrer("alerte-veille", false);
+    v.addEventListener("release", function(){ verrouEcran = null; });
+  }).catch(function(){ montrer("alerte-veille", true); });
+}
+document.addEventListener("visibilitychange", function(){
+  if (document.visibilityState === "visible" && SLUG && timerPoll) { if (!verrouEcran) garderEcranAllume(); charger(); verifierSon(); }
+});
+/* Sur iPhone, un simple toucher suffit à réveiller le son s'il a été coupé */
+document.addEventListener("touchend", function(){ if (ctxAudio && ctxAudio.state !== "running") { ctxAudio.resume().then(verifierSon).catch(function(){}); } }, { passive: true });
+
+/* ===================== SERVICE ===================== */
+function demarrerService() {
+  audio(); bipAlarme();
+  garderEcranAllume();
+  ecran("ecran-service");
+  charger();
+  clearInterval(timerPoll); timerPoll = setInterval(charger, 8000);
+  setInterval(majEtat, 5000);
+}
+function arreterService() {
+  clearInterval(timerPoll); timerPoll = null;
+  clearInterval(timerAlarme); timerAlarme = null;
+  if (verrouEcran) { verrouEcran.release().catch(function(){}); verrouEcran = null; }
+}
+function majEtat() {
+  var ecart = Math.round((Date.now() - dernierSucces) / 1000);
+  var ok = ecart < 40;
+  $("etat").classList.toggle("ko", !ok);
+  $("etat-txt").textContent = ok ? "En service" : "Connexion perdue depuis " + ecart + " s";
+  verifierSon();
+}
+function charger() {
+  if (!SLUG) return;
+  fetch(API + "/commandes/" + encodeURIComponent(SLUG), { headers: { "x-client-password": PWD } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.ok) {
+        if (d && /mot de passe/i.test(d.error || "")) { seDeconnecter(); $("err-connexion").textContent = "Mot de passe modifié : reconnectez-vous."; }
+        return;
+      }
+      dernierSucces = Date.now(); majEtat();
+      afficher(d.commandes || []);
+    }).catch(function(){ majEtat(); });
+}
+function envoyer(chemin, corps) {
+  return fetch(API + "/commandes/" + encodeURIComponent(SLUG) + "/" + chemin, {
+    method: "POST", headers: { "Content-Type": "application/json", "x-client-password": PWD }, body: JSON.stringify(corps)
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok) alert((d && d.error) || "Action impossible, réessayez.");
+    charger();
+  }).catch(function(){ alert("Connexion impossible, réessayez."); });
+}
+function donnerDelai(id, minutes) { envoyer(encodeURIComponent(id) + "/delai", { minutes: minutes }); }
+function changerStatut(id, statut) { envoyer(encodeURIComponent(id) + "/statut", { statut: statut }); }
+
+/* ===================== AFFICHAGE ===================== */
+function afficher(liste) {
+  var limite = Date.now() - 24 * 3600000; // on ignore les commandes de plus de 24 h
+  var recentes = liste.filter(function(c){ return c.statut !== "terminee" && new Date(c.date).getTime() > limite; });
+  var nouvelles = recentes.filter(function(c){ return c.statut === "nouvelle"; });
+  var cours = recentes.filter(function(c){ return c.statut === "en_cours"; });
+  var pretes = recentes.filter(function(c){ return c.statut === "prete"; });
+  // Les plus anciennes en premier : on sert dans l'ordre
+  [nouvelles, cours, pretes].forEach(function(l){ l.sort(function(a, b){ return new Date(a.date) - new Date(b.date); }); });
+  remplir("col-nouvelles", nouvelles, "Aucune nouvelle commande.");
+  remplir("col-cours", cours, "Rien en préparation.");
+  remplir("col-pretes", pretes, "Aucune commande prête.");
+  $("n-nouvelles").textContent = nouvelles.length; $("n-cours").textContent = cours.length; $("n-pretes").textContent = pretes.length;
+  nbNouvelles = nouvelles.length;
+  document.title = (nbNouvelles ? "(" + nbNouvelles + ") " : "") + "Cuisine · " + (NOM || SLUG);
+  majAlarme();
+}
+function remplir(id, liste, vide) {
+  var z = $(id); z.innerHTML = "";
+  if (!liste.length) { z.appendChild(el("div", "vide", vide)); return; }
+  liste.forEach(function(c){ z.appendChild(carte(c)); });
+}
+function carte(c) {
+  var k = el("div", "commande" + (c.statut === "nouvelle" ? " nouvelle" : ""));
+  var haut = el("div", "c-haut");
+  haut.appendChild(el("div", "c-num", "N° " + c.numero));
+  haut.appendChild(el("div", "c-total", prix(c.total)));
+  k.appendChild(haut);
+  var infos = el("div", "c-infos");
+  if (c.mode) infos.appendChild(el("span", "mode" + (/livraison/i.test(c.mode) ? " livraison" : ""), c.mode));
+  infos.appendChild(document.createTextNode("Payée à " + heure(c.date)));
+  k.appendChild(infos);
+
+  var ul = el("ul", "articles");
+  (c.articles || []).forEach(function(a){ var li = el("li"); li.appendChild(el("b", null, a.qty + " ×")); li.appendChild(document.createTextNode(a.nom)); ul.appendChild(li); });
+  k.appendChild(ul);
+
+  var cl = c.client || {};
+  if (cl.nom || cl.tel) {
+    var ligne = el("div", "client", "Client : " + (cl.nom || ""));
+    if (cl.tel) { ligne.appendChild(document.createTextNode(" · ")); var t = el("a", null, cl.tel); t.href = "tel:" + cl.tel.replace(/[^0-9+]/g, ""); ligne.appendChild(t); }
+    k.appendChild(ligne);
+  }
+  if (c.livraison) {
+    var l = c.livraison;
+    k.appendChild(el("div", "adresse", "🛵 " + [l.nom, l.adresse, ((l.codePostal || "") + " " + (l.ville || "")).trim()].filter(Boolean).join(", ")));
+  }
+
+  if (c.statut === "nouvelle") {
+    var g = el("div", "delais");
+    [15, 20, 30, 45].forEach(function(m){
+      var b = el("button"); b.type = "button";
+      b.appendChild(document.createTextNode(m)); b.appendChild(el("small", null, "min"));
+      b.setAttribute("aria-label", "Prête dans " + m + " minutes");
+      b.onclick = function(){ b.disabled = true; donnerDelai(c.id, m); };
+      g.appendChild(b);
+    });
+    k.appendChild(el("div", "c-infos", "Prête dans combien de temps ? Le client est prévenu."));
+    k.appendChild(g);
+    var autre = el("div", "actions");
+    var ba = el("button", "b-autre", "Autre délai"); ba.type = "button";
+    ba.onclick = function(){ var m = parseInt(prompt("Prête dans combien de minutes ?", "60"), 10); if (m >= 5 && m <= 180) donnerDelai(c.id, m); };
+    autre.appendChild(ba); k.appendChild(autre);
+  } else if (c.statut === "en_cours") {
+    if (c.pretVers) k.appendChild(el("div", "pret-vers", "⏱️ Annoncée pour " + heure(c.pretVers)));
+    var a1 = el("div", "actions");
+    var bp = el("button", "b-prete", /livraison/i.test(c.mode || "") ? "🛵 Partie en livraison" : "✅ Prête"); bp.type = "button";
+    bp.onclick = function(){ bp.disabled = true; changerStatut(c.id, "prete"); };
+    a1.appendChild(bp); k.appendChild(a1);
+  } else if (c.statut === "prete") {
+    var a2 = el("div", "actions");
+    var bf = el("button", "b-fin", "Terminée (remise au client)"); bf.type = "button";
+    bf.onclick = function(){ bf.disabled = true; changerStatut(c.id, "terminee"); };
+    a2.appendChild(bf); k.appendChild(a2);
+  }
+  return k;
+}
+
+/* ===================== DÉMARRAGE DE LA PAGE ===================== */
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  if (p.get("client")) $("in-slug").value = slugifier(p.get("client"));
+  var memo = null; try { memo = JSON.parse(localStorage.getItem(CLE) || "null"); } catch(e){}
+  if (memo && memo.slug && memo.pwd && (!p.get("client") || slugifier(p.get("client")) === memo.slug)) {
+    SLUG = memo.slug; PWD = memo.pwd; preparerDemarrage();
+  } else ecran("ecran-connexion");
+})();
+</script>
+</body>
+</html>
