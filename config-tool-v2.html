@@ -314,7 +314,7 @@ label.mini input,label.mini textarea{font-weight:500}
       <div class="champ"><label for="cf-icone">Icône si pas de logo</label><input id="cf-icone" type="text" placeholder="🍕" oninput="majApercu()"/></div>
       <div class="champ"><label for="cf-whatsapp">Votre WhatsApp</label><input id="cf-whatsapp" type="tel" placeholder="33612345678"/></div>
     </div>
-    <div class="champ"><label for="cf-email">Votre email</label><input id="cf-email" type="email" placeholder="contact@exemple.fr"/><small>Pour vous envoyer les infos importantes.</small></div>
+    <div class="champ"><label for="cf-email">Votre email</label><input id="cf-email" type="email" placeholder="contact@exemple.fr"/><small>Vous y recevrez une alerte à chaque commande payée.</small></div>
     <div class="champ"><label for="cf-domaine-souhaite">Nom de domaine souhaité (offert)</label><input id="cf-domaine-souhaite" type="text" inputmode="url" autocapitalize="off" placeholder="Ex : pizzaflo.fr" oninput="verifierDomaine()"/><small id="domaine-info">Facultatif. On vérifie qu'il est libre et on s'en occupe.</small></div>
     <div class="champ"><label for="cf-admin-password">Mot de passe de votre espace</label><input id="cf-admin-password" type="password" placeholder="Pour modifier votre appli vous-même"/></div>
   </section>
@@ -483,7 +483,8 @@ label.mini input,label.mini textarea{font-weight:500}
   <div id="ad-content" class="cache">
     <div class="carte cache" id="ad-bloc-commandes">
       <h3>Commandes payées</h3>
-      <p style="color:var(--gris);font-size:14px;margin-bottom:12px">Mise à jour toutes les 20 secondes, avec un bip à chaque nouvelle commande.</p>
+      <a class="btn btn-accent btn-plein" id="ad-lien-cuisine" target="_blank" rel="noopener" style="margin-bottom:10px">🔔 Ouvrir l'écran cuisine</a>
+      <p style="color:var(--gris);font-size:14px;margin-bottom:12px">À laisser ouvert sur un téléphone ou une tablette posé sur le comptoir : alarme à chaque commande, et vous indiquez l'heure de retrait au client. Vous recevez aussi un e-mail à chaque commande.</p>
       <div id="ad-commandes-liste"></div>
     </div>
     <div class="carte cache" id="ad-bloc-paiement">
@@ -1676,7 +1677,7 @@ function connecterStripe() {
     .then(function(d){ if (d && d.ok && d.url) { window.location.href = d.url; return; } $("ad-stripe-statut").textContent = (d && d.error) || "Connexion Stripe impossible."; btn.disabled = false; btn.textContent = "Réessayer"; })
     .catch(function(){ $("ad-stripe-statut").textContent = "Connexion impossible."; btn.disabled = false; btn.textContent = "Réessayer"; });
 }
-function demarrerCommandes() { montrer("ad-bloc-commandes", true); chargerCommandes(); clearInterval(timerCommandes); timerCommandes = setInterval(chargerCommandes, 20000); }
+function demarrerCommandes() { $("ad-lien-cuisine").href = "cuisine.html?client=" + encodeURIComponent(SLUG_CLIENT_ACTUEL); montrer("ad-bloc-commandes", true); chargerCommandes(); clearInterval(timerCommandes); timerCommandes = setInterval(chargerCommandes, 20000); }
 function bip() {
   try { var ctx = new (window.AudioContext || window.webkitAudioContext)();
     [0, .25].forEach(function(t){ var o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value = 880; g.gain.value = .25; o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + .18); });
@@ -1702,7 +1703,7 @@ function chargerCommandes() {
       if (inf) k.appendChild(el2("div", "Client : " + inf, "font-size:14px;color:var(--gris);margin-top:6px"));
       if (c.livraison) { var l = c.livraison; k.appendChild(el2("div", "Livraison : " + [l.nom, l.adresse, (l.codePostal + " " + l.ville).trim(), l.pays].filter(Boolean).join(", "), "font-size:14px;margin-top:4px")); }
       var a = el2("div", null, "display:flex;gap:8px;margin-top:10px");
-      if (neuve) { var b1 = el2("button", "Prête", "flex:1;min-height:44px;border-radius:12px;border:none;background:var(--encre);color:#fff;font-weight:700;cursor:pointer"); b1.onclick = function(){ changerStatutCommande(c.id, "prete"); }; a.appendChild(b1); }
+      if (c.statut === "nouvelle" || c.statut === "en_cours") { var b1 = el2("button", "Prête", "flex:1;min-height:44px;border-radius:12px;border:none;background:var(--encre);color:#fff;font-weight:700;cursor:pointer"); b1.onclick = function(){ changerStatutCommande(c.id, "prete"); }; a.appendChild(b1); }
       var b2 = el2("button", "Terminée", "flex:1;min-height:44px;border-radius:12px;border:2px solid var(--encre);background:#fff;font-weight:700;cursor:pointer"); b2.onclick = function(){ changerStatutCommande(c.id, "terminee"); }; a.appendChild(b2);
       k.appendChild(a); z.appendChild(k);
     });
