@@ -848,11 +848,10 @@ function envoyerCommandePanier() {
 
 /* =====================================================================
    INTERRUPTEUR DU PAIEMENT EN LIGNE
-   false = Stripe encore en mode test : les visiteurs voient « bientôt disponible ».
-   Toi, tu peux tester : ouvre une fois la page avec ?test=1 à la fin de l'adresse
-   (ou déverrouille ton Espace Philomène). Passe à true quand Stripe est en mode réel.
+   true = Stripe est en mode réel : le paiement par carte est ouvert à tous.
+   (false = caché aux visiteurs ; ?test=1 à la fin de l'adresse le montre quand même.)
    ===================================================================== */
-var PAIEMENT_OUVERT = false;
+var PAIEMENT_OUVERT = true;
 function paiementPermis() {
   if (PAIEMENT_OUVERT) return true;
   try {
