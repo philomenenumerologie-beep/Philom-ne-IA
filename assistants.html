@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Assistants clients · Philomène IA</title>
+<style>
+:root{--bg:#F6F0E6;--card:#fff;--ink:#181514;--soft:#5E554C;--line:#DCCFBB;--ok:#1E7A46;--err:#9C3D21;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,"Helvetica Neue",Arial,sans-serif}
+main{max-width:640px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right)) 60px max(16px,env(safe-area-inset-left));display:grid;gap:18px}
+h1{font-size:1.5rem;margin:0}
+h2{font-size:1.1rem;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px}
+label{display:grid;gap:6px;font-weight:600;font-size:.95rem}
+small{font-weight:400;color:var(--soft)}
+input,textarea{font:16px/1.4 inherit;font-family:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:260px;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+button{font:600 .95rem inherit;font-family:inherit;border:0;border-radius:999px;padding:11px 18px;background:var(--ink);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.msg{padding:10px 12px;border-radius:8px;font-size:.92rem;white-space:pre-wrap}
+.msg.ok{background:#E6F4EC;color:var(--ok)}
+.msg.err{background:#FBEDE6;color:var(--err)}
+.muted{color:var(--soft);font-size:.9rem}
+code{background:#EEE5D6;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Assistants clients</h1>
+  <p class="muted">Ajouter ou modifier l'assistant IA d'un client, sans toucher au serveur. Le site du client appelle <code>/assistant/nom-du-client</code>.</p>
+
+  <div class="card">
+    <label for="token">Jeton admin <small>(ADMIN_TOKEN de Render, jamais enregistré dans cette page)</small><input id="token" type="password" autocomplete="off"></label>
+    <label for="client">Nom du client <small>(minuscules, sans espace ni accent : ex. dupont, jodeco)</small><input id="client" autocapitalize="off" autocomplete="off" placeholder="dupont"></label>
+    <div class="row"><button class="ghost" type="button" id="charger">Charger ses instructions</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Instructions de l'assistant</h2>
+    <label for="prompt">Ce que l'assistant doit savoir et comment il doit répondre<textarea id="prompt" placeholder="Tu es l'assistant de Dupont Plomberie, à Tourcoing. Réponds en français, chaleureux et court, sans markdown. Horaires : … Prix : … Contact : …"></textarea></label>
+    <div class="row"><button type="button" id="enregistrer">Enregistrer</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Protéger ses données</h2>
+    <p class="muted">Bloque la modification de toutes ses clés (<code>nom_…</code>) sans le jeton admin. Son site peut toujours les lire.</p>
+    <div class="row"><button class="ghost" type="button" id="proteger">Protéger ce client</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Tester</h2>
+    <label for="question">Question de test<input id="question" placeholder="Quels sont vos horaires ?"></label>
+    <div class="row"><button class="ghost" type="button" id="tester">Envoyer</button></div>
+  </div>
+
+  <div id="out" class="msg" hidden></div>
+</main>
+<script>
+const API = "https://philo-backend-by2c.onrender.com";
+const $ = (id) => document.getElementById(id);
+function info(t, ok) { const o = $("out"); o.hidden = false; o.className = "msg " + (ok ? "ok" : "err"); o.textContent = t; o.scrollIntoView({ block: "nearest" }); }
+function client() { const c = $("client").value.trim().toLowerCase(); if (!/^[a-z0-9_-]{1,40}$/.test(c)) { info("Nom du client invalide : minuscules, chiffres, - ou _ seulement.", false); return null; } return c; }
+function token() { const t = $("token").value.trim(); if (!t) { info("Tape d'abord ton jeton admin.", false); return null; } return t; }
+
+$("charger").onclick = async () => {
+  const c = client(), t = token(); if (!c || !t) return;
+  try {
+    const r = await fetch(API + "/memory/prompt_" + c, { headers: { "x-admin-token": t } });
+    if (r.status === 403) return info("Jeton refusé.", false);
+    const j = await r.json();
+    $("prompt").value = j.value || "";
+    info(j.value ? "Instructions chargées." : "Aucune instruction pour ce client : écris-les puis Enregistrer.", true);
+  } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
+};
+
+$("enregistrer").onclick = async () => {
+  const c = client(), t = token(); if (!c || !t) return;
+  const p = $("prompt").value.trim();
+  if (p.length < 20) return info("Les instructions sont trop courtes.", false);
+  try {
+    const r = await fetch(API + "/memory/prompt_" + c, { method: "POST", headers: { "Content-Type": "application/json", "x-admin-token": t }, body: JSON.stringify({ value: p }) });
+    if (r.status === 403) return info("Jeton refusé.", false);
+    if (!r.ok) return info("Erreur à l'enregistrement.", false);
+    info("Enregistré ✅ L'assistant de « " + c + " » utilise ces instructions dès maintenant.", true);
+  } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
+};
+
+$("proteger").onclick = async () => {
+  const c = client(), t = token(); if (!c || !t) return;
+  try {
+    const r0 = await fetch(API + "/memory/prefixes_proteges");
+    const liste = ((await r0.json()).value || []).filter((x) => typeof x === "string");
+    const p = c + "_";
+    if (liste.includes(p)) return info("« " + c + " » est déjà protégé.", true);
+    liste.push(p);
+    const r = await fetch(API + "/memory/prefixes_proteges", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-token": t }, body: JSON.stringify({ value: liste }) });
+    if (r.status === 403) return info("Jeton refusé.", false);
+    info("Protégé ✅ Clients protégés : " + liste.map((x) => x.slice(0, -1)).join(", "), true);
+  } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
+};
+
+$("tester").onclick = async () => {
+  const c = client(); if (!c) return;
+  const q = $("question").value.trim() || "Bonjour, que pouvez-vous me dire sur vous ?";
+  info("L'assistant réfléchit…", true);
+  try {
+    const r = await fetch(API + "/assistant/" + c, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: q, userId: "test-admin-" + Date.now() }) });
+    const j = await r.json();
+    info((r.ok ? "Réponse :\n" : "Problème :\n") + (j.answer || j.error || "Pas de réponse."), r.ok);
+  } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
+};
+</script>
+</body>
+</html>
