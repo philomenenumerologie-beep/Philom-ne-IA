@@ -25,6 +25,12 @@ button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--in
 .msg.err{background:#FBEDE6;color:var(--err)}
 .muted{color:var(--soft);font-size:.9rem}
 code{background:#EEE5D6;padding:1px 5px;border-radius:4px}
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.ph{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;display:grid}
+.ph img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#EEE5D6}
+.ph div{padding:8px;display:grid;gap:6px;font-size:.85rem}
+.ph b{font-weight:600}
+.ph button{padding:8px 10px;font-size:.85rem;background:var(--err)}
 </style>
 </head>
 <body>
@@ -54,6 +60,13 @@ code{background:#EEE5D6;padding:1px 5px;border-radius:4px}
     <h2>Tester</h2>
     <label for="question">Question de test<input id="question" placeholder="Quels sont vos horaires ?"></label>
     <div class="row"><button class="ghost" type="button" id="tester">Envoyer</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Photos du site</h2>
+    <p class="muted">Les photos envoyées au bot Telegram. 🗑 supprime la photo du site et du serveur.</p>
+    <div class="row"><button class="ghost" type="button" id="photos">Voir ses photos</button></div>
+    <div id="grille" class="grille"></div>
   </div>
 
   <div id="out" class="msg" hidden></div>
@@ -101,6 +114,39 @@ $("proteger").onclick = async () => {
     info("Protégé ✅ Clients protégés : " + liste.map((x) => x.slice(0, -1)).join(", "), true);
   } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
 };
+
+async function chargerPhotos() {
+  const c = client(); if (!c) return;
+  const g = $("grille"); g.textContent = "";
+  try {
+    const r = await fetch(API + "/memory/" + c + "_galerie");
+    const liste = ((await r.json()).value || []).filter((p) => p && p.id && /^\/photos\//.test(String(p.src || "")));
+    if (!liste.length) return info("Aucune photo pour « " + c + " ».", true);
+    liste.forEach((p) => {
+      const carte = document.createElement("div"); carte.className = "ph";
+      const img = document.createElement("img"); img.src = API + p.src; img.loading = "lazy"; img.alt = "";
+      const bas = document.createElement("div");
+      const t = document.createElement("b"); t.textContent = p.categorie || "Dernières réalisations";
+      const l = document.createElement("span"); l.textContent = p.legende || "—";
+      const b = document.createElement("button"); b.type = "button"; b.textContent = "🗑 Supprimer";
+      b.onclick = () => supprimerPhoto(c, p.id, carte);
+      bas.append(t, l, b); carte.append(img, bas); g.appendChild(carte);
+    });
+    info(liste.length + " photo(s).", true);
+  } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
+}
+async function supprimerPhoto(c, id, carte) {
+  const t = token(); if (!t) return;
+  if (!confirm("Supprimer cette photo du site ?")) return;
+  try {
+    const r = await fetch(API + "/photos/" + c + "/" + encodeURIComponent(id), { method: "DELETE", headers: { "x-admin-token": t } });
+    if (r.status === 403) return info("Jeton refusé.", false);
+    if (!r.ok) return info("Impossible de supprimer cette photo.", false);
+    carte.remove();
+    info("Photo supprimée ✅", true);
+  } catch (e) { info("Serveur injoignable. Réessaie dans un instant.", false); }
+}
+$("photos").onclick = chargerPhotos;
 
 $("tester").onclick = async () => {
   const c = client(); if (!c) return;
