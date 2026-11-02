@@ -766,9 +766,12 @@ function premiersLundis(n){
 const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function renderCal(){
   const today=new Date();today.setHours(0,0,0,0);
-  const soirees=EVENEMENTS.map(e=>({...e,d:new Date(e.date+"T00:00")})).filter(e=>e.d>=today).sort((a,b)=>a.d-b.d);
-  const items=soirees.map(e=>({d:e.d,kind:"Soirée",titre:e.titre,texte:[e.heure,e.texte].filter(Boolean).join(" · ")}));
-  premiersLundis(2).forEach(d=>items.push({d,kind:"Retouches",titre:"Retouches sans rendez-vous",texte:"De 10h à 18h, pour les tatouages de moins d'un an."}));
+  const evs=EVENEMENTS.filter(e=>e&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)).map(e=>({...e,d:new Date(e.date+"T00:00"),retouche:/retouche/i.test(String(e.type||"")+" "+String(e.titre||""))})).filter(e=>e.d>=today).sort((a,b)=>a.d-b.d);
+  const soirees=evs.filter(e=>!e.retouche);
+  const items=evs.map(e=>({d:e.d,kind:e.retouche?"Retouches":"Soirée",titre:e.titre||(e.retouche?"Retouches sans rendez-vous":"Soirée Flash"),texte:[e.heure,e.texte].filter(Boolean).join(" · ")}));
+  const datesRetouches=new Set(evs.filter(e=>e.retouche).map(e=>e.date));
+  const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  premiersLundis(2).filter(d=>!datesRetouches.has(iso(d))).forEach(d=>items.push({d,kind:"Retouches",titre:"Retouches sans rendez-vous",texte:"De 10h à 18h, pour les tatouages de moins d'un an."}));
   items.sort((a,b)=>a.d-b.d);
   const cal=document.getElementById("cal");
   cal.innerHTML=items.map(i=>`<div class="ev"><div class="date"><b>${i.d.getDate()}</b><span>${MOIS[i.d.getMonth()]}</span></div><div><span class="kind">${esc(i.kind)}</span><h4>${esc(i.titre)}</h4><p>${esc(i.texte)}</p></div></div>`).join("");
