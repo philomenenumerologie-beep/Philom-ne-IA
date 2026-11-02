@@ -791,6 +791,30 @@ fetch(API+"/memory/maka_flashs").then(r=>r.json()).then(d=>{
     c.innerHTML=(f.image?`<img src="${esc(f.image)}" alt="">`:`<div class="fl-ico">🖤</div>`)+`<span><b>${esc(f.nom)}</b><em>${esc(f.prix)}</em></span>`;
     c.onclick=()=>openFlash(f);grid.appendChild(c)});
 }).catch(()=>{});
+/* --- Photos envoyées par Marie au bot Telegram (rangées sur le serveur, clé maka_galerie) --- */
+const CATS_PHOTOS=[["c-fine",/fine|petit|minimal|floral|fleur|lettr/],["c-freehand",/free|main lev/],["c-covers",/cover|rattrap|recouvr/],["c-realisme",/r[ée]alis|portrait|anima/],["c-patchwork",/patch/]];
+function afficherPhotos(list){
+  const vue=document.getElementById("v-tatouage");if(!vue)return;
+  list.slice().reverse().forEach(p=>{
+    if(!p||!/^\/photos\/[a-z0-9_-]+\/[a-z0-9]+\.(jpg|png|webp)$/.test(String(p.src||"")))return;
+    const cat=String(p.categorie||"").toLowerCase();
+    const trouve=CATS_PHOTOS.find(c=>c[1].test(cat));
+    let bloc=trouve&&document.getElementById(trouve[0]);
+    if(!bloc){
+      bloc=document.getElementById("c-new");
+      if(!bloc){bloc=document.createElement("div");bloc.className="cat";bloc.id="c-new";
+        bloc.innerHTML='<div class="cat-head"><h3>Dernières réalisations</h3></div>';
+        vue.querySelector(".page-head").after(bloc)}
+    }
+    let gal=bloc.querySelector(".gallery");
+    if(!gal){gal=document.createElement("div");gal.className="gallery";bloc.querySelector(".cat-head").after(gal)}
+    const fig=document.createElement("figure"),img=document.createElement("img");
+    img.src=API+p.src;img.loading="lazy";img.alt=p.legende||"Réalisation MAKA TATTOO";fig.appendChild(img);
+    if(p.legende){const cap=document.createElement("figcaption"),b=document.createElement("b");b.textContent=p.legende;cap.appendChild(b);fig.appendChild(cap)}
+    gal.prepend(fig);
+  });
+}
+fetch(API+"/memory/maka_galerie").then(r=>r.json()).then(d=>{const l=d&&d.value;if(Array.isArray(l)&&l.length)afficherPhotos(l)}).catch(()=>{});
 const flm=document.getElementById("flmodal");
 function openFlash(f){
   document.getElementById("fl-img").innerHTML=f.image?`<img src="${esc(f.image)}" alt="">`:"";
