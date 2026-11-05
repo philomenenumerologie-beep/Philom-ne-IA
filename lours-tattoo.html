@@ -162,7 +162,15 @@ footer a{color:var(--soft)}
 .chat form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);margin:0;background:var(--bg)}
 .chat input{flex:1;min-width:0}
 .chat form button{border:0;border-radius:10px;background:var(--vert);color:#121114;padding:0 16px;font:600 .9rem var(--body);cursor:pointer}
-.wa-btn{display:block;margin-top:10px;width:100%;border:0;border-radius:10px;padding:11px;background:#25D366;color:#0B2A14;font:600 .9rem var(--body);cursor:pointer}
+.recapbox{display:grid;gap:6px;white-space:normal;max-width:92%}
+.recapbox b{font-family:var(--display);font-size:1.25rem;letter-spacing:.04em;font-weight:400;color:var(--vert)}
+.recapbox .rl{display:grid;grid-template-columns:110px 1fr;gap:8px;font-size:.9rem;border-top:1px solid var(--line);padding-top:6px}
+.recapbox .rl span:first-child{color:var(--soft)}
+.recapbox .rl span:last-child{overflow-wrap:anywhere}
+.ok-btn{margin-top:8px;width:100%;min-height:48px;border:0;border-radius:10px;padding:11px;background:var(--vert);color:#121114;font:600 .95rem var(--body);cursor:pointer}
+.ok-btn[disabled]{opacity:.6}
+.recapbox .st{font-size:.88rem;color:var(--soft)}
+.recapbox .st:empty{display:none}
 
 @media (max-width:760px){
   .chat{top:0;left:0;right:0;bottom:auto;width:auto;height:var(--vvh,100dvh);border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px)}
@@ -406,7 +414,7 @@ footer a{color:var(--soft)}
   <div class="contact-list">
     <a href="tel:+32473641544"><span>Téléphone</span><span>0473 64 15 44</span></a>
     <a href="https://wa.me/32473641544" target="_blank" rel="noopener"><span>WhatsApp</span><span>0473 64 15 44</span></a>
-    <a href="#" id="fb-link" target="_blank" rel="noopener"><span>Facebook</span><span>Tatoueur Lours Bear</span></a>
+    <a href="#" id="fb-link" target="_blank" rel="noopener"><span>Facebook</span><span>Tatoueur L'ours Bear</span></a>
   </div>
   <div class="sub">
     <h3>Horaires</h3>
@@ -469,7 +477,7 @@ footer a{color:var(--soft)}
 const CLIENT = "lours";                 // nom du client sur le serveur (prompt_lours, lours_galerie, lours_config)
 const WHATSAPP = "32473641544";         // WhatsApp de L'Ours
 const FACEBOOK_URL = "https://www.facebook.com/share/1KikeTEsiu/";                // lien de la page Facebook « Tatoueur Lours Bear » (à coller)
-const RESA_URL = "";                    // webhook n8n des réservations (ex. https://philomeneia.app.n8n.cloud/webhook/lours-resa), vide = envoi par WhatsApp
+const RESA_URL = "https://philomeneia.app.n8n.cloud/webhook/lours-resa"; // webhook n8n des réservations (Sheet + Telegram + mail), pour le formulaire ET l'assistant
 const EVENTS_URL = "";                  // webhook n8n qui renvoie l'agenda (ex. https://philomeneia.app.n8n.cloud/webhook/lours-events)
 const API = "https://philo-backend-by2c.onrender.com"; // ton serveur : assistant IA, galerie, bannière
 /* ===================== */
@@ -560,37 +568,96 @@ function setQuick(list){quick.innerHTML="";list.forEach(q=>{const b=document.cre
 const QUICK=["J'ai un projet de tatouage","Reprendre un vieux tatouage","Les prix","Les soins","Préparer ma séance","Adresse"];
 function hello(){addBot("Salut et bienvenue chez L'Ours Tattoo ! Je suis l'assistant du salon. Pose-moi tes questions, ou raconte-moi ton projet : je le transmets à L'Ours.");setQuick(QUICK)}
 
-/* Réponses de secours si le serveur ne répond pas */
+/* ===== Demande de projet : questions une par une, récapitulatif, confirmation, envoi au webhook ===== */
+const ETAPES=[
+  ["idee","Décris-moi ton idée : le style, les éléments, tes inspirations."],
+  ["zone","À quel endroit du corps ?"],
+  ["taille","Quelle taille à peu près ? (petit, moyen, grand, ou en cm)"],
+  ["histoire","Ce tatouage a une histoire ou un sens pour toi ? Raconte si tu veux, sinon écris « non »."],
+  ["disponibilites","Quelles sont tes disponibilités ? (jours, moments de la journée)"],
+  ["nom","C'est noté ! Ton prénom et ton nom ?"],
+  ["whatsapp","Ton numéro WhatsApp, pour que L'Ours puisse te répondre ?"],
+  ["email","Et ton adresse mail ? Tu y recevras la confirmation."]
+];
+const CHAMPS=["nom","whatsapp","email","prestation","zone","taille","disponibilites","idee","histoire"];
+const LABELS={prestation:"Demande",idee:"Idée",zone:"Emplacement",taille:"Taille",histoire:"Histoire",disponibilites:"Disponibilités",nom:"Nom",whatsapp:"WhatsApp",email:"Mail"};
+const telOk=v=>String(v||"").replace(/\D/g,"").length>=8;
+const mailOk=v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v||"").trim());
+const nomOk=v=>String(v||"").trim().length>=2;
 let lead=null;
+function startLead(prestation,intro){lead={i:0,data:{prestation}};return intro+"\n\n"+ETAPES[0][1]}
+function stepLead(q){
+  const k=ETAPES[lead.i][0];
+  if(k==="nom"&&!nomOk(q))return "Je n'ai pas bien compris. Ton prénom et ton nom ?";
+  if(k==="whatsapp"&&!telOk(q))return "Hmm, ce numéro me paraît incomplet. Tu peux me le redonner, avec l'indicatif (+32 ou +33) ?";
+  if(k==="email"&&!mailOk(q))return "Cette adresse mail ne me semble pas valide. Tu peux la retaper ?";
+  lead.data[k]=(k==="histoire"&&/^\s*non\s*[.!]?\s*$/i.test(q))?"":q.trim();
+  lead.i++;
+  if(lead.i<ETAPES.length)return ETAPES[lead.i][1];
+  const d=lead.data;lead=null;
+  return {recap:d,texte:`Merci ${d.nom} ! Vérifie ta demande ci-dessous, puis confirme pour l'envoyer à L'Ours.`};
+}
+/* Réponses de secours si le serveur ne répond pas */
 function local(q){
   const s=q.toLowerCase();
-  if(lead){
-    if(lead.step===1){lead.step=2;return "Top ! Ce tatouage a une histoire ou un sens particulier pour toi ? Si tu veux, raconte-moi. Sinon, écris simplement « non »."}
-    if(lead.step===2){lead.step=3;return "Merci. C'est quoi ton prénom ?"}
-    if(lead.step===3){lead.nom=q;lead.step=4;return "Et ton numéro WhatsApp, pour que L'Ours puisse te répondre ?"}
-    if(lead.step===4){const n=lead.nom;lead=null;return `C'est noté, ${n} ! Appuie sur le bouton vert juste en dessous pour envoyer ton projet à L'Ours sur WhatsApp.`}
-  }
-  if(/reprend|reprise|ancien|vieux|cover|recouvr|rattrap/.test(s)){lead={step:1};return "L'Ours regarde ton tatouage avec toi et te dit franchement ce qui est possible : le retravailler, le recouvrir, ou parfois le laisser. Décris-moi le tatouage actuel et ce que tu aimerais à la place. Une photo nette aidera beaucoup."}
+  if(lead)return stepLead(q);
+  if(/reprend|reprise|ancien|vieux|cover|recouvr|rattrap/.test(s))return startLead("Reprise d'un ancien tatouage","L'Ours regarde ton tatouage avec toi et te dit franchement ce qui est possible : le retravailler, le recouvrir, ou parfois le laisser. Je prends les infos pour lui, une question à la fois.");
   if(/prix|tarif|combien|coût|cout|budget/.test(s))return "Ça dépend de la taille, de l'emplacement et des détails. Décris-moi ton idée et L'Ours te donne un prix clair avant de commencer.";
-  if(/projet|tatou|rdv|rendez|réserv|reserv/.test(s)){lead={step:1};return "Avec plaisir ! Décris-moi ton idée : la taille, l'endroit du corps, tes inspirations."}
+  if(/projet|tatou|rdv|rendez|réserv|reserv/.test(s))return startLead("Tatouage","Avec plaisir ! Je prends les infos pour L'Ours, une question à la fois.");
   if(/cicatri|crème|creme|soin|pansement|gratt/.test(s))return "3 façons de cicatriser : à sec (rien du tout), en douceur (2 jours sans rien, puis crème cicatrisante 1 à 2 fois par jour) ou pansement seconde peau (5 à 8 jours). Pas de vaseline, pas de bain ni de soleil pendant la cicatrisation. Tout est dans « Soins & suivi ».";
   if(/prépar|prepar|manger|tenue|amener|apporter|jour j/.test(s))return "Viens reposé et le ventre plein, rase la zone la veille, pas de crème ni d'alcool le jour J. Prends des vêtements amples, de l'eau et un petit en-cas.";
   if(/douleur|mal\b|faire mal/.test(s))return "Ça dépend de la zone et de chacun. Bien dormir et bien manger avant, ça aide vraiment. Et chez L'Ours, on rigole, ça fait passer le temps !";
   if(/adresse|où|ou est|situ|venir|parking/.test(s))return "Rue du Christ 29, 7700 Mouscron. Les tatouages se font sur rendez-vous.";
   if(/horaire|ouvert|heure/.test(s))return "Les tatouages se font sur rendez-vous. Pour passer au salon, appelle L'Ours avant au 0473 64 15 44.";
-  if(/téléphone|telephone|appeler|numéro|numero|whatsapp|facebook|contact/.test(s))return "Téléphone et WhatsApp : 0473 64 15 44. Facebook : Tatoueur Lours Bear.";
+  if(/téléphone|telephone|appeler|numéro|numero|whatsapp|facebook|contact/.test(s))return "Téléphone : 0473 64 15 44. Facebook : Tatoueur L'ours Bear.";
   return "Je réponds aux questions sur les tatouages, les reprises, les prix, la préparation et les soins. Pour le reste, je préfère laisser L'Ours te répondre. Tu veux me parler de ton projet ?";
+}
+/* Bloc [ENVOI]{...}[/ENVOI] écrit par l'IA : jamais affiché */
+function extraire(t){
+  const s=String(t||"");
+  const m=s.match(/\[ENVOI\]([\s\S]*?)\[\/ENVOI\]/i);
+  const texte=s.replace(/\[ENVOI\][\s\S]*?(\[\/ENVOI\]|$)/gi,"").replace(/\n{3,}/g,"\n\n").trim();
+  let data=null;
+  if(m){try{const j=JSON.parse(m[1].trim());data={};CHAMPS.forEach(k=>data[k]=String(j[k]==null?"":j[k]).trim());if(!data.prestation)data.prestation="Tatouage"}catch(e){data=null}}
+  return {texte,data,bloc:/\[ENVOI\]/i.test(s)};
+}
+function showRecap(d){
+  const box=document.createElement("div");box.className="msg bot recapbox";
+  const h=document.createElement("b");h.textContent="Récapitulatif de ta demande";box.appendChild(h);
+  ["prestation","idee","zone","taille","histoire","disponibilites","nom","whatsapp","email"].forEach(k=>{if(!d[k])return;const row=document.createElement("div");row.className="rl";const a=document.createElement("span");a.textContent=LABELS[k];const b=document.createElement("span");b.textContent=d[k];row.append(a,b);box.appendChild(row)});
+  const btn=document.createElement("button");btn.type="button";btn.className="ok-btn";btn.textContent="✅ Confirmer et envoyer à L'Ours";
+  const st=document.createElement("p");st.className="st";st.setAttribute("aria-live","polite");
+  btn.onclick=async()=>{
+    btn.disabled=true;btn.textContent="Envoi…";
+    try{
+      if(!RESA_URL)throw 0;
+      const r=await fetch(RESA_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...d,client:CLIENT,source:"assistante"})});
+      if(!r.ok)throw 0;
+      btn.remove();st.textContent="C'est envoyé ! Tu vas recevoir une confirmation par mail, et L'Ours te recontacte sur WhatsApp.";
+    }catch(e){btn.disabled=false;btn.textContent="✅ Réessayer l'envoi";st.textContent="L'envoi n'a pas marché. Réessaie, ou appelle L'Ours au 0473 64 15 44.";}
+    msgs.scrollTop=msgs.scrollHeight;
+  };
+  box.append(btn,st);msgs.appendChild(box);msgs.scrollTop=msgs.scrollHeight;
 }
 async function send(t){
   t=t.trim();if(!t)return;addUser(t);setQuick([]);setTyping(true);userMsgs.push(t);
-  let r;
-  try{const res=await fetch(API+"/assistant/"+CLIENT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,userId:sessionId})});const j=await res.json();r=j&&(j.answer||j.reply||j.output);if(!r)throw 0}
-  catch(e){document.getElementById("demo-tag").hidden=false;await new Promise(z=>setTimeout(z,400));r=local(t)}
-  setTyping(false);addBot(r);
-  if(/projet|tatou|rdv|rendez|réserv|reserv|reprend|ancien|vieux|cover|histoire|dispo/i.test(userMsgs.join(" "))&&userMsgs.length>=2){
-    const last=msgs.lastElementChild;const b=document.createElement("button");b.className="wa-btn";b.type="button";b.textContent="Envoyer mon projet à L'Ours sur WhatsApp";
-    b.onclick=()=>window.open(waLink("Salut L'Ours ! Voici mon projet (via l'assistant du site) :\n\n"+userMsgs.filter(m=>!QUICK.includes(m)).join("\n")),"_blank","noopener");
-    msgs.querySelectorAll(".wa-btn").forEach(x=>x.remove());last.appendChild(b);msgs.scrollTop=msgs.scrollHeight;
+  let r=null;
+  if(!lead){
+    try{const res=await fetch(API+"/assistant/"+CLIENT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,userId:sessionId})});const j=await res.json();r=j&&(j.answer||j.reply||j.output);}
+    catch(e){r=null}
+  }
+  if(r){
+    const x=extraire(r);setTyping(false);
+    if(x.texte)addBot(x.texte);
+    if(x.bloc){
+      const d=x.data;
+      if(d&&nomOk(d.nom)&&telOk(d.whatsapp)&&mailOk(d.email))showRecap(d);
+      else addBot("Il me manque une info ou je l'ai mal notée (nom, numéro WhatsApp ou mail). Tu peux me la redonner ?");
+    }
+  }else{
+    document.getElementById("demo-tag").hidden=false;await new Promise(z=>setTimeout(z,400));setTyping(false);
+    const rep=local(t);
+    if(rep&&typeof rep==="object"){addBot(rep.texte);showRecap(rep.recap)}else if(rep)addBot(rep);
   }
   if(!lead)setQuick(QUICK);
 }
