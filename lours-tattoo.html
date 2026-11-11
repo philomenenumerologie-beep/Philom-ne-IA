@@ -109,6 +109,8 @@ ul.list,ol.list{margin:0;padding-left:1.2em;display:grid;gap:6px}
 
 /* Contact */
 .addr{font-family:var(--display);font-size:1.9rem;line-height:1.05}
+.hours{display:grid;grid-template-columns:1fr auto;gap:8px 16px;max-width:360px}
+.hours span:nth-child(odd){color:var(--soft)}
 .contact-list{display:grid;gap:10px}
 .contact-list a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--fg);font-weight:500}
 .contact-list a span:last-child{color:var(--soft);font-weight:400;text-align:right}
@@ -425,7 +427,7 @@ footer a{color:var(--soft)}
   <div class="page-head"><a class="back" href="#accueil">← Accueil</a><span class="eyebrow">Contact &amp; rendez-vous</span><h2>Venir chez L'Ours</h2></div>
   <div class="sub">
     <p class="addr">Rue du Christ 29<br>7700 Mouscron</p>
-    <div class="row"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Rue+du+Christ+29+7700+Mouscron" target="_blank" rel="noopener">Itinéraire</a></div>
+    <div class="row"><a class="btn" href="https://share.google/cLmKbS1jlwDVMaJCJ" target="_blank" rel="noopener">Itinéraire</a><a class="btn ghost" href="https://share.google/cLmKbS1jlwDVMaJCJ" target="_blank" rel="noopener"><span class="s-v">★★★★★</span> Laisser un avis Google</a></div>
   </div>
   <div class="contact-list">
     <a href="tel:+32473641544"><span>Téléphone</span><span>0473 64 15 44</span></a>
@@ -435,7 +437,15 @@ footer a{color:var(--soft)}
   <div class="sub">
     <h3>Horaires</h3>
     <p>Les tatouages se font sur rendez-vous.</p>
-    <p class="todo">[Horaires d'ouverture à compléter]</p>
+    <div class="hours">
+      <span>Lundi</span><span>14h – 18h</span>
+      <span>Mardi</span><span>10h – 18h</span>
+      <span>Mercredi</span><span>10h – 18h</span>
+      <span>Jeudi</span><span>10h – 18h</span>
+      <span>Vendredi</span><span>10h – 18h</span>
+      <span>Samedi</span><span>10h – 18h</span>
+      <span>Dimanche</span><span class="muted">Fermé</span>
+    </div>
   </div>
 </section>
 
@@ -464,6 +474,8 @@ footer a{color:var(--soft)}
     <b>L'OURS TATTOO</b>
     <span>Un mot, un geste, L'Ours fait le reste !</span>
     <span>Rue du Christ 29 · 7700 Mouscron · <a href="tel:+32473641544">0473 64 15 44</a></span>
+    <span>Lun 14h–18h · Mar–Sam 10h–18h · Dim fermé</span>
+    <a href="https://share.google/cLmKbS1jlwDVMaJCJ" target="_blank" rel="noopener"><span class="s-v">★★★★★</span> Laisse-nous un avis Google</a>
     <a href="#mentions">Mentions légales &amp; confidentialité</a>
   </div>
 </footer>
@@ -624,7 +636,7 @@ function local(q){
   if(/prépar|prepar|manger|tenue|amener|apporter|jour j/.test(s))return "Viens reposé et le ventre plein, rase la zone la veille, pas de crème ni d'alcool le jour J. Prends des vêtements amples, de l'eau et un petit en-cas.";
   if(/douleur|mal\b|faire mal/.test(s))return "Ça dépend de la zone et de chacun. Bien dormir et bien manger avant, ça aide vraiment. Et chez L'Ours, on rigole, ça fait passer le temps !";
   if(/adresse|où|ou est|situ|venir|parking/.test(s))return "Rue du Christ 29, 7700 Mouscron. Les tatouages se font sur rendez-vous.";
-  if(/horaire|ouvert|heure/.test(s))return "Les tatouages se font sur rendez-vous. Pour passer au salon, appelle L'Ours avant au 0473 64 15 44.";
+  if(/horaire|ouvert|heure/.test(s))return "Le salon est ouvert le lundi de 14h à 18h, et du mardi au samedi de 10h à 18h. Fermé le dimanche. Les tatouages se font sur rendez-vous.";
   if(/téléphone|telephone|appeler|numéro|numero|whatsapp|facebook|contact/.test(s))return "Téléphone : 0473 64 15 44. Facebook : Tatoueur L'ours Bear.";
   return "Je réponds aux questions sur les tatouages, les reprises, les prix, la préparation et les soins. Pour le reste, je préfère laisser L'Ours te répondre. Tu veux me parler de ton projet ?";
 }
