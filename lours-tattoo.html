@@ -99,6 +99,18 @@ ul.list,ol.list{margin:0;padding-left:1.2em;display:grid;gap:6px}
 
 /* Agenda */
 .cal{display:grid;gap:10px}
+.dispos{display:grid;gap:10px;margin:14px 0 26px}
+.dj{padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.dj h4{margin:0 0 8px;font-size:.95rem}.dj h4::first-letter{text-transform:uppercase}
+.slots{display:flex;flex-wrap:wrap;gap:8px}
+.slot{min-height:44px;min-width:64px;padding:6px 12px;border-radius:22px;border:1.5px solid var(--vert-dark);background:transparent;color:var(--vert);font:600 .9rem var(--body);cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.slot small{font-weight:500;font-size:.68rem;color:var(--soft)}
+.slot.pris{border-color:var(--line);color:var(--mute);text-decoration:line-through;cursor:default}
+.slot[aria-pressed="true"]{background:var(--vert);color:#121114}
+.slot[aria-pressed="true"] small{color:#121114}
+.legende{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--soft)}
+.legende b{color:var(--vert)} .legende s{color:var(--mute)}
+#r-dispos-box .dispos{margin:6px 0 4px}
 .ev{display:grid;grid-template-columns:70px 1fr;gap:16px;align-items:center;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
 .date{text-align:center;border-right:1px dashed var(--line-2);padding-right:12px}
 .date b{display:block;font-family:var(--display);font-size:2rem;line-height:1;color:var(--mauve-txt)}
@@ -204,7 +216,7 @@ footer a{color:var(--soft)}
     <div class="hero-txt">
       <h1>Un mot.<br>Un geste.</h1>
       <p>L'Ours fait le reste !</p>
-      <div><a class="btn" href="#projet">Créer mon projet</a></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn" href="#projet">Créer mon projet</a><a class="btn ghost" href="#agenda">Disponibilités</a></div>
     </div>
   </div>
 
@@ -392,7 +404,12 @@ footer a{color:var(--soft)}
 
 <!-- AGENDA -->
 <section class="view wrap" id="v-agenda" hidden>
-  <div class="page-head"><a class="back" href="#accueil">← Accueil</a><span class="eyebrow">Agenda</span><h2>Les prochaines dates</h2></div>
+  <div class="page-head"><a class="back" href="#accueil">← Accueil</a><span class="eyebrow">Agenda</span><h2>Mes disponibilités</h2></div>
+  <p class="muted">Touchez un créneau libre pour le proposer dans votre demande. L'Ours confirme ensuite avec vous sur WhatsApp.</p>
+  <div class="legende"><span><b>10h</b> libre</span><span><s>10h</s> pris</span><span>18h : sur rendez-vous, pour ceux qui travaillent</span></div>
+  <div class="dispos" id="dispos"><p class="empty">Chargement des disponibilités…</p></div>
+  <p class="muted"><small>Un grand tatouage peut prendre plusieurs créneaux. Les disponibilités sont données à titre indicatif.</small></p>
+  <h3>Les prochaines dates</h3>
   <p class="muted">Conventions, guests, soirées ou fermetures : tout est ici.</p>
   <div class="cal" id="cal"></div>
 </section>
@@ -409,7 +426,8 @@ footer a{color:var(--soft)}
     <label for="r-type">Votre demande<select id="r-type"><option>Nouveau tatouage</option><option>Reprise d'un ancien tatouage</option><option>Retouche</option><option>Juste un conseil</option></select></label>
     <label for="r-zone">Emplacement<input id="r-zone" placeholder="Avant-bras, épaule, mollet…"></label>
     <label for="r-taille">Taille approximative<select id="r-taille"><option>Petit (moins de 5 cm)</option><option>Moyen (5 à 15 cm)</option><option>Grand (plus de 15 cm)</option><option>Grande pièce (bras, jambe, dos…)</option><option>Je ne sais pas</option></select></label>
-    <label for="r-dispo">Vos disponibilités<input id="r-dispo" placeholder="En semaine, le samedi…"></label>
+    <label for="r-dispo">Vos disponibilités<input id="r-dispo" placeholder="En semaine, le samedi… ou choisissez un créneau ci-dessous"></label>
+    <div id="r-dispos-box"><small class="muted">Créneaux libres (touchez pour choisir) :</small><div class="dispos" id="dispos-form"><p class="empty">Chargement…</p></div></div>
     <label for="r-projet">Votre idée<textarea id="r-projet" required placeholder="Le style, les éléments, vos inspirations…"></textarea></label>
     <label for="r-histoire">L'histoire de votre tatouage <small>Facultatif. Un souvenir, une personne, un moment de vie : si vous voulez, dites-moi ce qu'il représente pour vous.</small><textarea id="r-histoire" placeholder="Ce que ce tatouage veut dire pour vous…"></textarea></label>
     <p class="muted" style="font-size:.85rem">En envoyant ce formulaire, vous acceptez que vos données servent à traiter votre demande (voir la <a href="#mentions">politique de confidentialité</a>).</p>
@@ -507,6 +525,7 @@ const WHATSAPP = "32473641544";         // WhatsApp de L'Ours
 const FACEBOOK_URL = "https://www.facebook.com/share/1KikeTEsiu/";                // lien de la page Facebook « Tatoueur Lours Bear » (à coller)
 const RESA_URL = "https://philomeneia.app.n8n.cloud/webhook/lours-resa"; // webhook n8n des réservations (Sheet + Telegram + mail), pour le formulaire ET l'assistant
 const EVENTS_URL = "https://philomeneia.app.n8n.cloud/webhook/lours-events";                  // webhook n8n qui renvoie l'agenda (ex. https://philomeneia.app.n8n.cloud/webhook/lours-events)
+const DISPOS_URL = "https://philomeneia.app.n8n.cloud/webhook/lours-dispos"; // webhook n8n des créneaux libres (Google Agenda de L'Ours)
 const API = "https://philo-backend-by2c.onrender.com"; // ton serveur : assistant IA, galerie, bannière
 /* ===================== */
 
@@ -522,8 +541,10 @@ function show(){
   VIEWS.forEach(n=>{document.getElementById("v-"+n).hidden=n!==v});
   document.querySelectorAll(".tabbar a[data-tab]").forEach(a=>{if(a.dataset.tab===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
   window.scrollTo(0,0);
+  if(v==="agenda"){chargeEvents();chargeDispos()}
+  if(v==="projet")chargeDispos();
 }
-addEventListener("hashchange",show); show();
+addEventListener("hashchange",show);
 
 /* --- Agenda (Google Sheet via n8n). Format : {date:"2026-12-05", heure:"14h", titre:"Convention", texte:"..."} --- */
 const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
@@ -535,8 +556,40 @@ function renderCal(){
   if(!evs.length){cal.innerHTML='<p class="empty">Pas de date annoncée pour le moment. Revenez bientôt, ou demandez directement à l\'assistant.</p>';return}
   cal.innerHTML=evs.map(e=>`<div class="ev"><div class="date"><b>${e.d.getDate()}</b><span>${MOIS[e.d.getMonth()]}</span></div><div><span class="kind">${esc(e.type||"À venir")}</span><h4>${esc(e.titre||"Événement")}</h4><p>${esc([e.heure,e.texte].filter(Boolean).join(" · "))}</p></div></div>`).join("");
 }
-renderCal();
-if(EVENTS_URL){fetch(EVENTS_URL).then(r=>r.json()).then(j=>{EVENEMENTS=Array.isArray(j)?j:(j.data||[]);renderCal()}).catch(()=>{})}
+let eventsCharges=false;
+function chargeEvents(){
+  if(eventsCharges)return;eventsCharges=true;renderCal();
+  if(EVENTS_URL){fetch(EVENTS_URL).then(r=>r.json()).then(j=>{EVENEMENTS=Array.isArray(j)?j:(j.data||[]);renderCal()}).catch(()=>{})}
+}
+
+/* --- Disponibilités (Google Agenda de L'Ours via n8n), chargées seulement à l'ouverture --- */
+const JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+let DISPOS=null,dispoCharge=false;
+function libelleJour(d){const x=new Date(d+"T00:00");return JOURS[x.getDay()]+" "+x.getDate()+" "+MOIS[x.getMonth()]}
+function renderDispos(id,max){
+  const box=document.getElementById(id);if(!box)return;
+  if(!DISPOS){box.innerHTML='<p class="empty">Disponibilités indisponibles pour le moment. Indiquez vos préférences, L\'Ours vous répond sur WhatsApp.</p>';return}
+  const jours=DISPOS.filter(j=>j.creneaux.some(c=>c.libre)).slice(0,max);
+  if(!jours.length){box.innerHTML='<p class="empty">Plus de créneau libre sur les 3 prochaines semaines. Écrivez quand même à L\'Ours !</p>';return}
+  box.innerHTML=jours.map(j=>`<div class="dj"><h4>${libelleJour(j.date)}</h4><div class="slots">${j.creneaux.map(c=>c.libre?`<button type="button" class="slot" aria-pressed="false" data-choix="${esc(libelleJour(j.date)+" à "+c.heure)}">${esc(c.heure)}${c.surRdv?"<small>sur RDV</small>":""}</button>`:`<span class="slot pris" aria-label="${esc(c.heure)} pris">${esc(c.heure)}</span>`).join("")}</div></div>`).join("");
+}
+function chargeDispos(){
+  if(dispoCharge)return;dispoCharge=true;
+  if(!DISPOS_URL){renderDispos("dispos",21);renderDispos("dispos-form",6);return}
+  fetch(DISPOS_URL).then(r=>r.json()).then(j=>{DISPOS=Array.isArray(j.jours)?j.jours:null}).catch(()=>{DISPOS=null;dispoCharge=false}).finally(()=>{renderDispos("dispos",21);renderDispos("dispos-form",6)});
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".slot[data-choix]");if(!b)return;
+  const inp=document.getElementById("r-dispo");
+  const choix=b.dataset.choix;
+  const liste=inp.value.split(" ou ").map(x=>x.trim()).filter(Boolean);
+  const i=liste.indexOf(choix);
+  if(i>=0)liste.splice(i,1);else liste.push(choix);
+  inp.value=liste.join(" ou ");
+  document.querySelectorAll('.slot[data-choix]').forEach(x=>x.setAttribute("aria-pressed",liste.includes(x.dataset.choix)?"true":"false"));
+  if(b.closest("#dispos"))location.hash="#projet";
+});
+show();
 
 /* --- Serveur : bannière et photos envoyées au bot Telegram (clé lours_galerie) --- */
 fetch(API+"/memory/"+CLIENT+"_config").then(r=>r.json()).then(d=>{const m=d&&d.value&&d.value.message;if(m&&m.trim()){const b=document.getElementById("banner");b.textContent=m;b.hidden=false}}).catch(()=>{});
