@@ -231,16 +231,18 @@ footer b{color:var(--creme)}
 .bloc,.carte-menu,.real,.formule,.chat,.cartes{box-shadow:none}
 /* Vitrine animée, CSS pur */
 .couche{position:absolute;top:0;left:0;width:100%;opacity:0}
-.c1{animation:vis1 20s infinite,def1 20s infinite}
-.c2{animation:vis2 20s infinite,def2 20s infinite}
+.couche.c1{opacity:1}
+.vitrine .couche.c1{animation:vis1 20s infinite,def1 20s infinite!important}
+.vitrine .couche.c2{animation:vis2 20s infinite,def2 20s infinite!important}
 @keyframes vis1{0%,46%{opacity:1}50%,96%{opacity:0}100%{opacity:1}}
 @keyframes vis2{0%,46%{opacity:0}50%,96%{opacity:1}100%{opacity:0}}
 @keyframes def1{0%,5%{transform:translateY(0);animation-timing-function:ease-in-out}44%,51%{transform:translateY(-41.22%)}52%,100%{transform:translateY(0)}}
 @keyframes def2{0%,54%{transform:translateY(0);animation-timing-function:ease-in-out}94%,100%{transform:translateY(-34.55%)}}
 .noms{position:relative;height:1.6em}
 .noms span{position:absolute;left:0;right:0;opacity:0}
-.noms .n1{animation:vis1 20s infinite}
-.noms .n2{animation:vis2 20s infinite}
+.noms .n1{opacity:1}
+.vitrine .noms .n1{animation:vis1 20s infinite!important}
+.vitrine .noms .n2{animation:vis2 20s infinite!important}
 </style>
 </head>
 <body>
