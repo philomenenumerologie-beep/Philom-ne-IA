@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ma wishlist cadeau</title>
+<meta name="description" content="Choisissez les cartes cadeaux que vous aimeriez recevoir et envoyez votre liste à vos proches.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Jost:wght@400;500;600&display=swap">
+<script>
+/* =====================================================================
+   PHILOMÈNE IA · WISHLIST CARTES CADEAUX · MODÈLE RÉUTILISABLE
+   Pour un nouveau client : on ne change QUE ce bloc CONFIG.
+   ===================================================================== */
+const CONFIG = {
+  client: "demo-eclat",                 // identifiant court (minuscules, sans espace) : sert à router l'alerte Telegram
+  demo: true,                           // true = page de démonstration : rien n'est envoyé, bandeau « Démo »
+  nom: "Institut Éclat",                // nom affiché du commerce
+  surtitre: "Beauté · Soins · Bien-être",
+  titre: "Offrez-lui un moment rien qu'à elle",
+  logo: "",                             // adresse d'une image (rond) ; vide = monogramme avec les initiales
+  photo: "",                            // photo de fond plein écran ; vide = fond dégradé aux couleurs ci-dessous
+  couleurs: { fond1: "#0B1250", fond2: "#2B2FC2", accent: "#1A1F6E", papier: "#FBF8F1" },
+  decor: "noel",                        // "noel" = scène de Noël dessinée (malle-cadeau, neige, maisonnette) ; "" = sans décor
+  montants: [30, 50, 75, 100, 150],     // cartes proposées (en €)
+  montantLibre: true,                   // ajoute « Montant supérieur » (au choix du proche)
+  occasions: true,                      // la cliente choisit l'occasion (Noël, anniversaire…) ; false = Noël seulement
+  validite: "Valable 6 mois à partir de la date d'achat",
+  conditions: "Sur réservation · Non remboursable · Hors promotion",
+  adresse: "12 rue Exemple · 59200 Tourcoing",
+  site: "",                             // lien du site ou de l'Instagram du commerce (facultatif)
+  texte: "Cette année, j'aimerais recevoir un vrai moment pour moi : une carte cadeau à utiliser pour le soin de mon choix. Un cadeau qui me ferait vraiment plaisir. 🤍",
+  envoi: "https://philomeneia.app.n8n.cloud/webhook/wishlist"   // un seul tuyau n8n pour tous les clients
+};
+</script>
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --ink:#151312; --ink-soft:#5B5550; --line:#D9D4CC; --err:#9C3D21; --accent:#151312;
+  --display:"Playfair Display", Georgia, "Times New Roman", serif;
+  --body:"Jost", "Helvetica Neue", Arial, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:#151312;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;min-height:100dvh}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:linear-gradient(160deg,var(--f1),var(--f2))}
+.bg img{width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block}
+.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,10,9,.5) 0%,rgba(12,10,9,.25) 35%,rgba(12,10,9,.6) 100%)}
+.page{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:max(18px,env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
+.demo{position:fixed;top:12px;right:-38px;z-index:5;transform:rotate(35deg);background:#C9A227;color:#151312;font:700 .78rem var(--body);letter-spacing:.2em;padding:5px 46px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+header{text-align:center;display:grid;justify-items:center;gap:8px;padding-top:18px;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.45)}
+.logo{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;object-fit:cover;background:#fff;color:var(--accent);font:700 1.9rem var(--display);box-shadow:0 0 0 2px #fff,0 6px 20px rgba(0,0,0,.35);text-shadow:none}
+.surtitre{font-size:.76rem;letter-spacing:.3em;text-transform:uppercase;font-weight:600}
+.nom{font-family:var(--display);font-size:1.05rem;letter-spacing:.12em;text-transform:uppercase}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,7vw,2.3rem);line-height:1.15;margin:0}
+h1 em{display:block;font-style:italic;font-weight:500;font-size:.68em;margin-top:6px}
+.panel{background:color-mix(in srgb,var(--paper) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:18px;padding:22px 16px 24px;margin-top:16px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+section{margin-top:22px;display:grid;gap:14px}
+.panel>div>section:first-child,.panel>div>form>section:first-child{margin-top:0}
+h2{font-family:var(--display);font-size:1.3rem;margin:0;text-align:center}
+.hint{font-size:.95rem;color:var(--ink-soft);text-align:center;margin:0}
+.intro{font-family:var(--display);font-style:italic;font-size:1.05rem;text-align:center;margin:22px auto 0;max-width:42ch;white-space:pre-line}
+label.field{display:grid;gap:6px;font-weight:600;font-size:.95rem}
+label.field small{font-weight:400;color:var(--ink-soft)}
+input[type=text],input[type=tel],input[type=email],input[type=number],textarea,select{font:16px/1.4 var(--body);width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{position:relative;padding:9px 14px;border:1.5px solid var(--accent);border-radius:999px;background:var(--card);font-size:.92rem;font-weight:500;cursor:pointer}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip:has(input:checked){background:var(--accent);color:#fff}
+.chip:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gc{position:relative;display:grid;place-items:center;text-align:center;gap:2px;padding:14px 10px;min-height:80px;border:1.5px solid var(--accent);border-radius:12px;background:var(--card);cursor:pointer;user-select:none}
+.gc input{position:absolute;opacity:0;pointer-events:none}
+.gc b{font-family:var(--display);font-size:1.6rem;line-height:1}
+.gc span{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.gc::after{content:"";position:absolute;top:8px;right:8px;width:20px;height:20px;border:1.5px solid var(--accent);border-radius:50%;background:var(--card)}
+.gc:has(input:checked){background:var(--accent);color:#fff}
+.gc:has(input:checked) span{color:rgba(255,255,255,.75)}
+.gc:has(input:checked)::after{content:"✓";display:grid;place-items:center;font-size:.8rem;background:#fff;color:var(--accent);border-color:#fff}
+.gc:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
+.gc.wide{grid-column:1/-1}.gc.wide b{font-size:1.25rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 24px;font:600 .98rem var(--body);cursor:pointer;text-decoration:none;background:var(--accent);color:#fff;width:100%}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+.err{color:var(--err);font-size:.92rem;margin:0}
+.box{border:1.5px solid var(--accent);border-radius:14px;padding:18px;background:var(--card);display:grid;gap:12px}
+.link{font-size:.9rem;word-break:break-all;background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:10px 12px;color:var(--ink-soft)}
+.wish{display:grid;gap:10px}
+.wi{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1.5px solid var(--accent);border-radius:12px;background:var(--card)}
+.wi div{display:grid;line-height:1.25}
+.wi b{font-family:var(--display);font-size:1.35rem}
+.wi small{font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.wi .btn{width:auto;padding:10px 20px}
+.conditions{margin-top:18px;text-align:center;font-size:.82rem;color:#fff;display:grid;gap:4px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.conditions b{letter-spacing:.14em;text-transform:uppercase;font-weight:600;font-size:.78rem}
+.conditions a{color:#fff}
+.conditions .by{opacity:.7;font-size:.72rem;margin-top:6px}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(21,19,18,.55);display:grid;align-items:end;justify-items:center}
+.sheet{background:var(--paper);border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;padding:22px max(18px,env(safe-area-inset-right,0px)) calc(26px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:grid;gap:12px}
+.sheet h3{font-family:var(--display);font-size:1.35rem;margin:0;text-align:center}
+.sheet .sub{text-align:center;color:var(--ink-soft);font-size:.95rem;margin:0}
+.link-btn{background:none;border:0;color:var(--ink-soft);font:500 .95rem var(--body);text-decoration:underline;cursor:pointer;padding:6px}
+.ok{text-align:center;display:grid;gap:10px}.ok p{margin:0}
+/* ---------- Décor « noel » : scène dessinée, originale ---------- */
+.scene{display:none;width:100%;max-width:300px;height:auto;margin:0 auto 6px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.decor-noel .scene{display:block}
+.decor-noel .bg{background:radial-gradient(120% 70% at 50% 18%,#3A44E8 0%,#1C24A8 38%,#0B1250 75%,#070A33 100%)}
+.decor-noel .bg::after{background:linear-gradient(180deg,rgba(7,10,51,0) 55%,rgba(7,10,51,.55) 100%)}
+.decor-noel header{gap:4px;padding-top:6px}
+.decor-noel .logo{width:52px;height:52px;font-size:1.15rem;color:#1A1F6E;box-shadow:0 0 0 2px #E8C766,0 6px 20px rgba(0,0,0,.35)}
+.decor-noel .surtitre{color:#E8C766}
+.decor-noel h1 em{color:#F4E3A6}
+.decor-noel .gc,.decor-noel .wi,.decor-noel .box{border-color:#1A1F6E}
+.decor-noel .gc:has(input:checked){background:linear-gradient(160deg,#1A1F6E,#2B2FC2);box-shadow:inset 0 0 0 1.5px #E8C766}
+.decor-noel .btn{background:linear-gradient(160deg,#1A1F6E,#2B2FC2);box-shadow:0 0 0 1.5px #E8C766 inset}
+.decor-noel .btn.ghost{background:transparent;box-shadow:none}
+.neige{position:fixed;inset:0;z-index:0;pointer-events:none;display:none}
+.decor-noel .neige{display:block}
+.neige i{position:absolute;top:-12px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.85;animation:tombe linear infinite}
+@keyframes tombe{to{transform:translate3d(var(--dx,20px),105vh,0)}}
+@media (prefers-reduced-motion:reduce){.neige i{animation:none;top:auto}}
+.sol{position:fixed;left:0;right:0;bottom:0;height:70px;z-index:0;display:none;background:radial-gradient(60% 100% at 25% 100%,#fff 0 60%,transparent 61%),radial-gradient(70% 100% at 80% 100%,#F3F6FF 0 55%,transparent 56%);opacity:.9}
+.decor-noel .sol{display:block}
+.decor-noel .page{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+@media (min-width:600px){.cards{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true" id="bg"></div>
+<div class="neige" aria-hidden="true" id="neige"></div>
+<div class="sol" aria-hidden="true"></div>
+<div class="demo" id="demo" hidden>DÉMO</div>
+<main class="page">
+  <header>
+    <svg class="scene" viewBox="0 0 360 250" role="img" aria-label="Un coffret cadeau ouvert d'où sortent une maisonnette illuminée et des paquets, sous un nuage lumineux">
+      <defs>
+        <linearGradient id="g-or" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4E3A6"/><stop offset="1" stop-color="#B8892B"/></linearGradient>
+        <linearGradient id="g-coffre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF8"/><stop offset="1" stop-color="#E9E1D2"/></linearGradient>
+        <linearGradient id="g-paquet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9473F"/><stop offset="1" stop-color="#8E2A2A"/></linearGradient>
+        <radialGradient id="g-halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF7D6" stop-opacity=".9"/><stop offset="1" stop-color="#FFF7D6" stop-opacity="0"/></radialGradient>
+      </defs>
+      <!-- couvercle qui flotte -->
+      <g transform="rotate(-4 180 30)">
+        <rect x="58" y="12" width="244" height="30" rx="5" fill="url(#g-coffre)" stroke="#B8892B" stroke-width="2"/>
+        <rect x="58" y="12" width="244" height="8" rx="4" fill="#FFFFFF"/>
+        <rect x="170" y="12" width="20" height="30" fill="url(#g-or)"/>
+        <path d="M180 12 C168 -6 150 -2 158 8 C162 13 172 12 180 12 C188 12 198 13 202 8 C210 -2 192 -6 180 12Z" fill="url(#g-or)"/>
+        <g fill="#B8892B"><circle cx="72" cy="36" r="2.2"/><circle cx="288" cy="36" r="2.2"/><circle cx="110" cy="36" r="1.8"/><circle cx="250" cy="36" r="1.8"/></g>
+      </g>
+      <!-- nuage lumineux -->
+      <ellipse cx="180" cy="78" rx="110" ry="40" fill="url(#g-halo)"/>
+      <g fill="#FFFFFF" opacity=".95"><circle cx="140" cy="80" r="20"/><circle cx="168" cy="70" r="26"/><circle cx="200" cy="74" r="22"/><circle cx="224" cy="84" r="16"/><rect x="128" y="80" width="108" height="16" rx="8"/></g>
+      <!-- sapins -->
+      <g fill="#1F5B3F"><path d="M78 196 L98 132 L118 196Z"/><path d="M84 170 L98 120 L112 170Z" fill="#2A7350"/><path d="M262 196 L280 140 L298 196Z"/><path d="M267 174 L280 128 L293 174Z" fill="#2A7350"/></g>
+      <g fill="#F4E3A6"><circle cx="96" cy="150" r="2"/><circle cx="104" cy="170" r="2"/><circle cx="90" cy="182" r="2"/><circle cx="282" cy="156" r="2"/><circle cx="276" cy="178" r="2"/></g>
+      <!-- maisonnette -->
+      <g>
+        <path d="M150 128 L180 100 L210 128Z" fill="#7A2E2E"/>
+        <rect x="154" y="126" width="52" height="70" fill="#F3E7D4"/>
+        <g stroke="#B5523B" stroke-width="1.4" fill="none" opacity=".7"><path d="M154 140 L206 140"/><path d="M160 134 l6 6 6-6 6 6 6-6 6 6 6-6 6 6"/></g>
+        <rect x="170" y="108" width="8" height="14" fill="#FFD976"/>
+        <rect x="160" y="148" width="40" height="48" rx="3" fill="#2D6B5A"/>
+        <rect x="164" y="152" width="32" height="40" rx="2" fill="#FFD976"/>
+        <g stroke="#2D6B5A" stroke-width="1.5"><path d="M174.7 152 V192"/><path d="M185.3 152 V192"/><path d="M164 166 H196"/></g>
+        <rect x="156" y="144" width="48" height="5" fill="#C9A227"/>
+      </g>
+      <!-- paquets -->
+      <g>
+        <rect x="112" y="166" width="34" height="30" rx="2" fill="url(#g-paquet)"/><rect x="126" y="166" width="6" height="30" fill="url(#g-or)"/><rect x="112" y="178" width="34" height="5" fill="url(#g-or)"/>
+        <rect x="118" y="148" width="24" height="18" rx="2" fill="#F3E7D4"/><rect x="128" y="148" width="4" height="18" fill="#1A1F6E"/>
+        <path d="M130 148 c-8 -10 -14 -4 -8 0 Z M130 148 c8 -10 14 -4 8 0 Z" fill="#1A1F6E"/>
+        <rect x="214" y="158" width="40" height="38" rx="2" fill="#F3E7D4"/><rect x="231" y="158" width="6" height="38" fill="#1A1F6E"/><rect x="214" y="172" width="40" height="5" fill="#1A1F6E"/>
+        <path d="M234 158 c-10 -12 -18 -5 -10 0 Z M234 158 c10 -12 18 -5 10 0 Z" fill="#1A1F6E"/>
+        <rect x="248" y="178" width="24" height="18" rx="2" fill="url(#g-paquet)"/><rect x="258" y="178" width="4" height="18" fill="url(#g-or)"/>
+      </g>
+      <!-- coffret -->
+      <rect x="40" y="194" width="280" height="12" rx="3" fill="#FFFFFF"/>
+      <rect x="46" y="204" width="268" height="44" rx="4" fill="url(#g-coffre)" stroke="#B8892B" stroke-width="2"/>
+      <rect x="170" y="204" width="20" height="44" fill="url(#g-or)"/>
+      <path d="M46 222 H314" stroke="#B8892B" stroke-width="1.5"/>
+      <g fill="#B8892B"><circle cx="60" cy="214" r="2.2"/><circle cx="300" cy="214" r="2.2"/><circle cx="60" cy="236" r="2.2"/><circle cx="300" cy="236" r="2.2"/></g>
+    </svg>
+    <div id="logo"></div>
+    <span class="surtitre" id="surtitre"></span>
+    <span class="nom" id="nom"></span>
+    <h1><span id="titre"></span><em id="sous-titre"></em></h1>
+  </header>
+
+  <div class="panel">
+    <div id="creer">
+      <form id="f-creer" novalidate>
+        <section>
+          <h2>Vos cartes cadeaux</h2>
+          <p class="hint">Touchez les montants que vous aimeriez recevoir, puis envoyez votre lien à vos proches.</p>
+          <div class="cards" id="choix"></div>
+        </section>
+        <section id="s-occasion" hidden>
+          <h2>Pour quelle occasion ?</h2>
+          <div class="chips" id="occ"></div>
+        </section>
+        <section>
+          <label class="field" for="c-prenom">Votre prénom <small>(il apparaîtra sur votre wishlist)</small><input type="text" id="c-prenom" maxlength="30" autocomplete="given-name" placeholder="Léa"></label>
+          <p class="err" id="c-err" hidden></p>
+          <button class="btn" type="submit">Créer ma wishlist</button>
+        </section>
+      </form>
+      <section id="c-ok" hidden>
+        <div class="box">
+          <h2>Votre wishlist est prête 🤍</h2>
+          <p class="hint">Envoyez ce lien à vos proches. Chut : ils choisiront en secret, vous découvrirez votre cadeau le jour J.</p>
+          <div class="link" id="c-lien"></div>
+          <button class="btn" type="button" id="c-partager">Envoyer ma liste à un proche</button>
+          <a class="btn ghost" id="c-wa" target="_blank" rel="noopener">Envoyer sur WhatsApp</a>
+          <button class="link-btn" type="button" id="c-copier">Copier le lien</button>
+          <button class="link-btn" type="button" id="c-modifier">Modifier ma wishlist</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="voir" hidden>
+      <section>
+        <h2 id="v-titre"></h2>
+        <p class="hint">Choisissez la carte cadeau que vous souhaitez offrir.</p>
+        <div class="wish" id="v-liste"></div>
+      </section>
+      <p class="intro" id="v-texte"></p>
+      <section><a class="btn ghost" id="v-creer">Créer ma propre wishlist</a></section>
+    </div>
+  </div>
+
+  <footer class="conditions">
+    <b id="f-nom"></b>
+    <span id="f-validite"></span>
+    <span id="f-conditions"></span>
+    <span id="f-adresse"></span>
+    <span id="f-site" hidden><a id="f-site-a" target="_blank" rel="noopener"></a></span>
+    <span class="by">Wishlist créée par <a href="https://philomeneia.com" target="_blank" rel="noopener">Philomène IA</a></span>
+  </footer>
+</main>
+
+<div class="modal" id="m-offrir" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="o-titre">
+    <h3 id="o-titre"></h3>
+    <p class="sub" id="o-sub"></p>
+    <form id="f-offrir" novalidate>
+      <div style="display:grid;gap:12px">
+        <label class="field" for="o-montant" id="o-montant-l" hidden>Montant de la carte<input type="number" id="o-montant" min="1" max="2000" step="1" inputmode="numeric"></label>
+        <label class="field" for="o-nom">Votre prénom et nom<input type="text" id="o-nom" maxlength="60" autocomplete="name"></label>
+        <label class="field" for="o-tel">Votre numéro WhatsApp<input type="tel" id="o-tel" maxlength="25" autocomplete="tel" inputmode="tel"></label>
+        <label class="field" for="o-mail">Votre e-mail <small>(pour recevoir la carte cadeau)</small><input type="email" id="o-mail" maxlength="80" autocomplete="email"></label>
+        <label class="field" for="o-mot">Un petit mot ? <small>(facultatif)</small><textarea id="o-mot" rows="2" maxlength="400"></textarea></label>
+        <p class="err" id="o-err" hidden></p>
+        <button class="btn" type="submit">✅ Confirmer ma demande</button>
+      </div>
+    </form>
+    <div class="ok" id="o-ok" hidden></div>
+    <button class="link-btn" type="button" id="o-fermer">Fermer</button>
+  </div>
+</div>
+
+<script>
+const C = CONFIG, $ = id => document.getElementById(id);
+const PLUS = "plus";
+const OCCASIONS = { noel: "de Noël", anniv: "d'anniversaire", stval: "de Saint-Valentin", meres: "de Fête des mères", moi: "" };
+const OCC_LABEL = { noel: "🎄 Noël", anniv: "🎂 Anniversaire", stval: "💝 Saint-Valentin", meres: "🌷 Fête des mères", moi: "🤍 Juste pour me faire plaisir" };
+const MONTANTS = C.montants.filter(n => Number.isFinite(n) && n > 0);
+const MAX_LISTE = Math.max(...MONTANTS);
+const propre = s => String(s || "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim();
+const nomCarte = m => m === PLUS ? "Montant supérieur" : m + " €";
+const PAGE = location.origin + location.pathname;
+const wl_titre = o => "Ma wishlist " + (OCCASIONS[o] || "cadeau");
+
+/* ---------- Habillage depuis CONFIG ---------- */
+const r = document.documentElement.style;
+r.setProperty("--f1", C.couleurs.fond1); r.setProperty("--f2", C.couleurs.fond2);
+r.setProperty("--accent", C.couleurs.accent); r.setProperty("--paper", C.couleurs.papier);
+if (C.photo) { const i = document.createElement("img"); i.src = C.photo; i.alt = ""; $("bg").appendChild(i); }
+if (C.logo) { const i = document.createElement("img"); i.className = "logo"; i.src = C.logo; i.alt = C.nom; $("logo").replaceWith(i); }
+else { $("logo").className = "logo"; $("logo").textContent = C.nom.split(/\s+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w)).slice(0, 2).map(w => w[0].toUpperCase()).join(""); }
+$("surtitre").textContent = C.surtitre; $("nom").textContent = C.nom; $("titre").textContent = C.titre;
+$("f-nom").textContent = C.nom; $("f-validite").textContent = C.validite; $("f-conditions").textContent = C.conditions; $("f-adresse").textContent = C.adresse;
+if (C.site) { $("f-site").hidden = false; $("f-site-a").href = C.site; $("f-site-a").textContent = C.site.replace(/^https?:\/\//, "").replace(/\/$/, ""); }
+$("demo").hidden = !C.demo;
+
+/* ---------- Décor ---------- */
+if (C.decor === "noel") {
+  document.documentElement.classList.add("decor-noel");
+  const n = $("neige");
+  for (let k = 0; k < 40; k++) {
+    const f = document.createElement("i");
+    const t = 2 + Math.random() * 5;
+    f.style.left = Math.random() * 100 + "%";
+    f.style.width = f.style.height = t + "px";
+    f.style.opacity = (.4 + Math.random() * .5).toFixed(2);
+    f.style.setProperty("--dx", (Math.random() * 60 - 30).toFixed(0) + "px");
+    f.style.animationDuration = (8 + Math.random() * 10).toFixed(1) + "s";
+    f.style.animationDelay = (-Math.random() * 18).toFixed(1) + "s";
+    n.appendChild(f);
+  }
+}
+
+$("v-creer").href = PAGE;
+
+/* ---------- Lien partagé : #p=Léa&o=anniv&m=30,50,plus ---------- */
+function lireLien() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  const prenom = propre(h.get("p")).slice(0, 30);
+  const o = Object.prototype.hasOwnProperty.call(OCCASIONS, h.get("o")) ? h.get("o") : (C.occasions ? "moi" : "noel");
+  const m = [...new Set(String(h.get("m") || "").split(",").map(x => x === PLUS && C.montantLibre ? PLUS : Number(x)).filter(x => x === PLUS || MONTANTS.includes(x)))];
+  return prenom && m.length ? { prenom, occasion: o, montants: m } : null;
+}
+const faireLien = (p, o, m) => PAGE + "#p=" + encodeURIComponent(p) + "&o=" + o + "&m=" + m.join(",");
+
+/* ---------- 1. Créer ---------- */
+const choix = $("choix");
+[...MONTANTS, ...(C.montantLibre ? [PLUS] : [])].forEach(m => {
+  const l = document.createElement("label"); l.className = "gc" + (m === PLUS ? " wide" : "");
+  const i = document.createElement("input"); i.type = "checkbox"; i.value = m;
+  const b = document.createElement("b"); b.textContent = nomCarte(m);
+  const s = document.createElement("span"); s.textContent = m === PLUS ? "au choix de mon proche" : "carte cadeau";
+  l.append(i, b, s); choix.appendChild(l);
+});
+if (C.occasions) {
+  $("s-occasion").hidden = false;
+  Object.keys(OCC_LABEL).forEach((k, n) => {
+    const l = document.createElement("label"); l.className = "chip";
+    const i = document.createElement("input"); i.type = "radio"; i.name = "occ"; i.value = k; i.checked = n === 0;
+    l.append(i, document.createTextNode(OCC_LABEL[k])); $("occ").appendChild(l);
+  });
+}
+const occasionChoisie = () => C.occasions ? ($("occ").querySelector("input:checked") || {}).value || "moi" : "noel";
+$("sous-titre").textContent = wl_titre(C.occasions ? "" : "noel");
+let lienCree = "";
+$("f-creer").addEventListener("submit", e => {
+  e.preventDefault();
+  const m = [...choix.querySelectorAll("input:checked")].map(i => i.value === PLUS ? PLUS : Number(i.value));
+  const prenom = propre($("c-prenom").value).slice(0, 30), err = $("c-err");
+  if (!m.length) { err.textContent = "Choisissez au moins une carte cadeau."; err.hidden = false; return; }
+  if (prenom.length < 2) { err.textContent = "Indiquez votre prénom."; err.hidden = false; $("c-prenom").focus(); return; }
+  err.hidden = true;
+  const o = occasionChoisie();
+  lienCree = faireLien(prenom, o, m);
+  $("c-lien").textContent = lienCree;
+  $("c-wa").href = "https://wa.me/?text=" + encodeURIComponent("Coucou 😊 Voici " + wl_titre(o).replace("Ma", "ma") + " chez " + C.nom + " 🎁 " + lienCree);
+  $("f-creer").hidden = true; $("c-ok").hidden = false;
+  $("c-ok").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("c-partager").onclick = async () => {
+  if (navigator.share) { try { await navigator.share({ title: wl_titre(occasionChoisie()), text: "Coucou 😊 Voici " + wl_titre(occasionChoisie()).replace("Ma", "ma") + " chez " + C.nom + " 🎁", url: lienCree }); } catch (e) {} }
+  else window.open($("c-wa").href, "_blank", "noopener");
+};
+$("c-copier").onclick = e => { const t = e.currentTarget; navigator.clipboard.writeText(lienCree).then(() => { t.textContent = "Lien copié ✓"; setTimeout(() => t.textContent = "Copier le lien", 2000); }).catch(() => {}); };
+$("c-modifier").onclick = () => { $("c-ok").hidden = true; $("f-creer").hidden = false; };
+
+/* ---------- 2. Voir et offrir ---------- */
+let wl = null, carte = null;
+function afficher() {
+  wl = lireLien();
+  if (!wl) { $("creer").hidden = false; $("voir").hidden = true; return; }
+  $("creer").hidden = true; $("voir").hidden = false;
+  const occ = OCCASIONS[wl.occasion];
+  $("sous-titre").textContent = "La wishlist " + (occ ? occ + " " : "") + "de " + wl.prenom;
+  document.title = $("sous-titre").textContent + " · " + C.nom;
+  $("v-titre").textContent = "Les envies de " + wl.prenom;
+  $("v-texte").textContent = C.texte;
+  const liste = $("v-liste"); liste.textContent = "";
+  wl.montants.forEach(m => {
+    const d = document.createElement("div"); d.className = "wi";
+    const t = document.createElement("div"), b = document.createElement("b"), s = document.createElement("small");
+    b.textContent = nomCarte(m); s.textContent = "Carte cadeau"; t.append(b, s);
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn"; btn.textContent = "Offrir"; btn.onclick = () => ouvrir(m);
+    d.append(t, btn); liste.appendChild(d);
+  });
+}
+const mo = $("m-offrir"), fo = $("f-offrir");
+function ouvrir(m) {
+  carte = m;
+  $("o-titre").textContent = m === PLUS ? "Offrir une carte cadeau" : "Offrir une carte cadeau de " + m + " €";
+  $("o-sub").textContent = "Pour " + wl.prenom + " · " + C.nom + " vous recontacte sur WhatsApp pour le paiement, puis vous envoie la carte cadeau par e-mail.";
+  $("o-montant-l").hidden = m !== PLUS;
+  if (m === PLUS) { $("o-montant").min = MAX_LISTE + 1; $("o-montant").placeholder = String(MAX_LISTE + 50); $("o-montant-l").firstChild.textContent = "Montant de la carte (plus de " + MAX_LISTE + " €)"; }
+  fo.hidden = false; $("o-ok").hidden = true; $("o-err").hidden = true;
+  const b = fo.querySelector("button[type=submit]"); b.disabled = false; b.textContent = "✅ Confirmer ma demande";
+  mo.hidden = false;
+}
+$("o-fermer").onclick = () => mo.hidden = true;
+mo.addEventListener("click", e => { if (e.target === mo) mo.hidden = true; });
+fo.addEventListener("submit", e => {
+  e.preventDefault();
+  const g = id => propre($(id).value);
+  const nom = g("o-nom").slice(0, 60), tel = g("o-tel").slice(0, 25), mail = g("o-mail").slice(0, 80), mot = g("o-mot").slice(0, 400);
+  const montant = carte === PLUS ? Math.round(Number($("o-montant").value)) : carte;
+  const err = $("o-err");
+  const faute =
+    carte === PLUS && !(montant > MAX_LISTE && montant <= 2000) ? "Indiquez un montant de plus de " + MAX_LISTE + " €." :
+    nom.length < 2 ? "Indiquez votre prénom et nom." :
+    tel.replace(/\D/g, "").length < 8 ? "Indiquez un numéro WhatsApp valide." :
+    !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail) ? "Indiquez une adresse e-mail valide." : "";
+  if (faute) { err.textContent = faute; err.hidden = false; return; }
+  err.hidden = true;
+  const b = fo.querySelector("button[type=submit]"); b.disabled = true; b.textContent = "Envoi…";
+  const data = { client: C.client, commerce: C.nom, source: "wishlist", occasion: wl.occasion, pour: wl.prenom, montant: montant + " €",
+    nom, whatsapp: tel, email: mail, mot, validite: C.validite };
+  const fini = () => {
+    fo.hidden = true; fo.reset();
+    const ok = $("o-ok"); ok.textContent = "";
+    const p1 = document.createElement("p"), p1b = document.createElement("b"); p1b.textContent = "Merci " + nom.split(" ")[0] + " ! 🤍"; p1.appendChild(p1b);
+    const p2 = document.createElement("p"); p2.textContent = "Votre carte cadeau de " + montant + " € pour " + wl.prenom + " est bien réservée. " + C.nom + " vous contacte très vite sur WhatsApp pour le paiement, puis vous envoie la carte par e-mail.";
+    const p3 = document.createElement("p"); p3.textContent = C.demo ? "(Page de démonstration : aucune demande n'a été envoyée.)" : "Chut, c'est une surprise 🤫";
+    ok.append(p1, p2, p3); ok.hidden = false;
+  };
+  if (C.demo) { setTimeout(fini, 500); return; }
+  fetch(C.envoi, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+    .then(r => { if (!r.ok) throw 0; fini(); })
+    .catch(() => { b.disabled = false; b.textContent = "Réessayer"; err.textContent = "L'envoi n'a pas fonctionné. Vérifiez votre connexion et réessayez."; err.hidden = false; });
+});
+window.addEventListener("hashchange", afficher);
+afficher();
+</script>
+</body>
+</html>
