@@ -389,8 +389,8 @@ async function faire2(){
   catch(e){c=await html2canvas(p,{scale:1.4,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
   finally{p.style.transform=old}
   const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:"mm",format:"a4"}),pw=210,ph=297,hpx=c.width*ph/pw;
-  for(let y=0,i=0;y<c.height;y+=hpx,i++){
-    const part=document.createElement("canvas");part.width=c.width;part.height=Math.min(hpx,c.height-y);
+  for(let y=0,i=0;y<c.height-20;y+=hpx,i++){ /* on ignore un reste de moins de 20 px (arrondi) */
+    const part=document.createElement("canvas");part.width=c.width;part.height=Math.max(1,Math.round(Math.min(hpx,c.height-y)));
     part.getContext("2d").drawImage(c,0,y,c.width,part.height,0,0,c.width,part.height);
     if(i)pdf.addPage();pdf.addImage(part.toDataURL("image/jpeg",.92),"JPEG",0,0,pw,part.height*pw/c.width);
   }
