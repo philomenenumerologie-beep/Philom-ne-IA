@@ -109,6 +109,7 @@ textarea{min-height:90px;resize:vertical}
 <main>
 <!-- NOUVEAU DEVIS -->
 <section id="t-nouveau" class="tab" style="display:grid;gap:16px">
+  <button class="btn ghost" id="nouveau" type="button">＋ Nouveau devis</button>
   <div class="card">
     <h2>🎤 Dicter le devis</h2>
     <button class="mic" id="mic" type="button" aria-label="Dicter">🎤</button>
@@ -245,6 +246,10 @@ const dateFr=v=>v?new Date(v+"T00:00").toLocaleDateString("fr-BE"):"";
 /* --- Rendu de la page A4 --- */
 const SERVICES=["Peinture intérieure &amp; extérieure","Revêtement de sol &amp; tapisserie","Enduit et ratissage","Préparation des supports","Rénovation et finition"];
 function render(){
+  if(!$("num").value.trim())$("num").value=nouveauNum();
+  if(!$("date").value)$("date").value=new Date().toISOString().slice(0,10);
+  if(!$("cond").value.trim()&&INFOS.cond)$("cond").value=INFOS.cond;
+  if(!$("valid").value.trim())$("valid").value="15 jours";
   const T=totaux(),rows=lignes.filter(l=>l.d||num(l.p));const vides=Math.max(0,8-rows.length);
   $("s-ht").textContent=eur(T.ht);$("s-tvl").textContent="TVA ("+T.t+" %)";$("s-tva").textContent=eur(T.tva);$("s-ttc").textContent=eur(T.ttc);
   const legal=[INFOS.nom,INFOS.adresse,INFOS.bce&&("BCE "+INFOS.bce),INFOS.tvanum&&("TVA "+INFOS.tvanum),INFOS.iban&&("IBAN "+INFOS.iban),INFOS.tel].filter(Boolean).map(esc).join(" · ");
@@ -284,6 +289,7 @@ function render(){
   /* Une seule page : on retire des lignes vides tant que ça dépasse */
   const pg=$("page");let vs=pg.querySelectorAll("tbody tr.vide");for(let i=vs.length-1;i>=0&&pg.scrollHeight>1123;i--)vs[i].remove();
   fitPreview();
+  if(!faireEnCours)st.set("jodeco_brouillon",{...lire(),editId});
 }
 function fitPreview(){const w=$("prev-wrap").clientWidth||794,s=Math.min(1,w/794),p=$("page");p.style.transform=`scale(${s})`;$("prev-wrap").style.height=(p.offsetHeight*s)+"px"}
 addEventListener("resize",fitPreview);
@@ -310,7 +316,7 @@ function appliquer(o){
   const tv=parseInt(String(o.tva??"").replace(/\D/g,""),10);if([0,6,21].includes(tv))$("tva").value=String(tv);if(o.delai)$("delai").value=o.delai;
   const prixDe=d=>{const x=PRIX.find(p=>new RegExp(p.mots,"i").test(d));return x?x.p:""};
   const nl=(o.lignes||[]).filter(l=>l&&l.d).map(l=>({d:String(l.d),q:num(l.q)||1,u:String(l.u||"m²"),p:num(l.p)||prixDe(String(l.d))}));
-  lignes=lignes.filter(l=>l.d||num(l.p)).concat(nl);if(!lignes.length)lignes=[{d:"",q:1,u:"m²",p:""}];
+  lignes=nl.length?nl:lignes;if(!lignes.length)lignes=[{d:"",q:1,u:"m²",p:""}];
   renderLignes();render();
 }
 /* Lecture de secours sans serveur */
@@ -366,9 +372,10 @@ $("fill").onclick=async()=>{
 let editId=null;
 function enregistrer(silencieux){
   const d=lire(),T=totaux(),list=st.get("jodeco_devis",[]);
+  if(!editId){const m=list.find(x=>x.num===d.num);if(m)editId=m.id} /* même n° = même devis */
   if(editId){const i=list.findIndex(x=>x.id===editId);if(i>=0){list[i]={...list[i],...d,ttc:T.ttc}}}
   else{editId=Date.now();list.unshift({id:editId,statut:"Envoyé",...d,ttc:T.ttc});const y=new Date().getFullYear(),n=parseInt(String(d.num).split("-")[1])||0;if(n>st.get("jodeco_num_"+y,0))st.set("jodeco_num_"+y,n)}
-  st.set("jodeco_devis",list);if(!silencieux)toast("Devis enregistré ✓");
+  st.set("jodeco_devis",list);st.set("jodeco_brouillon",{...lire(),editId});if(!silencieux)toast("Devis enregistré ✓");
 }
 function renderListe(){
   const list=st.get("jodeco_devis",[]);
@@ -387,7 +394,9 @@ async function chargerLibs(){
   if(!window.html2canvas)await charger("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js");
   if(!window.jspdf)await charger("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js");
 }
+const aDuContenu=()=>lignes.some(l=>String(l.d||"").trim()||num(l.p))||$("c-nom").value.trim();
 async function faire2(){
+  if(!aDuContenu())throw new Error("le devis est vide. Remplissez le client et les travaux d'abord");
   await chargerLibs();
   try{await document.fonts.ready}catch(e){}
   render();
@@ -424,7 +433,11 @@ $("share").onclick=async()=>{const b=$("share");
   catch(e){resetShare();toast("Le PDF n'a pas pu être créé : "+((e&&(e.message||e.name))||e))}
   b.disabled=false};
 
-vider();
+$("nouveau").onclick=()=>{if(aDuContenu())enregistrer(true);vider();resetShare();scrollTo(0,0);toast("Nouveau devis ✓ (le précédent est dans « Mes devis »)")};
+(()=>{const b=st.get("jodeco_brouillon",null);
+  if(b&&((b.lignes||[]).some(l=>String(l.d||"").trim()||num(l.p))||String(b["c-nom"]||"").trim())){
+    vider();CHAMPS.forEach(c=>{if(b[c]!=null)$(c).value=b[c]});lignes=(b.lignes||[]).map(l=>({...l}));editId=b.editId||null;renderLignes();render();
+  }else vider();})();
 </script>
 </body>
 </html>
