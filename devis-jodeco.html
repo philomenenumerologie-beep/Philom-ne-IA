@@ -50,7 +50,7 @@ textarea{min-height:90px;resize:vertical}
 .item{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
 .item b{display:block}
 .item select{width:auto;padding:6px 8px;font-size:.85rem}
-.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:calc(100vw - 32px);text-align:center;background:var(--night);color:#fff;padding:10px 16px;border-radius:999px;font-weight:700;z-index:30}
+.toast{position:fixed;font-size:.9rem;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:calc(100vw - 32px);text-align:center;background:var(--night);color:#fff;padding:10px 16px;border-radius:999px;font-weight:700;z-index:30}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;justify-content:center}
 .bar .btn{flex:1;max-width:240px;padding:12px 10px}
 /* Aperçu */
@@ -372,11 +372,22 @@ $("save").onclick=()=>enregistrer();
 /* --- PDF --- */
 let faireEnCours=false;
 async function faire(){faireEnCours=true;try{return await faire2()}finally{faireEnCours=false}}
+/* Si les outils PDF ne se sont pas chargés (réseau), on les recharge depuis un autre serveur */
+function charger(src){return new Promise((ok,ko)=>{const t=document.createElement("script");t.src=src;t.onload=ok;t.onerror=()=>ko(new Error("chargement impossible : "+src.split("/")[2]));document.head.appendChild(t)})}
+async function chargerLibs(){
+  if(!window.html2canvas)await charger("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js");
+  if(!window.jspdf)await charger("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js");
+}
 async function faire2(){
-  await document.fonts.ready;render();
-  const p=$("page"),old=p.style.transform;p.style.transform="none";
-  const c=await html2canvas(p,{scale:2,backgroundColor:"#fff",useCORS:true,windowWidth:794});
-  p.style.transform=old;
+  await chargerLibs();
+  try{await document.fonts.ready}catch(e){}
+  render();
+  const p=$("page");
+  await Promise.all([...p.querySelectorAll("img")].map(i=>i.decode?i.decode().catch(()=>{}):null));
+  const old=p.style.transform;p.style.transform="none";let c;
+  try{c=await html2canvas(p,{scale:2,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
+  catch(e){c=await html2canvas(p,{scale:1.4,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
+  finally{p.style.transform=old}
   const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:"mm",format:"a4"}),pw=210,ph=297,hpx=c.width*ph/pw;
   for(let y=0,i=0;y<c.height;y+=hpx,i++){
     const part=document.createElement("canvas");part.width=c.width;part.height=Math.min(hpx,c.height-y);
@@ -386,7 +397,7 @@ async function faire2(){
   const nom="Devis "+($("num").value||"")+" "+($("c-nom").value||"")+".pdf";
   return {pdf,nom:nom.replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim()};
 }
-$("pdf").onclick=async()=>{const b=$("pdf");b.disabled=true;try{const {pdf,nom}=await faire();pdf.save(nom);enregistrer(true)}catch(e){toast("Le PDF n'a pas pu être créé")}b.disabled=false};
+$("pdf").onclick=async()=>{const b=$("pdf");b.disabled=true;try{const {pdf,nom}=await faire();pdf.save(nom);enregistrer(true)}catch(e){toast("Le PDF n'a pas pu être créé : "+((e&&(e.message||e.name))||e))}b.disabled=false};
 /* Envoyer en 2 temps : iPhone n'autorise le partage que juste après un appui */
 let pret=null;const SHARE_TXT="📤 Envoyer";
 function resetShare(){pret=null;$("share").textContent=SHARE_TXT}
@@ -398,7 +409,7 @@ $("share").onclick=async()=>{const b=$("share");
   b.disabled=true;b.textContent="Préparation…";
   try{const {pdf,nom}=await faire();pret={f:new File([pdf.output("blob")],nom,{type:"application/pdf"}),pdf,nom};enregistrer(true);
     b.textContent="📤 Partager";toast("PDF prêt : appuyez sur « Partager »")}
-  catch(e){resetShare();toast("Le PDF n'a pas pu être créé")}
+  catch(e){resetShare();toast("Le PDF n'a pas pu être créé : "+((e&&(e.message||e.name))||e))}
   b.disabled=false};
 
 vider();
