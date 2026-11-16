@@ -272,6 +272,7 @@ function render(){
     <path d="M0 112C180 124 320 116 440 104C580 90 700 104 794 120V150H0Z" fill="#0A2A6E"/>
     <g transform="translate(360 22)" fill="#0A2A6E"><path d="M0 46L38 12L76 46H66V76H10V46Z"/><rect x="52" y="10" width="9" height="20"/><g fill="#fff"><rect x="28" y="50" width="9" height="9"/><rect x="39" y="50" width="9" height="9"/><rect x="28" y="61" width="9" height="9"/><rect x="39" y="61" width="9" height="9"/></g></g>
   </svg><p>${legal}</p></div>`;
+  if(typeof pret!=="undefined"&&pret&&!faireEnCours)resetShare();
   /* Une seule page : on retire des lignes vides tant que ça dépasse */
   const pg=$("page");let vs=pg.querySelectorAll("tbody tr.vide");for(let i=vs.length-1;i>=0&&pg.scrollHeight>1123;i--)vs[i].remove();
   fitPreview();
@@ -293,15 +294,14 @@ $("mic").onclick=()=>{
 };
 
 /* --- Remplir le devis à partir de la dictée --- */
-function consigne(txt){return `Tu remplis un devis de peintre-décorateur belge à partir d'une dictée. Réponds UNIQUEMENT avec un objet JSON, sans texte autour :
-{"client":{"nom":"","adresse":"","cp":"","ville":"","tel":"","mail":""},"lignes":[{"d":"désignation claire","q":nombre,"u":"m² ou forfait ou h ou pièce","p":prix unitaire HTVA nombre}],"tva":6 ou 21,"delai":""}
-Règles : si un prix est dicté (prix total d'un poste, ou prix au m²), utilise-le. Sinon prends le prix de cette liste (HTVA) : ${PRIX.map(p=>p.k+" "+p.p+" €/"+p.u).join(", ")}. Si la TVA n'est pas dite, mets 6. N'invente aucune donnée client. Écris les désignations proprement (ex. « Peinture murs du salon, 2 couches »).
-Dictée : « ${txt} »`}
+/* Message court : les règles et le format sont dans le prompt du serveur (assistants.html) */
+function consigne(txt){return "Dictée : « "+txt.slice(0,600)+" »"}
 function lireJSON(t){const m=String(t).match(/\{[\s\S]*\}/);if(!m)throw 0;return JSON.parse(m[0])}
 function appliquer(o){
   const c=o.client||{};[["c-nom","nom"],["c-adr","adresse"],["c-cp","cp"],["c-ville","ville"],["c-tel","tel"],["c-mail","mail"]].forEach(([id,k])=>{if(c[k])$(id).value=c[k]});
   if([0,6,21].includes(+o.tva))$("tva").value=String(+o.tva);if(o.delai)$("delai").value=o.delai;
-  const nl=(o.lignes||[]).filter(l=>l&&l.d).map(l=>({d:String(l.d),q:num(l.q)||1,u:String(l.u||"m²"),p:num(l.p)||""}));
+  const prixDe=d=>{const x=PRIX.find(p=>new RegExp(p.mots,"i").test(d));return x?x.p:""};
+  const nl=(o.lignes||[]).filter(l=>l&&l.d).map(l=>({d:String(l.d),q:num(l.q)||1,u:String(l.u||"m²"),p:num(l.p)||prixDe(String(l.d))}));
   lignes=lignes.filter(l=>l.d||num(l.p)).concat(nl);if(!lignes.length)lignes=[{d:"",q:1,u:"m²",p:""}];
   renderLignes();render();
 }
@@ -370,7 +370,9 @@ function renderListe(){
 $("save").onclick=()=>enregistrer();
 
 /* --- PDF --- */
-async function faire(){
+let faireEnCours=false;
+async function faire(){faireEnCours=true;try{return await faire2()}finally{faireEnCours=false}}
+async function faire2(){
   await document.fonts.ready;render();
   const p=$("page"),old=p.style.transform;p.style.transform="none";
   const c=await html2canvas(p,{scale:2,backgroundColor:"#fff",useCORS:true,windowWidth:794});
@@ -385,11 +387,18 @@ async function faire(){
   return {pdf,nom:nom.replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim()};
 }
 $("pdf").onclick=async()=>{const b=$("pdf");b.disabled=true;try{const {pdf,nom}=await faire();pdf.save(nom);enregistrer(true)}catch(e){toast("Le PDF n'a pas pu être créé")}b.disabled=false};
-$("share").onclick=async()=>{const b=$("share");b.disabled=true;
-  try{const {pdf,nom}=await faire();const f=new File([pdf.output("blob")],nom,{type:"application/pdf"});enregistrer(true);
-    if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:nom,text:"Bonjour, voici votre devis Jodéco Pro. Bonne journée !"});
-    else{pdf.save(nom);toast("PDF téléchargé : joignez-le à votre message")}}
-  catch(e){if(e&&e.name!=="AbortError")toast("L'envoi n'a pas pu se faire")}
+/* Envoyer en 2 temps : iPhone n'autorise le partage que juste après un appui */
+let pret=null;const SHARE_TXT="📤 Envoyer";
+function resetShare(){pret=null;$("share").textContent=SHARE_TXT}
+$("share").onclick=async()=>{const b=$("share");
+  if(pret){const {f,pdf,nom}=pret;
+    if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:nom}).then(resetShare).catch(e=>{if(e&&e.name!=="AbortError"){pdf.save(nom);toast("PDF téléchargé : joignez-le à votre message")}})}
+    else{pdf.save(nom);toast("PDF téléchargé : joignez-le à votre message");resetShare()}
+    return}
+  b.disabled=true;b.textContent="Préparation…";
+  try{const {pdf,nom}=await faire();pret={f:new File([pdf.output("blob")],nom,{type:"application/pdf"}),pdf,nom};enregistrer(true);
+    b.textContent="📤 Partager";toast("PDF prêt : appuyez sur « Partager »")}
+  catch(e){resetShare();toast("Le PDF n'a pas pu être créé")}
   b.disabled=false};
 
 vider();
