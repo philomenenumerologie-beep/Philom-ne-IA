@@ -385,15 +385,18 @@ async function faire2(){
   const p=$("page");
   await Promise.all([...p.querySelectorAll("img")].map(i=>i.decode?i.decode().catch(()=>{}):null));
   const old=p.style.transform;p.style.transform="none";let c;
-  try{c=await html2canvas(p,{scale:2,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
-  catch(e){c=await html2canvas(p,{scale:1.4,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
+  try{c=await html2canvas(p,{scale:1.6,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
+  catch(e){c=await html2canvas(p,{scale:1.1,backgroundColor:"#fff",useCORS:true,windowWidth:794,logging:false})}
   finally{p.style.transform=old}
-  const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:"mm",format:"a4"}),pw=210,ph=297,hpx=c.width*ph/pw;
-  for(let y=0,i=0;y<c.height-20;y+=hpx,i++){ /* on ignore un reste de moins de 20 px (arrondi) */
-    const part=document.createElement("canvas");part.width=c.width;part.height=Math.max(1,Math.round(Math.min(hpx,c.height-y)));
-    part.getContext("2d").drawImage(c,0,y,c.width,part.height,0,0,c.width,part.height);
-    if(i)pdf.addPage();pdf.addImage(part.toDataURL("image/jpeg",.92),"JPEG",0,0,pw,part.height*pw/c.width);
-  }
+  const ratio=c&&c.width?c.height/c.width:1123/794;
+  /* Une seule image sur une seule page A4 (réduite si le devis est plus long) */
+  if(!c||!c.width||!c.height)throw new Error("image vide (mémoire du téléphone pleine : fermez l'onglet et rouvrez la page)");
+  const img=c.toDataURL("image/jpeg",.9);
+  c.width=0;c.height=0; /* libère la mémoire tout de suite */
+  if(!img||img.length<2000)throw new Error("image vide (mémoire du téléphone pleine : fermez l'onglet et rouvrez la page)");
+  const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:"mm",format:"a4"});
+  let w=210,h=w*ratio;if(h>297){h=297;w=h/ratio}
+  pdf.addImage(img,"JPEG",(210-w)/2,0,w,h);
   const nom="Devis "+($("num").value||"")+" "+($("c-nom").value||"")+".pdf";
   return {pdf,nom:nom.replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim()};
 }
