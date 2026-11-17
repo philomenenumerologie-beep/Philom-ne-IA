@@ -161,10 +161,10 @@ textarea{min-height:90px;resize:vertical}
   <div class="card">
     <h2>Mon entreprise</h2>
     <p class="muted">Ces infos apparaissent en bas de chaque devis.</p>
-    <label>Nom / raison sociale<input autocomplete="off" data-i="nom" value="Scomm Jodéco Pro (en cours de constitution)"></label>
-    <label>Adresse<input autocomplete="off" data-i="adresse" value="Paradijstraat 115/A, 3621 Rekem" placeholder="Rue, n°, code postal, ville"></label>
+    <label>Nom / raison sociale<input autocomplete="off" data-i="nom" value="JODECO-PRO CommV"></label>
+    <label>Adresse<input autocomplete="off" data-i="adresse" value="Paradijsstraat 115A, 8930 Menen-Rekkem" placeholder="Rue, n°, code postal, ville"></label>
     <div class="f2"><label>Téléphone<input autocomplete="off" data-i="tel" value="+32 471 07 21 20"></label><label>E-mail<input autocomplete="off" data-i="mail" value="dejasjo6@gmail.com"></label></div>
-    <div class="f2"><label>N° d'entreprise (BCE)<input autocomplete="off" data-i="bce" value="1045 244 086 en cours de constitution"></label><label>N° TVA<input autocomplete="off" data-i="tvanum" value="1045 244 086 en cours d'attribution"></label></div>
+    <div class="f2"><label>N° d'entreprise (BCE)<input autocomplete="off" data-i="bce" value="1045.244.086"></label><label>N° TVA<input autocomplete="off" data-i="tvanum" value="" placeholder="BE 1045.244.086 (quand la TVA est active)"></label></div>
     <label>IBAN<input autocomplete="off" data-i="iban" value="BE05 0019 4755 4175"></label>
     <label>Conditions de paiement par défaut<input autocomplete="off" data-i="cond" value="Acompte de 50 % à la signature, 30 % au commencement des travaux, solde à la fin des travaux"></label>
     <label>Mention sur le devis<textarea autocomplete="off" data-i="mention0">Le présent devis est établi hors taxes en raison de la constitution en cours de la société. Lors de la facture finale, la TVA réglementaire sera d'application et s'ajoutera au montant total.</textarea></label>
@@ -216,8 +216,9 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
 /* Valeurs par défaut = celles écrites dans le fichier (jamais celles que Safari remet tout seul dans les cases) */
 const defaut=i=>i.tagName==="TEXTAREA"?i.defaultValue:(i.getAttribute("value")||"");
 let INFOS=st.get("jodeco_infos",{});
-if(INFOS._v!==2)INFOS={_v:2};
-if(INFOS.adresse==="Paradijstraat 115/A")INFOS.adresse=""; /* ajoute Rekem */
+if(!INFOS._v||INFOS._v<2)INFOS={_v:2};
+if(INFOS._v<3){["nom","adresse","bce","tvanum"].forEach(k=>{const v=String(INFOS[k]||"");if(!v||/en cours|Paradijstraat|Scomm|Rekem,/i.test(v))INFOS[k]=""});INFOS._v=3} /* mentions officielles JODECO-PRO CommV */
+if(INFOS.adresse==="Paradijstraat 115/A"||INFOS.adresse==="Paradijstraat 115/A, 3621 Rekem")INFOS.adresse=""; /* ajoute Rekem */
 if(/TVA sera d.application/.test(INFOS.mention0||""))INFOS.mention0=""; /* ancienne phrase -> nouvelle phrase */
 document.querySelectorAll("[data-i]").forEach(i=>{const k=i.dataset.i;if(INFOS[k]==null||INFOS[k]==="")INFOS[k]=defaut(i);i.value=INFOS[k];i.oninput=()=>{INFOS[k]=i.value;st.set("jodeco_infos",INFOS);render()}});
 st.set("jodeco_infos",INFOS);
@@ -296,15 +297,22 @@ addEventListener("resize",fitPreview);
 CHAMPS.forEach(c=>$(c).addEventListener("input",render));$("tva").addEventListener("change",()=>{renderLignes();render()});
 
 /* --- Dictée vocale --- */
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,ecoute=false,base="";
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,voulu=false,acquis="";
+const ANDROID=/Android/i.test(navigator.userAgent);
+function finMicro(){voulu=false;$("mic").classList.remove("rec");$("mic").textContent="🎤";$("mic-st").textContent=$("dictee").value?"C'est noté. Appuyez sur « Remplir le devis ».":"Appuyez et parlez"}
+function ecouter(){
+  rec=new SR();rec.lang="fr-BE";rec.continuous=!ANDROID;rec.interimResults=true;
+  rec.onresult=e=>{let fin="",enCours="";for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t;else enCours+=t}
+    if(fin.trim())acquis=(acquis+" "+fin.trim()).trim();$("dictee").value=(acquis+" "+enCours.trim()).trim()};
+  rec.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){$("mic-st").textContent="Autorisez le micro dans les réglages, ou utilisez le micro du clavier.";finMicro()}};
+  rec.onend=()=>{$("dictee").value=acquis;if(voulu)setTimeout(()=>{if(voulu){try{ecouter()}catch(_){finMicro()}}},250);else finMicro()};
+  rec.start();
+}
 $("mic").onclick=()=>{
   if(!SR){$("mic-st").textContent="Micro non disponible ici : utilisez le micro du clavier dans la case ci-dessous.";$("dictee").focus();return}
-  if(ecoute){rec.stop();return}
-  rec=new SR();rec.lang="fr-BE";rec.continuous=true;rec.interimResults=true;base=$("dictee").value?$("dictee").value+" ":"";
-  rec.onresult=e=>{let t="";for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;$("dictee").value=base+t};
-  rec.onend=()=>{ecoute=false;$("mic").classList.remove("rec");$("mic").textContent="🎤";$("mic-st").textContent=$("dictee").value?"C'est noté. Appuyez sur « Remplir le devis ».":"Appuyez et parlez"};
-  rec.onerror=e=>{$("mic-st").textContent=e.error==="not-allowed"?"Autorisez le micro dans les réglages, ou utilisez le micro du clavier.":"Le micro s'est arrêté. Réessayez."};
-  rec.start();ecoute=true;$("mic").classList.add("rec");$("mic").textContent="■";$("mic-st").textContent="J'écoute… appuyez pour arrêter";
+  if(voulu){voulu=false;try{rec.stop()}catch(_){}finMicro();return}
+  voulu=true;acquis=$("dictee").value.trim();$("mic").classList.add("rec");$("mic").textContent="■";$("mic-st").textContent="J'écoute… parlez normalement, appuyez sur ■ pour arrêter";
+  try{ecouter()}catch(_){finMicro()}
 };
 
 /* --- Remplir le devis à partir de la dictée --- */
