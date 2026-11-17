@@ -62,6 +62,15 @@ button:disabled{opacity:.5}
     <button id="tester" type="button">Tester</button>
     <div class="msg" id="msg-tester"></div>
   </div>
+
+  <div class="card">
+    <h2>4. Assistant IA Pro</h2>
+    <label>Nom de l'espace<input id="i-nom" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="jodeco"></label>
+    <div class="row"><button class="or" id="i-on" type="button">Activer</button><button class="ghost" id="i-off" type="button">Désactiver</button><button id="i-conso" type="button">Consommation</button></div>
+    <div class="msg" id="msg-ia"></div>
+    <div class="recap" id="i-recap" hidden></div>
+    <p class="muted">Utilise le jeton admin de la partie 1. Plafond par mois : 30 séries de couleurs (90 images) et environ 3 € d'IA.</p>
+  </div>
 </main>
 <script>
 const API="https://philo-backend-by2c.onrender.com";
@@ -111,6 +120,24 @@ $("tester").onclick=async()=>{
   }catch(e){msg("msg-tester","Le serveur ne répond pas. Réessaie dans une minute.",false)}
   b.disabled=false;
 };
+
+$("i-nom").addEventListener("input",()=>{const p=propre($("i-nom").value);if(p!==$("i-nom").value)$("i-nom").value=p});
+function recapIA(j){const ia=j.ia||{},r=$("i-recap");r.hidden=false;
+  r.innerHTML="<span>Option : <b></b></span><span>Mois : <b></b></span><span>Images : <b></b> / 90</span><span>Messages : <b></b></span><span>Coût réel : <b></b></span>";
+  const b=r.querySelectorAll("b");b[0].textContent=j.iaPro?"activée ✅":"désactivée";b[1].textContent=ia.mois||"—";b[2].textContent=ia.images||0;b[3].textContent=ia.messages||0;
+  const usd=Number(ia.coutUSD||0);b[4].textContent=usd.toFixed(2)+" $ (≈ "+(usd*0.92).toFixed(2)+" €)"+(j.modele?" · "+j.modele:"")}
+async function appelIA(meth,ch,body){
+  const jeton=$("jeton").value.trim(),nom=propre($("i-nom").value);
+  if(!jeton)return msg("msg-ia","Entre d'abord ton jeton admin (partie 1).",false);
+  if(!/^[a-z0-9_-]{2,40}$/.test(nom))return msg("msg-ia","Nom d'espace invalide.",false);
+  try{const r=await fetch(API+"/espace/"+encodeURIComponent(nom)+ch,{method:meth,headers:{"Content-Type":"application/json","x-admin-token":jeton},body:body?JSON.stringify(body):undefined});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok){msg("msg-ia",ch==="/option"?(j.iaPro?"✅ Assistant IA Pro activé pour « "+nom+" ».":"Assistant IA Pro désactivé."):"✅ Consommation de « "+nom+" »",true);recapIA(j)}
+    else msg("msg-ia",r.status===403?"Jeton admin refusé.":r.status===404?"Espace inconnu.":"Erreur : "+(j.error||r.status),false)}
+  catch(e){msg("msg-ia","Le serveur ne répond pas. Réessaie dans une minute.",false)}}
+$("i-on").onclick=()=>appelIA("POST","/option",{iaPro:true});
+$("i-off").onclick=()=>appelIA("POST","/option",{iaPro:false});
+$("i-conso").onclick=()=>appelIA("GET","/conso");
 </script>
 </body>
 </html>
