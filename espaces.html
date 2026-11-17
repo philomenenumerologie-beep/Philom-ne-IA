@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Espaces pro · Philomène IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500;600&display=swap">
+<style>
+:root{--noir:#111;--or:#C9A24B;--or2:#F3E7C8;--fond:#F7F4EE;--ligne:#E2DACB;--texte:#1b1b1b;--doux:#6b6458;--ok:#1F7A3A;--err:#B3261E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.5 Jost,Arial,sans-serif}
+header{background:var(--noir);color:#fff;border-bottom:3px solid var(--or);padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px}
+header b{font:700 1.4rem "Playfair Display",serif}
+header b em{font-style:normal;color:var(--or)}
+header span{display:block;color:#d9d0bd;font-size:.85rem;margin-top:2px}
+main{max-width:560px;margin:0 auto;padding:16px 16px 60px;display:grid;gap:16px}
+.card{background:#fff;border:1px solid var(--ligne);border-radius:14px;padding:16px;display:grid;gap:12px}
+h2{margin:0;font:700 1.15rem "Playfair Display",serif}
+label{display:grid;gap:4px;font-weight:600;font-size:.92rem}
+label small{font-weight:400;color:var(--doux)}
+input{font:400 16px Jost,sans-serif;border:1.5px solid var(--ligne);border-radius:10px;padding:11px 12px;width:100%;background:#fff;color:var(--texte)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row input{flex:1;min-width:0}
+button{border:0;border-radius:999px;padding:12px 18px;font:600 .98rem Jost,sans-serif;cursor:pointer;background:var(--noir);color:#fff}
+button.or{background:var(--or);color:var(--noir)}
+button.ghost{background:transparent;color:var(--noir);border:2px solid var(--noir)}
+button:disabled{opacity:.5}
+.msg{border-radius:10px;padding:10px 12px;font-size:.92rem;display:none}
+.msg.ok{display:block;background:#E6F4EA;color:var(--ok)}
+.msg.err{display:block;background:#FBE9E7;color:var(--err)}
+.recap{background:var(--or2);border-radius:10px;padding:12px;font-size:.95rem;display:grid;gap:6px}
+.recap code{font:600 1.05rem ui-monospace,Menlo,monospace;letter-spacing:.05em}
+.muted{color:var(--doux);font-size:.88rem;margin:0}
+</style>
+</head>
+<body>
+<header><b>Philomène <em>IA</em></b><span>Espaces pro des clients (devis, factures, assistant)</span></header>
+<main>
+  <div class="card">
+    <h2>1. Ton jeton admin</h2>
+    <label>Jeton admin <small>(le même que pour assistants.html, il n'est enregistré nulle part)</small><input id="jeton" type="password" autocomplete="off"></label>
+  </div>
+
+  <div class="card">
+    <h2>2. Créer un espace ou changer son code</h2>
+    <label>Nom de l'espace <small>(minuscules, sans espace ni accent : ex. jodeco, bernard)</small><input id="nom" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="jodeco"></label>
+    <label>Code du client <small>(6 caractères minimum)</small>
+      <div class="row"><input id="code" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="ghost" id="generer" type="button">Générer</button></div></label>
+    <button class="or" id="creer" type="button">Créer l'espace</button>
+    <div class="msg" id="msg-creer"></div>
+    <div class="recap" id="recap" hidden></div>
+    <p class="muted">Si l'espace existe déjà, seul son code change : ses devis et ses infos sont gardés.</p>
+  </div>
+
+  <div class="card">
+    <h2>3. Tester un code</h2>
+    <label>Nom de l'espace<input id="t-nom" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="jodeco"></label>
+    <label>Code<input id="t-code" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+    <button id="tester" type="button">Tester</button>
+    <div class="msg" id="msg-tester"></div>
+  </div>
+</main>
+<script>
+const API="https://philo-backend-by2c.onrender.com";
+const $=id=>document.getElementById(id);
+const propre=v=>String(v||"").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9_-]/g,"");
+function msg(id,texte,ok){const m=$(id);m.textContent=texte;m.className="msg "+(ok?"ok":"err")}
+$("nom").addEventListener("input",()=>{const p=propre($("nom").value);if(p!==$("nom").value)$("nom").value=p});
+$("t-nom").addEventListener("input",()=>{const p=propre($("t-nom").value);if(p!==$("t-nom").value)$("t-nom").value=p});
+
+/* Code facile à dicter : pas de 0/O ni 1/l/I */
+$("generer").onclick=()=>{
+  const a="abcdefghjkmnpqrstuvwxyz23456789",t=new Uint32Array(8);crypto.getRandomValues(t);
+  $("code").value=Array.from(t,x=>a[x%a.length]).join("");
+};
+
+$("creer").onclick=async()=>{
+  const jeton=$("jeton").value.trim(),nom=propre($("nom").value),code=$("code").value.trim();
+  $("recap").hidden=true;
+  if(!jeton)return msg("msg-creer","Entre d'abord ton jeton admin.",false);
+  if(!/^[a-z0-9_-]{2,40}$/.test(nom))return msg("msg-creer","Nom d'espace invalide (2 à 40 caractères : lettres, chiffres, - ou _).",false);
+  if(code.length<6)return msg("msg-creer","Le code doit faire au moins 6 caractères.",false);
+  const b=$("creer");b.disabled=true;b.textContent="Création…";
+  try{
+    const r=await fetch(API+"/espace/"+encodeURIComponent(nom)+"/creer",{method:"POST",headers:{"Content-Type":"application/json","x-admin-token":jeton},body:JSON.stringify({code})});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok){
+      msg("msg-creer","✅ Espace « "+nom+" » prêt.",true);
+      $("recap").hidden=false;
+      $("recap").innerHTML="<b>À donner au client :</b><span>Espace : <code></code></span><span>Code : <code></code></span>";
+      const c=$("recap").querySelectorAll("code");c[0].textContent=nom;c[1].textContent=code;
+      $("t-nom").value=nom;$("t-code").value=code;
+    }else msg("msg-creer",r.status===403?"Jeton admin refusé.":"Erreur : "+(j.error||("code "+r.status)),false);
+  }catch(e){msg("msg-creer","Le serveur ne répond pas. Réessaie dans une minute.",false)}
+  b.disabled=false;b.textContent="Créer l'espace";
+};
+
+$("tester").onclick=async()=>{
+  const nom=propre($("t-nom").value),code=$("t-code").value.trim();
+  if(!nom||!code)return msg("msg-tester","Remplis le nom et le code.",false);
+  const b=$("tester");b.disabled=true;
+  try{
+    const r=await fetch(API+"/espace/"+encodeURIComponent(nom)+"/connexion",{method:"POST",headers:{"Content-Type":"application/json","x-client-password":code},body:"{}"});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok)msg("msg-tester","✅ Le code est bon.",true);
+    else if(r.status===429)msg("msg-tester","Trop d'essais : attends 15 minutes.",false);
+    else msg("msg-tester","❌ Code refusé (ou espace inexistant).",false);
+  }catch(e){msg("msg-tester","Le serveur ne répond pas. Réessaie dans une minute.",false)}
+  b.disabled=false;
+};
+</script>
+</body>
+</html>
