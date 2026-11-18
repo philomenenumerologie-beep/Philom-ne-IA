@@ -244,7 +244,7 @@ details.card>summary{list-style:none}details.card>summary::-webkit-details-marke
     <label>Adresse<input autocomplete="off" data-i="adresse" value="Paradijsstraat 115A, 8930 Menen-Rekkem" placeholder="Rue, n°, code postal, ville"></label>
     <div class="f2"><label>Téléphone<input autocomplete="off" data-i="tel" value="+32 471 07 21 20"></label><label>E-mail<input autocomplete="off" data-i="mail" value="dejasjo6@gmail.com"></label></div>
     <div class="f2"><label>N° d'entreprise (BCE)<input autocomplete="off" data-i="bce" value="1045.244.086"></label><label>N° TVA<input autocomplete="off" data-i="tvanum" value="en cours d'attribution" placeholder="BE 1045.244.086 (quand la TVA est active)"></label></div>
-    <label>IBAN<input autocomplete="off" data-i="iban" value="BE05 0019 4755 4175"></label>
+    <label>IBAN<input autocomplete="off" data-i="iban" value="BE41 1262 1297 6910"></label>
     <label>Conditions de paiement par défaut<input autocomplete="off" data-i="cond" value="Acompte de 50 % à la signature, 30 % au commencement des travaux, solde à la fin des travaux"></label>
     <label>Mention sur le devis<textarea autocomplete="off" data-i="mention0" placeholder="(facultatif)">Le présent devis est établi hors taxes en raison de la constitution en cours de la société. Lors de la facture finale, la TVA réglementaire sera d'application et s'ajoutera au montant total.</textarea></label>
   </div>
@@ -313,7 +313,11 @@ if(INFOS._v<3){["nom","adresse","bce","tvanum"].forEach(k=>{const v=String(INFOS
 if(INFOS.adresse==="Paradijstraat 115/A"||INFOS.adresse==="Paradijstraat 115/A, 3621 Rekem")INFOS.adresse=""; /* ajoute Rekem */
 const PHRASE_HT="Le présent devis est établi hors taxes en raison de la constitution en cours de la société. Lors de la facture finale, la TVA réglementaire sera d\'application et s\'ajoutera au montant total.";
 /* 18/11 : le comptable veut de nouveau « hors taxes » et « TVA en cours d'attribution » */
-function migrerInfos(I){if((I._v||0)>=5)return false;if(!String(I.mention0||"").trim())I.mention0=PHRASE_HT;if(!I.tvanum||/1045/.test(I.tvanum))I.tvanum="en cours d'attribution";I._v=5;return true}
+function migrerInfos(I){let ch=false;
+  if((I._v||0)<5){if(!String(I.mention0||"").trim())I.mention0=PHRASE_HT;if(!I.tvanum||/1045/.test(I.tvanum))I.tvanum="en cours d'attribution";I._v=5;ch=true}
+  /* 18/11 : compte privé remplacé par le compte pro */
+  if(!I.iban||/BE05\s*0019\s*4755\s*4175/.test(I.iban)){I.iban="BE41 1262 1297 6910";ch=true}
+  return ch}
 migrerInfos(INFOS);
 document.querySelectorAll("[data-i]").forEach(i=>{const k=i.dataset.i;if(INFOS[k]==null||INFOS[k]==="")INFOS[k]=defaut(i);i.value=INFOS[k];i.oninput=()=>{INFOS[k]=i.value;st.set("jodeco_infos",INFOS);marquerInfos();render()}});
 st.set("jodeco_infos",INFOS);
