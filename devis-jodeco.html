@@ -66,6 +66,7 @@ textarea{min-height:90px;resize:vertical}
 .doc .coord .ck{display:flex;gap:8px;align-items:center}
 .doc .coord .ck::before{content:"✓";color:#0A2A6E;font-weight:800;font-size:16px}
 .doc .title{display:flex;align-items:center;gap:16px;padding:0 26px;margin-top:-6px}
+.doc .constit{text-align:center;color:#0A2A6E;font-weight:800;font-size:19px;letter-spacing:.22em;text-transform:uppercase;margin:8px 0 -6px}
 .doc .title i{flex:1;height:2px;background:#0A2A6E}
 .doc .title span{background:#0A2A6E;color:#fff;font-weight:800;font-size:40px;letter-spacing:.04em;padding:2px 46px;border-radius:14px}
 .doc .info{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;padding:18px 26px 0}
@@ -241,7 +242,7 @@ details.card>summary{list-style:none}details.card>summary::-webkit-details-marke
     <h2>Mon entreprise</h2>
     <p class="muted">Ces infos apparaissent en bas de chaque devis.</p>
     <label>Nom / raison sociale<input autocomplete="off" data-i="nom" value="JODECO-PRO CommV"></label>
-    <label>Adresse<input autocomplete="off" data-i="adresse" value="Paradijsstraat 115A, 8930 Menen-Rekkem" placeholder="Rue, n°, code postal, ville"></label>
+    <label>Adresse<input autocomplete="off" data-i="adresse" value="Paradijsstraat 115A, 8930 Rekkem" placeholder="Rue, n°, code postal, ville"></label>
     <div class="f2"><label>Téléphone<input autocomplete="off" data-i="tel" value="+32 471 07 21 20"></label><label>E-mail<input autocomplete="off" data-i="mail" value="dejasjo6@gmail.com"></label></div>
     <div class="f2"><label>N° d'entreprise (BCE)<input autocomplete="off" data-i="bce" value="1045.244.086"></label><label>N° TVA<input autocomplete="off" data-i="tvanum" value="en cours d'attribution" placeholder="BE 1045.244.086 (quand la TVA est active)"></label></div>
     <label>IBAN<input autocomplete="off" data-i="iban" value="BE41 1262 1297 6910"></label>
@@ -315,6 +316,7 @@ const PHRASE_HT="Le présent devis est établi hors taxes en raison de la consti
 /* 18/11 : le comptable veut de nouveau « hors taxes » et « TVA en cours d'attribution » */
 function migrerInfos(I){let ch=false;
   if((I._v||0)<5){if(!String(I.mention0||"").trim())I.mention0=PHRASE_HT;if(!I.tvanum||/1045/.test(I.tvanum))I.tvanum="en cours d'attribution";I._v=5;ch=true}
+  if(/Menen-Rekkem/i.test(I.adresse||"")){I.adresse=I.adresse.replace(/Menen-Rekkem/i,"Rekkem");ch=true}
   /* 18/11 : compte privé remplacé par le compte pro */
   if(!I.iban||/BE05\s*0019\s*4755\s*4175/.test(I.iban)){I.iban="BE41 1262 1297 6910";ch=true}
   return ch}
@@ -364,7 +366,7 @@ function pageDoc(d){
   </svg>
   <img class="logo" src="${LOGO}" alt="">
   <div class="coord"><div class="mail">✉&nbsp; ${esc(V.mail||"")} &nbsp;·&nbsp; ☎ ${esc(V.tel||"")}</div>${SERVICES.map(s=>`<div class="ck">${s}</div>`).join("")}</div></div>
-  <div class="title"><i></i><span>${F?"FACTURE":"DEVIS"}</span><i></i></div>
+  <div class="title"><i></i><span>${F?"FACTURE":"DEVIS"}</span><i></i></div>${/en cours/i.test(V.tvanum||"")?`<div class="constit">Société en constitution</div>`:""}
   <div class="info"><div><span class="pill">Coordonnées client :</span><div class="cl">
     <div><b>Nom :</b>${esc(d["c-nom"])}</div><div><b>Adresse :</b>${esc(d["c-adr"])}</div>
     <div><b>Code postal :</b>${esc(d["c-cp"])}&nbsp;&nbsp;&nbsp;<b>Ville :</b>${esc(d["c-ville"])}</div>
