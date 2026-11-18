@@ -123,6 +123,12 @@ textarea{min-height:90px;resize:vertical}
 .c-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .c-cols input{min-width:0}
 .tabs button{font-size:.85rem;padding:10px 2px}
+.bul .gen{display:block;width:100%;max-width:100%;border-radius:10px;margin-top:6px}
+.bul.img{max-width:96%;width:96%}
+.bul .gb{display:flex;gap:6px;margin-top:6px}.bul .gb button{flex:1;padding:8px 6px;font-size:.88rem}
+.bul .pt{font-size:.75rem;color:var(--soft);margin-top:4px}
+#q-mic.on{background:#E53935;color:#fff;border-color:#E53935}
+details.card>summary{list-style:none}details.card>summary::-webkit-details-marker{display:none}
 </style>
 </head>
 <body>
@@ -158,7 +164,7 @@ textarea{min-height:90px;resize:vertical}
     <div id="lignes" style="display:grid;gap:8px"></div>
     <button class="btn ghost" id="add" type="button">+ Ajouter une ligne</button>
     <div class="f3">
-      <label>TVA <small class="muted">6 % : logement +10 ans · 21 % : moins de 10 ans, neuf ou local pro · 0 % : hors taxes</small><select autocomplete="off" id="tva"><option value="0">0 % (hors taxes)</option><option value="6" selected>6 % (logement + 10 ans)</option><option value="21">21 %</option></select></label>
+      <label>TVA <small class="muted">6 % : logement +10 ans · 21 % : moins de 10 ans, neuf ou local pro · 0 % : hors taxes</small><select autocomplete="off" id="tva"><option value="0" selected>0 % (hors taxes)</option><option value="6">6 % (logement + 10 ans)</option><option value="21">21 %</option></select></label>
       <label>N° devis<input autocomplete="off" id="num"></label>
       <label>Date<input autocomplete="off" id="date" type="date"></label>
     </div>
@@ -203,18 +209,20 @@ textarea{min-height:90px;resize:vertical}
 <section id="t-ia" class="tab" hidden>
   <div class="card">
     <h2>💬 Votre assistant</h2>
-    <p class="muted" style="margin:0">Messages aux clients, réclamations, quantités de peinture, conseils… Demandez comme à un collègue.</p>
+    <p class="muted" style="margin:0">Demandez comme à un collègue. Avec une photo 📷, demandez par exemple « 3 couleurs pastel sur la façade » : l'IA vous montre le résultat.</p>
     <div class="chat" id="chat"></div>
     <textarea autocomplete="off" id="q" rows="3" placeholder="Ex : écris un message poli pour relancer Mme Petit sur son devis"></textarea>
     <div class="row" style="align-items:center">
       <label class="btn ghost" for="q-photo" style="padding:10px 14px">📷</label><input type="file" id="q-photo" accept="image/*" hidden>
+      <button class="btn ghost" id="q-mic" type="button" style="padding:10px 14px" aria-label="Dicter">🎤</button>
       <span class="muted" id="q-pj" style="flex:1"></span>
       <button class="btn ghost" id="q-new" type="button" style="padding:10px 14px">Effacer</button>
       <button class="btn" id="q-go" type="button">Envoyer</button>
     </div>
+    <p class="muted" id="q-quota" style="margin:0;font-size:.85rem"></p>
   </div>
-  <div class="card">
-    <h2>🎨 Couleurs pour vos clients</h2>
+  <details class="card">
+    <summary style="font-weight:800;cursor:pointer">🎨 Couleurs : mode manuel (choisir soi-même)</summary>
     <p class="muted" style="margin:0">Prenez la pièce en photo : l'IA la repeint en 3 couleurs, à montrer ou envoyer au client.</p>
     <label class="btn ghost" for="c-photo">📷 Prendre ou choisir une photo</label><input type="file" id="c-photo" accept="image/*" hidden>
     <img id="c-apercu" class="c-img" alt="" hidden>
@@ -224,7 +232,7 @@ textarea{min-height:90px;resize:vertical}
     <p class="muted" id="c-quota" style="margin:0"></p>
     <div class="c-grid" id="c-res"></div>
     <p class="muted" style="margin:0;font-size:.8rem">Simulation indicative : le rendu réel peut varier.</p>
-  </div>
+  </details>
 </section>
 
 <!-- MES INFOS -->
@@ -235,10 +243,10 @@ textarea{min-height:90px;resize:vertical}
     <label>Nom / raison sociale<input autocomplete="off" data-i="nom" value="JODECO-PRO CommV"></label>
     <label>Adresse<input autocomplete="off" data-i="adresse" value="Paradijsstraat 115A, 8930 Menen-Rekkem" placeholder="Rue, n°, code postal, ville"></label>
     <div class="f2"><label>Téléphone<input autocomplete="off" data-i="tel" value="+32 471 07 21 20"></label><label>E-mail<input autocomplete="off" data-i="mail" value="dejasjo6@gmail.com"></label></div>
-    <div class="f2"><label>N° d'entreprise (BCE)<input autocomplete="off" data-i="bce" value="1045.244.086"></label><label>N° TVA<input autocomplete="off" data-i="tvanum" value="BE 1045.244.086" placeholder="BE 1045.244.086"></label></div>
+    <div class="f2"><label>N° d'entreprise (BCE)<input autocomplete="off" data-i="bce" value="1045.244.086"></label><label>N° TVA<input autocomplete="off" data-i="tvanum" value="en cours d'attribution" placeholder="BE 1045.244.086 (quand la TVA est active)"></label></div>
     <label>IBAN<input autocomplete="off" data-i="iban" value="BE05 0019 4755 4175"></label>
     <label>Conditions de paiement par défaut<input autocomplete="off" data-i="cond" value="Acompte de 50 % à la signature, 30 % au commencement des travaux, solde à la fin des travaux"></label>
-    <label>Mention sur le devis<textarea autocomplete="off" data-i="mention0" placeholder="(facultatif)"></textarea></label>
+    <label>Mention sur le devis<textarea autocomplete="off" data-i="mention0" placeholder="(facultatif)">Le présent devis est établi hors taxes en raison de la constitution en cours de la société. Lors de la facture finale, la TVA réglementaire sera d'application et s'ajoutera au montant total.</textarea></label>
   </div>
   <div class="card">
     <h2>Mes prix (HTVA)</h2>
@@ -303,7 +311,10 @@ let INFOS=st.get("jodeco_infos",{});
 if(!INFOS._v||INFOS._v<2)INFOS={_v:2};
 if(INFOS._v<3){["nom","adresse","bce","tvanum"].forEach(k=>{const v=String(INFOS[k]||"");if(!v||/en cours|Paradijstraat|Scomm|Rekem,/i.test(v))INFOS[k]=""});INFOS._v=3} /* mentions officielles JODECO-PRO CommV */
 if(INFOS.adresse==="Paradijstraat 115/A"||INFOS.adresse==="Paradijstraat 115/A, 3621 Rekem")INFOS.adresse=""; /* ajoute Rekem */
-if(/hors taxes|TVA sera d.application/i.test(INFOS.mention0||""))INFOS.mention0=""; /* TVA active (17/11) : phrase hors taxes enlevée */
+const PHRASE_HT="Le présent devis est établi hors taxes en raison de la constitution en cours de la société. Lors de la facture finale, la TVA réglementaire sera d\'application et s\'ajoutera au montant total.";
+/* 18/11 : le comptable veut de nouveau « hors taxes » et « TVA en cours d'attribution » */
+function migrerInfos(I){if((I._v||0)>=5)return false;if(!String(I.mention0||"").trim())I.mention0=PHRASE_HT;if(!I.tvanum||/1045/.test(I.tvanum))I.tvanum="en cours d'attribution";I._v=5;return true}
+migrerInfos(INFOS);
 document.querySelectorAll("[data-i]").forEach(i=>{const k=i.dataset.i;if(INFOS[k]==null||INFOS[k]==="")INFOS[k]=defaut(i);i.value=INFOS[k];i.oninput=()=>{INFOS[k]=i.value;st.set("jodeco_infos",INFOS);marquerInfos();render()}});
 st.set("jodeco_infos",INFOS);
 let PRIX=st.get("jodeco_prix",PRIX_DEFAUT);
@@ -323,7 +334,7 @@ $("add").onclick=()=>{lignes.push({d:"",q:1,u:"m²",p:""});renderLignes();render
 /* --- Données du devis --- */
 const CHAMPS=["c-nom","c-adr","c-cp","c-ville","c-tel","c-mail","tva","num","date","valid","delai","cond"];
 function nouveauNum(){const y=new Date().getFullYear(),n=st.get("jodeco_num_"+y,0)+1;return y+"-"+String(n).padStart(3,"0")}
-function vider(){CHAMPS.forEach(c=>{if(!["tva","valid"].includes(c))$(c).value=""});$("tva").value="6";$("num").value=nouveauNum();$("date").value=new Date().toISOString().slice(0,10);$("cond").value=INFOS.cond||"";$("valid").value="15 jours";lignes=[{d:"",q:1,u:"m²",p:""}];editId=null;numReserve=false;renderLignes();render()}
+function vider(){CHAMPS.forEach(c=>{if(!["tva","valid"].includes(c))$(c).value=""});$("tva").value="0";$("num").value=nouveauNum();$("date").value=new Date().toISOString().slice(0,10);$("cond").value=INFOS.cond||"";$("valid").value="15 jours";lignes=[{d:"",q:1,u:"m²",p:""}];editId=null;numReserve=false;renderLignes();render()}
 function lire(){const o={};CHAMPS.forEach(c=>o[c]=$(c).value);o.lignes=lignes.map(l=>({...l}));return o}
 function totaux(){const ht=lignes.reduce((s,l)=>s+num(l.q)*num(l.p),0),t=num($("tva").value);return {ht,tva:ht*t/100,ttc:ht*(1+t/100),t}}
 const dateFr=v=>v?new Date(v+"T00:00").toLocaleDateString("fr-BE"):"";
@@ -415,7 +426,7 @@ function consigne(txt){return "Dictée : « "+txt.slice(0,600)+" »"}
 function lireJSON(t){const m=String(t).match(/\{[\s\S]*\}/);if(!m)throw 0;return JSON.parse(m[0])}
 function appliquer(o){
   const c=o.client||{};[["c-nom","nom"],["c-adr","adresse"],["c-cp","cp"],["c-ville","ville"],["c-tel","tel"],["c-mail","mail"]].forEach(([id,k])=>{if(c[k])$(id).value=c[k]});
-  const tv=parseInt(String(o.tva??"").replace(/\D/g,""),10);const dit=String(($("dictee")||{}).value||"");if([6,21].includes(tv)||(tv===0&&/hors[\s-]*tax|sans\s*tva|0\s*%/i.test(dit)))$("tva").value=String(tv);if(o.delai)$("delai").value=o.delai;
+  const tv=parseInt(String(o.tva??"").replace(/\D/g,""),10);if([0,6,21].includes(tv))$("tva").value=String(tv);if(o.delai)$("delai").value=o.delai;
   const prixDe=d=>{const x=PRIX.find(p=>new RegExp(p.mots,"i").test(d));return x?x.p:""};
   const nl=(o.lignes||[]).filter(l=>l&&l.d).map(l=>({d:String(l.d),q:num(l.q)||1,u:String(l.u||"m²"),p:num(l.p)||prixDe(String(l.d))}));
   lignes=nl.length?nl:lignes;if(!lignes.length)lignes=[{d:"",q:1,u:"m²",p:""}];
@@ -616,28 +627,65 @@ function reduire(file,max){return new Promise((ok,ko)=>{const u=URL.createObject
   im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
     c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);const d=c.toDataURL("image/jpeg",.82);c.width=0;ok(d)};
   im.onerror=()=>{URL.revokeObjectURL(u);ko(new Error("photo illisible"))};im.src=u})}
+var lastPhoto=st.get("jodeco_photo",null);
+/* Une bulle par message ; les images créées ne sont gardées que pendant la visite */
 function renderChat(){
   const c=$("chat");
-  c.innerHTML=CHAT.length?CHAT.map((m,i)=>`<div class="bul ${m.role==="user"?"moi":"ia"}">${esc(m.content)}${m.img?`<img src="${m.img}" alt="">`:""}${m.role==="assistant"?`<button class="cop" data-cop="${i}" type="button">Copier</button>`:""}</div>`).join(""):'<p class="muted" style="margin:0">Posez votre première question 👇</p>';
+  c.innerHTML=CHAT.length?CHAT.map((m,i)=>{
+    if(m.gen)return `<div class="bul ia img"><b>${esc(m.gen.couleur)}</b><img class="gen" src="${m.gen.src}" alt=""><div class="gb"><button class="btn wa" data-gs="${i}" type="button">📤 Envoyer</button><button class="btn ghost" data-gd="${i}" type="button">💾 Enregistrer</button></div><div class="pt">Simulation indicative</div></div>`;
+    if(m.attente)return `<div class="bul ia">${esc(m.attente)}</div>`;
+    if(/^\[Image créée : /.test(m.content||""))return `<div class="bul ia" style="opacity:.7;font-size:.88rem">🖼️ ${esc(m.content.slice(15,-1))} (image d'une visite précédente)</div>`;
+    return `<div class="bul ${m.role==="user"?"moi":"ia"}">${esc(m.content)}${m.img?`<img src="${m.img}" alt="">`:""}${m.role==="assistant"?`<button class="cop" data-cop="${i}" type="button">Copier</button>`:""}</div>`}).join(""):'<p class="muted" style="margin:0">Posez votre première question 👇</p>';
   c.querySelectorAll("[data-cop]").forEach(b=>b.onclick=()=>{const t=CHAT[+b.dataset.cop].content;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copié ✓")).catch(()=>toast("Copie impossible : sélectionnez le texte"))});
+  const tele=g=>{const a=document.createElement("a");a.href=g.src;a.download=g.nom;document.body.appendChild(a);a.click();a.remove()};
+  c.querySelectorAll("[data-gs]").forEach(b=>b.onclick=()=>{const g=CHAT[+b.dataset.gs].gen;if(navigator.canShare&&navigator.canShare({files:[g.file]}))navigator.share({files:[g.file],title:g.nom}).catch(()=>{});else{tele(g);toast("Image téléchargée : joignez-la à votre message")}});
+  c.querySelectorAll("[data-gd]").forEach(b=>b.onclick=()=>tele(CHAT[+b.dataset.gd].gen));
   c.scrollTop=c.scrollHeight}
-function garderChat(){CHAT=CHAT.slice(-40);st.set("jodeco_chat",CHAT.map(m=>({role:m.role,content:m.content})))}
+/* Ce qui part au serveur et ce qui est gardé : du texte seulement */
+const pourIA=m=>m.gen?{role:"assistant",content:"[Image créée : "+m.gen.couleur+"]"}:{role:m.role,content:m.content};
+function garderChat(){CHAT=CHAT.filter(m=>!m.attente).slice(-40);st.set("jodeco_chat",CHAT.map(pourIA))}
 function iaPrete(){if(!CODE){toast("Connectez-vous d'abord (🔒 en haut)");return false}if(iaOcc){toast("Patientez, l'IA travaille…");return false}return true}
 function erreurIA(e){const m=e&&e.message||"";return m==="code"?"Code à retaper.":/Failed to fetch|NetworkError|Load failed/i.test(m)?"Pas de réseau : réessayez.":m||"L'IA ne répond pas, réessayez."}
 function majIA(ia){if(!ia)return;const v=st.get("jodeco_ia",{});st.set("jodeco_ia",{...v,...ia,actif:true});quotaIA()}
 function quotaIA(){const v=st.get("jodeco_ia",{});const reste=Math.max(0,Math.floor((90-(v.mois===new Date().toISOString().slice(0,7)?(v.images||0):0))/3));
-  $("c-quota").textContent=v.actif===false?"L'Assistant IA Pro n'est pas encore activé.":"Ce mois-ci : encore "+reste+" série"+(reste>1?"s":"")+" de couleurs."}
+  const t=v.actif===false?"L'Assistant IA Pro n'est pas encore activé.":"Ce mois-ci : encore "+reste+" série"+(reste>1?"s":"")+" de couleurs.";$("c-quota").textContent=t;$("q-quota").textContent=t}
+
+const CONSIGNE_PHOTO="\n\n[Consigne pour l'assistant, invisible pour l'utilisateur : une photo de chantier est disponible. "+
+ "Si la demande consiste à voir cette photo repeinte, à proposer ou essayer des couleurs, ou à modifier une simulation déjà faite (ex. « 3 couleurs pastel », « plus foncé », « essaie un gris », « mets la porte en anthracite »), "+
+ "réponds UNIQUEMENT avec ce JSON, sans rien d'autre : {\"action\":\"couleurs\",\"zone\":\"<ce qu'il faut repeindre, en anglais, ex. the walls / the facade of the house / the front door / the garage door / the doors and the woodwork / the ceiling / the shutters>\",\"couleurs\":[\"<couleur 1 précise en français>\",\"...\"],\"message\":\"<une phrase courte en français qui annonce ce que tu prépares>\"}. "+
+ "Mets autant de couleurs que demandé (1 à 3 ; 3 si rien n'est précisé). Pour « plus foncé », « plus clair »… repars des couleurs de la simulation précédente. "+
+ "Si la demande ne concerne pas des couleurs à appliquer sur la photo, réponds normalement en texte.]";
+function lireAction(t){const m=/\{[\s\S]*\}/.exec(String(t||""));if(!m)return null;try{const o=JSON.parse(m[0]);
+  if(o&&o.action==="couleurs"&&Array.isArray(o.couleurs)){const c=o.couleurs.map(x=>String(x||"").trim()).filter(Boolean).slice(0,3);if(c.length)return {zone:String(o.zone||"the walls").slice(0,80),couleurs:c,message:String(o.message||"")}}}catch(e){}return null}
+async function creerImages(act){
+  for(const col of act.couleurs){
+    CHAT.push({role:"assistant",attente:"🎨 "+col+" : création en cours… (20 à 40 secondes)"});const k=CHAT.length-1;renderChat();
+    try{const j=await appel("/ia/couleur",{method:"POST",body:{photo:lastPhoto,couleur:col,zone:act.zone}});majIA(j.ia);
+      const nom=("Simulation "+col).replace(/[^\wÀ-ÿ -]/g,"").trim()+".jpg";
+      CHAT[k]={role:"assistant",gen:{couleur:col,src:j.image,nom,file:fichierDe(j.image,nom)}}}
+    catch(e){CHAT[k]={role:"assistant",content:"❌ "+col+" : "+erreurIA(e)};renderChat();if(/budget|séries|activé/i.test(e&&e.message||""))break}
+    renderChat()}}
 $("q-photo").onchange=async()=>{const f=$("q-photo").files[0];$("q-photo").value="";if(!f)return;try{qPhoto=await reduire(f,1024);$("q-pj").textContent="📎 photo jointe"}catch(e){toast("Photo illisible")}};
-$("q-new").onclick=()=>{CHAT=[];garderChat();qPhoto=null;$("q-pj").textContent="";renderChat()};
+$("q-new").onclick=()=>{CHAT=[];garderChat();qPhoto=null;lastPhoto=null;st.set("jodeco_photo",null);$("q-pj").textContent="";renderChat()};
 $("q-go").onclick=async()=>{
   const t=$("q").value.trim();if(!t&&!qPhoto)return;if(!iaPrete())return;
   iaOcc=true;const b=$("q-go");b.disabled=true;b.textContent="…";
-  CHAT.push({role:"user",content:t||"Que penses-tu de cette photo ?",img:qPhoto});const photo=qPhoto;qPhoto=null;$("q-pj").textContent="";$("q").value="";renderChat();
-  CHAT.push({role:"assistant",content:"✍️ …"});renderChat();
-  try{const j=await appel("/ia/chat",{method:"POST",body:{messages:CHAT.slice(0,-1).slice(-12).map(m=>({role:m.role,content:m.content})),photo:photo||undefined}});
-    CHAT[CHAT.length-1]={role:"assistant",content:j.answer||"(pas de réponse)"};majIA(j.ia)}
-  catch(e){CHAT.pop();toast(erreurIA(e));if(!$("q").value)$("q").value=CHAT.length&&CHAT[CHAT.length-1].role==="user"?CHAT.pop().content:"";}
+  const photo=qPhoto;if(photo){lastPhoto=photo;st.set("jodeco_photo",photo)}
+  CHAT.push({role:"user",content:t||"Que penses-tu de cette photo ?",img:photo});qPhoto=null;$("q-pj").textContent="";$("q").value="";
+  CHAT.push({role:"assistant",attente:"✍️ …"});renderChat();
+  try{const hist=CHAT.filter(m=>!m.attente).slice(-12).map(pourIA);
+    if(lastPhoto)hist[hist.length-1]={...hist[hist.length-1],content:hist[hist.length-1].content+CONSIGNE_PHOTO};
+    const j=await appel("/ia/chat",{method:"POST",body:{messages:hist,photo:photo||undefined}});majIA(j.ia);
+    const act=lastPhoto&&lireAction(j.answer);CHAT.pop();
+    if(act){CHAT.push({role:"assistant",content:(act.message||"Je vous prépare la simulation.")+"\nCouleurs : "+act.couleurs.join(", ")});renderChat();await creerImages(act)}
+    else CHAT.push({role:"assistant",content:/^\s*\{/.test(j.answer||"")?"Je n'ai pas bien compris. Dites par exemple : « 3 couleurs pastel sur les murs »":(j.answer||"(pas de réponse)")})}
+  catch(e){CHAT.pop();toast(erreurIA(e));if(!$("q").value&&CHAT.length&&CHAT[CHAT.length-1].role==="user"){const u=CHAT.pop();$("q").value=u.content;if(u.img)qPhoto=u.img,$("q-pj").textContent="📎 photo jointe"}}
   garderChat();renderChat();iaOcc=false;b.disabled=false;b.textContent="Envoyer"};
+/* Micro du chat : on parle, le texte s'écrit dans la case */
+(()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition,m=$("q-mic");if(!R){m.hidden=true;return}let r=null;
+  m.onclick=()=>{if(r){r.stop();return}r=new R();r.lang="fr-BE";r.interimResults=true;r.continuous=false;const base=$("q").value?$("q").value.trim()+" ":"";
+    r.onresult=e=>{let t="";for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;$("q").value=base+t};
+    r.onend=()=>{r=null;m.classList.remove("on")};r.onerror=()=>{};m.classList.add("on");try{r.start()}catch(e){r=null;m.classList.remove("on")}}})();
 $("c-photo").onchange=async()=>{const f=$("c-photo").files[0];$("c-photo").value="";if(!f)return;
   try{cPhoto=await reduire(f,1024);$("c-apercu").src=cPhoto;$("c-apercu").hidden=false;$("c-res").innerHTML=""}catch(e){toast("Photo illisible")}};
 function fichierDe(dataUrl,nom){const b=atob(dataUrl.split(",")[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new File([u],nom,{type:"image/jpeg"})}
@@ -694,7 +742,7 @@ async function synchro(){
     st.set("jodeco_devis",liste);
     if(!s.infos||!Object.keys(s.infos).length){if(!a.infos){a.infos=true;resynchro=true}}
     else if(!a.infos){
-      INFOS={...s.infos};st.set("jodeco_infos",INFOS);
+      INFOS={...s.infos};const mig=migrerInfos(INFOS);st.set("jodeco_infos",INFOS);if(mig){a.infos=true;resynchro=true}
       document.querySelectorAll("[data-i]").forEach(i=>{if(document.activeElement!==i)i.value=INFOS[i.dataset.i]??""});
       if(Array.isArray(s.prix)&&s.prix.length&&!$("prix").contains(document.activeElement)){PRIX=s.prix;st.set("jodeco_prix",PRIX);renderPrix()}
       render()}
