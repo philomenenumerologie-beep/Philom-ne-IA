@@ -396,8 +396,9 @@ function render(){
   if(!$("valid").value.trim())$("valid").value="15 jours";
   const T=totaux();
   $("s-ht").textContent=eur(T.ht);$("s-tvl").textContent="TVA ("+T.t+" %)";$("s-tva").textContent=eur(T.tva);$("s-ttc").textContent=eur(T.ttc);
-  $("page").innerHTML=pageDoc({...lire(),type:"devis"});
-  if(typeof pret!=="undefined"&&pret&&!faireEnCours)resetShare();
+  const html=pageDoc({...lire(),type:"devis"});dernierHtml=html;$("page").innerHTML=html;
+  /* on ne remet « Envoyer » que si le devis a vraiment changé (pas pour une simple synchro) */
+  if(typeof pret!=="undefined"&&pret&&!faireEnCours&&pret.html!==html)resetShare();
   /* Une seule page : on retire des lignes vides tant que ça dépasse */
   const pg=$("page");let vs=pg.querySelectorAll("tbody tr.vide");for(let i=vs.length-1;i>=0&&pg.scrollHeight>1123;i--)vs[i].remove();
   fitPreview();
@@ -541,7 +542,7 @@ async function faire2(o){
 }
 $("pdf").onclick=async()=>{const b=$("pdf");b.disabled=true;try{const {pdf,nom}=await faire();pdf.save(nom);enregistrer(true)}catch(e){toast("Le PDF n'a pas pu être créé : "+((e&&(e.message||e.name))||e))}b.disabled=false};
 /* Envoyer en 2 temps : iPhone n'autorise le partage que juste après un appui */
-let pret=null;const SHARE_TXT="📤 Envoyer";
+let pret=null;var dernierHtml="";const SHARE_TXT="📤 Envoyer";
 function resetShare(){pret=null;$("share").textContent=SHARE_TXT}
 $("share").onclick=async()=>{const b=$("share");
   if(pret){const {f,pdf,nom}=pret;
@@ -549,7 +550,7 @@ $("share").onclick=async()=>{const b=$("share");
     else{pdf.save(nom);toast("PDF téléchargé : joignez-le à votre message");resetShare()}
     return}
   b.disabled=true;b.textContent="Préparation…";
-  try{const {pdf,nom}=await faire();pret={f:new File([pdf.output("blob")],nom,{type:"application/pdf"}),pdf,nom};enregistrer(true);
+  try{const {pdf,nom}=await faire();pret={f:new File([pdf.output("blob")],nom,{type:"application/pdf"}),pdf,nom,html:dernierHtml};enregistrer(true);
     b.textContent="📤 Partager";toast("PDF prêt : appuyez sur « Partager »")}
   catch(e){resetShare();toast("Le PDF n'a pas pu être créé : "+((e&&(e.message||e.name))||e))}
   b.disabled=false};
