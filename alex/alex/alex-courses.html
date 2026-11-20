@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alex Courses & Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: chaleureux, simple, rassurant — pensé pour les personnes âgées (gros boutons, gros texte)
+   IDEA: la liste de courses papier d'Alex devenue vivante sur le téléphone
+   PICTURE: la voiture d'Alex qui livre un sac de courses, puis la liste elle-même
+   COLOUR and TYPE: jaune Alex #FFC20E + noir, fond clair ; Oswald (comme son site) + Inter
+   LAYOUT: appli mobile, une colonne, barre d'onglets en bas */
+:root{color-scheme:light dark;--y:#FFC20E;--y2:#FFE27A;--k:#141414;
+--bg:light-dark(#FFFBEF,#121212);--card:light-dark(#FFFFFF,#1F1F1F);--ink:light-dark(#141414,#F4F1E8);
+--mut:light-dark(#5E5A50,#B5B0A3);--line:light-dark(#EDE6D3,#2E2E2E);--soft:light-dark(#FFF4CC,#2A2414)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.5 Inter,system-ui,-apple-system,sans-serif;overflow-x:clip}
+h1,h2,h3,.osw{font-family:Oswald,Impact,sans-serif;font-weight:600;line-height:1.08;margin:0;text-wrap:balance}
+svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+
+/* splash */
+#splash{position:fixed;inset:0;z-index:99;background:var(--y);display:grid;place-items:center;text-align:center;color:var(--k);transition:opacity .5s,visibility .5s}
+#splash.off{opacity:0;visibility:hidden}
+#splash .pin{width:96px;animation:drop .8s cubic-bezier(.3,1.5,.5,1)}
+#splash h1{font-size:34px;margin-top:14px}
+#splash p{margin:6px 0 0;font-weight:600}
+@keyframes drop{from{transform:translateY(-60px);opacity:0}}
+.demo{position:fixed;z-index:60;top:calc(64px + env(safe-area-inset-top));right:-34px;transform:rotate(35deg);background:var(--k);color:var(--y);font:700 13px Oswald,sans-serif;letter-spacing:.1em;padding:4px 40px;pointer-events:none;opacity:.85}
+
+/* header */
+header{position:sticky;top:0;z-index:50;background:var(--k);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:10px}
+header .pin{width:34px}
+header .t{flex:1;font-family:Oswald,sans-serif;font-weight:600;font-size:19px;line-height:1.1}
+header .t small{display:block;font-family:Inter,sans-serif;font-weight:500;font-size:13px;color:var(--y)}
+.callbtn{background:var(--y);color:var(--k);width:44px;height:44px;border-radius:50%;display:grid;place-items:center}
+
+.view{display:none;animation:fade .35s}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.pad{padding:20px 16px}
+
+/* home */
+.hero{background:var(--y);color:var(--k);padding:24px 18px 0;overflow:hidden}
+.hero h2{font-size:40px}
+.hero p{margin:10px 0 18px;font-weight:500;max-width:30ch}
+.hero svg.scene{display:block;width:100%;height:auto;margin-top:6px}
+.bigbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;border-radius:16px;background:var(--k);color:var(--y);font:600 21px Oswald,sans-serif;padding:0 18px}
+.bigbtn.y{background:var(--y);color:var(--k)}
+.bigbtn.wa{background:#1FAF55;color:#fff}
+.reprise{margin:16px;background:var(--card);border:2px solid var(--y);border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center}
+.reprise div{flex:1;font-size:15px;color:var(--mut)}.reprise b{display:block;color:var(--ink);font-size:17px}
+.reprise button{background:var(--k);color:var(--y);border-radius:12px;padding:10px 14px;font-weight:700;font-size:15px;min-height:44px}
+.pour{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.pour div{background:var(--card);border-radius:14px;padding:12px 8px;text-align:center;font-size:13px;color:var(--mut);border:1px solid var(--line)}
+.pour b{display:block;font-family:Oswald,sans-serif;font-size:17px;color:var(--ink);font-weight:600}
+.sec{font-size:26px;margin:28px 0 12px}
+.serv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.serv div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;gap:10px;align-items:center;font-weight:600;font-size:15px;line-height:1.25}
+.serv span.ic{width:44px;height:44px;border-radius:50%;background:var(--y);color:var(--k);display:grid;place-items:center;flex:none}
+.serv small{display:block;font-weight:400;color:var(--mut);font-size:13px}
+.steps{display:grid;gap:10px}
+.steps div{display:flex;gap:14px;align-items:flex-start;background:var(--card);border-radius:16px;padding:14px;border:1px solid var(--line)}
+.steps b.n{width:36px;height:36px;border-radius:50%;background:var(--k);color:var(--y);display:grid;place-items:center;font:600 18px Oswald,sans-serif;flex:none}
+.steps p{margin:0;font-size:15px;color:var(--mut)}.steps strong{display:block;color:var(--ink);font-size:17px}
+.slogan{margin:28px 0 0;background:var(--k);color:#fff;border-radius:20px;padding:22px 18px;text-align:center}
+.slogan h3{font-size:26px}.slogan h3 em{color:var(--y);font-style:normal}
+
+/* liste */
+.lhead h2{font-size:32px}.lhead p{margin:4px 0 14px;color:var(--mut);font-size:15px}
+.addrow{display:flex;gap:8px;margin-top:10px}
+.addrow input{flex:1;min-height:54px;border-radius:14px;border:2px solid var(--line);background:var(--card);padding:0 14px;font-size:17px}
+.addrow input:focus{border-color:var(--y);outline:none}
+.addrow button{width:54px;height:54px;border-radius:14px;background:var(--k);color:var(--y);display:grid;place-items:center}
+.hint{font-size:13px;color:var(--mut);margin:8px 2px 0}
+.count{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 8px;font-weight:600}
+.count button{color:var(--mut);font-size:14px;text-decoration:underline;min-height:44px}
+.ray{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden}
+.ray>button{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;min-height:60px;text-align:left}
+.ray .ic{width:40px;height:40px;border-radius:12px;background:var(--soft);display:grid;place-items:center;flex:none}
+.ray.has .ic{background:var(--y);color:var(--k)}
+.ray .nm{flex:1;font-weight:600}
+.ray .bd{background:var(--k);color:var(--y);border-radius:20px;padding:2px 10px;font-size:14px;font-weight:700}
+.ray .chev{transition:transform .2s;color:var(--mut)}
+.ray.open .chev{transform:rotate(180deg)}
+.ray .body{display:none;padding:0 14px 14px}
+.ray.open .body{display:block}
+.it{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--line)}
+.it .x{flex:1;font-weight:500;overflow-wrap:anywhere}
+.qty{display:flex;align-items:center;background:var(--soft);border-radius:12px}
+.qty button{width:40px;height:40px;display:grid;place-items:center}
+.qty span{min-width:22px;text-align:center;font-weight:700}
+.del{width:40px;height:40px;display:grid;place-items:center;color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips button{border:1.5px solid var(--line);border-radius:20px;padding:6px 12px;font-size:14px;min-height:38px;background:var(--bg)}
+.chips button:active{background:var(--y)}
+.chips .lab{width:100%;font-size:13px;color:var(--mut)}
+.sticky{position:fixed;left:0;right:0;bottom:calc(76px + env(safe-area-inset-bottom));z-index:40;padding:0 16px;max-width:560px;margin:0 auto;display:none}
+.sticky.on{display:block}
+.sticky .bigbtn{box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.empty{text-align:center;color:var(--mut);padding:10px 0 4px;font-size:15px}
+
+/* chat */
+#v-chat{height:calc(100vh - 64px - 76px);height:calc(100dvh - 64px - 76px - env(safe-area-inset-bottom) - env(safe-area-inset-top));display:none;flex-direction:column}
+#v-chat.on{display:flex}
+#msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:85%;padding:10px 14px;border-radius:18px;font-size:16px}
+.m.b{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
+.m.u{background:var(--k);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.m.t{color:var(--mut);font-style:italic}
+.qr{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 8px}
+.qr button{background:var(--y);color:var(--k);border-radius:20px;padding:8px 14px;font-weight:600;font-size:14px;min-height:40px}
+.cin{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--line);background:var(--bg)}
+.cin input{flex:1;min-height:50px;border-radius:25px;border:2px solid var(--line);background:var(--card);padding:0 18px;font-size:16px}
+.cin button{width:50px;height:50px;border-radius:50%;background:var(--y);color:var(--k);display:grid;place-items:center}
+
+/* contact */
+.ct{display:grid;gap:10px;margin-top:14px}
+.ct a{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;color:inherit;text-decoration:none;min-height:64px}
+.ct a span.ic{width:44px;height:44px;border-radius:50%;background:var(--y);color:var(--k);display:grid;place-items:center;flex:none}
+.ct a div{font-size:14px;color:var(--mut)}.ct a b{display:block;color:var(--ink);font-size:17px}
+.pro{margin-top:22px;background:var(--soft);border-radius:18px;padding:18px}
+.pro h3{font-size:22px}.pro p{margin:6px 0 0;font-size:15px}
+footer{text-align:center;font-size:13px;color:var(--mut);padding:26px 16px 10px}
+
+/* tabbar */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--k);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+nav div{display:flex;width:100%;max-width:560px}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:#A9A598;font-size:12px;font-weight:600;padding:10px 0 12px;min-height:66px;position:relative}
+nav button.on{color:var(--y)}
+nav .badge{position:absolute;top:6px;left:calc(50% + 6px);background:var(--y);color:var(--k);font-size:11px;border-radius:10px;padding:0 6px;font-weight:700;display:none}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom));animation:up .3s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h3{font-size:26px;display:flex;justify-content:space-between;align-items:center}
+.sheet h3 button{width:44px;height:44px;display:grid;place-items:center}
+.f{margin-top:12px}.f label{display:block;font-weight:600;font-size:15px;margin-bottom:4px}
+.f input,.f select,.f textarea{width:100%;min-height:52px;border-radius:12px;border:2px solid var(--line);background:var(--card);padding:10px 12px;font-size:16px}
+.f textarea{min-height:76px;resize:vertical}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.recap{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:15px}
+.recap b{display:block;margin-top:8px;font-family:Oswald,sans-serif;font-weight:600;font-size:16px}
+.recap b:first-child{margin-top:0}
+.note{font-size:13px;color:var(--mut);margin:10px 0 0;text-align:center}
+.voice{text-align:center;color:#fff;padding:30px 20px calc(40px + env(safe-area-inset-bottom));width:100%;max-width:560px}
+.voice .mic{width:110px;height:110px;border-radius:50%;background:var(--y);color:var(--k);display:grid;place-items:center;margin:0 auto 18px;animation:pulse 1.4s infinite}
+.voice .mic svg{width:48px;height:48px}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,194,14,.6)}100%{box-shadow:0 0 0 34px rgba(255,194,14,0)}}
+.voice p{font-size:20px;min-height:60px;margin:0 0 18px}
+.voice .stop{background:#fff;color:var(--k);border-radius:30px;padding:12px 28px;font-weight:700;min-height:50px}
+#toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--k);color:#fff;padding:12px 18px;border-radius:14px;z-index:90;opacity:0;transition:.3s;pointer-events:none;width:max-content;max-width:90vw;text-align:center;font-size:15px;border:1px solid var(--y)}
+#toast.on{opacity:1;transform:translateX(-50%)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="pin" viewBox="0 0 64 64"><path d="M32 2C17.6 2 7 12.4 7 26c0 17.5 25 36 25 36s25-18.5 25-36C57 12.4 46.4 2 32 2z" fill="#141414"/><circle cx="32" cy="26" r="16" fill="#FFC20E"/><path d="M22 30l3-7.5h14l3 7.5" fill="none" stroke="#141414" stroke-width="2.6" stroke-linejoin="round"/><rect x="20" y="29" width="24" height="7" rx="2.5" fill="#141414"/><circle cx="26" cy="37" r="2.6" fill="#141414"/><circle cx="38" cy="37" r="2.6" fill="#141414"/><circle cx="24.5" cy="32.5" r="1.3" fill="#FFC20E"/><circle cx="39.5" cy="32.5" r="1.3" fill="#FFC20E"/></symbol>
+ <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.2l2.3 11h10.8l2-8H6.3"/><circle cx="10" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></symbol>
+ <symbol id="i-car" viewBox="0 0 24 24"><path d="M4 16v-4l2.2-5h11.6l2.2 5v4z"/><path d="M4 12h16"/><circle cx="7.5" cy="17" r="1.6"/><circle cx="16.5" cy="17" r="1.6"/></symbol>
+ <symbol id="i-cross" viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></symbol>
+ <symbol id="i-bread" viewBox="0 0 24 24"><path d="M5 11a3.5 3.5 0 0 1 1-7h12a3.5 3.5 0 0 1 1 7v9H5z"/><path d="M10 9v3M14 9v3"/></symbol>
+ <symbol id="i-meat" viewBox="0 0 24 24"><path d="M3 12c4-5.5 10-5.5 14 0-4 5.5-10 5.5-14 0z"/><path d="M17 12l4-3.5v7z"/><circle cx="7.5" cy="11.5" r=".6"/></symbol>
+ <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></symbol>
+ <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></symbol>
+ <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19C5 9.5 11 4 20 4c0 9-5.5 15-15 15z"/><path d="M5 19l8-8"/></symbol>
+ <symbol id="i-milk" viewBox="0 0 24 24"><path d="M9 3h6v3l2 3.5V21H7V9.5L9 6z"/><path d="M7 13h10"/></symbol>
+ <symbol id="i-jar" viewBox="0 0 24 24"><rect x="6" y="7" width="12" height="14" rx="2"/><path d="M8 3h8v4H8zM9 12h6"/></symbol>
+ <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M3.5 7l17 10M3.5 17l17-10"/></symbol>
+ <symbol id="i-glass" viewBox="0 0 24 24"><path d="M6 3h12l-2 18H8z"/><path d="M6.8 10h10.4"/></symbol>
+ <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 7 6 11.2a6 6 0 0 1-12 0C6 10 12 3 12 3z"/></symbol>
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-6h4v6"/></symbol>
+ <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></symbol>
+ <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L4 20z"/></symbol>
+ <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l2 5-2.4 1.4a11 11 0 0 0 5.5 5.5L15 13.5l5 2V19a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+ <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+ <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/></symbol>
+ <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+ <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></symbol>
+ <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+ <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></symbol>
+ <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/><path d="M9 9.5c.2 2.6 2.3 4.8 5 5l1-1.2-1.6-.8-.8.8c-.9-.4-1.6-1.1-2-2l.8-.8-.8-1.6z"/></symbol>
+ <symbol id="i-sms" viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L4 20z"/><path d="M8 10.5h.01M12 10.5h.01M16 10.5h.01"/></symbol>
+</svg>
+
+<div id="splash"><div><svg class="pin"><use href="#pin"/></svg><h1>ALEX COURSES<br>&amp; SERVICES</h1><p>Vos courses, ma mission !</p></div></div>
+<div class="demo">DÉMO</div>
+
+<div class="app">
+<header>
+ <svg class="pin"><use href="#pin"/></svg>
+ <div class="t">ALEX COURSES &amp; SERVICES<small>Courses et livraison à domicile</small></div>
+ <a class="callbtn" href="tel:+32472337061" aria-label="Appeler Alex"><svg class="i"><use href="#i-phone"/></svg></a>
+</header>
+
+<!-- ACCUEIL -->
+<section class="view on" id="v-home">
+ <div class="hero">
+  <h2>Vos courses,<br>livrées chez vous.</h2>
+  <p>Faites votre liste sur votre téléphone, même à la voix. Alex s'occupe du reste.</p>
+  <button class="bigbtn" data-go="liste"><svg class="i"><use href="#i-cart"/></svg>Faire ma liste</button>
+  <svg class="scene" viewBox="0 0 400 150" aria-hidden="true">
+   <path d="M0 132h400" stroke="#141414" stroke-width="3"/><path d="M20 142h40M110 142h40M200 142h40M290 142h40" stroke="#141414" stroke-width="3" opacity=".35"/>
+   <g transform="translate(40 40)">
+    <path d="M10 80V58l22-30h98l34 30h20a8 8 0 0 1 8 8v14z" fill="#141414"/>
+    <path d="M42 34h36v24H24zM86 34h40l26 24H86z" fill="#FFE27A"/>
+    <rect x="58" y="12" width="56" height="16" rx="4" fill="#141414"/><text x="86" y="24.5" text-anchor="middle" font-family="Oswald,sans-serif" font-weight="600" font-size="12" fill="#FFC20E">ALEX</text>
+    <circle cx="52" cy="82" r="15" fill="#141414" stroke="#FFC20E" stroke-width="4"/><circle cx="160" cy="82" r="15" fill="#141414" stroke="#FFC20E" stroke-width="4"/>
+    <rect x="186" y="62" width="10" height="6" rx="2" fill="#FFE27A"/>
+   </g>
+   <g transform="translate(276 38)">
+    <path d="M18 18c-2-14 6-20 10-6" stroke="#2F7D32" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <rect x="34" y="-6" width="12" height="44" rx="6" transform="rotate(14 40 16)" fill="#C98A2B"/>
+    <path d="M0 30h76l-8 64H8z" fill="#fff"/><path d="M0 30h76l-1.2 9H1.2z" fill="#141414" opacity=".12"/>
+    <path d="M22 44a16 16 0 0 0 32 0" stroke="#141414" stroke-width="3" fill="none"/>
+    <circle cx="20" cy="30" r="9" fill="#E8412C"/>
+   </g>
+  </svg>
+ </div>
+ <div id="repriseHome"></div>
+ <div class="pad">
+  <div class="pour">
+   <div><b>Pour tous</b>Particuliers, personnes âgées, sans voiture</div>
+   <div><b>Pour les pros</b>Commerçants, artisans, indépendants</div>
+   <div><b>Sur mesure</b>Des solutions adaptées à vos besoins</div>
+  </div>
+  <h2 class="sec">Nos courses &amp; services</h2>
+  <div class="serv" id="servGrid"></div>
+  <h2 class="sec">Comment ça marche ?</h2>
+  <div class="steps">
+   <div><b class="n">1</b><p><strong>Je fais ma liste</strong>En tapant, en touchant les idées ou en parlant au micro.</p></div>
+   <div><b class="n">2</b><p><strong>Je choisis mon créneau</strong>Le jour, le moment et le magasin si j'en ai un préféré.</p></div>
+   <div><b class="n">3</b><p><strong>Alex reçoit tout sur WhatsApp</strong>Une liste claire, rangée par rayon. Il fait les courses et livre chez vous.</p></div>
+  </div>
+  <div class="slogan"><h3>Vos courses, ma mission !<br><em>Livrer chez vous, ma passion !</em></h3><p style="margin:10px 0 0;font-size:15px;color:#cfcac0">Service fiable, rapide et à votre écoute.</p></div>
+ </div>
+</section>
+
+<!-- LISTE -->
+<section class="view" id="v-liste">
+ <div class="pad">
+  <div class="lhead"><h2>Ma liste de courses</h2><p>Ajoutez vos articles, ils se rangent tout seuls par rayon.</p></div>
+  <button class="bigbtn y" id="micBtn"><svg class="i"><use href="#i-mic"/></svg>Dicter ma liste</button>
+  <form class="addrow" id="addForm"><input id="addInput" placeholder="Ex : 2 baguettes, lait, pommes" autocomplete="off" aria-label="Ajouter un article"><button aria-label="Ajouter"><svg class="i"><use href="#i-plus"/></svg></button></form>
+  <p class="hint">Astuce : séparez par des virgules pour ajouter plusieurs articles d'un coup.</p>
+  <div id="repriseListe"></div>
+  <div class="count"><span id="countTxt">0 article</span><button id="clearBtn" type="button">Vider la liste</button></div>
+  <div id="rayons"></div>
+ </div>
+</section>
+
+<!-- ASSISTANT -->
+<section class="view" id="v-chat">
+ <div id="msgs"></div>
+ <div class="qr" id="qr"></div>
+ <form class="cin" id="chatForm"><input id="chatInput" placeholder="Posez votre question…" autocomplete="off" aria-label="Votre message"><button aria-label="Envoyer"><svg class="i"><use href="#i-send"/></svg></button></form>
+</section>
+
+<!-- CONTACT -->
+<section class="view" id="v-contact">
+ <div class="pad">
+  <h2 style="font-size:32px">Contacter Alex</h2>
+  <p style="color:var(--mut);margin:4px 0 0">Réponse rapide garantie.</p>
+  <div class="ct">
+   <a href="tel:+32472337061"><span class="ic"><svg class="i"><use href="#i-phone"/></svg></span><div><b>0472 / 33 / 70 / 61</b>Appeler</div></a>
+   <a href="sms:+32472337061"><span class="ic"><svg class="i"><use href="#i-sms"/></svg></span><div><b>Envoyer un SMS</b>0472 / 33 / 70 / 61</div></a>
+   <a href="https://wa.me/32472337061"><span class="ic"><svg class="i"><use href="#i-wa"/></svg></span><div><b>WhatsApp</b>Écrire à Alex</div></a>
+   <a href="mailto:courses.services@outlook.be"><span class="ic"><svg class="i"><use href="#i-mail"/></svg></span><div><b>E-mail</b>courses.services@outlook.be</div></a>
+  </div>
+  <div class="pro"><h3>Vous êtes un professionnel ?</h3><p>Commerçants, artisans, entreprises et indépendants : courses, colis, courriers, réapprovisionnement… Alex vous propose une solution adaptée.</p></div>
+ </div>
+ <footer>TVA : BE1.028.352.131<br>© 2025 – 2026 Courses-services.be<br>Site réalisé par Philomène IA</footer>
+</section>
+</div>
+
+<div class="sticky" id="sticky"><button class="bigbtn" id="validBtn">Valider ma liste</button></div>
+
+<nav><div>
+ <button class="on" data-go="home"><svg class="i"><use href="#i-home"/></svg>Accueil</button>
+ <button data-go="liste"><svg class="i"><use href="#i-list"/></svg>Ma liste<span class="badge" id="badge"></span></button>
+ <button data-go="chat"><svg class="i"><use href="#i-chat"/></svg>Assistant</button>
+ <button data-go="contact"><svg class="i"><use href="#i-phone"/></svg>Contact</button>
+</div></nav>
+
+<div class="ov" id="ovCmd"><div class="sheet">
+ <h3>Ma commande<button id="closeCmd" aria-label="Fermer"><svg class="i"><use href="#i-close"/></svg></button></h3>
+ <form id="cmdForm">
+  <div class="f"><label for="cNom">Nom et prénom *</label><input id="cNom" required autocomplete="name"></div>
+  <div class="f"><label for="cAdr">Adresse de livraison *</label><input id="cAdr" required autocomplete="street-address"></div>
+  <div class="f"><label for="cTel">Téléphone *</label><input id="cTel" type="tel" required autocomplete="tel"></div>
+  <div class="two">
+   <div class="f"><label for="cDate">Jour</label><input id="cDate" type="date"></div>
+   <div class="f"><label for="cMom">Moment</label><select id="cMom"><option>Le matin</option><option>L'après-midi</option><option>En fin de journée</option><option>Peu importe</option></select></div>
+  </div>
+  <div class="f"><label for="cMag">Magasin préféré</label><select id="cMag"><option>Peu importe</option><option>Auchan</option><option>Carrefour</option><option>Delhaize</option><option>Colruyt</option><option>Lidl</option><option>Aldi</option><option>Intermarché</option><option>Autre (voir note)</option></select></div>
+  <div class="f"><label for="cNote">Une précision ?</label><textarea id="cNote" placeholder="Ex : sonner deux fois, marque préférée…"></textarea></div>
+  <div class="recap" id="recap"></div>
+  <button class="bigbtn wa" style="margin-top:16px" type="submit"><svg class="i"><use href="#i-wa"/></svg>Envoyer à Alex sur WhatsApp</button>
+  <p class="note">WhatsApp s'ouvre avec votre commande déjà écrite : il ne reste qu'à appuyer sur Envoyer.</p>
+ </form>
+</div></div>
+
+<div class="ov" id="ovVoice" style="align-items:center"><div class="voice">
+ <div class="mic"><svg class="i"><use href="#i-mic"/></svg></div>
+ <p id="vTxt">Je vous écoute… Dites par exemple : « deux baguettes, du lait et des pommes »</p>
+ <button class="stop" id="vStop">J'ai terminé</button>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+{
+const ALEX_WA = "32472337061";
+const BACKEND = "https://philo-backend-by2c.onrender.com";
+const ASSISTANT_URL = ""; // à remplir : BACKEND + "/assistant/alexcourses" quand le prompt est créé
+const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ico = n => `<svg class="i"><use href="#i-${n}"/></svg>`;
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ");
+
+const RAYONS = [
+ {id:"fl",nm:"Fruits et légumes",ic:"leaf",sug:["Pommes","Bananes","Tomates","Pommes de terre","Carottes","Salade","Oignons","Oranges"],
+  k:["fruit","legume","pomme","poire","banane","orange","citron","clementine","mandarine","kiwi","raisin","fraise","framboise","ananas","mangue","melon","pasteque","peche","abricot","prune","cerise","avocat","tomate","salade","laitue","carotte","poireau","oignon","ail","echalote","pomme de terre","patate","courgette","aubergine","poivron","concombre","champignon","chou","brocoli","epinard","haricot vert","celeri","radis","chicon","endive","persil","basilic","navet","potiron","butternut"]},
+ {id:"bo",nm:"Boulangerie",ic:"bread",sug:["Baguette","Pain gris","Pistolets","Croissants","Couques"],
+  k:["pain","baguette","croissant","pistolet","couque","brioche","cramique","craquelin","pain au chocolat","sandwich","tarte","eclair","viennoiserie","gaufre"]},
+ {id:"fr",nm:"Rayon frais",ic:"milk",sug:["Lait","Œufs","Beurre","Yaourts","Fromage","Jambon","Crème fraîche"],
+  k:["lait","yaourt","yogourt","fromage","beurre","creme","oeuf","œuf","jambon","charcuterie","saucisson","lardon","margarine","mozzarella","emmental","gruyere","feta","skyr","fromage blanc","dessert","pate a tarte","pate feuilletee","salami","pate de foie"]},
+ {id:"vp",nm:"Viande et poisson",ic:"meat",sug:["Poulet","Haché","Steak","Saucisses","Saumon","Filet américain"],
+  k:["viande","poulet","boeuf","steak","hache","porc","cote","saucisse","dinde","veau","agneau","roti","escalope","filet americain","boulette","cuisse","aile de poulet","poisson","saumon","cabillaud","crevette","moule","truite","merlu","scampi"]},
+ {id:"ep",nm:"Épicerie",ic:"jar",sug:["Pâtes","Riz","Café","Sucre","Huile","Biscuits","Confiture","Sauce tomate"],
+  k:["pate","pates","riz","farine","sucre","sel","poivre","huile","vinaigre","moutarde","mayonnaise","ketchup","sauce","conserve","thon","sardine","cafe","the","chocolat","biscuit","cereale","confiture","miel","nutella","choco","chips","gateau","compote","soupe","bouillon","epice","lentille","pois chiche","mais","olive","levure","speculoos","bonbon","croquette chien","croquette chat","nourriture"]},
+ {id:"su",nm:"Surgelés",ic:"snow",sug:["Frites","Pizza surgelée","Glace","Légumes surgelés","Croquettes"],
+  k:["surgele","congele","glace","frite","croquette","pizza","nugget","poisson pane","cornet"]},
+ {id:"bs",nm:"Boissons",ic:"glass",sug:["Eau plate","Eau pétillante","Coca","Jus d'orange","Bière","Vin"],
+  k:["eau","coca","soda","jus","biere","vin","sirop","limonade","ice tea","fanta","sprite","pepsi","champagne","boisson","cidre","pack d eau","bouteille"]},
+ {id:"hy",nm:"Hygiène et beauté",ic:"drop",sug:["Dentifrice","Gel douche","Shampoing","Papier toilette","Déodorant","Mouchoirs"],
+  k:["savon","gel douche","douche","shampoing","shampooing","dentifrice","brosse a dent","deodorant","deo","coton","mouchoir","papier toilette","rasoir","serviette hygienique","tampon","creme hydratante","creme main","couche","lingette","maquillage","apres shampoing"]},
+ {id:"ma",nm:"Maison",ic:"home",sug:["Lessive","Liquide vaisselle","Sacs poubelle","Essuie-tout","Éponges","Piles"],
+  k:["lessive","adoucissant","liquide vaisselle","vaisselle","eponge","sac poubelle","poubelle","essuie tout","essuie","javel","nettoyant","pile","ampoule","aluminium","papier alu","film","allumette","bougie","litiere","produit","dish","tablette lave"]},
+ {id:"au",nm:"Autres demandes",ic:"dots",sug:["Passer à la pharmacie","Retirer un colis","Poster un courrier"],
+  k:["pharmacie","medicament","ordonnance","colis","courrier","lettre","poste","timbre","cadeau","fleur","journal"]}
+];
+const SERV = [["cart","Petites et grandes surfaces","Tous commerces"],["car","Drive","Auchan par exemple"],["cross","Pharmacie",""],["bread","Boulangerie",""],["meat","Boucherie",""],["box","Colis, courriers…",""],["dots","Autres services","Sur demande"]];
+$("#servGrid").innerHTML = SERV.map(s=>`<div><span class="ic">${ico(s[0])}</span><span>${s[1]}${s[2]?`<small>${s[2]}</small>`:""}</span></div>`).join("");
+
+/* ---- liste ---- */
+let items = store.get("ac_liste") || [];
+const open = new Set(items.map(i=>i.r));
+const NUM = {un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,douze:12,quinze:15,vingt:20};
+function classer(nom){
+ const n = " "+norm(nom)+" "; let best="au", len=0, found=false;
+ for(const r of RAYONS) for(const k of r.k){ if(n.includes(" "+k) && k.length>len){best=r.id;len=k.length;found=true} }
+ if(n.includes(" surgel")) best="su";
+ return found?best:"ep";
+}
+function parse(texte){
+ return texte.split(/,|;|\.|\n|\bet\b|\bpuis\b|\baussi\b/i).map(s=>s.trim()).filter(Boolean).map(s=>{
+  s = s.replace(/^(il me faut|il faut|je voudrais|j'aimerais|je veux|ajoute|ajouter|mets|prendre|acheter)\s+/i,"").replace(/\s*(s'il (te|vous) pla[iî]t|svp)$/i,"");
+  let q=1; const m = s.match(/^(\d+)\s*(x\s+)?(.*)$/i);
+  if(m && m[3]){q=+m[1]; s=m[3]} else { const w=s.split(/\s+/); const nk=norm(w[0]); if(NUM[nk]&&w.length>1){q=NUM[nk]; s=w.slice(1).join(" ")} }
+  s = s.replace(/^(du|de la|de l'|des|de|d'|le|la|les|l')\s*/i,"").trim();
+  if(!s) return null;
+  return {nom:s.charAt(0).toUpperCase()+s.slice(1), q};
+ }).filter(Boolean);
+}
+function ajouter(nom,q=1,r){
+ r = r || classer(nom);
+ const ex = items.find(i=>norm(i.n)===norm(nom));
+ if(ex){ex.q+=q} else items.push({id:Date.now()+Math.random(),n:nom,q,r});
+ open.add(ex?ex.r:r);
+}
+function ajouterTexte(t){
+ const p = parse(t); p.forEach(x=>ajouter(x.nom,x.q)); save(); render();
+ if(p.length) toast(p.length>1?`${p.length} articles ajoutés et rangés par rayon`:`« ${p[0].nom} » ajouté`);
+ return p.length;
+}
+function save(){store.set("ac_liste",items)}
+function total(){return items.reduce((a,i)=>a+i.q,0)}
+function render(){
+ const t = total();
+ $("#countTxt").textContent = `${items.length} article${items.length>1?"s":""}`+(t>items.length?` · ${t} au total`:"");
+ const b=$("#badge"); b.textContent=items.length; b.style.display=items.length?"block":"none";
+ $("#validBtn").innerHTML = `Valider ma liste · ${items.length} article${items.length>1?"s":""}`;
+ $("#rayons").innerHTML = RAYONS.map(r=>{
+  const its = items.filter(i=>i.r===r.id), has=its.length>0;
+  const chips = r.sug.filter(s=>!items.some(i=>norm(i.n)===norm(s))).map(s=>`<button type="button" data-sug="${esc(s)}" data-r="${r.id}">+ ${esc(s)}</button>`).join("");
+  return `<div class="ray ${has?"has":""} ${open.has(r.id)?"open":""}" data-ray="${r.id}">
+   <button type="button" data-tog="${r.id}"><span class="ic">${ico(r.ic)}</span><span class="nm">${r.nm}</span>${has?`<span class="bd">${its.length}</span>`:""}<svg class="i chev"><use href="#i-chev"/></svg></button>
+   <div class="body">${its.map(i=>`<div class="it"><span class="x">${esc(i.n)}</span><span class="qty"><button type="button" data-m="${i.id}" aria-label="Moins">${ico("minus")}</button><span>${i.q}</span><button type="button" data-p="${i.id}" aria-label="Plus">${ico("plus")}</button></span><button type="button" class="del" data-d="${i.id}" aria-label="Supprimer">${ico("trash")}</button></div>`).join("")||`<p class="empty">Rien pour l'instant dans ce rayon.</p>`}
+   ${chips?`<div class="chips"><span class="lab">Idées rapides :</span>${chips}</div>`:""}</div></div>`;
+ }).join("");
+ $("#sticky").classList.toggle("on", items.length>0 && cur==="liste");
+ reprise();
+}
+$("#rayons").addEventListener("click",e=>{
+ const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+ if(d.tog){open.has(d.tog)?open.delete(d.tog):open.add(d.tog); render(); return}
+ if(d.sug){ajouter(d.sug,1,d.r); save(); render(); return}
+ const f = id => items.find(i=>String(i.id)===id);
+ if(d.p){f(d.p).q++} else if(d.m){const it=f(d.m); if(it.q>1) it.q--; else items=items.filter(i=>i!==it)} else if(d.d){items=items.filter(i=>String(i.id)!==d.d)} else return;
+ save(); render();
+});
+$("#addForm").addEventListener("submit",e=>{e.preventDefault(); const v=$("#addInput").value.trim(); if(v){ajouterTexte(v); $("#addInput").value=""}});
+let clearArm=false;
+$("#clearBtn").addEventListener("click",()=>{
+ if(!items.length) return;
+ if(!clearArm){clearArm=true; $("#clearBtn").textContent="Toucher encore pour confirmer"; setTimeout(()=>{clearArm=false;$("#clearBtn").textContent="Vider la liste"},3000); return}
+ items=[]; open.clear(); save(); render(); toast("Liste vidée"); clearArm=false; $("#clearBtn").textContent="Vider la liste";
+});
+
+/* reprise de la dernière commande */
+function reprise(){
+ const last = store.get("ac_derniere");
+ const html = (last && last.items && last.items.length && !items.length) ? `<div class="reprise"><div><b>Reprendre ma dernière liste</b>${last.items.length} articles · ${esc(last.date)}</div><button type="button" class="rep">Reprendre</button></div>` : "";
+ $("#repriseHome").innerHTML = html; $("#repriseListe").innerHTML = html;
+}
+document.addEventListener("click",e=>{
+ if(e.target.closest(".rep")){const last=store.get("ac_derniere"); items=last.items.map(i=>({...i,id:Date.now()+Math.random()})); items.forEach(i=>open.add(i.r)); save(); go("liste"); toast("Votre dernière liste est de retour 👍")}
+});
+
+/* ---- dictée ---- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec=null, heard="";
+$("#micBtn").addEventListener("click",()=>{
+ if(!SR){toast("Dictée indisponible ici : utilisez le micro de votre clavier 🎤"); $("#addInput").focus(); return}
+ heard=""; $("#vTxt").textContent="Je vous écoute… Dites par exemple : « deux baguettes, du lait et des pommes »";
+ try{
+  rec = new SR(); rec.lang="fr-BE"; rec.interimResults=true; rec.continuous=true;
+  rec.onresult = ev => { let fin="",tmp=""; for(const r of ev.results){ r.isFinal?fin+=r[0].transcript+", ":tmp+=r[0].transcript } heard=fin; $("#vTxt").textContent=(fin+tmp)||"…" };
+  rec.onerror = ev => { stopVoice(); toast(ev.error==="not-allowed"?"Autorisez le micro pour dicter votre liste":"Je n'ai pas bien entendu, réessayez") };
+  rec.onend = () => { if($("#ovVoice").classList.contains("on")) stopVoice() };
+  rec.start(); $("#ovVoice").classList.add("on");
+ }catch(err){toast("Dictée indisponible ici : utilisez le micro de votre clavier 🎤")}
+});
+function stopVoice(){
+ $("#ovVoice").classList.remove("on");
+ try{rec&&rec.stop()}catch(e){}
+ const t = heard || ($("#vTxt").textContent.startsWith("Je vous écoute")?"":$("#vTxt").textContent);
+ heard=""; if(t && t!=="…") ajouterTexte(t);
+}
+$("#vStop").addEventListener("click",stopVoice);
+
+/* ---- commande ---- */
+const client = store.get("ac_client") || {};
+["cNom","cAdr","cTel"].forEach(k=>{ if(client[k]) $("#"+k).value=client[k] });
+function demain(){const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10)}
+function grouped(){return RAYONS.map(r=>({r,its:items.filter(i=>i.r===r.id)})).filter(g=>g.its.length)}
+$("#validBtn").addEventListener("click",()=>{
+ if(!$("#cDate").value) $("#cDate").value=demain();
+ $("#recap").innerHTML = grouped().map(g=>`<b>${g.r.nm}</b>${g.its.map(i=>`${i.q} × ${esc(i.n)}`).join("<br>")}`).join("");
+ $("#ovCmd").classList.add("on");
+});
+$("#closeCmd").addEventListener("click",()=>$("#ovCmd").classList.remove("on"));
+$("#ovCmd").addEventListener("click",e=>{if(e.target.id==="ovCmd") $("#ovCmd").classList.remove("on")});
+$("#cmdForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const v = k => $("#"+k).value.trim();
+ const d = v("cDate") ? new Date(v("cDate")+"T12:00").toLocaleDateString("fr-BE",{weekday:"long",day:"numeric",month:"long"}) : "à convenir";
+ let msg = `🛒 *Nouvelle commande – Alex Courses & Services*\n\n👤 ${v("cNom")}\n📍 ${v("cAdr")}\n📞 ${v("cTel")}\n🕒 ${d} – ${v("cMom")}\n🏪 Magasin : ${v("cMag")}\n`;
+ grouped().forEach(g=>{ msg += `\n*${g.r.nm}*\n` + g.its.map(i=>`• ${i.q} × ${i.n}`).join("\n") + "\n" });
+ if(v("cNote")) msg += `\n📝 ${v("cNote")}\n`;
+ msg += `\nTotal : ${items.length} articles`;
+ store.set("ac_client",{cNom:v("cNom"),cAdr:v("cAdr"),cTel:v("cTel")});
+ store.set("ac_derniere",{items:items.map(({n,q,r})=>({n,q,r})),date:new Date().toLocaleDateString("fr-BE")});
+ const url = `https://wa.me/${ALEX_WA}?text=${encodeURIComponent(msg)}`;
+ const a=document.createElement("a"); a.href=url; a.target="_blank"; a.rel="noopener"; document.body.appendChild(a); a.click(); a.remove();
+ $("#ovCmd").classList.remove("on");
+ toast("WhatsApp s'ouvre : appuyez sur Envoyer ✅");
+});
+
+/* ---- assistant ---- */
+const QR0 = ["Comment commander ?","Vous livrez où ?","Combien ça coûte ?","Pharmacie ?","Je suis un pro"];
+function addBot(html,qr){const m=document.createElement("div"); m.className="m b"; m.innerHTML=html; $("#msgs").appendChild(m); setQR(qr||QR0); scrollChat()}
+function addUser(t){const m=document.createElement("div"); m.className="m u"; m.textContent=t; $("#msgs").appendChild(m); setQR([]); scrollChat()}
+function setTyping(on){const t=$("#typing"); if(on&&!t){const m=document.createElement("div"); m.className="m b t"; m.id="typing"; m.textContent="L'assistant écrit…"; $("#msgs").appendChild(m); scrollChat()} else if(!on&&t) t.remove()}
+function setQR(a){$("#qr").innerHTML=a.map(q=>`<button type="button">${esc(q)}</button>`).join("")}
+function scrollChat(){const c=$("#msgs"); c.scrollTop=c.scrollHeight}
+const BTN_LISTE = `<br><button type="button" class="bigbtn" style="margin-top:10px;min-height:46px;font-size:17px" data-go="liste">Faire ma liste</button>`;
+function local(q){
+ const n=norm(q);
+ const has=(...w)=>w.some(x=>n.includes(x));
+ if(has("bonjour","salut","bonsoir","hello")) return "Bonjour ! 😊 Je suis l'assistant d'Alex. Je peux vous expliquer comment commander, ou vous aider à faire votre liste.";
+ if(has("command","liste","comment ca marche","fonctionne")) return "C'est très simple :<br>1. Faites votre liste (vous pouvez même la dicter au micro).<br>2. Choisissez le jour et le moment.<br>3. Elle part sur le WhatsApp d'Alex, rangée par rayon. Il fait vos courses et vous livre."+BTN_LISTE;
+ if(has("pharma","medic","ordonnance")) return "Oui, Alex peut passer à la pharmacie pour vous. Ajoutez-le dans « Autres demandes » de votre liste, ou appelez-le au 0472 / 33 / 70 / 61 pour vous organiser ensemble.";
+ if(has("prix","tarif","combien","cout","cher","payer","paiement")) return "Le tarif dépend de la distance et de ce que vous demandez. Envoyez votre liste ou contactez Alex au 0472 / 33 / 70 / 61 : il vous donne un prix clair avant de partir.";
+ if(has("ou ","livr","zone","ville","commune","region")) return "Alex livre à domicile dans sa région. Indiquez votre adresse en validant votre liste, ou demandez-lui directement au 0472 / 33 / 70 / 61 : il vous confirme rapidement.";
+ if(has("pro","entreprise","commer","artisan","independant","societe")) return "Pour les professionnels (commerçants, artisans, entreprises, indépendants), Alex propose des solutions sur mesure : courses, colis, courriers, réapprovisionnement… Le plus simple est de l'appeler ou de lui écrire sur WhatsApp.";
+ if(has("colis","courrier","poste","lettre")) return "Oui, Alex s'occupe aussi des colis et courriers : dépôt, retrait, envoi. Dites-lui ce qu'il vous faut dans « Autres demandes » ou par téléphone.";
+ if(has("drive","auchan")) return "Oui, Alex peut récupérer votre commande drive (Auchan par exemple) et vous la livrer. Précisez-le dans la note de votre commande.";
+ if(has("heure","horaire","quand","delai","dispo","aujourd")) return "Choisissez le jour et le moment qui vous arrangent en validant votre liste : Alex vous confirme le créneau. Pour une urgence, appelez-le au 0472 / 33 / 70 / 61.";
+ if(has("merci")) return "Avec plaisir ! Bonne journée 😊";
+ return "Je suis l'assistant d'Alex Courses &amp; Services : je réponds aux questions sur les courses, la livraison et les services. Pour le reste, Alex vous répond au 0472 / 33 / 70 / 61."+BTN_LISTE;
+}
+const histo=[];
+async function repondre(q){
+ addUser(q); setTyping(true); histo.push({role:"user",content:q});
+ let rep=null;
+ if(ASSISTANT_URL){
+  try{const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),9000);
+   const r=await fetch(ASSISTANT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q,history:histo.slice(-10)}),signal:ctl.signal});
+   clearTimeout(t); const j=await r.json(); rep=j.reply||j.answer||j.text||null; if(rep) rep=esc(rep).replace(/\n/g,"<br>");
+  }catch(e){rep=null}
+ }
+ if(!rep){await new Promise(r=>setTimeout(r,700)); rep=local(q)}
+ setTyping(false); histo.push({role:"assistant",content:rep}); addBot(rep);
+}
+$("#qr").addEventListener("click",e=>{const b=e.target.closest("button"); if(b) repondre(b.textContent)});
+$("#chatForm").addEventListener("submit",e=>{e.preventDefault(); const v=$("#chatInput").value.trim(); if(v){$("#chatInput").value=""; repondre(v)}});
+let chatInit=false;
+
+/* ---- navigation ---- */
+let cur="home";
+function go(v){
+ cur=v;
+ document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v));
+ if(v==="chat"&&!chatInit){chatInit=true; addBot("Bonjour ! 👋 Je suis l'assistant d'<b>Alex Courses &amp; Services</b>. Une question sur vos courses, la livraison ou nos services ? Je suis là.")}
+ render(); window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]"); if(b) go(b.dataset.go)});
+
+let tt; function toast(t){const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove("on"),2600)}
+
+render();
+setTimeout(()=>$("#splash").classList.add("off"),1700);
+try{fetch(BACKEND+"/ping?app=alexcourses").catch(()=>{})}catch(e){}
+}
+</script>
+</body>
+</html>
