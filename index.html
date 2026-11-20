@@ -151,6 +151,11 @@ button{font-family:inherit}
 .prix .plus{color:var(--or);font-weight:700}
 .formule .coche{margin:16px 0 20px}
 .note{color:var(--gris);font-size:15px;margin-top:6px}
+.options{list-style:none;margin-top:10px}
+.options li{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 0;border-bottom:1px solid var(--ligne);color:var(--creme)}
+.options li:last-child{border-bottom:none}
+.options li b{color:var(--or);font-weight:700;white-space:nowrap}
+.real-corps p.resultat{color:var(--or);font-weight:700;margin-bottom:14px}
 
 /* FAQ */
 .faq details{border-bottom:1px solid var(--ligne);padding:18px 0}
@@ -401,7 +406,8 @@ footer b{color:var(--creme)}
     <div class="real-corps">
       <p>Un site qui lui ressemble, avec son humour et son franc-parler. Les clients voient ses créneaux libres et décrivent leur projet à l'assistant.</p>
       <p class="inclus">Inclus : dispos en direct, assistant IA, demandes de projet, rappels, bot de gestion.</p>
-      <a class="btn btn-contour btn-large" href="lours-tattoo.html" target="_blank" rel="noopener">Voir le site</a>
+      <p class="resultat">2 réservations dès la première semaine</p>
+      <a class="btn btn-contour btn-large" href="https://lourstattoo.com" target="_blank" rel="noopener">Voir le site</a>
     </div>
   </article>
 
@@ -459,6 +465,18 @@ footer b{color:var(--creme)}
       <li>Mail de confirmation et rappels clients</li>
     </ul>
     <button class="btn btn-contour btn-large" onclick="devis('Agent IA seul')">Demander mon devis</button>
+  </div>
+
+  <div class="formule">
+    <h3>Options</h3>
+    <div class="pour">À ajouter à n'importe quelle formule</div>
+    <ul class="options">
+      <li><span>Carte cadeau + liste de souhaits</span><b>79 €</b></li>
+      <li><span>Page supplémentaire</span><b>90 €</b></li>
+      <li><span>Petite modification</span><b>20 €</b></li>
+      <li><span>Nom de domaine</span><b>inclus</b></li>
+      <li><span>Une autre idée ?</span><b>Sur devis</b></li>
+    </ul>
   </div>
 
   <p class="note">Création réglée 50 % au démarrage, 50 % à la livraison. Prix en euros, TVA non applicable (art. 293 B du CGI).</p>
@@ -570,7 +588,7 @@ var SYS = "Tu es Philomène, l'assistante de Philomène IA, l'entreprise de Flor
  + "La création est réglée 50 % au démarrage et 50 % à la livraison. Pas de TVA (micro-entreprise). Il existe aussi une version petit budget où le client crée son appli lui-même dès 24,90 euros par mois sur philomeneia.com. "
  + "DÉROULÉ : on fait connaissance (WhatsApp ou rendez-vous), Florentin envoie un devis clair, il crée le site et son assistant, il le met en ligne, puis il branche l'agent IA et le teste avec le client. Il reste joignable sur WhatsApp ensuite. Le client n'a rien de technique à faire. "
  + "DIFFÉRENCE : l'assistant répond aux questions sur le site ; l'agent IA travaille en coulisses (range les demandes, prévient sur Telegram, envoie les mails et rappels, affiche les dispos). "
- + "RÉALISATIONS : Maka Tattoo à Mouscron (makatattoo.com) et L'Ours Tattoo à Mouscron. "
+ + "RÉALISATIONS : Maka Tattoo à Mouscron (makatattoo.com) et L'Ours Tattoo à Mouscron (lourstattoo.com). "
  + "RÈGLES : n'invente jamais de délai, de remise ni de condition d'engagement ; pour ça, dis que Florentin le précise dans le devis. Ne parle que de Philomène IA et ramène poliment tout hors-sujet. Quand la personne semble intéressée ou demande un prix pour son cas, propose-lui de cliquer sur « Demander mon devis » juste en dessous.";
 
 var userId = "site_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
