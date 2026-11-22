@@ -161,6 +161,16 @@ details.card>summary{list-style:none}details.card>summary::-webkit-details-marke
 .ia-pj img{width:64px;height:64px;object-fit:cover;border-radius:12px;display:block;border:1px solid var(--line)}
 .ia-pj button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--night);color:#fff;font-size:.8rem;cursor:pointer}
 .ia-quota{text-align:center;font-size:.72rem;color:var(--soft);margin:6px auto 0 !important}
+#t-ia .bul.ia.md{white-space:normal}
+#t-ia .md p{margin:0 0 8px}#t-ia .md p:last-of-type{margin-bottom:0}
+#t-ia .md h4{margin:14px 0 6px;font-size:1.05rem;color:var(--ink)}#t-ia .md h4:first-child{margin-top:0}
+#t-ia .md ul,#t-ia .md ol{margin:0 0 10px;padding-left:22px}#t-ia .md li{margin:3px 0}
+#t-ia .md code{background:#EEF2F8;border-radius:4px;padding:0 4px}
+.mdt{overflow-x:auto;margin:6px 0 12px;border:1px solid var(--line);border-radius:12px}
+.mdt table{border-collapse:collapse;width:100%;font-size:.9rem}
+.mdt th{background:#EEF2F8;text-align:left;font-weight:800}
+.mdt th,.mdt td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+.mdt tr:last-child td{border-bottom:0}
 </style>
 </head>
 <body>
@@ -677,13 +687,39 @@ function renderChat(){
     if(m.gen)return `<div class="bul ia img"><b>${esc(m.gen.couleur)}</b><img class="gen" src="${m.gen.src}" alt=""><div class="gb"><button class="btn wa" data-gs="${i}" type="button">📤 Envoyer</button><button class="btn ghost" data-gd="${i}" type="button">💾 Enregistrer</button></div><div class="pt">Simulation indicative</div></div>`;
     if(m.attente)return `<div class="bul ia">${esc(m.attente)}</div>`;
     if(/^\[Image créée : /.test(m.content||""))return `<div class="bul ia" style="opacity:.7;font-size:.88rem">🖼️ ${esc(m.content.slice(15,-1))} (image d'une visite précédente)</div>`;
-    return `<div class="bul ${m.role==="user"?"moi":"ia"}">${esc(m.content)}${m.img?`<img src="${m.img}" alt="">`:""}${m.role==="assistant"?`<button class="cop" data-cop="${i}" type="button">⧉ Copier</button>`:""}</div>`}).join(""):`<div class="ia-vide"><h3>Bonjour Jo 👋</h3><p>Comment puis-je vous aider ?</p><div class="ia-sug">${SUGG.map((x,i)=>`<button type="button" data-sg="${i}"><span>${x[0]}</span>${esc(x[1])}</button>`).join("")}</div></div>`;
+    return `<div class="bul ${m.role==="user"?"moi":"ia md"}">${m.role==="user"?esc(m.content):md(m.content)}${m.img?`<img src="${m.img}" alt="">`:""}${m.role==="assistant"?`<button class="cop" data-cop="${i}" type="button">⧉ Copier</button>`:""}</div>`}).join(""):`<div class="ia-vide"><h3>Bonjour Jo 👋</h3><p>Comment puis-je vous aider ?</p><div class="ia-sug">${SUGG.map((x,i)=>`<button type="button" data-sg="${i}"><span>${x[0]}</span>${esc(x[1])}</button>`).join("")}</div></div>`;
   c.querySelectorAll("[data-sg]").forEach(b=>b.onclick=()=>{const x=SUGG[+b.dataset.sg];$("q").value=x[2];majSaisie();if(x[3])$("q-photo").click();else $("q").focus()});
-  c.querySelectorAll("[data-cop]").forEach(b=>b.onclick=()=>{const t=CHAT[+b.dataset.cop].content;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copié ✓")).catch(()=>toast("Copie impossible : sélectionnez le texte"))});
+  c.querySelectorAll("[data-cop]").forEach(b=>b.onclick=()=>{const t=CHAT[+b.dataset.cop].content.replace(/\*\*/g,"").replace(/^\s*#+\s*/gm,"");(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copié ✓")).catch(()=>toast("Copie impossible : sélectionnez le texte"))});
   const tele=g=>{const a=document.createElement("a");a.href=g.src;a.download=g.nom;document.body.appendChild(a);a.click();a.remove()};
   c.querySelectorAll("[data-gs]").forEach(b=>b.onclick=()=>{const g=CHAT[+b.dataset.gs].gen;if(navigator.canShare&&navigator.canShare({files:[g.file]}))navigator.share({files:[g.file],title:g.nom}).catch(()=>{});else{tele(g);toast("Image téléchargée : joignez-la à votre message")}});
   c.querySelectorAll("[data-gd]").forEach(b=>b.onclick=()=>tele(CHAT[+b.dataset.gd].gen));
   if(!$("t-ia").hidden&&CHAT.length)requestAnimationFrame(()=>scrollTo(0,document.body.scrollHeight))}
+/* Petit lecteur Markdown : **gras**, *italique*, # titres, listes, tableaux | a | b | */
+function md(t){
+  let out="",liste=null,tab=[];
+  const inl=x=>esc(x).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>").replace(/`([^`]+)`/g,"<code>$1</code>");
+  const finListe=()=>{if(liste){out+="</"+liste+">";liste=null}};
+  const finTab=()=>{if(!tab.length)return;const rows=tab.filter(r=>!/^\s*\|?\s*:?-{2,}/.test(r));
+    out+='<div class="mdt"><table>'+rows.map((r,i)=>"<tr>"+r.trim().replace(/^\||\|$/g,"").split("|").map(c=>i===0?"<th>"+inl(c.trim())+"</th>":"<td>"+inl(c.trim())+"</td>").join("")+"</tr>").join("")+"</table></div>";tab=[]};
+  for(const l of String(t||"").split("\n")){
+    if(/^\s*\|.*\|\s*$/.test(l)){finListe();tab.push(l);continue}
+    finTab();let m;
+    if((m=/^\s*#{1,4}\s+(.*)$/.exec(l))){finListe();out+="<h4>"+inl(m[1])+"</h4>"}
+    else if((m=/^\s*[-*•]\s+(.*)$/.exec(l))){if(liste!=="ul"){finListe();out+="<ul>";liste="ul"}out+="<li>"+inl(m[1])+"</li>"}
+    else if((m=/^\s*(\d+)[.)]\s+(.*)$/.exec(l))){if(liste!=="ol"){finListe();out+='<ol start="'+m[1]+'">';liste="ol"}out+="<li>"+inl(m[2])+"</li>"}
+    else if(!l.trim())finListe();
+    else{finListe();out+="<p>"+inl(l)+"</p>"}}
+  finListe();finTab();return out}
+/* 2. Réponses complètes de pro, avec les prix de Jo */
+function consignePro(){
+  const tarifs=(PRIX||[]).filter(p=>num(p.p)>0).map(p=>p.k+" : "+p.p+" €/"+p.u).join(" ; ");
+  return "\n\n[Consigne pour l'assistant, invisible pour l'utilisateur : tu parles à Jo, artisan peintre-décorateur en Belgique, qui connaît son métier. "+
+  "Réponds de façon complète et concrète, comme ChatGPT, avec une mise en forme Markdown : titres courts, **gras**, listes, et un tableau dès qu'il y a des chiffres. "+
+  "Pour une question de chantier, de travaux ou de prix : donne les étapes, les quantités de matériaux, le temps de travail, puis les prix en € HT, main-d'œuvre et fournitures séparées "+
+  "(fourchettes réalistes pour la Belgique en 2026), et termine par un total estimé. "+
+  (tarifs?"Quand ça correspond, calcule d'abord avec les tarifs habituels de Jo : "+tarifs+". ":"")+
+  "Ne renvoie pas vers un comptable ni vers un professionnel pour les prix : c'est lui le professionnel. Ajoute seulement une courte ligne disant que ce sont des estimations à ajuster sur place. "+
+  "Pour une simple question ou un message à écrire, reste naturel et va droit au but.]"}
 const SUGG=[["🎨","3 couleurs sur une photo","Fais-moi 3 couleurs pour cette pièce",true],["✉️","Relancer un client","Écris un message poli pour relancer un client sur son devis : ",false],["🪣","Calculer la peinture","Combien de peinture faut-il pour une pièce de 4 m sur 5 m, 2,5 m de haut, en 2 couches ?",false],["🧾","Préparer un devis","Aide-moi à lister les travaux et les fournitures pour un devis : ",false]];
 /* Barre de saisie : hauteur automatique, bouton ↑ actif seulement s'il y a quelque chose à envoyer */
 function majSaisie(){const q=$("q");q.style.height="auto";q.style.height=Math.min(140,q.scrollHeight)+"px";$("q-go").disabled=iaOcc||(!q.value.trim()&&!qPhoto)}
@@ -724,7 +760,7 @@ $("q-go").onclick=async()=>{
   CHAT.push({role:"user",content:t||"Que penses-tu de cette photo ?",img:photo});qPhoto=null;$("q").value="";pj(null);
   CHAT.push({role:"assistant",attente:"✍️ …"});renderChat();
   try{const hist=CHAT.filter(m=>!m.attente).slice(-12).map(pourIA);
-    if(lastPhoto)hist[hist.length-1]={...hist[hist.length-1],content:hist[hist.length-1].content+CONSIGNE_PHOTO};
+    hist[hist.length-1]={...hist[hist.length-1],content:hist[hist.length-1].content+consignePro()+(lastPhoto?CONSIGNE_PHOTO:"")};
     const j=await appel("/ia/chat",{method:"POST",body:{messages:hist,photo:photo||undefined}});majIA(j.ia);
     const act=lastPhoto&&lireAction(j.answer);CHAT.pop();
     if(act){CHAT.push({role:"assistant",content:(act.message||"Je vous prépare la simulation.")+"\nCouleurs : "+act.couleurs.join(", ")});renderChat();await creerImages(act)}
