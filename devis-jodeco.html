@@ -715,9 +715,11 @@ function consignePro(){
   const tarifs=(PRIX||[]).filter(p=>num(p.p)>0).map(p=>p.k+" : "+p.p+" €/"+p.u).join(" ; ");
   return "\n\n[Consigne pour l'assistant, invisible pour l'utilisateur : tu parles à Jo, artisan peintre-décorateur en Belgique, qui connaît son métier. "+
   "Réponds de façon complète et concrète, comme ChatGPT, avec une mise en forme Markdown : titres courts, **gras**, listes, et un tableau dès qu'il y a des chiffres. "+
-  "Pour une question de chantier, de travaux ou de prix : donne les étapes, les quantités de matériaux, le temps de travail, puis les prix en € HT, main-d'œuvre et fournitures séparées "+
-  "(fourchettes réalistes pour la Belgique en 2026), et termine par un total estimé. "+
-  (tarifs?"Quand ça correspond, calcule d'abord avec les tarifs habituels de Jo : "+tarifs+". ":"")+
+  "Pour une question de chantier, de travaux ou de prix : donne brièvement les étapes et le temps de travail, puis UN tableau avec 3 parties bien séparées : "+
+  "**Main-d'œuvre** (chaque poste commence par « Main-d'œuvre – », avec le calcul, ex. 15 m² × 35 €), **Fournitures** (chaque poste commence par « Fournitures – », avec les quantités) "+
+  "et une ligne de sous-total pour chacune, puis le **Total**. Prix en € HT, fourchettes réalistes pour la Belgique en 2026. "+
+  "Jo travaille au forfait : termine TOUJOURS par une ligne seule « 👉 **Forfait conseillé : X € HT** » avec un montant rond (à la dizaine ou à la cinquantaine), situé dans le haut de la fourchette pour couvrir les imprévus. "+
+  (tarifs?"Pour la main-d'œuvre, utilise d'abord les tarifs de pose habituels de Jo (main-d'œuvre seule, fournitures en plus) : "+tarifs+". ":"")+
   "Ne renvoie pas vers un comptable ni vers un professionnel pour les prix : c'est lui le professionnel. Ajoute seulement une courte ligne disant que ce sont des estimations à ajuster sur place. "+
   "Pour une simple question ou un message à écrire, reste naturel et va droit au but.]"}
 const SUGG=[["🎨","3 couleurs sur une photo","Fais-moi 3 couleurs pour cette pièce",true],["✉️","Relancer un client","Écris un message poli pour relancer un client sur son devis : ",false],["🪣","Calculer la peinture","Combien de peinture faut-il pour une pièce de 4 m sur 5 m, 2,5 m de haut, en 2 couches ?",false],["🧾","Préparer un devis","Aide-moi à lister les travaux et les fournitures pour un devis : ",false]];
