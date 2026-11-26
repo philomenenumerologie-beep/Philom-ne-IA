@@ -123,6 +123,25 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
 .gal input{padding:8px;font-size:14px}
 .gal .it button{font-size:13px;color:var(--rouge)}
 .charge{position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:95;display:flex;align-items:center;justify-content:center;font-weight:600}
+.s-payee{background:#e3f4e6;color:#1f7a35}
+.badges-cmd{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.btn-payee{border:1.5px solid #1f7a35;color:#1f7a35;background:#fff}
+.btn-payee.on{background:#1f7a35;color:#fff}
+.cmd .sous-bijou{border-top:1px dashed var(--ligne);margin-top:8px;padding-top:8px}
+.cmd .art-cmd{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cmd .art-cmd img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+.vente .it .etat{font-size:12px;font-weight:700;border-radius:10px;padding:3px 8px;justify-self:start}
+.vente .it .etat.dispo{background:#e3f4e6;color:#1f7a35}
+.vente .it .etat.vendu{background:#eee;color:#777}
+.vente .it.cache img{opacity:.4}
+.vente .it .rg{display:flex;gap:6px;flex-wrap:wrap}
+.vente .it .rg button{border:1px solid var(--ligne);border-radius:20px;padding:5px 9px;font-size:12.5px;background:#fff}
+.vente img{aspect-ratio:1/1!important}
+.vente .ligne-prix input{width:auto;flex:1 1 auto;min-width:0}
+.vente .it .rg button{color:#111}
+.vente .it div.ligne-prix,.vente .it div.rg{display:flex;padding:0}
+.vente .it>div{grid-template-columns:minmax(0,1fr)}
+.vente .it .ligne-prix input{width:0}
 .coche{display:flex;align-items:center;gap:10px;margin-top:10px;font-weight:600;font-size:15px}
 .coche input{width:22px;height:22px;flex:0 0 22px;margin:0;padding:0;accent-color:#111}
 .ligne-prix{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:15px}
@@ -149,6 +168,7 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
   <div class="onglets">
     <button data-onglet="commandes" class="on">Commandes<span class="pastille" id="nbNouvelles" hidden></span></button>
     <button data-onglet="planches">Breloques</button>
+    <button data-onglet="vente">À vendre</button>
     <button data-onglet="galerie">Photos</button>
     <button data-onglet="tarifs">Tarifs</button>
     <button data-onglet="reglages">Réglages</button>
@@ -201,6 +221,22 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
       <div class="gal" id="listeGalerie"></div>
     </div>
 
+    <!-- BIJOUX À VENDRE -->
+    <div id="o-vente" hidden>
+      <h2>Mes bijoux à vendre</h2>
+      <p class="sous">Vos bijoux déjà faits. Ils s'affichent sur le site dans « Bijoux disponibles ». Quand une cliente en commande un, il passe tout seul en « Vendu ».</p>
+      <div class="carte">
+        <label class="l" style="margin-top:0">Photo du bijou</label>
+        <input type="file" id="vtPhoto" accept="image/*">
+        <label class="l">Nom</label>
+        <input id="vtNom" placeholder="ex. Collier lune dorée" maxlength="60">
+        <label class="l">Prix</label>
+        <div class="ligne-prix" style="margin-top:0"><input type="text" inputmode="decimal" id="vtPrix" placeholder="22"> €</div>
+        <button class="btn btn-noir large" style="margin-top:12px" id="btnAjoutVente">Mettre en vente</button>
+      </div>
+      <div class="gal vente" id="listeVente"></div>
+    </div>
+
     <!-- TARIFS -->
     <div id="o-tarifs" hidden>
       <h2>Mes tarifs</h2>
@@ -237,6 +273,14 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
         <input id="lvBic" placeholder="BIC (facultatif)" style="margin-top:8px" autocapitalize="characters">
         <input id="lvTitulaire" placeholder="Au nom de (titulaire du compte)" style="margin-top:8px">
         <button class="btn btn-noir" style="margin-top:10px" id="btnLivraison">Enregistrer</button>
+      </div>
+      <div class="carte">
+        <b>💌 E-mail récapitulatif pour la cliente</b>
+        <p class="sous" style="margin:4px 0 0">Si elle donne son e-mail, elle reçoit sa commande, la livraison et vos coordonnées de virement. Si elle y répond, la réponse arrive dans votre boîte mail.</p>
+        <label class="coche"><input type="checkbox" id="ecActif"> Envoyer l'e-mail à la cliente</label>
+        <label class="l">Votre petit mot (facultatif)</label>
+        <textarea id="ecMessage" rows="3" maxlength="1000" placeholder="ex. Merci pour votre confiance ! Je prépare votre bijou avec amour, comptez 5 à 7 jours."></textarea>
+        <button class="btn btn-noir" style="margin-top:10px" id="btnEmailCliente">Enregistrer</button>
       </div>
       <div class="carte">
         <b>📧 E-mail pour les nouvelles commandes</b>
@@ -329,6 +373,9 @@ async function charger(){
   $("banniere").value=PUB.banniere||"";
   $("mailAlerte").value=(DATA.infos&&DATA.infos.email)||"";
   remplirLivraison();
+  if(!Array.isArray(PUB.pretAPorter)) PUB.pretAPorter=[];
+  const EC=PUB.emailCliente||{}; $("ecActif").checked=!!EC.actif; $("ecMessage").value=EC.message||"";
+  rendreVente();
   $("lienSite").href=SITE;
   rendreCommandes(); rendrePlanches(); rendreGalerie(); TF=null; rendreTarifsAdmin();
 }
@@ -337,7 +384,7 @@ async function charger(){
 let minuteur=null;
 function sauver(immediat){
   clearTimeout(minuteur);
-  const go=async()=>{try{await api("/public","POST",{public:PUB});toast("Enregistré ✓")}catch(e){toast(e.message,true)}};
+  const go=async()=>{try{PUB.infosAssistant=infosAssistant();await api("/public","POST",{public:PUB});toast("Enregistré ✓")}catch(e){toast(e.message,true)}};
   if(immediat) return go();
   minuteur=setTimeout(go,700);
 }
@@ -345,7 +392,7 @@ function sauver(immediat){
 /* ---------- onglets ---------- */
 document.querySelectorAll("[data-onglet]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-onglet]").forEach(x=>x.classList.toggle("on",x===b));
-  ["commandes","planches","galerie","tarifs","reglages"].forEach(n=>$("o-"+n).hidden=n!==b.dataset.onglet);
+  ["commandes","planches","vente","galerie","tarifs","reglages"].forEach(n=>$("o-"+n).hidden=n!==b.dataset.onglet);
   window.scrollTo(0,0);
 });
 
@@ -364,14 +411,22 @@ function rendreCommandes(){
     const d=new Date(c.date), dt=d.toLocaleDateString("fr-BE",{day:"numeric",month:"short"})+" à "+d.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});
     const tel=String(c.client&&c.client.tel||""), wa=tel.replace(/\D/g,"").replace(/^0/,"32");
     const opts=Object.entries(c.options||{}).map(([k,v])=>`<div>${esc(k)} : <b>${esc(v)}</b></div>`).join("");
+    const unBijou=x=>`<div class="det"><div><b>${esc(x.bijou)}</b> · ${(x.breloques||[]).length} breloque${(x.breloques||[]).length>1?"s":""} · ${x.totalAPartirDe?"dès ":""}${euros(x.total||0)}</div></div>
+         <div class="ordre">${(x.breloques||[]).map((b,i)=>`<span><i>${i+1}</i>${esc(b)}</span>`).join("")}</div>
+         <div class="det">${Object.entries(x.options||{}).map(([k,v])=>`<div>${esc(k)} : <b>${esc(v)}</b></div>`).join("")}</div>`;
     const corps = c.type==="demande"
       ? `<div class="det"><div>💬 <b>Demande spéciale</b></div><div style="white-space:pre-wrap">${esc(c.demande)}</div></div>`
+      : Array.isArray(c.panier)
+      ? (c.panier||[]).map((x,i)=>`<div class="${i?"sous-bijou":""}">${unBijou(x)}</div>`).join("")+
+        (c.articles||[]).map(a=>`<div class="art-cmd">${imgAdmin(a.src)?`<img src="${esc(imgAdmin(a.src))}" alt="">`:""}<div class="det"><div><b>${esc(a.nom)}</b> · bijou à vendre · ${euros(a.prix||0)}</div></div></div>`).join("")+
+        `<div class="det" style="margin-top:8px">${opts}</div>
+         <div class="total">${c.totalAPartirDe?"dès ":""}${euros(c.total||0)}</div>`
       : `<div class="det"><div><b>${esc(c.bijou)}</b> · ${(c.breloques||[]).length} breloque${(c.breloques||[]).length>1?"s":""}</div></div>
          <div class="ordre">${(c.breloques||[]).map((b,i)=>`<span><i>${i+1}</i>${esc(b)}</span>`).join("")}</div>
          <div class="det">${opts}</div>
          <div class="total">${c.totalAPartirDe?"dès ":""}${euros(c.total||0)}</div>`;
     return `<div class="carte cmd">
-      <div class="tete"><div><b>n° ${esc(c.numero)}</b><div class="date">${dt}</div></div><span class="statut s-${esc(c.statut)}">${esc(nomStatut(c.statut))}</span></div>
+      <div class="tete"><div><b>n° ${esc(c.numero)}</b><div class="date">${dt}</div></div><div class="badges-cmd">${c.payee?`<span class="statut s-payee">Payée ✓</span>`:""}<span class="statut s-${esc(c.statut)}">${esc(nomStatut(c.statut))}</span></div></div>
       ${corps}
       <div class="det" style="margin-top:8px;border-top:1px dashed var(--ligne);padding-top:8px">
         <div>👤 ${esc(c.client&&c.client.nom)}</div>
@@ -381,6 +436,7 @@ function rendreCommandes(){
       </div>
       <div class="actions">
         ${wa.length>=10?`<a class="btn btn-or" href="https://wa.me/${wa}?text=${encodeURIComponent("Bonjour "+((c.client&&c.client.nom)||"").split(" ")[0]+", c'est Breloque & vous à propos de votre commande n° "+c.numero+" 💛")}" target="_blank" rel="noopener">WhatsApp</a>`:""}
+        ${c.type!=="demande"?`<button class="btn btn-payee ${c.payee?"on":""}" data-payee="${c.payee?0:1}" data-id="${esc(c.id)}">${c.payee?"✓ Payée":"Marquer payée"}</button>`:""}
         ${STATUTS.filter(s=>s[0]!==c.statut).map(s=>`<button class="btn btn-ligne" data-statut="${s[0]}" data-id="${esc(c.id)}">${s[1]}</button>`).join("")}
         <button class="btn btn-rouge" data-suppr="${esc(c.id)}">Supprimer</button>
       </div></div>`;
@@ -390,13 +446,87 @@ $("filtres").onclick=e=>{const b=e.target.closest("[data-filtre]");if(b){FILTRE=
 $("listeCommandes").onclick=async e=>{
   const b=e.target.closest("button"); if(!b) return;
   try{
-    if(b.dataset.statut){ await api("/commande/"+encodeURIComponent(b.dataset.id)+"/statut","POST",{statut:b.dataset.statut});
-      const c=DATA.commandes.find(x=>x.id===b.dataset.id); if(c)c.statut=b.dataset.statut; rendreCommandes(); toast("Statut : "+nomStatut(b.dataset.statut)); }
+    if(b.dataset.statut){ const j=await api("/commande/"+encodeURIComponent(b.dataset.id)+"/statut","POST",{statut:b.dataset.statut});
+      const c=DATA.commandes.find(x=>x.id===b.dataset.id); if(c)c.statut=b.dataset.statut; rendreCommandes();
+      if(c&&Array.isArray(c.articles)&&c.articles.length) await rafraichirStock();
+      if(j&&j.nonDispo&&j.nonDispo.length) toast("Attention : "+j.nonDispo.join(", ")+" a déjà été vendu à une autre cliente",true);
+      else toast("Statut : "+nomStatut(b.dataset.statut)+(b.dataset.statut==="annulee"&&c&&c.articles&&c.articles.length?" · bijoux remis en vente":"")); }
+    else if(b.dataset.payee!==undefined){ const p=b.dataset.payee==="1"; await api("/commande/"+encodeURIComponent(b.dataset.id)+"/payee","POST",{payee:p});
+      const c=DATA.commandes.find(x=>x.id===b.dataset.id); if(c)c.payee=p; rendreCommandes(); toast(p?"Commande payée ✓":"Paiement retiré"); }
     else if(b.dataset.suppr){ if(!confirm("Supprimer cette commande ?")) return;
       await api("/commande/"+encodeURIComponent(b.dataset.suppr),"DELETE"); DATA.commandes=DATA.commandes.filter(x=>x.id!==b.dataset.suppr); rendreCommandes(); toast("Supprimée"); }
   }catch(err){ toast(err.message,true) }
 };
-$("btnRafraichir").onclick=async()=>{charge(true);try{const d=await api("");DATA.commandes=d.commandes||[];DATA.photos=d.photos||[];rendreCommandes();toast("À jour ✓")}catch(e){toast(e.message,true)}charge(false)};
+$("btnRafraichir").onclick=async()=>{charge(true);try{const d=await api("");DATA.commandes=d.commandes||[];DATA.photos=d.photos||[];majStockDepuis(d);rendreCommandes();toast("À jour ✓")}catch(e){toast(e.message,true)}charge(false)};
+/* l'état « vendu » vient toujours du serveur */
+function majStockDepuis(d){
+  const srv=(d&&d.public&&Array.isArray(d.public.pretAPorter))?d.public.pretAPorter:[];
+  (PUB.pretAPorter||[]).forEach(a=>{ const x=srv.find(y=>y&&y.id===a.id); a.vendu=!!(x&&x.vendu); });
+  rendreVente();
+}
+async function rafraichirStock(){ try{ majStockDepuis(await api("")); }catch(e){} }
+
+/* ---------- bijoux à vendre ---------- */
+function rendreVente(){
+  const L=PUB.pretAPorter||[];
+  $("listeVente").innerHTML=L.length?L.map((a,i)=>`<div class="it ${a.cache?"cache":""}">${imgAdmin(a.src)?`<img src="${esc(imgAdmin(a.src))}" alt="">`:""}<div>
+    <span class="etat ${a.vendu?"vendu":"dispo"}">${a.vendu?"Vendu":a.cache?"Caché":"En vente"}</span>
+    <input value="${esc(a.nom)}" data-vnom="${i}" maxlength="60">
+    <div class="ligne-prix" style="margin:0"><input type="text" inputmode="decimal" value="${esc(String(a.prix).replace(".",","))}" data-vprix="${i}"> €</div>
+    <div class="rg"><button data-vvendu="${i}">${a.vendu?"Remettre en vente":"Marquer vendu"}</button><button data-vcache="${i}">${a.cache?"Montrer":"Cacher"}</button><button data-vsuppr="${i}" style="color:var(--rouge)">Supprimer</button></div>
+  </div></div>`).join("")
+  :`<div class="vide" style="grid-column:1/-1">Aucun bijou à vendre pour l'instant. Tant qu'il n'y en a pas, la page « Bijoux disponibles » reste cachée sur le site.</div>`;
+}
+const prixSaisi=v=>{ const n=Number(String(v).replace(",",".").replace(/[^\d.]/g,"")); return n>0?Math.round(n*100)/100:0; };
+$("btnAjoutVente").onclick=async()=>{
+  const f=$("vtPhoto").files[0], nom=$("vtNom").value.trim(), prix=prixSaisi($("vtPrix").value);
+  if(!f) return toast("Choisissez une photo",true);
+  if(nom.length<2) return toast("Donnez un nom au bijou",true);
+  if(!prix) return toast("Indiquez le prix",true);
+  charge(true);
+  try{ const src=await envoyerPhoto(f,1000);
+    PUB.pretAPorter.unshift({id:"a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),nom:nom.slice(0,60),prix,src,vendu:false});
+    await sauver(true); rendreVente(); $("vtPhoto").value=""; $("vtNom").value=""; $("vtPrix").value=""; toast("En vente sur le site ✓"); }
+  catch(e){toast(e.message,true)}
+  charge(false);
+};
+$("listeVente").onchange=e=>{ const d=e.target.dataset;
+  if(d.vnom!==undefined){ const v=e.target.value.trim().slice(0,60); if(v.length>=2){ PUB.pretAPorter[+d.vnom].nom=v; sauver(); } }
+  else if(d.vprix!==undefined){ const p=prixSaisi(e.target.value); if(p){ PUB.pretAPorter[+d.vprix].prix=p; sauver(); } else toast("Prix incorrect",true); }
+};
+$("listeVente").onclick=async e=>{ const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+  try{
+    if(d.vvendu!==undefined){ const a=PUB.pretAPorter[+d.vvendu]; const j=await api("/article/"+encodeURIComponent(a.id)+"/vente","POST",{vendu:!a.vendu}); a.vendu=!!j.vendu; rendreVente(); await sauver(true); }
+    else if(d.vcache!==undefined){ const a=PUB.pretAPorter[+d.vcache]; a.cache=!a.cache; rendreVente(); await sauver(true); }
+    else if(d.vsuppr!==undefined){ if(!confirm("Supprimer ce bijou du site ?")) return; const a=PUB.pretAPorter.splice(+d.vsuppr,1)[0]; rendreVente(); await sauver(true); supprimerPhoto(a.src); }
+  }catch(err){ toast(err.message,true); }
+};
+
+/* ---------- infos à jour pour l'assistante (envoyées avec chaque enregistrement) ---------- */
+function infosAssistant(){
+  const T=Object.assign({},TARIFS_DEPART,PUB.tarifs||{}), e=n=>euros(Number(n)||0);
+  const grille=(g)=>(g||[]).map((p,i)=>(i+1)+" breloque"+(i?"s":"")+" "+e(p)).join(", ");
+  const L=Object.assign({},LIV_DEPART,PUB.livraison||{});
+  const liv=[]; if(L.retrait) liv.push("retrait gratuit chez "+L.retraitNom+(L.retraitAdresse?" ("+L.retraitAdresse+")":""));
+  if(L.mr) liv.push("envoi en point relais Mondial Relay en Belgique et en France : "+(Number(L.mrPrix)?e(L.mrPrix):"offert")+" (la cliente choisit son point relais sur la carte au moment de commander)");
+  const dispo=(PUB.pretAPorter||[]).filter(a=>!a.vendu&&!a.cache);
+  return ["INFOS À JOUR DE LA BOUTIQUE (elles remplacent les prix et infos donnés plus haut s'ils sont différents) :",
+    "- Colliers : "+grille(T.collier)+" (maximum "+(T.collier||[]).length+" breloques).",
+    "- Bracelets : "+grille(T.bracelet)+" (maximum "+(T.bracelet||[]).length+").",
+    "- Chevillères : "+grille(T.cheville)+" (maximum "+(T.cheville||[]).length+").",
+    "- Chaînes : "+(T.chaines||[]).map(c=>c.nom+(Number(c.prix)?" + "+e(c.prix):" incluse")).join(", ")+". Fermoir type mousqueton : + "+e(T.mousqueton)+". Breloque XXL : + "+e(T.xxl)+" chacune.",
+    "- Boucles d'oreilles (2 breloques + perles au choix) : "+(T.anneaux||[]).map(a=>a.nom+" "+e(a.prix)).join(", ")+". Breloque en plus : + "+e(T.bouclesPlus)+". Breloque XXL : + "+e(T.bouclesXXL)+".",
+    "- Épingle : "+e(T.epingle&&T.epingle.base)+" avec "+(T.epingle&&T.epingle.inclus)+" breloques, + "+e(T.epingle&&T.epingle.plus)+" par breloque en plus, "+(T.epingle&&T.epingle.max)+" maximum.",
+    "- Bague multi-breloques : à partir de "+e(T.bague)+".",
+    "- Livraison : "+(liv.join(" ; ")||"à convenir")+".",
+    "- Paiement : "+(L.iban?"par virement bancaire ; l'IBAN et la communication s'affichent juste après la commande":"à convenir avec moi après la commande")+".",
+    "- Panier : la cliente peut mettre plusieurs bijoux dans une seule commande (bouton « Ajouter ce bijou au panier et en composer un autre »).",
+    dispo.length?"- Bijoux déjà faits, disponibles tout de suite (page « Bijoux disponibles » du site, un seul exemplaire) : "+dispo.slice(0,40).map(a=>a.nom+" "+e(a.prix)).join(" ; ")+".":"- Aucun bijou déjà fait disponible pour le moment."
+  ].join("\n");
+}
+
+/* ---------- e-mail à la cliente ---------- */
+$("btnEmailCliente").onclick=()=>{ PUB.emailCliente={ actif:$("ecActif").checked, message:$("ecMessage").value.trim().slice(0,1000) }; sauver(true); };
 
 /* ---------- planches ---------- */
 function plages(nums){ // 537,538,539 → "537-539"
