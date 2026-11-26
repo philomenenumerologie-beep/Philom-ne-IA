@@ -408,23 +408,44 @@ const POSITIONS = {"pl537": {"ar": 1.3333, "pos": {"537": [0.0996, 0.1604, 0.050
 PLANCHES.forEach(p=>{ const k=p.img.slice(4); if(POSITIONS[k]){ p.pos=POSITIONS[k].pos; p.ar=POSITIONS[k].ar; } });
 let GALERIE = GALERIE_INTEGREE;
 
-/* Tarifs 2025 */
-const CHAINES = [
-  { id:"classique", nom:"Chaîne classique", prix:0 },
-  { id:"leopard",   nom:"Chaîne tissu léopard", prix:5 },
-  { id:"bandana",   nom:"Chaîne tissu bandana", prix:6 },
-  { id:"torsade",   nom:"Tissu torsadé avec chaîne", prix:7 },
-];
-const MOUSQUETON = 4, XXL = 3;
-const TYPES = {
-  collier:  { nom:"Collier",    desc:"1 à 11 breloques", min:1, max:11, grille:[11,13,15,18,21,24,27,30,33,35,37], chaines:true },
-  bracelet: { nom:"Bracelet",   desc:"1 à 6 breloques",  min:1, max:6,  grille:[8,10,12,14,16,18], chaines:true },
-  cheville: { nom:"Chevillère", desc:"1 à 8 breloques",  min:1, max:8,  grille:[9,11,13,15,17,19,20,21], chaines:true },
-  boucles:  { nom:"Boucles d'oreilles", desc:"Paire d'anneaux", min:2, max:6 },
-  epingle:  { nom:"Épingle",    desc:"3 à 7 breloques",  min:1, max:7 },
-  bague:    { nom:"Bague multi-breloques", desc:"À partir de 12 €", min:1, max:5 },
+/* Tarifs 2025 — remplacés par ceux de la page admin dès qu'elle les enregistre */
+const TARIFS_DEPART = {
+  collier:[11,13,15,18,21,24,27,30,33,35,37], bracelet:[8,10,12,14,16,18], cheville:[9,11,13,15,17,19,20,21],
+  chaines:[ {id:"classique",nom:"Chaîne classique",prix:0}, {id:"leopard",nom:"Chaîne tissu léopard",prix:5}, {id:"bandana",nom:"Chaîne tissu bandana",prix:6}, {id:"torsade",nom:"Tissu torsadé avec chaîne",prix:7} ],
+  mousqueton:4, xxl:3,
+  anneaux:[ {id:"20",nom:"Anneaux 20 mm",prix:13}, {id:"30",nom:"Anneaux 30 mm",prix:14}, {id:"40",nom:"Anneaux 40 mm",prix:15} ],
+  bouclesPlus:1, bouclesXXL:1.5,
+  epingle:{base:13, inclus:3, plus:1.5, max:7},
+  bague:12
 };
-const ANNEAUX = [ {id:"20",nom:"Anneaux 20 mm",prix:13}, {id:"30",nom:"Anneaux 30 mm",prix:14}, {id:"40",nom:"Anneaux 40 mm",prix:15} ];
+let CHAINES, MOUSQUETON, XXL, ANNEAUX, TARIFS;
+const TYPES = {
+  collier:  { nom:"Collier",    min:1, chaines:true },
+  bracelet: { nom:"Bracelet",   min:1, chaines:true },
+  cheville: { nom:"Chevillère", min:1, chaines:true },
+  boucles:  { nom:"Boucles d'oreilles", desc:"Paire d'anneaux", min:2, max:6 },
+  epingle:  { nom:"Épingle",    min:1 },
+  bague:    { nom:"Bague multi-breloques", min:1, max:5 },
+};
+const nombre=(v,d)=>{ const n=Number(v); return isFinite(n)&&n>=0?n:d; };
+function appliquerTarifs(t){
+  const D=TARIFS_DEPART; t=t&&typeof t==="object"?t:{};
+  const grille=(g,d)=>Array.isArray(g)&&g.length&&g.every(x=>isFinite(Number(x)))?g.map(Number):d;
+  const liste=(l,d)=>Array.isArray(l)&&l.length?l.filter(x=>x&&x.nom).map((x,i)=>({id:String(x.id||("o"+i)),nom:String(x.nom),prix:nombre(x.prix,0)})):d;
+  TARIFS={ collier:grille(t.collier,D.collier), bracelet:grille(t.bracelet,D.bracelet), cheville:grille(t.cheville,D.cheville),
+    chaines:liste(t.chaines,D.chaines), mousqueton:nombre(t.mousqueton,D.mousqueton), xxl:nombre(t.xxl,D.xxl),
+    anneaux:liste(t.anneaux,D.anneaux), bouclesPlus:nombre(t.bouclesPlus,D.bouclesPlus), bouclesXXL:nombre(t.bouclesXXL,D.bouclesXXL),
+    epingle:{ base:nombre(t.epingle&&t.epingle.base,D.epingle.base), inclus:Math.max(1,Math.round(nombre(t.epingle&&t.epingle.inclus,D.epingle.inclus))), plus:nombre(t.epingle&&t.epingle.plus,D.epingle.plus), max:Math.max(1,Math.round(nombre(t.epingle&&t.epingle.max,D.epingle.max))) },
+    bague:nombre(t.bague,D.bague) };
+  CHAINES=TARIFS.chaines; MOUSQUETON=TARIFS.mousqueton; XXL=TARIFS.xxl; ANNEAUX=TARIFS.anneaux;
+  ["collier","bracelet","cheville"].forEach(k=>{ TYPES[k].grille=TARIFS[k]; TYPES[k].max=TARIFS[k].length; TYPES[k].desc=`1 à ${TARIFS[k].length} breloques`; });
+  TYPES.epingle.max=TARIFS.epingle.max; TYPES.epingle.desc=`${TARIFS.epingle.inclus} à ${TARIFS.epingle.max} breloques`;
+  TYPES.bague.desc=`À partir de ${euros(TARIFS.bague)}`;
+  if(typeof etat!=="undefined"){
+    if(!CHAINES.find(c=>c.id===etat.chaine)) etat.chaine=CHAINES[0].id;
+    if(!ANNEAUX.find(a=>a.id===etat.anneau)) etat.anneau=ANNEAUX[0].id;
+  }
+}
 
 /* ========================================================= */
 const $=s=>document.getElementById(s);
@@ -439,7 +460,7 @@ function afficherVue(){
   const h=(location.hash||"#accueil").slice(1), v=VUES.includes(h)?h:"accueil";
   VUES.forEach(n=>$("v-"+n).hidden=n!==v);
   document.querySelectorAll(".menu nav a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+v));
-  $("menu").hidden=true; $("mZoom").hidden=true;
+  $("menu").hidden=true; $("mZoom").hidden=true; if(v==="composer") $("bulle").hidden=true;
   window.scrollTo(0,0);
   majBarre();
 }
@@ -449,6 +470,7 @@ $("menu").onclick=e=>{if(e.target.id==="menu"||e.target.closest("[data-ferme-men
 
 /* ---------- configurateur ---------- */
 const etat = { type:"collier", chaine:"classique", mousqueton:false, anneau:"20", perles:"", planche:null, choix:[] };
+appliquerTarifs(null);
 const visibles=()=>PLANCHES.filter(p=>!p.cache);
 function infoBreloque(n){ for(const p of PLANCHES){ if(p.nums.includes(n)) return { xxl:p.xxl.includes(n), pasInox:p.pasInox.includes(n) }; } return {}; }
 const libelle=n=> /^[A-Z]$/.test(n) ? "Lettre "+n : "Breloque n° "+n;
@@ -465,14 +487,14 @@ function calcul(){
     if(etat.mousqueton){ total+=MOUSQUETON; lignes.push(["Fermoir mousqueton",MOUSQUETON]); }
   } else if(etat.type==="boucles"){
     const a=ANNEAUX.find(x=>x.id===etat.anneau); total+=a.prix; lignes.push(["Paire · "+a.nom+" · 2 breloques + perles",a.prix]);
-    const plus=Math.max(0,n-2); if(plus){ total+=plus; lignes.push([plus+" breloque"+s(plus)+" en plus",plus]); }
-    if(nbXXL){ total+=nbXXL*1.5; lignes.push([nbXXL+" breloque"+s(nbXXL)+" XXL",nbXXL*1.5]); }
+    const plus=Math.max(0,n-2); if(plus){ total+=plus*TARIFS.bouclesPlus; lignes.push([plus+" breloque"+s(plus)+" en plus",plus*TARIFS.bouclesPlus]); }
+    if(nbXXL){ total+=nbXXL*TARIFS.bouclesXXL; lignes.push([nbXXL+" breloque"+s(nbXXL)+" XXL",nbXXL*TARIFS.bouclesXXL]); }
   } else if(etat.type==="epingle"){
-    total+=13; lignes.push(["Épingle à 3 breloques",13]);
-    const plus=Math.max(0,n-3); if(plus){ total+=plus*1.5; lignes.push([plus+" breloque"+s(plus)+" en plus",plus*1.5]); }
+    const E=TARIFS.epingle; total+=E.base; lignes.push([`Épingle à ${E.inclus} breloques`,E.base]);
+    const plus=Math.max(0,n-E.inclus); if(plus){ total+=plus*E.plus; lignes.push([plus+" breloque"+s(plus)+" en plus",plus*E.plus]); }
     if(nbXXL){ total+=nbXXL*XXL; lignes.push([nbXXL+" breloque"+s(nbXXL)+" XXL",nbXXL*XXL]); }
   } else if(etat.type==="bague"){
-    total=12; aPartirDe=true; lignes.push(["Bague multi-breloques","à partir de 12 €"]);
+    total=TARIFS.bague; aPartirDe=true; lignes.push(["Bague multi-breloques","à partir de "+euros(TARIFS.bague)]);
   }
   return {total,lignes,aPartirDe};
 }
@@ -487,11 +509,11 @@ function rendreOptions(){
   } else if(etat.type==="boucles"){
     h=`<div class="opts">`+ANNEAUX.map(a=>`<button class="opt ${etat.anneau===a.id?"on":""}" data-anneau="${a.id}"><i class="rond"></i><span>${a.nom}</span><em>${a.prix} €</em></button>`).join("")+`</div>
       <input class="champ" id="fPerles" placeholder="Mes perles : couleurs souhaitées…" value="${esc(etat.perles)}">
-      <p class="note">Vous choisissez vos perles et j'imagine l'assortiment et le montage sur le bijou. 2 breloques comprises, + 1 € par breloque en plus.</p>`;
+      <p class="note">Vous choisissez vos perles et j'imagine l'assortiment et le montage sur le bijou. 2 breloques comprises, + ${euros(TARIFS.bouclesPlus)} par breloque en plus.</p>`;
   } else if(etat.type==="epingle"){
-    h=`<p class="note" style="margin:0">13 € pour 3 breloques, + 1,50 € par breloque supplémentaire, jusqu'à 7 breloques maximum.</p>`;
+    h=`<p class="note" style="margin:0">${euros(TARIFS.epingle.base)} pour ${TARIFS.epingle.inclus} breloques, + ${euros(TARIFS.epingle.plus)} par breloque supplémentaire, jusqu'à ${TARIFS.epingle.max} breloques maximum.</p>`;
   } else {
-    h=`<p class="note" style="margin:0">À partir de 12 €. Le prix exact vous sera confirmé selon les breloques choisies.</p>`;
+    h=`<p class="note" style="margin:0">À partir de ${euros(TARIFS.bague)}. Le prix exact vous sera confirmé selon les breloques choisies.</p>`;
   }
   $("options").innerHTML=h;
   const fp=$("fPerles"); if(fp) fp.oninput=e=>{etat.perles=e.target.value; rendreRecap();};
@@ -508,7 +530,7 @@ function vignette(n,taille){
   const [x,y,r]=q, Wd=taille/(2*r), Hd=Wd*p.ar;
   return `<i class="vg ${clsPl(p.id)}" style="width:${taille}px;height:${taille}px;background-size:${Wd.toFixed(1)}px ${Hd.toFixed(1)}px;background-position:${(-(x*Wd-taille/2)).toFixed(1)}px ${(-(y*Hd-taille/2)).toFixed(1)}px"></i>`;
 }
-const supXXL=()=>etat.type==="boucles"?"+1,50 €":"+3 €";
+const supXXL=()=>"+"+euros(etat.type==="boucles"?TARIFS.bouclesXXL:XXL);
 function rendrePlanche(){
   const vis=visibles(); if(!vis.length){ $("onglets").innerHTML=""; $("nums").innerHTML=""; return; }
   if(!vis.find(p=>p.id===etat.planche)) etat.planche=vis[0].id;
@@ -634,15 +656,18 @@ function rendreGaleries(){
   $("grilleCreations").innerHTML=g.map(p=>`<figure><img src="${esc(imgSrc(p.src))}" alt="${esc(p.legende||"Création Breloque & vous")}" loading="lazy" data-zoom>${p.legende?`<figcaption>${esc(p.legende)}</figcaption>`:""}</figure>`).join("");
 }
 document.addEventListener("click",e=>{const i=e.target.closest("img[data-zoom]");if(i)zoom(i.src)});
-(function(){
-  const tab=t=>t.grille.map((p,i)=>`<tr><td>${i+1} breloque${i?"s":""}</td><td>${p} €</td></tr>`).join("");
+function rendreTarifs(){
+  const T=TARIFS, tab=g=>g.map((p,i)=>`<tr><td>${i+1} breloque${i?"s":""}</td><td>${euros(p)}</td></tr>`).join("");
   $("tarifsListe").innerHTML=`
-  <div class="carte"><h3>Les colliers</h3><table>${tab(TYPES.collier)}</table><p>+ 3 € par breloque XXL</p></div>
-  <div class="carte"><h3>Les bracelets</h3><table>${tab(TYPES.bracelet)}</table></div>
-  <div class="carte"><h3>Les chevillères</h3><table>${tab(TYPES.cheville)}</table></div>
-  <div class="carte"><h3>Les options</h3><table><tr><td>Chaîne tissu léopard</td><td>+ 5 €</td></tr><tr><td>Chaîne tissu bandana</td><td>+ 6 €</td></tr><tr><td>Tissu torsadé avec chaîne</td><td>+ 7 €</td></tr><tr><td>Fermoir type mousqueton</td><td>+ 4 €</td></tr></table></div>
-  <div class="carte"><h3>Les boucles d'oreilles</h3><table><tr><td>Anneaux 20 mm · 2 breloques + perles</td><td>13 €</td></tr><tr><td>Anneaux 30 mm · 2 breloques + perles</td><td>14 €</td></tr><tr><td>Anneaux 40 mm · 2 breloques + perles</td><td>15 €</td></tr><tr><td>2 breloques XXL</td><td>+ 3 €</td></tr><tr><td>Breloque classique en plus</td><td>+ 1 €</td></tr></table><p>Vous choisissez vos perles et j'imagine l'assortiment et le montage sur le bijou.</p></div>
-  <div class="carte"><h3>Et aussi</h3><table><tr><td>Épingle à 3 breloques</td><td>13 €</td></tr><tr><td>Breloque en plus (7 max)</td><td>+ 1,50 €</td></tr><tr><td>Bague multi-breloques</td><td>dès 12 €</td></tr></table></div>`;
+  <div class="carte"><h3>Les colliers</h3><table>${tab(T.collier)}</table><p>+ ${euros(T.xxl)} par breloque XXL</p></div>
+  <div class="carte"><h3>Les bracelets</h3><table>${tab(T.bracelet)}</table></div>
+  <div class="carte"><h3>Les chevillères</h3><table>${tab(T.cheville)}</table></div>
+  <div class="carte"><h3>Les options</h3><table>${T.chaines.filter(c=>c.prix>0).map(c=>`<tr><td>${esc(c.nom)}</td><td>+ ${euros(c.prix)}</td></tr>`).join("")}<tr><td>Fermoir type mousqueton</td><td>+ ${euros(T.mousqueton)}</td></tr></table></div>
+  <div class="carte"><h3>Les boucles d'oreilles</h3><table>${T.anneaux.map(a=>`<tr><td>${esc(a.nom)} · 2 breloques + perles</td><td>${euros(a.prix)}</td></tr>`).join("")}<tr><td>Breloque XXL</td><td>+ ${euros(T.bouclesXXL)}</td></tr><tr><td>Breloque classique en plus</td><td>+ ${euros(T.bouclesPlus)}</td></tr></table><p>Vous choisissez vos perles et j'imagine l'assortiment et le montage sur le bijou.</p></div>
+  <div class="carte"><h3>Et aussi</h3><table><tr><td>Épingle à ${T.epingle.inclus} breloques</td><td>${euros(T.epingle.base)}</td></tr><tr><td>Breloque en plus (${T.epingle.max} max)</td><td>+ ${euros(T.epingle.plus)}</td></tr><tr><td>Bague multi-breloques</td><td>dès ${euros(T.bague)}</td></tr></table></div>`;
+}
+rendreTarifs();
+(function(){
   const c=[`<button style="display:flex;align-items:center;gap:12px;background:#111;color:#fff;border-radius:16px;padding:14px 16px;text-align:left" id="contactIA"><span class="ic">💬</span><span><b>Poser une question à l'assistante</b><br><small style="color:#bdb6aa">Réponse immédiate, jour et nuit</small></span></button>`];
   if(CONFIG.MESSENGER) c.push(`<a href="${esc(CONFIG.MESSENGER)}" target="_blank" rel="noopener"><span class="ic">✉️</span><span>M'écrire sur Messenger</span></a>`);
   if(CONFIG.FACEBOOK) c.push(`<a href="${esc(CONFIG.FACEBOOK)}" target="_blank" rel="noopener"><span class="ic">📘</span><span>Ma page Facebook</span></a>`);
@@ -672,6 +697,7 @@ function chargerBoutique(){
   return fetch(CONFIG.API+"/espace/"+CONFIG.CLIENT+"/public",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
     const p=j&&j.public; if(!p) return;
     boutiqueOuverte=true;
+    if(p.tarifs){ appliquerTarifs(p.tarifs); const t=TYPES[etat.type]; if(t.max&&etat.choix.length>t.max) etat.choix=etat.choix.slice(0,t.max); tout(); rendreTarifs(); }
     if(p.banniere&&String(p.banniere).trim()){ $("banniere").textContent="📢 "+p.banniere; $("banniere").hidden=false; }
     if(Array.isArray(p.planches)&&p.planches.length){
       PLANCHES=p.planches.filter(x=>x&&Array.isArray(x.nums)).map(x=>({id:String(x.id),nom:String(x.nom||""),img:String(x.img||""),nums:x.nums.map(String),
@@ -700,7 +726,7 @@ function ouvrirChat(o){chat.hidden=!o;$("bulle").hidden=true;document.body.class
 $("fab").onclick=()=>ouvrirChat(chat.hidden);
 $("bulle").onclick=()=>ouvrirChat(true);
 $("chatFermer").onclick=()=>ouvrirChat(false);
-setTimeout(()=>{if(chat.hidden)$("bulle").hidden=false},4000);
+setTimeout(()=>{ if(chat.hidden && $("v-composer").hidden){ $("bulle").hidden=false; setTimeout(()=>$("bulle").hidden=true,8000); } },4000);
 function addBot(t){const d=document.createElement("div");d.className="msg bot";d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
 function addUser(t){const d=document.createElement("div");d.className="msg user";d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight}
 let tapeEl=null;
