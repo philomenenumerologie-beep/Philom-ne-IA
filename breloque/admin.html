@@ -123,6 +123,10 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
 .gal input{padding:8px;font-size:14px}
 .gal .it button{font-size:13px;color:var(--rouge)}
 .charge{position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:95;display:flex;align-items:center;justify-content:center;font-weight:600}
+.coche{display:flex;align-items:center;gap:10px;margin-top:10px;font-weight:600;font-size:15px}
+.coche input{width:22px;height:22px;flex:0 0 22px;margin:0;padding:0;accent-color:#111}
+.ligne-prix{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:15px}
+.ligne-prix input{width:90px;flex:0 0 90px;margin:0}
 </style>
 </head>
 <body>
@@ -215,6 +219,26 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
         <button class="btn btn-noir" style="margin-top:10px" id="btnBanniere">Enregistrer</button>
       </div>
       <div class="carte">
+        <b>🚚 Livraison</b>
+        <label class="coche"><input type="checkbox" id="lvRetrait"> Retrait gratuit</label>
+        <div id="lvRetraitZone">
+          <input id="lvRetraitNom" placeholder="Nom du lieu (ex. JO'lie Nana)">
+          <input id="lvRetraitAdr" placeholder="Adresse du lieu" style="margin-top:8px">
+        </div>
+        <label class="coche" style="margin-top:12px"><input type="checkbox" id="lvMr"> Envoi Mondial Relay (point relais)</label>
+        <div id="lvMrZone">
+          <div class="ligne-prix">Prix de l'envoi <input type="text" id="lvMrPrix" inputmode="decimal"> €</div>
+          <input id="lvMrCode" placeholder="Code client Mondial Relay (ex. CC12AB34)" style="margin-top:8px" autocapitalize="characters">
+          <p class="sous" style="margin:6px 0 0" id="lvMrInfo"></p>
+        </div>
+        <b style="display:block;margin-top:16px">💳 Paiement par virement</b>
+        <p class="sous" style="margin:4px 0 0">Affiché à la cliente juste après sa commande, avec le numéro de commande en communication. Laissez l'IBAN vide pour ne pas l'afficher.</p>
+        <input id="lvIban" placeholder="IBAN (ex. FR76 …)" style="margin-top:8px" autocapitalize="characters">
+        <input id="lvBic" placeholder="BIC (facultatif)" style="margin-top:8px" autocapitalize="characters">
+        <input id="lvTitulaire" placeholder="Au nom de (titulaire du compte)" style="margin-top:8px">
+        <button class="btn btn-noir" style="margin-top:10px" id="btnLivraison">Enregistrer</button>
+      </div>
+      <div class="carte">
         <b>📧 E-mail pour les nouvelles commandes</b>
         <p class="sous" style="margin:4px 0 0">Vous recevez un mail à chaque commande.</p>
         <input type="email" id="mailAlerte" placeholder="mon.adresse@gmail.com">
@@ -304,6 +328,7 @@ async function charger(){
   if(!Array.isArray(PUB.galerie)) PUB.galerie=[];
   $("banniere").value=PUB.banniere||"";
   $("mailAlerte").value=(DATA.infos&&DATA.infos.email)||"";
+  remplirLivraison();
   $("lienSite").href=SITE;
   rendreCommandes(); rendrePlanches(); rendreGalerie(); TF=null; rendreTarifsAdmin();
 }
@@ -588,6 +613,34 @@ $("btnBanniere").onclick=()=>{PUB.banniere=$("banniere").value.trim().slice(0,16
 $("btnMail").onclick=async()=>{
   const m=$("mailAlerte").value.trim(); if(m&&!/^\S+@\S+\.\S+$/.test(m)) return toast("Adresse e-mail incorrecte",true);
   try{ const infos=Object.assign({},DATA.infos||{},{email:m}); await api("/infos","POST",{infos}); DATA.infos=infos; toast("Enregistré ✓"); }catch(e){toast(e.message,true)}
+};
+
+const LIV_DEPART={ retrait:true, retraitNom:"JO'lie Nana", retraitAdresse:"Chaussée des Ballons 440, 7712 Herseaux", mr:true, mrPrix:5, mrCode:"", iban:"", titulaire:"", bic:"" };
+function remplirLivraison(){
+  const L=Object.assign({},LIV_DEPART,PUB.livraison||{});
+  $("lvRetrait").checked=!!L.retrait; $("lvRetraitNom").value=L.retraitNom||""; $("lvRetraitAdr").value=L.retraitAdresse||"";
+  $("lvMr").checked=!!L.mr; $("lvMrPrix").value=String(L.mrPrix).replace(".",","); $("lvMrCode").value=L.mrCode||"";
+  $("lvIban").value=L.iban||""; $("lvBic").value=L.bic||""; $("lvTitulaire").value=L.titulaire||"";
+  majLivraison();
+}
+function majLivraison(){
+  $("lvRetraitZone").hidden=!$("lvRetrait").checked; $("lvMrZone").hidden=!$("lvMr").checked;
+  $("lvMrInfo").textContent=$("lvMrCode").value.trim()?"Votre code est utilisé pour la carte des points relais.":"Sans code, la carte fonctionne en mode test (BDTEST).";
+}
+["lvRetrait","lvMr"].forEach(i=>$(i).onchange=majLivraison); $("lvMrCode").oninput=majLivraison;
+$("btnLivraison").onclick=()=>{
+  const iban=$("lvIban").value.replace(/\s+/g,"").toUpperCase();
+  if(!$("lvRetrait").checked&&!$("lvMr").checked) return toast("Gardez au moins une façon de livrer",true);
+  if($("lvRetrait").checked&&$("lvRetraitNom").value.trim().length<2) return toast("Indiquez le nom du lieu de retrait",true);
+  if(iban&&!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(iban)) return toast("L'IBAN ne semble pas correct",true);
+  const prix=Number(String($("lvMrPrix").value).replace(",","."));
+  if($("lvMr").checked&&!(prix>=0)) return toast("Prix de l'envoi incorrect",true);
+  PUB.livraison={
+    retrait:$("lvRetrait").checked, retraitNom:$("lvRetraitNom").value.trim().slice(0,60), retraitAdresse:$("lvRetraitAdr").value.trim().slice(0,120),
+    mr:$("lvMr").checked, mrPrix:Math.round((prix||0)*100)/100, mrCode:$("lvMrCode").value.trim().toUpperCase().slice(0,8),
+    iban:iban.replace(/(.{4})/g,"$1 ").trim(), bic:$("lvBic").value.replace(/\s+/g,"").toUpperCase().slice(0,11), titulaire:$("lvTitulaire").value.trim().slice(0,80)
+  };
+  remplirLivraison(); sauver(true);
 };
 
 /* ---------- démarrage ---------- */
