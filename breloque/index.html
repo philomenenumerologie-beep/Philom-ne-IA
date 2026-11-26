@@ -96,6 +96,22 @@ header .btn{padding:8px 15px;font-size:14px}
 .opt span{flex:1;font-size:14.5px}
 .opt em{font-style:normal;color:var(--or2);font-size:14px;font-weight:600}
 .champ{width:100%;background:#181818;border:1.5px solid #333;border-radius:12px;padding:12px;color:#fff;margin-top:10px}
+.livr{margin:14px 0 4px}
+.livr h4{font-size:15px;margin:0 0 8px}
+.livr .opt small{display:block;color:#9d978d;font-size:12.5px;margin-top:2px}
+.relais-choisi{background:#241f14;border:1.5px dashed var(--or);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:8px}
+.relais-choisi b{color:var(--or2)}
+.paie{background:#f6f1e7;border-radius:14px;padding:14px;margin:14px 0;text-align:left;font-size:14.5px}
+.paie .r{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed #ddd3c0}
+.paie .r:last-child{border:none}
+.paie .r span{color:#7a7366;font-size:13px}
+.paie .r b{overflow-wrap:anywhere;text-align:right}
+.paie button{background:#111;color:#fff;border-radius:8px;padding:4px 8px;font-size:12px;flex:0 0 auto}
+.relais-boite{background:#fff;color:#111;border-radius:16px;width:100%;max-width:760px;max-height:100%;overflow:auto;padding:14px}
+.relais-boite .haut{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.relais-boite select{padding:8px;border-radius:8px;border:1px solid #ccc;font-size:15px}
+#Zone_Widget{min-height:300px}
+#Zone_Widget:empty{min-height:0}
 .note{font-size:13px;color:#9d978d;margin-top:10px}
 .onglets{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}
 .onglets::-webkit-scrollbar{display:none}
@@ -174,7 +190,7 @@ footer .liens a{color:#ccc;margin:0 8px}
 /* fenêtres */
 .modal{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:14px}
 .modal .boite{max-height:100%;overflow:auto;width:100%;max-width:720px}
-.modal img{width:100%;border-radius:10px}
+#mZoom img{width:100%;border-radius:10px}
 .fermer{position:fixed;top:14px;left:14px;z-index:81;background:#fff;color:#000;width:40px;height:40px;border-radius:50%;font-size:20px;font-weight:700}
 .merci{background:#fff;border-radius:20px;padding:28px 22px;text-align:center;max-width:420px}
 .merci .coeur{color:var(--rouge);font-size:44px;margin-bottom:8px}
@@ -303,9 +319,10 @@ body.chat-ouvert{overflow:hidden}
       <input class="champ" id="fMail" type="email" autocomplete="email">
       <label for="fMsg">Un petit mot ? (occasion, couleur, date souhaitée…)</label>
       <textarea class="champ" id="fMsg" rows="3"></textarea>
+      <div class="livr" id="blocLivr"></div>
       <div class="err" id="err"></div>
       <button class="btn btn-or" style="width:100%;margin-top:6px" id="btnEnvoyer">Envoyer ma commande</button>
-      <p class="note">Je vous recontacte pour confirmer votre bijou, le paiement et la livraison ou le retrait. Vos données servent uniquement à traiter votre commande (<a href="#mentions" style="color:#e2c47c">confidentialité</a>).</p>
+      <p class="note" id="noteCmd">Je vous recontacte pour confirmer votre bijou. Vos données servent uniquement à traiter votre commande (<a href="#mentions" style="color:#e2c47c">confidentialité</a>).</p>
     </div>
   </div>
   </section>
@@ -369,7 +386,18 @@ body.chat-ouvert{overflow:hidden}
 <div class="modal" id="mMerci" hidden><div class="merci">
   <div class="coeur">♥</div><h3>Merci !</h3>
   <p id="merciTxt"></p>
+  <div id="merciPaie"></div>
   <button class="btn btn-noir" data-ferme>Fermer</button>
+</div></div>
+<div class="modal" id="mRelais" hidden><div class="relais-boite">
+  <div class="haut"><b>Choisir mon point relais</b><button class="btn btn-noir" style="padding:6px 12px" data-ferme>✕</button></div>
+  <label style="font-size:14px">Pays : <select id="relaisPays"><option value="BE">Belgique</option><option value="FR">France</option></select></label>
+  <div id="Zone_Widget" style="margin-top:8px"></div><input type="hidden" id="Target_Widget">
+  <div id="relaisSecours" hidden style="font-size:14px;margin-top:8px">
+    <p>La carte ne s'affiche pas. Écrivez le code postal et la ville où vous voulez recevoir votre colis : je choisirai le point relais le plus proche.</p>
+    <input class="champ" id="relaisLibre" placeholder="ex. 7730 Estaimbourg" style="background:#fff;color:#111;border:1px solid #ccc">
+    <button class="btn btn-noir" style="margin-top:8px;width:100%" id="relaisLibreOk">Valider</button>
+  </div>
 </div></div>
 <div class="toast" id="toast"></div>
 
@@ -448,28 +476,38 @@ function appliquerTarifs(t){
 }
 
 /* ========================================================= */
-const $=s=>document.getElementById(s);
+const el=s=>document.getElementById(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const euros=n=>(Math.round(n*100)/100).toFixed(2).replace(".00","").replace(".",",")+" €";
 const imgSrc=s=>{s=String(s||"");if(s.startsWith("int:"))return IMAGES[s.slice(4)]||"";if(s.startsWith("/photos/"))return CONFIG.API+s;return s};
 let boutiqueOuverte=false;
+/* Livraison & paiement (réglés par elle dans son admin → public.livraison) */
+const LIV_DEPART={ retrait:true, retraitNom:"JO'lie Nana", retraitAdresse:"Chaussée des Ballons 440, 7712 Herseaux", mr:true, mrPrix:5, mrCode:"", iban:"", titulaire:"", bic:"" };
+let LIV=Object.assign({},LIV_DEPART);
+function appliquerLivraison(l){
+  LIV=Object.assign({},LIV_DEPART,l&&typeof l==="object"?l:{});
+  LIV.mrPrix=Math.max(0,Number(LIV.mrPrix)||0);
+  if(!LIV.retrait&&!LIV.mr) LIV.retrait=true;
+  if(etat.livraison==="mr"&&!LIV.mr) etat.livraison="retrait";
+  if(etat.livraison==="retrait"&&!LIV.retrait) etat.livraison="mr";
+}
 
 /* ---------- navigation ---------- */
 const VUES=["accueil","composer","creations","tarifs","contact","mentions"];
 function afficherVue(){
   const h=(location.hash||"#accueil").slice(1), v=VUES.includes(h)?h:"accueil";
-  VUES.forEach(n=>$("v-"+n).hidden=n!==v);
+  VUES.forEach(n=>el("v-"+n).hidden=n!==v);
   document.querySelectorAll(".menu nav a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+v));
-  $("menu").hidden=true; $("mZoom").hidden=true; if(v==="composer") $("bulle").hidden=true;
+  el("menu").hidden=true; el("mZoom").hidden=true; if(v==="composer") el("bulle").hidden=true;
   window.scrollTo(0,0);
   majBarre();
 }
 addEventListener("hashchange",afficherVue);
-$("btnMenu").onclick=()=>$("menu").hidden=false;
-$("menu").onclick=e=>{if(e.target.id==="menu"||e.target.closest("[data-ferme-menu]"))$("menu").hidden=true};
+el("btnMenu").onclick=()=>el("menu").hidden=false;
+el("menu").onclick=e=>{if(e.target.id==="menu"||e.target.closest("[data-ferme-menu]"))el("menu").hidden=true};
 
 /* ---------- configurateur ---------- */
-const etat = { type:"collier", chaine:"classique", mousqueton:false, anneau:"20", perles:"", planche:null, choix:[] };
+const etat = { type:"collier", chaine:"classique", mousqueton:false, anneau:"20", perles:"", planche:null, choix:[], livraison:"retrait", relais:null };
 appliquerTarifs(null);
 const visibles=()=>PLANCHES.filter(p=>!p.cache);
 function infoBreloque(n){ for(const p of PLANCHES){ if(p.nums.includes(n)) return { xxl:p.xxl.includes(n), pasInox:p.pasInox.includes(n) }; } return {}; }
@@ -496,10 +534,66 @@ function calcul(){
   } else if(etat.type==="bague"){
     total=TARIFS.bague; aPartirDe=true; lignes.push(["Bague multi-breloques","à partir de "+euros(TARIFS.bague)]);
   }
+  if(etat.livraison==="mr"&&LIV.mr&&LIV.mrPrix){ total+=LIV.mrPrix; lignes.push(["Livraison Mondial Relay",LIV.mrPrix]); }
   return {total,lignes,aPartirDe};
 }
+function rendreLivraison(){
+  const opts=[];
+  if(LIV.retrait) opts.push(`<button class="opt ${etat.livraison==="retrait"?"on":""}" data-livr="retrait"><i class="rond"></i><span>Retrait chez ${esc(LIV.retraitNom)}<small>${esc(LIV.retraitAdresse)}</small></span><em>gratuit</em></button>`);
+  if(LIV.mr) opts.push(`<button class="opt ${etat.livraison==="mr"?"on":""}" data-livr="mr"><i class="rond"></i><span>Envoi en point relais<small>Mondial Relay · Belgique et France</small></span><em>${LIV.mrPrix?"+ "+euros(LIV.mrPrix):"offert"}</em></button>`);
+  let h=`<h4>🚚 Livraison</h4><div class="opts">${opts.join("")}</div>`;
+  if(etat.livraison==="mr"){
+    h+= etat.relais
+      ? `<div class="relais-choisi">📍 <b>${esc(etat.relais.nom)}</b><br>${esc(etat.relais.adresse)}<br><button class="btn btn-ligne" style="margin-top:8px;padding:6px 12px;font-size:13px" data-relais="1">Changer de point relais</button></div>`
+      : `<button class="btn btn-or" style="width:100%;margin-top:8px" data-relais="1">📍 Choisir mon point relais</button>`;
+  }
+  h+= LIV.iban
+    ? `<p class="note">💳 Paiement par virement : le numéro de compte s'affiche après l'envoi de votre commande.</p>`
+    : `<p class="note">💳 Je vous recontacte pour le paiement.</p>`;
+  el("blocLivr").innerHTML=h;
+}
+/* ---------- widget officiel Mondial Relay ---------- */
+let mrCharge=null;
+function chargerScript(src){ return new Promise((ok,ko)=>{ const x=document.createElement("script"); x.src=src; x.onload=ok; x.onerror=ko; document.head.appendChild(x); }); }
+function chargerCss(href){ const l=document.createElement("link"); l.rel="stylesheet"; l.href=href; document.head.appendChild(l); }
+function chargerMR(){
+  if(!mrCharge){
+    chargerCss("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+    mrCharge=(window.jQuery?Promise.resolve():chargerScript("https://code.jquery.com/jquery-3.7.1.min.js"))
+      .then(()=>window.L?null:chargerScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"))
+      .then(()=>chargerScript("https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"))
+      .then(()=>{ if(!window.jQuery||!window.jQuery.fn.MR_ParcelShopPicker) throw new Error("widget"); });
+    mrCharge.catch(()=>{ mrCharge=null; });
+  }
+  return mrCharge;
+}
+function ouvrirRelais(){
+  el("mRelais").hidden=false; el("relaisSecours").hidden=true;
+  el("Zone_Widget").innerHTML=`<p style="padding:20px;text-align:center;color:#777">Chargement de la carte…</p>`;
+  const lancer=()=>{
+    const pays=el("relaisPays").value, J=window.jQuery;
+    el("Zone_Widget").innerHTML="";
+    J("#Zone_Widget").MR_ParcelShopPicker({
+      Target:"#Target_Widget", Brand:(String(LIV.mrCode||"").trim()||"BDTEST").padEnd(8," "),
+      Country:pays, AllowedCountries:"BE,FR", PostCode:"", ColLivMod:"24R", NbResults:"7",
+      Responsive:true, ShowResultsOnMap:true,
+      OnParcelShopSelected:d=>{
+        etat.relais={ id:String(d.ID||""), pays:String(d.Pays||pays), nom:String(d.Nom||"").trim(),
+          adresse:[d.Adresse1,d.Adresse2].filter(Boolean).map(x=>String(x).trim()).join(", ")+", "+String(d.CP||"").trim()+" "+String(d.Ville||"").trim() };
+        el("mRelais").hidden=true; rendreLivraison(); toast("Point relais choisi ✓");
+      }
+    });
+  };
+  chargerMR().then(lancer).catch(()=>{ el("Zone_Widget").innerHTML=""; el("relaisSecours").hidden=false; });
+  el("relaisPays").onchange=()=>{ if(window.jQuery&&window.jQuery.fn.MR_ParcelShopPicker){ el("Zone_Widget").innerHTML=""; lancer(); } };
+}
+el("relaisLibreOk").onclick=()=>{
+  const v=el("relaisLibre").value.trim(); if(v.length<4) return toast("Indiquez le code postal et la ville");
+  etat.relais={ id:"", pays:el("relaisPays").value, nom:"À choisir près de "+v.slice(0,60), adresse:v.slice(0,80), libre:true };
+  el("mRelais").hidden=true; rendreLivraison();
+};
 function rendreTypes(){
-  $("types").innerHTML=Object.entries(TYPES).map(([k,t])=>`<button class="type ${etat.type===k?"on":""}" data-type="${k}"><strong>${t.nom}</strong><small>${t.desc}</small></button>`).join("");
+  el("types").innerHTML=Object.entries(TYPES).map(([k,t])=>`<button class="type ${etat.type===k?"on":""}" data-type="${k}"><strong>${t.nom}</strong><small>${t.desc}</small></button>`).join("");
 }
 function rendreOptions(){
   const t=TYPES[etat.type]; let h="";
@@ -515,14 +609,14 @@ function rendreOptions(){
   } else {
     h=`<p class="note" style="margin:0">À partir de ${euros(TARIFS.bague)}. Le prix exact vous sera confirmé selon les breloques choisies.</p>`;
   }
-  $("options").innerHTML=h;
-  const fp=$("fPerles"); if(fp) fp.oninput=e=>{etat.perles=e.target.value; rendreRecap();};
+  el("options").innerHTML=h;
+  const fp=el("fPerles"); if(fp) fp.oninput=e=>{etat.perles=e.target.value; rendreRecap();};
 }
 /* ---------- vignettes : la breloque découpée dans la photo de sa planche ---------- */
 const clsPl=id=>"bgp-"+String(id).replace(/[^a-z0-9_-]/gi,"_");
 function stylesPlanches(){
-  let el=$("stylesPlanches"); if(!el){ el=document.createElement("style"); el.id="stylesPlanches"; document.head.appendChild(el); }
-  el.textContent=PLANCHES.map(p=>`.${clsPl(p.id)}{background-image:url("${imgSrc(p.img).replace(/"/g,"%22")}")}`).join("\n");
+  let st=el("stylesPlanches"); if(!st){ st=document.createElement("style"); st.id="stylesPlanches"; document.head.appendChild(st); }
+  st.textContent=PLANCHES.map(p=>`.${clsPl(p.id)}{background-image:url("${imgSrc(p.img).replace(/"/g,"%22")}")}`).join("\n");
 }
 function planchDe(n){ return PLANCHES.find(p=>p.nums.includes(n)); }
 function vignette(n,taille){
@@ -532,13 +626,13 @@ function vignette(n,taille){
 }
 const supXXL=()=>"+"+euros(etat.type==="boucles"?TARIFS.bouclesXXL:XXL);
 function rendrePlanche(){
-  const vis=visibles(); if(!vis.length){ $("onglets").innerHTML=""; $("nums").innerHTML=""; return; }
+  const vis=visibles(); if(!vis.length){ el("onglets").innerHTML=""; el("nums").innerHTML=""; return; }
   if(!vis.find(p=>p.id===etat.planche)) etat.planche=vis[0].id;
-  $("onglets").innerHTML=vis.map(p=>`<button class="onglet ${etat.planche===p.id?"on":""}" data-planche="${esc(p.id)}">${esc(p.nom)}</button>`).join("");
+  el("onglets").innerHTML=vis.map(p=>`<button class="onglet ${etat.planche===p.id?"on":""}" data-planche="${esc(p.id)}">${esc(p.nom)}</button>`).join("");
   const p=vis.find(x=>x.id===etat.planche);
-  const src=imgSrc(p.img); if($("plancheImg").getAttribute("src")!==src) $("plancheImg").src=src;
+  const src=imgSrc(p.img); if(el("plancheImg").getAttribute("src")!==src) el("plancheImg").src=src;
   /* zones à toucher directement sur la photo */
-  const zone=$("zones"); zone.innerHTML="";
+  const zone=el("zones"); zone.innerHTML="";
   if(p.pos&&p.ar){
     zone.innerHTML=p.nums.filter(n=>p.pos[n]).map(n=>{
       const [x,y,r]=p.pos[n], ko=p.epuises.includes(n), nb=etat.choix.filter(c=>c===n).length;
@@ -546,8 +640,8 @@ function rendrePlanche(){
         style="left:${((x-r)*100).toFixed(2)}%;top:${((y-r/p.ar)*100).toFixed(2)}%;width:${(2*r*100).toFixed(2)}%;height:${(2*r/p.ar*100).toFixed(2)}%">${nb?`<i class="pris">×${nb}</i>`:""}</button>`;
     }).join("");
   }
-  $("aidePlanche").textContent = p.pos&&p.ar ? "Touchez une breloque sur la photo, ou son numéro en dessous. Vous pouvez prendre plusieurs fois la même." : "Touchez un numéro pour l'ajouter. Vous pouvez prendre plusieurs fois la même breloque.";
-  $("nums").innerHTML=p.nums.map(n=>{
+  el("aidePlanche").textContent = p.pos&&p.ar ? "Touchez une breloque sur la photo, ou son numéro en dessous. Vous pouvez prendre plusieurs fois la même." : "Touchez un numéro pour l'ajouter. Vous pouvez prendre plusieurs fois la même breloque.";
+  el("nums").innerHTML=p.nums.map(n=>{
     const ko=p.epuises.includes(n), nb=etat.choix.filter(c=>c===n).length, v=vignette(n,40);
     const tag=p.xxl.includes(n)?`<i class="tag">XXL ${supXXL()}</i>`:p.pasInox.includes(n)?`<i class="tag inox">*</i>`:"";
     return `<button class="num ${ko?"ko":""} ${v?"avec-photo":""}" data-num="${esc(n)}">${nb?`<i class="compte">×${nb}</i>`:""}${v}${esc(n)}${tag}</button>`;
@@ -555,8 +649,8 @@ function rendrePlanche(){
 }
 function rendreApercu(){
   const c=etat.choix;
-  if(!c.length){ $("apercu").innerHTML=`<div class="vide">Votre bijou apparaîtra ici ✨<br><small>Touchez une breloque pour l'ajouter</small></div>`; return; }
-  const W=340,H=150,n=c.length, larg=$("apercu").clientWidth||340, k=larg/W;
+  if(!c.length){ el("apercu").innerHTML=`<div class="vide">Votre bijou apparaîtra ici ✨<br><small>Touchez une breloque pour l'ajouter</small></div>`; return; }
+  const W=340,H=150,n=c.length, larg=el("apercu").clientWidth||340, k=larg/W;
   let h=`<div class="collier"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="M6,14 Q170,118 334,14" fill="none" stroke="#c9a24a" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round"/></svg>`;
   c.forEach((v,i)=>{
     const t=(i+1)/(n+1), x=(1-t)*(1-t)*6+2*(1-t)*t*170+t*t*334, y=(1-t)*(1-t)*14+2*(1-t)*t*118+t*t*14;
@@ -564,20 +658,20 @@ function rendreApercu(){
     h+=`<div class="br" style="left:${(x/W*100).toFixed(2)}%;top:${((y+2)/H*100).toFixed(2)}%">${vg||`<i class="rond" style="width:${taille}px;height:${taille}px;font-size:${Math.max(9,taille/3.2)}px">${esc(v)}</i>`}<b>${esc(v)}</b></div>`;
   });
   h+=`<span class="cote" style="left:4px">gauche</span><span class="cote" style="right:4px">droite</span></div>`;
-  $("apercu").innerHTML=h;
+  el("apercu").innerHTML=h;
 }
 function rendreListe(){
   const t=TYPES[etat.type], c=etat.choix;
-  $("compteur").textContent=`${c.length} / ${t.max} breloques max`+(c.length&&c.length<t.min?` · minimum ${t.min}`:"");
-  $("liste").innerHTML=c.map((v,i)=>{ const inf=infoBreloque(v);
+  el("compteur").textContent=`${c.length} / ${t.max} breloques max`+(c.length&&c.length<t.min?` · minimum ${t.min}`:"");
+  el("liste").innerHTML=c.map((v,i)=>{ const inf=infoBreloque(v);
     return `<div class="ligne"><span class="pos">${i+1}</span>${vignette(v,38)}<span class="lib">${esc(/^[A-Z]$/.test(v)?"Lettre "+v:"N° "+v)}${inf.xxl?"<small>XXL</small>":""}${inf.pasInox?"<small>*</small>":""}</span>
       <button data-g="${i}" ${i===0?"disabled":""} aria-label="vers la gauche">◀</button><button data-d="${i}" ${i===c.length-1?"disabled":""} aria-label="vers la droite">▶</button><button data-x="${i}" aria-label="retirer">✕</button></div>`;
   }).join("");
 }
 function rendreRecap(){
   const r=calcul();
-  $("prixLigne").textContent=r.vide?"":(r.aPartirDe?"dès ":"")+euros(r.total);
-  $("recap").innerHTML=r.vide?`<div class="vide">Ajoutez au moins une breloque.</div>`:
+  el("prixLigne").textContent=r.vide?"":(r.aPartirDe?"dès ":"")+euros(r.total);
+  el("recap").innerHTML=r.vide?`<div class="vide">Ajoutez au moins une breloque.</div>`:
     r.lignes.map(([a,b])=>`<div class="l"><span>${esc(a)}</span><b>${typeof b==="number"?euros(b):esc(b)}</b></div>`).join("")+
     `<div class="l"><span>Ordre (gauche → droite)</span><b style="text-align:right">${esc(etat.choix.join(" · "))}</b></div>`+
     (etat.type==="boucles"&&etat.perles?`<div class="l"><span>Perles</span><b>${esc(etat.perles)}</b></div>`:"")+
@@ -585,15 +679,15 @@ function rendreRecap(){
   majBarre();
 }
 function majBarre(){
-  const r=calcul(), sur=!$("v-composer").hidden, vis=sur&&!r.vide;
-  $("barre").hidden=!vis; document.body.classList.toggle("avec-barre",vis);
-  $("barreInfo").textContent=`${TYPES[etat.type].nom} · ${etat.choix.length} breloque${etat.choix.length>1?"s":""}`;
-  $("barreTotal").textContent=(r.aPartirDe?"dès ":"")+euros(r.total);
+  const r=calcul(), sur=!el("v-composer").hidden, vis=sur&&!r.vide;
+  el("barre").hidden=!vis; document.body.classList.toggle("avec-barre",vis);
+  el("barreInfo").textContent=`${TYPES[etat.type].nom} · ${etat.choix.length} breloque${etat.choix.length>1?"s":""}`;
+  el("barreTotal").textContent=(r.aPartirDe?"dès ":"")+euros(r.total);
 }
-function tout(){ rendreTypes(); rendreOptions(); rendrePlanche(); rendreApercu(); rendreListe(); rendreRecap(); }
+function tout(){ rendreTypes(); rendreOptions(); rendrePlanche(); rendreApercu(); rendreListe(); rendreLivraison(); rendreRecap(); }
 function maj(){ rendrePlanche(); rendreApercu(); rendreListe(); rendreRecap(); }
-function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("vis"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("vis"),1600); }
-function zoom(src){ $("zoomImg").src=src; $("mZoom").hidden=false; }
+function toast(m){ const t=el("toast"); t.textContent=m; t.classList.add("vis"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("vis"),1600); }
+function zoom(src){ el("zoomImg").src=src; el("mZoom").hidden=false; }
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("button,[data-ferme]"); if(!b) return;
@@ -602,6 +696,8 @@ document.addEventListener("click",e=>{
   else if(d.chaine){ etat.chaine=d.chaine; rendreOptions(); rendreRecap(); }
   else if(d.mousq){ etat.mousqueton=!etat.mousqueton; rendreOptions(); rendreRecap(); }
   else if(d.anneau){ etat.anneau=d.anneau; rendreOptions(); rendreRecap(); }
+  else if(d.livr){ etat.livraison=d.livr; rendreLivraison(); rendreRecap(); }
+  else if(d.relais){ ouvrirRelais(); }
   else if(d.planche){ etat.planche=d.planche; rendrePlanche(); }
   else if(d.num!==undefined){
     const t=TYPES[etat.type]; if(etat.choix.length>=t.max){ toast("Maximum "+t.max+" breloques pour ce bijou"); return; }
@@ -613,10 +709,23 @@ document.addEventListener("click",e=>{
   else if(d.x!==undefined){ etat.choix.splice(+d.x,1); maj(); }
   else if(d.ferme!==undefined){ b.closest(".modal").hidden=true; }
 });
-$("btnZoom").onclick=()=>zoom($("plancheImg").src);
-$("plancheImg").onclick=$("btnZoom").onclick;
-$("btnSuite").onclick=()=>$("blocCommande").scrollIntoView({behavior:"smooth"});
+el("btnZoom").onclick=()=>zoom(el("plancheImg").src);
+el("plancheImg").onclick=el("btnZoom").onclick;
+el("btnSuite").onclick=()=>el("blocCommande").scrollIntoView({behavior:"smooth"});
 
+function blocPaiement(numero, r){
+  if(!LIV.iban) return "";
+  const ligne=(t,v,copie)=>`<div class="r"><span>${t}</span><b>${esc(v)}</b>${copie?`<button data-copie="${esc(v)}">Copier</button>`:""}</div>`;
+  return `<div class="paie"><div style="font-weight:700;margin-bottom:4px">💳 Paiement par virement</div>
+    ${ligne("Montant", r.aPartirDe?"je vous confirme le montant":euros(r.total), false)}
+    ${ligne("IBAN", LIV.iban, true)}
+    ${LIV.bic?ligne("BIC", LIV.bic, true):""}
+    ${LIV.titulaire?ligne("Au nom de", LIV.titulaire, false):""}
+    ${ligne("Communication", "Commande "+numero, true)}
+  </div><p style="font-size:13px;color:#7a7366;margin-bottom:12px">Votre bijou est préparé dès réception du virement.</p>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-copie]"); if(!b) return;
+  const v=b.dataset.copie; (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>toast("Copié ✓"),()=>toast(v)); });
 async function envoyerCommande(commande){
   const rep=await fetch(CONFIG.API+"/espace/"+CONFIG.CLIENT+"/commande",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({commande})});
   const j=await rep.json().catch(()=>({}));
@@ -624,41 +733,49 @@ async function envoyerCommande(commande){
   if(!rep.ok||!j.ok) throw new Error(j.error||"Envoi impossible");
   return j;
 }
-$("btnEnvoyer").onclick=async()=>{
-  const t=TYPES[etat.type], nom=$("fNom").value.trim(), tel=$("fTel").value.trim(), mail=$("fMail").value.trim();
+el("btnEnvoyer").onclick=async()=>{
+  const t=TYPES[etat.type], nom=el("fNom").value.trim(), tel=el("fTel").value.trim(), mail=el("fMail").value.trim();
   let err="";
   if(etat.choix.length<t.min) err=`Choisissez au moins ${t.min} breloque${t.min>1?"s":""} pour ce bijou.`;
   else if(nom.length<2) err="Indiquez votre prénom et votre nom.";
   else if(tel.replace(/\D/g,"").length<8) err="Indiquez un numéro de téléphone valide.";
   else if(mail && !/^\S+@\S+\.\S+$/.test(mail)) err="L'adresse e-mail ne semble pas correcte.";
-  $("err").textContent=err; if(err) return;
+  else if(etat.livraison==="mr" && !etat.relais) err="Choisissez votre point relais (bouton « Choisir mon point relais »).";
+  el("err").textContent=err; if(err) return;
   const r=calcul(), options={};
   if(t.chaines){ options["Chaîne"]=CHAINES.find(c=>c.id===etat.chaine).nom; if(etat.mousqueton) options["Fermoir"]="Mousqueton"; }
   if(etat.type==="boucles"){ options["Anneaux"]=etat.anneau+" mm"; if(etat.perles) options["Perles"]=etat.perles; }
+  if(etat.livraison==="mr"){
+    options["Livraison"]="Mondial Relay ("+(etat.relais.pays==="FR"?"France":"Belgique")+")"+(LIV.mrPrix?" + "+euros(LIV.mrPrix):"");
+    options["Point relais"]=etat.relais.nom+(etat.relais.id?" · n° "+etat.relais.id:"");
+    options["Adresse relais"]=etat.relais.adresse;
+  } else options["Livraison"]="Retrait chez "+LIV.retraitNom+" (gratuit)";
+  options["Paiement"]=LIV.iban?"Virement bancaire":"À convenir";
   const commande={ type:"commande", bijou:t.nom, options, breloques:etat.choix.slice(), total:r.total, totalAPartirDe:!!r.aPartirDe,
-    client:{ nom, tel, email:mail, message:$("fMsg").value.trim() } };
-  const btn=$("btnEnvoyer"); btn.disabled=true; btn.textContent="Envoi…";
+    client:{ nom, tel, email:mail, message:el("fMsg").value.trim() } };
+  const btn=el("btnEnvoyer"); btn.disabled=true; btn.textContent="Envoi…";
   try{
     const j=await envoyerCommande(commande);
-    $("merciTxt").textContent = j.demo
+    el("merciTxt").textContent = j.demo
       ? "Ceci est une démo : la commande n'est pas réellement envoyée. Sur le vrai site, Breloque & vous reçoit tout de suite votre composition dans l'ordre."
       : `Votre commande n° ${j.numero} est bien envoyée. Je vous recontacte très vite pour la confirmer.`;
-    $("mMerci").hidden=false;
-    etat.choix=[]; ["fNom","fTel","fMail","fMsg"].forEach(i=>$(i).value=""); maj();
-  }catch(e){ $("err").textContent=e.message&&e.message!=="Envoi impossible"?e.message:"Oups, l'envoi n'a pas marché. Vérifiez votre connexion et réessayez."; }
+    el("merciPaie").innerHTML=blocPaiement(j.demo?"DÉMO":j.numero, r);
+    el("mMerci").hidden=false;
+    etat.choix=[]; etat.relais=null; ["fNom","fTel","fMail","fMsg"].forEach(i=>el(i).value=""); maj();
+  }catch(e){ el("err").textContent=e.message&&e.message!=="Envoi impossible"?e.message:"Oups, l'envoi n'a pas marché. Vérifiez votre connexion et réessayez."; }
   btn.disabled=false; btn.textContent="Envoyer ma commande";
 };
 
 /* ---------- galerie, tarifs, contact, mentions ---------- */
 function rendreGaleries(){
   const g=GALERIE.length?GALERIE:GALERIE_INTEGREE;
-  $("galerieAccueil").innerHTML=g.slice(0,6).map(p=>`<img src="${esc(imgSrc(p.src))}" alt="${esc(p.legende||"Création Breloque & vous")}" loading="lazy" data-zoom>`).join("");
-  $("grilleCreations").innerHTML=g.map(p=>`<figure><img src="${esc(imgSrc(p.src))}" alt="${esc(p.legende||"Création Breloque & vous")}" loading="lazy" data-zoom>${p.legende?`<figcaption>${esc(p.legende)}</figcaption>`:""}</figure>`).join("");
+  el("galerieAccueil").innerHTML=g.slice(0,6).map(p=>`<img src="${esc(imgSrc(p.src))}" alt="${esc(p.legende||"Création Breloque & vous")}" loading="lazy" data-zoom>`).join("");
+  el("grilleCreations").innerHTML=g.map(p=>`<figure><img src="${esc(imgSrc(p.src))}" alt="${esc(p.legende||"Création Breloque & vous")}" loading="lazy" data-zoom>${p.legende?`<figcaption>${esc(p.legende)}</figcaption>`:""}</figure>`).join("");
 }
 document.addEventListener("click",e=>{const i=e.target.closest("img[data-zoom]");if(i)zoom(i.src)});
 function rendreTarifs(){
   const T=TARIFS, tab=g=>g.map((p,i)=>`<tr><td>${i+1} breloque${i?"s":""}</td><td>${euros(p)}</td></tr>`).join("");
-  $("tarifsListe").innerHTML=`
+  el("tarifsListe").innerHTML=`
   <div class="carte"><h3>Les colliers</h3><table>${tab(T.collier)}</table><p>+ ${euros(T.xxl)} par breloque XXL</p></div>
   <div class="carte"><h3>Les bracelets</h3><table>${tab(T.bracelet)}</table></div>
   <div class="carte"><h3>Les chevillères</h3><table>${tab(T.cheville)}</table></div>
@@ -675,10 +792,10 @@ rendreTarifs();
   if(CONFIG.TELEPHONE) c.push(`<a href="tel:${esc(CONFIG.TELEPHONE.replace(/\s/g,""))}"><span class="ic">📞</span><span>${esc(CONFIG.TELEPHONE)}</span></a>`);
   if(CONFIG.EMAIL) c.push(`<a href="mailto:${esc(CONFIG.EMAIL)}"><span class="ic">📧</span><span>${esc(CONFIG.EMAIL)}</span></a>`);
   c.push(`<div><span class="ic">📍</span><span>${esc(CONFIG.MENTIONS.adresse)}</span></div>`);
-  $("contacts").innerHTML=c.join("");
-  $("contactIA").onclick=()=>ouvrirChat(true);
+  el("contacts").innerHTML=c.join("");
+  el("contactIA").onclick=()=>ouvrirChat(true);
   const M=CONFIG.MENTIONS, contactTxt=[CONFIG.TELEPHONE,CONFIG.EMAIL].filter(Boolean).join(" · ");
-  $("mentions").innerHTML=`<h2>Mentions légales <em>&amp; confidentialité</em></h2>
+  el("mentions").innerHTML=`<h2>Mentions légales <em>&amp; confidentialité</em></h2>
   <h3>Éditeur du site</h3><p>${esc(M.editeur)}, ${esc(M.adresse)}${M.bce?"<br>Numéro d'entreprise (BCE) : "+esc(M.bce):""}${contactTxt?"<br>"+esc(contactTxt):""}</p>
   <h3>Création et hébergement</h3><p>Site créé par Philomène IA (philomeneia.com). Hébergement du site : GitHub, Inc., San Francisco, États-Unis. Commandes, assistante IA et photos : Render Services, Inc., San Francisco, États-Unis.</p>
   <h3>Propriété intellectuelle</h3><p>Les textes, photos et le logo de ce site appartiennent à ${esc(M.editeur)}. Toute reproduction sans autorisation est interdite.</p>
@@ -697,8 +814,9 @@ function chargerBoutique(){
   return fetch(CONFIG.API+"/espace/"+CONFIG.CLIENT+"/public",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
     const p=j&&j.public; if(!p) return;
     boutiqueOuverte=true;
+    appliquerLivraison(p.livraison); rendreLivraison(); rendreRecap();
     if(p.tarifs){ appliquerTarifs(p.tarifs); const t=TYPES[etat.type]; if(t.max&&etat.choix.length>t.max) etat.choix=etat.choix.slice(0,t.max); tout(); rendreTarifs(); }
-    if(p.banniere&&String(p.banniere).trim()){ $("banniere").textContent="📢 "+p.banniere; $("banniere").hidden=false; }
+    if(p.banniere&&String(p.banniere).trim()){ el("banniere").textContent="📢 "+p.banniere; el("banniere").hidden=false; }
     if(Array.isArray(p.planches)&&p.planches.length){
       PLANCHES=p.planches.filter(x=>x&&Array.isArray(x.nums)).map(x=>({id:String(x.id),nom:String(x.nom||""),img:String(x.img||""),nums:x.nums.map(String),
         xxl:(x.xxl||[]).map(String),pasInox:(x.pasInox||[]).map(String),epuises:(x.epuises||[]).map(String),cache:!!x.cache,
@@ -715,18 +833,18 @@ function chargerBoutique(){
 /* =========================================================
    ASSISTANTE IA — route /assistant/breloque (texte dans assistants.html)
    ========================================================= */
-const chat=$("chat"), msgs=$("msgs"), quick=$("quick");
+const chat=el("chat"), msgs=el("msgs"), quick=el("quick");
 const sessionId="bv-"+Math.random().toString(36).slice(2);
 let demarre=false, lead=null;
 const QUICK=["Composer mon bijou","Les tarifs","Délais et livraison","Une demande spéciale","Les matières"];
 const isPhone=()=>matchMedia("(max-width:760px)").matches;
 function ajuster(){const vv=window.visualViewport;if(!vv)return;document.documentElement.style.setProperty("--vvh",vv.height+"px");chat.style.transform=(!chat.hidden&&isPhone())?`translateY(${vv.offsetTop}px)`:""}
 if(window.visualViewport){visualViewport.addEventListener("resize",ajuster);visualViewport.addEventListener("scroll",ajuster)}
-function ouvrirChat(o){chat.hidden=!o;$("bulle").hidden=true;document.body.classList.toggle("chat-ouvert",o&&isPhone());ajuster();if(o&&!demarre){demarre=true;bonjour()}if(o&&!isPhone())$("chatIn").focus()}
-$("fab").onclick=()=>ouvrirChat(chat.hidden);
-$("bulle").onclick=()=>ouvrirChat(true);
-$("chatFermer").onclick=()=>ouvrirChat(false);
-setTimeout(()=>{ if(chat.hidden && $("v-composer").hidden){ $("bulle").hidden=false; setTimeout(()=>$("bulle").hidden=true,8000); } },4000);
+function ouvrirChat(o){chat.hidden=!o;el("bulle").hidden=true;document.body.classList.toggle("chat-ouvert",o&&isPhone());ajuster();if(o&&!demarre){demarre=true;bonjour()}if(o&&!isPhone())el("chatIn").focus()}
+el("fab").onclick=()=>ouvrirChat(chat.hidden);
+el("bulle").onclick=()=>ouvrirChat(true);
+el("chatFermer").onclick=()=>ouvrirChat(false);
+setTimeout(()=>{ if(chat.hidden && el("v-composer").hidden){ el("bulle").hidden=false; setTimeout(()=>el("bulle").hidden=true,8000); } },4000);
 function addBot(t){const d=document.createElement("div");d.className="msg bot";d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
 function addUser(t){const d=document.createElement("div");d.className="msg user";d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight}
 let tapeEl=null;
@@ -780,13 +898,13 @@ async function envoyer(t){
   try{
     const res=await fetch(CONFIG.API+"/assistant/"+CONFIG.CLIENT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,userId:sessionId})});
     const j=await res.json(); if(!j||!j.answer||res.status===404) throw 0; rep=j.answer;
-  }catch(e){ $("tagDemo").hidden=false; await new Promise(z=>setTimeout(z,400)); rep=local(t); }
+  }catch(e){ el("tagDemo").hidden=false; await new Promise(z=>setTimeout(z,400)); rep=local(t); }
   setTyping(false);
-  const env=lireEnvoi(rep), el=addBot(env.texte);
-  if(env.data) afficherConfirmation(env.data,el);
+  const env=lireEnvoi(rep), bulleBot=addBot(env.texte);
+  if(env.data) afficherConfirmation(env.data,bulleBot);
   if(!lead) setQuick(QUICK);
 }
-$("chatForm").onsubmit=e=>{e.preventDefault();const i=$("chatIn");envoyer(i.value);i.value=""};
+el("chatForm").onsubmit=e=>{e.preventDefault();const i=el("chatIn");envoyer(i.value);i.value=""};
 
 /* ---------- démarrage ---------- */
 stylesPlanches(); tout(); rendreGaleries(); afficherVue(); chargerBoutique();
