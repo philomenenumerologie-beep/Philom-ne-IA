@@ -85,6 +85,28 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
 .pl-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .pl-actions .btn{padding:7px 11px;font-size:13px}
 .cachee{opacity:.55}
+.place-info{font-size:13px;color:var(--gris);margin-top:10px}
+.place-info b{color:var(--vert)}
+.placeur{position:fixed;inset:0;z-index:96;background:#111;color:#fff;display:flex;flex-direction:column}
+.placeur header{position:static}
+.placeur .haut{padding:10px 14px;display:flex;align-items:center;gap:10px}
+.placeur .haut b{flex:1;font-size:16px}
+.placeur .consigne{padding:0 14px 8px;font-size:14px;color:#ddd}
+.placeur .consigne em{font-style:normal;color:var(--or2);font-weight:700}
+.placeur .nums-pl{display:flex;gap:6px;overflow-x:auto;padding:0 14px 10px}
+.placeur .nums-pl button{flex:0 0 auto;min-width:46px;border-radius:10px;padding:7px 8px;background:#262626;color:#fff;font-weight:600;font-size:14px;border:1.5px solid #333}
+.placeur .nums-pl button.ok{border-color:var(--vert);color:#9be3b6}
+.placeur .nums-pl button.sel{background:var(--or);color:#111;border-color:var(--or)}
+.placeur .photo{flex:1;overflow:auto;padding:0 8px}
+.placeur .cadre{position:relative;margin:0 auto;max-width:720px}
+.placeur .cadre img{width:100%;display:block;border-radius:8px;user-select:none;-webkit-user-select:none}
+.placeur .rond{position:absolute;border-radius:50%;border:2px solid var(--vert);pointer-events:none}
+.placeur .rond.sel{border-color:var(--or);border-width:3px}
+.placeur .rond i{position:absolute;left:50%;top:-18px;transform:translateX(-50%);font-style:normal;font-size:11px;font-weight:700;background:var(--vert);color:#fff;border-radius:8px;padding:0 5px}
+.placeur .rond.sel i{background:var(--or);color:#111}
+.placeur .bas{padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;background:#1c1c1c}
+.placeur .bas input[type=range]{flex:1;padding:0}
+.placeur .bas span{font-size:13px;color:#bbb;white-space:nowrap}
 
 /* galerie */
 .gal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -191,6 +213,13 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
   </div>
 </div>
 
+<div class="placeur" id="placeur" hidden>
+  <div class="haut"><b id="plTitre">Placer les breloques</b><button class="btn btn-or" id="plFini">Terminer</button></div>
+  <div class="consigne" id="plConsigne"></div>
+  <div class="nums-pl" id="plNums"></div>
+  <div class="photo"><div class="cadre" id="plCadre"><img id="plImg" alt=""><div id="plRonds"></div></div></div>
+  <div class="bas"><span>Taille du rond</span><input type="range" id="plTaille" min="15" max="180" value="45"><button class="btn btn-ligne" id="plEffacer" style="padding:7px 10px;font-size:13px;color:#111">Effacer</button></div>
+</div>
 <div class="charge" id="charge" hidden>Un instant…</div>
 <div class="toast" id="toast"></div>
 
@@ -349,6 +378,7 @@ function lireNums(txt){
   return [...new Set(out)];
 }
 const imgAdmin=s=>String(s||"").startsWith("/photos/")?API+s:"";
+const nbPlacees=p=>p.pos?p.nums.filter(n=>p.pos[n]).length:0;
 function rendrePlanches(){
   $("modes").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.mode===MODE));
   $("listePlanches").innerHTML=PUB.planches.map((p,i)=>{
@@ -357,6 +387,9 @@ function rendrePlanches(){
       <div class="pl-tete">${src?`<img class="vign" src="${esc(src)}" alt="">`:`<div class="vign">photo du site</div>`}
         <input value="${esc(p.nom)}" data-nom="${i}" aria-label="Nom de la planche"></div>
       <div class="chips">${p.nums.map(n=>`<button class="chip ${p.epuises.includes(n)?"epuise":""}" data-pl="${i}" data-n="${esc(n)}">${esc(n)}${p.xxl.includes(n)?'<i class="t">XXL</i>':p.pasInox.includes(n)?'<i class="t i">*</i>':""}</button>`).join("")}</div>
+      ${String(p.img).startsWith("int:")?`<p class="place-info"><b>✓</b> Breloques repérées sur la photo : vos clientes peuvent les toucher directement.</p>`
+        :`<p class="place-info">${nbPlacees(p)===p.nums.length?`<b>✓ Toutes les breloques sont placées</b> sur la photo.`:`${nbPlacees(p)} / ${p.nums.length} breloques placées sur la photo.`}</p>
+          <button class="btn btn-or" style="margin-top:8px" data-placer="${i}">📍 ${nbPlacees(p)?"Modifier le placement":"Placer les breloques sur la photo"}</button>`}
       <label class="l">Numéros de la planche</label>
       <input value="${esc(plages(p.nums))}" data-nums="${i}">
       <div class="pl-actions">
@@ -373,6 +406,7 @@ $("listePlanches").onclick=async e=>{
   const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
   if(d.n!==undefined){ const p=PUB.planches[+d.pl], l=p[MODE]; const k=l.indexOf(d.n); k>=0?l.splice(k,1):l.push(d.n); rendrePlanches(); sauver(); }
   else if(d.cache!==undefined){ const p=PUB.planches[+d.cache]; p.cache=!p.cache; rendrePlanches(); sauver(); }
+  else if(d.placer!==undefined){ ouvrirPlaceur(+d.placer); }
   else if(d.monte!==undefined){ const i=+d.monte; [PUB.planches[i-1],PUB.planches[i]]=[PUB.planches[i],PUB.planches[i-1]]; rendrePlanches(); sauver(); }
   else if(d.descend!==undefined){ const i=+d.descend; [PUB.planches[i+1],PUB.planches[i]]=[PUB.planches[i],PUB.planches[i+1]]; rendrePlanches(); sauver(); }
   else if(d.supprpl!==undefined){ const p=PUB.planches[+d.supprpl]; if(!confirm("Supprimer la planche « "+p.nom+" » ?")) return;
@@ -382,8 +416,10 @@ $("listePlanches").onchange=async e=>{
   const t=e.target, d=t.dataset;
   if(d.nom!==undefined){ PUB.planches[+d.nom].nom=t.value.trim().slice(0,40)||"Planche"; sauver(); }
   else if(d.nums!==undefined){ const p=PUB.planches[+d.nums], n=lireNums(t.value); if(!n.length){toast("Indiquez au moins un numéro",true);rendrePlanches();return}
-    p.nums=n; ["xxl","pasInox","epuises"].forEach(k=>p[k]=p[k].filter(x=>n.includes(x))); rendrePlanches(); sauver(); }
-  else if(d.photo!==undefined&&t.files[0]){ charge(true); try{ const p=PUB.planches[+d.photo], ancienne=p.img; p.img=await envoyerPhoto(t.files[0],1400); rendrePlanches(); await sauver(true); supprimerPhoto(ancienne); }catch(err){toast(err.message,true)} charge(false); }
+    p.nums=n; ["xxl","pasInox","epuises"].forEach(k=>p[k]=p[k].filter(x=>n.includes(x)));
+    if(p.pos) Object.keys(p.pos).forEach(k=>{ if(!n.includes(k)) delete p.pos[k]; });
+    rendrePlanches(); sauver(); }
+  else if(d.photo!==undefined&&t.files[0]){ charge(true); try{ const p=PUB.planches[+d.photo], ancienne=p.img; p.img=await envoyerPhoto(t.files[0],1400); delete p.pos; delete p.ar; rendrePlanches(); toast("Nouvelle photo : replacez les breloques 📍"); await sauver(true); supprimerPhoto(ancienne); }catch(err){toast(err.message,true)} charge(false); }
 };
 $("btnAjoutPlanche").onclick=async()=>{
   const f=$("npPhoto").files[0], nom=$("npNom").value.trim(), nums=lireNums($("npNums").value);
@@ -394,8 +430,49 @@ $("btnAjoutPlanche").onclick=async()=>{
     const src=await envoyerPhoto(f,1400);
     PUB.planches.push({ id:"p"+Date.now().toString(36), nom:nom||plages(nums).slice(0,40), img:src, nums, xxl:[], pasInox:[], epuises:[] });
     await sauver(true); rendrePlanches(); $("npPhoto").value=""; $("npNom").value=""; $("npNums").value=""; toast("Planche ajoutée ✓");
+    ouvrirPlaceur(PUB.planches.length-1);
   }catch(e){toast(e.message,true)}
   charge(false);
+};
+
+/* ---------- placement des breloques sur la photo d'une planche ---------- */
+let PL=null; // { i, pos, ar, sel }
+function ouvrirPlaceur(i){
+  const p=PUB.planches[i]; if(!p||!imgAdmin(p.img)) return;
+  PL={ i, pos:JSON.parse(JSON.stringify(p.pos||{})), ar:p.ar||0, sel:null };
+  PL.sel=p.nums.find(n=>!PL.pos[n])||p.nums[0];
+  $("plTitre").textContent="Placer : "+p.nom;
+  $("plImg").onload=()=>{ PL.ar=$("plImg").naturalHeight/$("plImg").naturalWidth; dessinerPlaceur(); };
+  $("plImg").src=imgAdmin(p.img);
+  $("placeur").hidden=false; document.body.style.overflow="hidden";
+  dessinerPlaceur();
+}
+function dessinerPlaceur(){
+  if(!PL) return; const p=PUB.planches[PL.i], nb=p.nums.filter(n=>PL.pos[n]).length;
+  $("plConsigne").innerHTML = nb===p.nums.length
+    ? `Tout est placé ✓ Pour corriger, touchez un numéro puis la photo. Sinon, touchez <em>Terminer</em>.`
+    : `Touchez la breloque <em>${esc(PL.sel)}</em> sur la photo. (${nb} / ${p.nums.length} placées)`;
+  $("plNums").innerHTML=p.nums.map(n=>`<button data-plsel="${esc(n)}" class="${PL.pos[n]?"ok":""} ${n===PL.sel?"sel":""}">${esc(n)}</button>`).join("");
+  const s=$("plNums").querySelector(".sel"); if(s) s.scrollIntoView({inline:"center",block:"nearest"});
+  if(PL.pos[PL.sel]) $("plTaille").value=Math.round(PL.pos[PL.sel][2]*1000);
+  $("plRonds").innerHTML=PL.ar?Object.entries(PL.pos).map(([n,[x,y,r]])=>`<div class="rond ${n===PL.sel?"sel":""}" style="left:${(x-r)*100}%;top:${(y-r/PL.ar)*100}%;width:${2*r*100}%;height:${2*r/PL.ar*100}%"><i>${esc(n)}</i></div>`).join(""):"";
+}
+$("plNums").onclick=e=>{ const b=e.target.closest("[data-plsel]"); if(b){ PL.sel=b.dataset.plsel; dessinerPlaceur(); } };
+$("plImg").onclick=e=>{
+  if(!PL||!PL.ar) return; const r=$("plImg").getBoundingClientRect(), p=PUB.planches[PL.i];
+  const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+  PL.pos[PL.sel]=[+x.toFixed(4),+y.toFixed(4),+(($("plTaille").value)/1000).toFixed(4)];
+  const suivante=p.nums.find(n=>!PL.pos[n]);
+  if(suivante) PL.sel=suivante;
+  dessinerPlaceur();
+};
+$("plTaille").oninput=()=>{ if(PL&&PL.pos[PL.sel]){ PL.pos[PL.sel][2]=+(($("plTaille").value)/1000).toFixed(4); dessinerPlaceur(); } };
+$("plEffacer").onclick=()=>{ if(PL&&PL.pos[PL.sel]){ delete PL.pos[PL.sel]; dessinerPlaceur(); } };
+$("plFini").onclick=async()=>{
+  if(!PL) return; const p=PUB.planches[PL.i];
+  p.pos=PL.pos; if(PL.ar) p.ar=+PL.ar.toFixed(4);
+  PL=null; $("placeur").hidden=true; document.body.style.overflow="";
+  rendrePlanches(); await sauver(true);
 };
 
 /* ---------- photos ---------- */
