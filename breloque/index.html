@@ -559,7 +559,7 @@ function chargerCss(href){ const l=document.createElement("link"); l.rel="styles
 function chargerMR(){
   if(!mrCharge){
     chargerCss("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
-    mrCharge=(window.jQuery?Promise.resolve():chargerScript("https://code.jquery.com/jquery-3.7.1.min.js"))
+    mrCharge=(window.jQuery?Promise.resolve():chargerScript("https://code.jquery.com/jquery-2.2.4.min.js"))
       .then(()=>window.L?null:chargerScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"))
       .then(()=>chargerScript("https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"))
       .then(()=>{ if(!window.jQuery||!window.jQuery.fn.MR_ParcelShopPicker) throw new Error("widget"); });
@@ -572,10 +572,11 @@ function ouvrirRelais(){
   el("Zone_Widget").innerHTML=`<p style="padding:20px;text-align:center;color:#777">Chargement de la carte…</p>`;
   const lancer=()=>{
     const pays=el("relaisPays").value, J=window.jQuery;
-    el("Zone_Widget").innerHTML="";
+    el("Zone_Widget").innerHTML=""; el("relaisSecours").hidden=true;
+    clearTimeout(window._mrT); window._mrT=setTimeout(()=>{ if(!el("Zone_Widget").children.length) el("relaisSecours").hidden=false; },8000);
     J("#Zone_Widget").MR_ParcelShopPicker({
       Target:"#Target_Widget", Brand:(String(LIV.mrCode||"").trim()||"BDTEST").padEnd(8," "),
-      Country:pays, AllowedCountries:"BE,FR", PostCode:"", ColLivMod:"24R", NbResults:"7",
+      Country:pays, AllowedCountries:"BE,FR", PostCode:pays==="FR"?"59000":"7730", ColLivMod:"24R", NbResults:"7",
       Responsive:true, ShowResultsOnMap:true,
       OnParcelShopSelected:d=>{
         etat.relais={ id:String(d.ID||""), pays:String(d.Pays||pays), nom:String(d.Nom||"").trim(),
