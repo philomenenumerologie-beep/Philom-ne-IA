@@ -579,6 +579,7 @@ function ouvrirRelais(){
       Country:pays, AllowedCountries:"BE,FR", PostCode:pays==="FR"?"59000":"7730", ColLivMod:"24R", NbResults:"7",
       Responsive:true, ShowResultsOnMap:true,
       OnParcelShopSelected:d=>{
+        d=Object.fromEntries(Object.entries(d||{}).map(([k,v])=>[k,typeof v==="string"?v.replace(/''/g,"'"):v]));
         etat.relais={ id:String(d.ID||""), pays:String(d.Pays||pays), nom:String(d.Nom||"").trim(),
           adresse:[d.Adresse1,d.Adresse2].filter(Boolean).map(x=>String(x).trim()).join(", ")+", "+String(d.CP||"").trim()+" "+String(d.Ville||"").trim() };
         el("mRelais").hidden=true; rendreLivraison(); toast("Point relais choisi ✓");
