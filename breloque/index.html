@@ -133,6 +133,7 @@ header .btn{padding:8px 15px;font-size:14px}
 .recap .item small{display:block;color:var(--gris);font-size:12.5px}
 .recap .item button{width:28px;height:28px;border-radius:50%;background:#f1ece3;color:#111;flex:0 0 28px}
 .recap .titre{font-weight:700;font-size:13px;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;padding:10px 0 2px}
+.voir-planche{display:inline-block;margin-top:8px;border:1.5px solid #444;border-radius:20px;padding:6px 12px;font-size:13.5px;color:#e2c47c;background:transparent}
 .note{font-size:13px;color:#9d978d;margin-top:10px}
 .onglets{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}
 .onglets::-webkit-scrollbar{display:none}
@@ -329,7 +330,7 @@ body.chat-ouvert{overflow:hidden}
     <div class="bloc">
       <h3>3 · Mes breloques</h3>
       <div class="onglets" id="onglets"></div>
-      <div class="planche"><img id="plancheImg" alt="Planche de breloques"><div id="zones" style="position:absolute;inset:0"></div><button class="zoom" id="btnZoom">🔍 Agrandir</button></div>
+      <div class="planche" id="blocPlanche"><img id="plancheImg" alt="Planche de breloques"><div id="zones" style="position:absolute;inset:0"></div><button class="zoom" id="btnZoom">🔍 Agrandir</button></div>
       <p class="aide" id="aidePlanche"></p>
       <div class="nums" id="nums"></div>
     </div>
@@ -683,9 +684,14 @@ function rendrePlanche(){
         style="left:${((x-r)*100).toFixed(2)}%;top:${((y-r/p.ar)*100).toFixed(2)}%;width:${(2*r*100).toFixed(2)}%;height:${(2*r/p.ar*100).toFixed(2)}%">${nb?`<i class="pris">×${nb}</i>`:""}</button>`;
     }).join("");
   }
-  el("aidePlanche").textContent = p.pos&&p.ar ? "Touchez une breloque sur la photo, ou son numéro en dessous. Vous pouvez prendre plusieurs fois la même." : "Touchez un numéro pour l'ajouter. Vous pouvez prendre plusieurs fois la même breloque.";
+  /* breloques repérées : les vignettes suffisent, la grande photo reste accessible en un clic */
+  const reperee=!!(p.pos&&p.ar&&p.nums.filter(n=>p.pos[n]).length>=p.nums.length*0.8);
+  el("blocPlanche").hidden=reperee;
+  el("aidePlanche").innerHTML = reperee
+    ? `Touchez une breloque pour l'ajouter. Vous pouvez prendre plusieurs fois la même. <button class="voir-planche" data-voirplanche="1">🖼 Voir la planche entière</button>`
+    : p.pos&&p.ar ? "Touchez une breloque sur la photo, ou son numéro en dessous. Vous pouvez prendre plusieurs fois la même." : "Touchez un numéro pour l'ajouter. Vous pouvez prendre plusieurs fois la même breloque.";
   el("nums").innerHTML=p.nums.map(n=>{
-    const ko=p.epuises.includes(n), nb=etat.choix.filter(c=>c===n).length, v=vignette(n,40);
+    const ko=p.epuises.includes(n), nb=etat.choix.filter(c=>c===n).length, v=vignette(n,46);
     const tag=p.xxl.includes(n)?`<i class="tag">XXL ${supXXL()}</i>`:p.pasInox.includes(n)?`<i class="tag inox">*</i>`:"";
     return `<button class="num ${ko?"ko":""} ${v?"avec-photo":""}" data-num="${esc(n)}">${nb?`<i class="compte">×${nb}</i>`:""}${v}${esc(n)}${tag}</button>`;
   }).join("");
@@ -798,6 +804,7 @@ document.addEventListener("click",e=>{
   else if(d.art){ const i=PANIER.articles.indexOf(d.art); if(i<0){ PANIER.articles.push(d.art); toast("Ajouté au panier ✓"); } else PANIER.articles.splice(i,1); garderPanier(); rendreStock(); rendreRecap(); }
   else if(d.rma){ PANIER.articles=PANIER.articles.filter(x=>x!==d.rma); garderPanier(); rendreStock(); rendreRecap(); }
   else if(d.rmc!==undefined){ PANIER.compos.splice(+d.rmc,1); garderPanier(); rendreRecap(); }
+  else if(d.voirplanche){ zoom(el("plancheImg").src); }
   else if(d.livr){ etat.livraison=d.livr; rendreLivraison(); rendreRecap(); }
   else if(d.relais){ ouvrirRelais(); }
   else if(d.planche){ etat.planche=d.planche; rendrePlanche(); }
