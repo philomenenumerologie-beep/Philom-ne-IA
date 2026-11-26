@@ -85,6 +85,13 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
 .pl-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .pl-actions .btn{padding:7px 11px;font-size:13px}
 .cachee{opacity:.55}
+.tl{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--ligne)}
+.tl:last-child{border:none}
+.tl span{flex:1;font-size:14.5px}
+.tl input{width:74px;flex:0 0 74px;text-align:right;padding:8px 10px}
+.tl input.nom{flex:1 1 auto;width:auto;min-width:0;text-align:left}
+.tl .x{color:var(--rouge);font-size:18px;width:30px}
+.mini{font-size:13px;padding:7px 12px;margin-top:8px}
 .place-info{font-size:13px;color:var(--gris);margin-top:10px}
 .place-info b{color:var(--vert)}
 .placeur{position:fixed;inset:0;z-index:96;background:#111;color:#fff;display:flex;flex-direction:column}
@@ -139,6 +146,7 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
     <button data-onglet="commandes" class="on">Commandes<span class="pastille" id="nbNouvelles" hidden></span></button>
     <button data-onglet="planches">Breloques</button>
     <button data-onglet="galerie">Photos</button>
+    <button data-onglet="tarifs">Tarifs</button>
     <button data-onglet="reglages">Réglages</button>
   </div>
 
@@ -187,6 +195,14 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
         <button class="btn btn-noir large" style="margin-top:12px" id="btnAjoutPhoto">Ajouter la photo</button>
       </div>
       <div class="gal" id="listeGalerie"></div>
+    </div>
+
+    <!-- TARIFS -->
+    <div id="o-tarifs" hidden>
+      <h2>Mes tarifs</h2>
+      <p class="sous">Les prix du site et le calcul automatique se mettent à jour dès que vous enregistrez.</p>
+      <div id="formTarifs"></div>
+      <button class="btn btn-noir large" id="btnTarifs" style="margin:6px 0 20px">Enregistrer mes tarifs</button>
     </div>
 
     <!-- RÉGLAGES -->
@@ -289,7 +305,7 @@ async function charger(){
   $("banniere").value=PUB.banniere||"";
   $("mailAlerte").value=(DATA.infos&&DATA.infos.email)||"";
   $("lienSite").href=SITE;
-  rendreCommandes(); rendrePlanches(); rendreGalerie();
+  rendreCommandes(); rendrePlanches(); rendreGalerie(); TF=null; rendreTarifsAdmin();
 }
 
 /* ---------- enregistrement des données publiques (automatique) ---------- */
@@ -304,7 +320,7 @@ function sauver(immediat){
 /* ---------- onglets ---------- */
 document.querySelectorAll("[data-onglet]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-onglet]").forEach(x=>x.classList.toggle("on",x===b));
-  ["commandes","planches","galerie","reglages"].forEach(n=>$("o-"+n).hidden=n!==b.dataset.onglet);
+  ["commandes","planches","galerie","tarifs","reglages"].forEach(n=>$("o-"+n).hidden=n!==b.dataset.onglet);
   window.scrollTo(0,0);
 });
 
@@ -511,6 +527,61 @@ $("btnAjoutPhoto").onclick=async()=>{
 $("listeGalerie").onchange=e=>{const d=e.target.dataset;if(d.leg!==undefined){PUB.galerie[+d.leg].legende=e.target.value.trim().slice(0,60);sauver()}};
 $("listeGalerie").onclick=async e=>{const b=e.target.closest("[data-supprgal]");if(!b)return;if(!confirm("Supprimer cette photo ?"))return;
   const g=PUB.galerie.splice(+b.dataset.supprgal,1)[0]; rendreGalerie(); await sauver(true); supprimerPhoto(g.src)};
+
+/* ---------- tarifs ---------- */
+const TARIFS_DEPART = {
+  collier:[11,13,15,18,21,24,27,30,33,35,37], bracelet:[8,10,12,14,16,18], cheville:[9,11,13,15,17,19,20,21],
+  chaines:[ {id:"classique",nom:"Chaîne classique",prix:0}, {id:"leopard",nom:"Chaîne tissu léopard",prix:5}, {id:"bandana",nom:"Chaîne tissu bandana",prix:6}, {id:"torsade",nom:"Tissu torsadé avec chaîne",prix:7} ],
+  mousqueton:4, xxl:3,
+  anneaux:[ {id:"20",nom:"Anneaux 20 mm",prix:13}, {id:"30",nom:"Anneaux 30 mm",prix:14}, {id:"40",nom:"Anneaux 40 mm",prix:15} ],
+  bouclesPlus:1, bouclesXXL:1.5, epingle:{base:13, inclus:3, plus:1.5, max:7}, bague:12
+};
+let TF=null;
+const champ=(cle,v)=>`<input type="number" inputmode="decimal" step="0.5" min="0" data-tf="${cle}" value="${v}">`;
+function rendreTarifsAdmin(){
+  if(!TF) TF=JSON.parse(JSON.stringify(Object.assign({},TARIFS_DEPART,PUB.tarifs||{})));
+  const grille=(k,titre)=>`<div class="carte"><b>${titre}</b><p class="sous" style="margin:2px 0 6px">Prix selon le nombre de breloques. Le nombre de lignes = le maximum de breloques.</p>
+    ${TF[k].map((p,i)=>`<div class="tl"><span>${i+1} breloque${i?"s":""}</span>${champ(k+"."+i,p)}<span style="flex:0">€</span></div>`).join("")}
+    <div class="rang"><button class="btn btn-ligne mini" data-ajout="${k}">+ Ajouter une ligne</button>${TF[k].length>1?`<button class="btn btn-ligne mini" data-retire="${k}">− Retirer la dernière</button>`:""}</div></div>`;
+  const listeNP=(k,titre,aide,base)=>`<div class="carte"><b>${titre}</b><p class="sous" style="margin:2px 0 6px">${aide}</p>
+    ${TF[k].map((o,i)=>`<div class="tl"><input class="nom" data-tfn="${k}.${i}" value="${esc(o.nom)}">${champ(k+"."+i+".prix",o.prix)}<span style="flex:0">€</span>${i>=base?`<button class="x" data-suppr-o="${k}.${i}" aria-label="Supprimer">✕</button>`:`<i style="width:30px"></i>`}</div>`).join("")}
+    <button class="btn btn-ligne mini" data-ajout-o="${k}">+ Ajouter</button></div>`;
+  $("formTarifs").innerHTML=
+    grille("collier","Colliers")+grille("bracelet","Bracelets")+grille("cheville","Chevillères")+
+    listeNP("chaines","Chaînes","La première est comprise dans le prix (mettez 0 €). Les autres sont un supplément.",1)+
+    `<div class="carte"><b>Suppléments</b>
+      <div class="tl"><span>Breloque XXL (colliers, bracelets, chevillères, épingles)</span>${champ("xxl",TF.xxl)}<span style="flex:0">€</span></div>
+      <div class="tl"><span>Fermoir type mousqueton</span>${champ("mousqueton",TF.mousqueton)}<span style="flex:0">€</span></div></div>`+
+    listeNP("anneaux","Boucles d'oreilles","Prix de la paire avec 2 breloques et perles.",1)+
+    `<div class="carte"><b>Boucles d'oreilles : en plus</b>
+      <div class="tl"><span>Breloque classique en plus</span>${champ("bouclesPlus",TF.bouclesPlus)}<span style="flex:0">€</span></div>
+      <div class="tl"><span>Chaque breloque XXL</span>${champ("bouclesXXL",TF.bouclesXXL)}<span style="flex:0">€</span></div></div>
+    <div class="carte"><b>Épingle et bague</b>
+      <div class="tl"><span>Épingle : prix de base</span>${champ("epingle.base",TF.epingle.base)}<span style="flex:0">€</span></div>
+      <div class="tl"><span>Breloques comprises</span><input type="number" min="1" step="1" data-tf="epingle.inclus" value="${TF.epingle.inclus}"><span style="flex:0">&nbsp;&nbsp;</span></div>
+      <div class="tl"><span>Par breloque en plus</span>${champ("epingle.plus",TF.epingle.plus)}<span style="flex:0">€</span></div>
+      <div class="tl"><span>Maximum de breloques</span><input type="number" min="1" step="1" data-tf="epingle.max" value="${TF.epingle.max}"><span style="flex:0">&nbsp;&nbsp;</span></div>
+      <div class="tl"><span>Bague : à partir de</span>${champ("bague",TF.bague)}<span style="flex:0">€</span></div></div>`;
+}
+function setChemin(o,chemin,v){ const k=chemin.split("."); let c=o; for(let i=0;i<k.length-1;i++) c=c[k[i]]; c[k[k.length-1]]=v; }
+$("formTarifs").oninput=e=>{
+  const t=e.target;
+  if(t.dataset.tf){ const v=parseFloat(String(t.value).replace(",",".")); setChemin(TF,t.dataset.tf,isFinite(v)?v:0); }
+  else if(t.dataset.tfn){ const [k,i]=t.dataset.tfn.split("."); TF[k][+i].nom=t.value.slice(0,50); }
+};
+$("formTarifs").onclick=e=>{
+  const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+  if(d.ajout){ const g=TF[d.ajout]; g.push(g[g.length-1]||0); rendreTarifsAdmin(); }
+  else if(d.retire){ TF[d.retire].pop(); rendreTarifsAdmin(); }
+  else if(d.ajoutO){ TF[d.ajoutO].push({id:"o"+Date.now().toString(36),nom:"",prix:0}); rendreTarifsAdmin(); const l=$("formTarifs").querySelectorAll(`[data-tfn^="${d.ajoutO}."]`); if(l.length) l[l.length-1].focus(); }
+  else if(d.supprO){ const [k,i]=d.supprO.split("."); TF[k].splice(+i,1); rendreTarifsAdmin(); }
+};
+$("btnTarifs").onclick=async()=>{
+  ["chaines","anneaux"].forEach(k=>TF[k]=TF[k].filter(o=>String(o.nom).trim()).map(o=>({...o,nom:String(o.nom).trim()})));
+  if(!TF.chaines.length||!TF.anneaux.length) return toast("Gardez au moins une chaîne et une taille d'anneaux",true);
+  if(TF.epingle.inclus>TF.epingle.max) return toast("Épingle : le maximum doit être plus grand que les breloques comprises",true);
+  PUB.tarifs=JSON.parse(JSON.stringify(TF)); rendreTarifsAdmin(); await sauver(true);
+};
 
 /* ---------- réglages ---------- */
 $("btnBanniere").onclick=()=>{PUB.banniere=$("banniere").value.trim().slice(0,160);sauver(true)};
